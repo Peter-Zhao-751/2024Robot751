@@ -20,6 +20,6 @@ public class PrimeShooter extends Command{
     }
     @Override
     public boolean isFinished() {
-        return System.currentTimeMillis() - startTime >= 3000; // Ends the command after 3 seconds
+        return System.currentTimeMillis() - startTime >= 2000; // Ends the command after 3 seconds
     }
 }
