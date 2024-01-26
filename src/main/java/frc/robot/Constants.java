@@ -26,6 +26,7 @@ public final class Constants {
         public static final int shooterMotorID = 1;
         public static final int shooterMotorID2 = 2;
         public static final int aimingMotorID = 3;
+        public static final double spinUpTime = 2.0;
     }
 
     public static final class Swerve {

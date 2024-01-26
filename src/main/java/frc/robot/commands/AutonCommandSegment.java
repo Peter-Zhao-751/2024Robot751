@@ -14,6 +14,10 @@ public class AutonCommandSegment extends SequentialCommandGroup{
         SmartDashboard.putString("Current Command", name);
         addCommands(locationCommand, action);
     }
+    public AutonCommandSegment(ParallelCommandGroup parallelCommand, Command action, String name){
+        SmartDashboard.putString("Current Command", name);
+        addCommands(parallelCommand, action);
+    }
     public AutonCommandSegment(MoveToLocation locationCommand){
         addCommands(locationCommand);
     }

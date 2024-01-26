@@ -5,15 +5,19 @@ import java.io.FileReader;
 import java.util.Iterator; 
 import java.util.Map;
 
-import frc.robot.Constants.shooter;
+import frc.robot.Constants;
 import frc.robot.commands.AutonCommandSegment;
 import frc.robot.commands.MoveToLocation;
+import frc.robot.commands.SpinShooter;
 import frc.robot.commands.Shooter;
 import frc.robot.commands.Intake;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
   
 import org.json.simple.JSONArray; 
 import org.json.simple.JSONObject;
@@ -68,10 +72,9 @@ public class JsonParser {
 
                 switch ( (String) point.get("e")){
                     case "Shoot": 
-                        double delay = (newMovementCommand.ETA() - 2) > 0 ? newMovementCommand.ETA() - 2 : 0;
-                        
-
-                        autonCommands.add(new AutonCommandSegment(newMovementCommand, new Shooter(shooterSubsystem), "Shoot"));
+                        double delay = (newMovementCommand.ETA() - Constants.shooter.spinUpTime) > 0 ? newMovementCommand.ETA() - Constants.shooter.spinUpTime : 0;
+                        ParallelCommandGroup moveAndPrime = new ParallelCommandGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(delay), new SpinShooter()));
+                        autonCommands.add(new AutonCommandSegment(moveAndPrime, new Shooter(shooterSubsystem), "Shoot"));
                         break;
                     case "Pickup":
                         autonCommands.add(new AutonCommandSegment(newMovementCommand, new Intake(intakeSubsystem), "Pickup"));
