@@ -3,8 +3,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class PrimeShooter extends Command{
     private double startTime;
+    private double totalTime;
     @Override
     public void initialize() {
+        
         startTime = System.currentTimeMillis();
         //motorSubsystem.runMotor(speed);
     }
@@ -20,6 +22,6 @@ public class PrimeShooter extends Command{
     }
     @Override
     public boolean isFinished() {
-        return System.currentTimeMillis() - startTime >= 2000; // Ends the command after 3 seconds
+        return System.currentTimeMillis() - startTime >= totalTime; // Ends the command after 3 seconds
     }
 }
