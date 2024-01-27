@@ -13,6 +13,33 @@ public class CANdleSubsystem extends SubsystemBase{
     
     private final CANdle m_candle = new CANdle(Constants.CANdle.CANdleID, "rio");
     private final int LEDCount = Constants.CANdle.LEDCount;
+    public enum Modules {
+
+        SwerveBL (false, 0),
+        SwerveBR (false, 1),
+        SwerveFL (false, 2),
+        SwerveFR (false, 3),
+        Shooter (false, 4),
+        Intake (false, 5),
+        Climber (false, 6),
+        Debug (false, 7);
+
+        private boolean initialized;
+        private int LEDIndex;
+        private Modules (boolean initialized, int LEDIndex){
+            this.initialized = initialized;
+            this.LEDIndex = LEDIndex;
+        }
+        public boolean isInitialized() {
+            return initialized;
+        }
+        public int getLEDIndex() {
+            return LEDIndex;
+        }
+        public void setInitialized(boolean initialized) {
+            this.initialized = initialized;
+        }
+    }
     public enum AnimationTypes {
         Shoot,
         Auton,
@@ -52,6 +79,17 @@ public class CANdleSubsystem extends SubsystemBase{
         if(animationToDisplay != null) {
             m_candle.animate(animationToDisplay);
         }
+        
         SmartDashboard.setDefaultString("Current Robot LED Animation", CurrentManager.isOverNominal() ? currentAnimation.name() : "Disabled due to over current");
+    }
+
+    public void moduleLED(Modules module) {
+        if(module.isInitialized()) m_candle.setLEDs(0, 255, 0, 0, module.getLEDIndex(), 1);
+        else m_candle.setLEDs(255, 0, 0, 0, module.getLEDIndex(), 1);
+    }
+
+    public void onboardLED(Modules module) {
+        module.setInitialized(!module.isInitialized());
+        moduleLED(module);
     }
 }
