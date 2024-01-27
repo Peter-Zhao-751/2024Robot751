@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
   
@@ -73,7 +74,7 @@ public class JsonParser {
                 switch ( (String) point.get("e")){
                     case "Shoot": 
                         double delay = (newMovementCommand.ETA() - Constants.shooter.spinUpTime) > 0 ? newMovementCommand.ETA() - Constants.shooter.spinUpTime : 0;
-                        ParallelCommandGroup moveAndPrime = new ParallelCommandGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(delay), new SpinShooter()));
+                        ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(delay), new SpinShooter()));
                         autonCommands.add(new AutonCommandSegment(moveAndPrime, new Shooter(shooterSubsystem), "Shoot"));
                         break;
                     case "Pickup":
