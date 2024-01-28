@@ -14,6 +14,9 @@ import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
 public final class Constants {
+
+    // Everything on the drive train is on the CANivore, so we use this ID for all CTRE configs
+    public static final String CANivoreID = "2003 Nissan Altima";
     public static final double stickDeadband = 0.1;
 
     public static final class CurrentManager{
