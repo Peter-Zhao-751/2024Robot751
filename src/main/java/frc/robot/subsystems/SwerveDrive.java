@@ -25,7 +25,7 @@ public class SwerveDrive extends SubsystemBase {
     public Limelight limelight;
 
     public SwerveDrive() {
-        gyro = new Pigeon2(Constants.Swerve.pigeonID);
+        gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.CANivoreID);
         limelight = new Limelight();
         gyro.getConfigurator().apply(new Pigeon2Configuration());
         gyro.setYaw(0);

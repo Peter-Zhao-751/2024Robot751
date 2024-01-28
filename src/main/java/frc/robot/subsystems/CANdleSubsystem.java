@@ -11,7 +11,7 @@ import frc.robot.Constants;
 
 public class CANdleSubsystem extends SubsystemBase{
     
-    private final CANdle m_candle = new CANdle(Constants.CANdle.CANdleID, "rio");
+    private final CANdle m_candle = new CANdle(Constants.CANdle.CANdleID, Constants.CANivoreID);
     private final int LEDCount = Constants.CANdle.LEDCount;
     public enum Modules {
 

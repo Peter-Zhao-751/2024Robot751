@@ -91,7 +91,7 @@ public final class Constants {
 
         /* Drive Motor Characterization Values From SYSID */
         public static final double driveKS = 0.32; //TODO: This must be tuned to specific robot
-        public static final double driveKV = 1.51;
+        public static final double driveKV = 1.51; //1.51
         public static final double driveKA = 0.27;
 
         /* Swerve Profiling Values */
@@ -123,10 +123,10 @@ public final class Constants {
             }
         }
 
-        public static final SwerveModule frontLeftModule = new SwerveModule(1, 2, 1, 0);
-        public static final SwerveModule frontRightModule = new SwerveModule(3, 4, 2, 0);
-        public static final SwerveModule backLeftModule = new SwerveModule(5, 6, 3, 0);
-        public static final SwerveModule backRightModule = new SwerveModule(7, 8, 4, 0);
+        public static final SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, 0);
+        public static final SwerveModule frontRightModule = new SwerveModule(21, 22, 23, 0);
+        public static final SwerveModule backLeftModule = new SwerveModule(31, 32, 33, 0);
+        public static final SwerveModule backRightModule = new SwerveModule(41, 42, 43, 0);
     }
 
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
