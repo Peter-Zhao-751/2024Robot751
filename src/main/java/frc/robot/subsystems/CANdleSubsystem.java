@@ -49,6 +49,7 @@ public class CANdleSubsystem extends SubsystemBase{
         Dance,
         Idle
     }
+    
     private AnimationTypes currentAnimation;
     private Animation animationToDisplay = null;
  
