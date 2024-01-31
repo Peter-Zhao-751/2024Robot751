@@ -5,6 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.HttpCamera;
+import edu.wpi.first.cscore.VideoSource;
+import edu.wpi.first.cscore.HttpCamera.HttpCameraKind;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -45,7 +48,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    CameraServer.startAutomaticCapture();
+    HttpCamera httpCamera = new HttpCamera("Camera Feed", "http://10.7.51.11:5800/stream.mjpg", HttpCameraKind.kMJPGStreamer);
+    CameraServer.startAutomaticCapture(httpCamera);
+    Shuffleboard.getTab("Limelight").add(httpCamera);
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();

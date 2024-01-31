@@ -36,7 +36,7 @@ public class SwerveDrive extends SubsystemBase {
             new SwerveModule(2, Constants.Swerve.backLeftModule),
             new SwerveModule(3, Constants.Swerve.backRightModule)
         };
-        odometry = new Odometry(limelight.getPose(), Constants.Swerve.swerveKinematics, getHeading(), getModulePositions());
+        //odometry = new Odometry(limelight.getPose(), Constants.Swerve.swerveKinematics, getHeading(), getModulePositions());
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());//, new Pose2d());
     }
 
@@ -50,9 +50,9 @@ public class SwerveDrive extends SubsystemBase {
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean isPrecise) {
         // precision mode
-        Double xSpeed = isPrecise ? translation.getX(): translation.getX() * Constants.Swerve.preciseControlFactor;
-        Double ySpeed = isPrecise ? translation.getY(): translation.getY() * Constants.Swerve.preciseControlFactor;
-        Double rot = isPrecise ? rotation: rotation * Constants.Swerve.preciseControlFactor;
+        Double xSpeed = !isPrecise ? translation.getX(): translation.getX() * Constants.Swerve.preciseControlFactor;
+        Double ySpeed = !isPrecise ? translation.getY(): translation.getY() * Constants.Swerve.preciseControlFactor;
+        Double rot = !isPrecise ? rotation: rotation * Constants.Swerve.preciseControlFactor;
 
         SwerveModuleState[] swerveModuleStates =
             Constants.Swerve.swerveKinematics.toSwerveModuleStates(
