@@ -97,9 +97,9 @@ public final class Constants {
         /* Swerve Profiling Values */
         public static final double preciseControlFactor = 0.5;
         /** Meters per Second */
-        public static final double maxSpeed = 0.1; //TODO: testing speed, normal: 4.5
+        public static final double maxSpeed = 0.02; //TODO: testing speed, normal: 4.5
         /** Radians per Second */
-        public static final double maxAngularVelocity = 3.0; // THIS IS THE MAX SPIN SPEED ROBOT
+        public static final double maxAngularVelocity = 1.0; // THIS IS THE MAX SPIN SPEED ROBOT
 
         /* Neutral Modes */
         public static final NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
