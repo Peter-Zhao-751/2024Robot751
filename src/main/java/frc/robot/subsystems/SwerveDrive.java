@@ -147,10 +147,10 @@ public class SwerveDrive extends SubsystemBase {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
 
         // Experimental odometry fusion using limelight and swerve
-        Pose2d newLimePosition = limelight.getPose();
+        //Pose2d newLimePosition = limelight.getPose();
 
-        SmartDashboard.putNumber("LimeLight X: ", newLimePosition.getX());
-        SmartDashboard.putNumber("LimeLight Y: ", newLimePosition.getY());
+        //SmartDashboard.putNumber("LimeLight X: ", newLimePosition.getX());
+        //SmartDashboard.putNumber("LimeLight Y: ", newLimePosition.getY());
 /* 
         if (limelight.hasTarget() && newLimePosition != null){
             odometry.update(newLimePosition, getGyroYaw(), getModulePositions());
