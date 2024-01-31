@@ -147,13 +147,13 @@ public class SwerveDrive extends SubsystemBase {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
 
         // Experimental odometry fusion using limelight and swerve
-        Pose2d newLimePosition = limelight.getPose();
+        /*Pose2d newLimePosition = limelight.getPose();
         if (limelight.hasTarget() && newLimePosition != null){
             odometry.update(newLimePosition, getGyroYaw(), getModulePositions());
         }
         else {
             odometry.update(getGyroYaw(), getModulePositions());
-        }
+        }*/
 
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
@@ -161,7 +161,7 @@ public class SwerveDrive extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
         }
 
-        SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getX());
-        SmartDashboard.putNumber("Odometry Y", odometry.getPoseMeters().getY());
+        // SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getX());
+        // SmartDashboard.putNumber("Odometry Y", odometry.getPoseMeters().getY());
     }
 }

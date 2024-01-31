@@ -16,7 +16,7 @@ import frc.lib.util.SwerveModuleConstants;
 public final class Constants {
 
     // Everything on the drive train is on the CANivore, so we use this ID for all CTRE configs
-    public static final String CANivoreID = "2003 Nissan Altima";
+    public static final String CANivoreID = "2003 Nissan Ultima";
     public static final double stickDeadband = 0.1;
 
     public static final class CurrentManager{
@@ -36,11 +36,11 @@ public final class Constants {
         public static final int pigeonID = 1;
 
         public static final COTSTalonFXSwerveConstants chosenModule =  //TODO: This must be tuned to specific robot
-        COTSTalonFXSwerveConstants.SDS.MK4i.Falcon500(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L2);
+        COTSTalonFXSwerveConstants.SDS.MK4i.KrakenX60(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L2);
 
         /* Drivetrain Constants */
-        public static final double trackWidth = Units.inchesToMeters(21.73); //TODO: This must be tuned to specific robot
-        public static final double wheelBase = Units.inchesToMeters(21.73); //TODO: This must be tuned to specific robot
+        public static final double trackWidth = Units.inchesToMeters(21.75); // 27 (Frame width) - 2*2.625 (SDS wheel offset)
+        public static final double wheelBase = Units.inchesToMeters(21.75);
         public static final double wheelCircumference = chosenModule.wheelCircumference;
 
         /* Swerve Kinematics 
@@ -97,9 +97,9 @@ public final class Constants {
         /* Swerve Profiling Values */
         public static final double preciseControlFactor = 0.5;
         /** Meters per Second */
-        public static final double maxSpeed = 1.0; //TODO: testing speed, normal: 4.5
+        public static final double maxSpeed = 0.1; //TODO: testing speed, normal: 4.5
         /** Radians per Second */
-        public static final double maxAngularVelocity = 10.0; //TODO: This must be tuned to specific robot
+        public static final double maxAngularVelocity = 3.0; // THIS IS THE MAX SPIN SPEED ROBOT
 
         /* Neutral Modes */
         public static final NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
@@ -123,10 +123,10 @@ public final class Constants {
             }
         }
 
-        public static final SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, 0);
-        public static final SwerveModule frontRightModule = new SwerveModule(21, 22, 23, 0);
-        public static final SwerveModule backLeftModule = new SwerveModule(31, 32, 33, 0);
-        public static final SwerveModule backRightModule = new SwerveModule(41, 42, 43, 0);
+        public static final SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, 280);
+        public static final SwerveModule frontRightModule = new SwerveModule(21, 22, 23, -60);
+        public static final SwerveModule backLeftModule = new SwerveModule(31, 32, 33, 280.7);
+        public static final SwerveModule backRightModule = new SwerveModule(41, 42, 43, 98);
     }
 
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
@@ -182,8 +182,8 @@ public final class Constants {
     }
     /* Other stuff that i probably need to organize better */
     public static final class CANdle{
-        public static final int CANdleID = 4;
-        public static final int LEDCount = 300;
+        public static final int CANdleID = 2;
+        public static final int LEDCount = 0; // TODO: CHANGE TO CORRECT AMOUNT
     }
 
 }
