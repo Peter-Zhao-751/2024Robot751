@@ -120,13 +120,13 @@ public class RobotContainer {
 
         zeroModules.onTrue(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()));
 
-        preciseControl.onTrue(new InstantCommand(() -> precise = !precise));
+        preciseControl.whileTrue(new InstantCommand(() -> precise = !precise));
 
         new Trigger(() -> driver.getRawAxis(intakeAxis) > 0.5)
-        .onTrue(new Shooter(s_Shooter));
+        .whileTrue(new Shooter(s_Shooter));
 
         new Trigger(() -> driver.getRawAxis(shootAxis) > 0.5)
-        .onTrue(new Intake(s_Intake));
+        .whileTrue(new Intake(s_Intake));
         
         aimBot.toggleOnTrue(new AimBot(s_Swerve));
     }

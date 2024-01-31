@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -44,6 +45,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    CameraServer.startAutomaticCapture();
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
@@ -72,6 +74,7 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     SmartDashboard.putBoolean("Current Manager Over Nominal", CurrentManager.isOverNominal());
+    SmartDashboard.putNumber("Current Manager Over Peak", CurrentManager.getCurrent());
     
   }
 
