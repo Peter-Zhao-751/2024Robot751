@@ -4,10 +4,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class SpinShooter extends Command{
     private double startTime;
     private double totalTime;
-    @Override
-    public void initialize() {
-        
-        startTime = System.currentTimeMillis();
+    private double speed;
+    private boolean shooting;
+    
+    public void initialize(boolean shooting, double speed, double totalTime) {
+        super.initialize();
+        this.shooting = shooting;
+        this.speed = speed;
+        this.totalTime = totalTime;
+        this.startTime = System.currentTimeMillis();
         //motorSubsystem.runMotor(speed);
     }
 

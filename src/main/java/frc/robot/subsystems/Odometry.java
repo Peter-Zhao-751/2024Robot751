@@ -83,7 +83,6 @@ public class Odometry extends SwerveDriveOdometry{
         double deltaTime = getDeltaTime();
         limeTimeout = 0;
 
-        //TODO: tune bias 
         double robotXPosition = robotPosition.getX()*0.2 + limelightData.getX()*0.8;
         double robotYPosition = robotPosition.getY()*0.2 + limelightData.getY()*0.8;
         updateLerp(robotX, robotXPosition, deltaTime);

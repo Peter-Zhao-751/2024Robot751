@@ -36,7 +36,7 @@ public class SwerveDrive extends SubsystemBase {
             new SwerveModule(2, Constants.Swerve.backLeftModule),
             new SwerveModule(3, Constants.Swerve.backRightModule)
         };
-
+        odometry = new Odometry(limelight.getPose(), Constants.Swerve.swerveKinematics, getHeading(), getModulePositions());
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());//, new Pose2d());
     }
 
@@ -147,7 +147,11 @@ public class SwerveDrive extends SubsystemBase {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
 
         // Experimental odometry fusion using limelight and swerve
-        /*Pose2d newLimePosition = limelight.getPose();
+        Pose2d newLimePosition = limelight.getPose();
+
+        SmartDashboard.putNumber("LimeLight X: ", newLimePosition.getX());
+        SmartDashboard.putNumber("LimeLight Y: ", newLimePosition.getY());
+/* 
         if (limelight.hasTarget() && newLimePosition != null){
             odometry.update(newLimePosition, getGyroYaw(), getModulePositions());
         }
@@ -160,8 +164,8 @@ public class SwerveDrive extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
         }
-
-        // SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getX());
-        // SmartDashboard.putNumber("Odometry Y", odometry.getPoseMeters().getY());
+        
+        //SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getX());
+        //SmartDashboard.putNumber("Odometry Y", odometry.getPoseMeters().getY());
     }
 }
