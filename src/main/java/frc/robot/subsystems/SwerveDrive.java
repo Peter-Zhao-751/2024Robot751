@@ -14,10 +14,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SwerveDrive extends SubsystemBase {
+    public StructArrayPublisher<SwerveModuleState> publisher;
     public SwerveDriveOdometry swerveOdometry;
     public Odometry odometry;
     public SwerveModule[] mSwerveMods;
@@ -38,6 +41,7 @@ public class SwerveDrive extends SubsystemBase {
         };
         //odometry = new Odometry(limelight.getPose(), Constants.Swerve.swerveKinematics, getHeading(), getModulePositions());
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());//, new Pose2d());
+        publisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveStates", SwerveModuleState.struct).publish();
     }
 
     public void setPosition(Pose2d desiredLocation, Rotation2d desiredHeading){
@@ -158,13 +162,14 @@ public class SwerveDrive extends SubsystemBase {
         else {
             odometry.update(getGyroYaw(), getModulePositions());
         }*/
-
+        
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
         }
-        
+        // use mSwerveMods to get the state of each module and publish it to the network table in an array
+        publisher.set(getModuleStates());
         //SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getX());
         //SmartDashboard.putNumber("Odometry Y", odometry.getPoseMeters().getY());
     }
