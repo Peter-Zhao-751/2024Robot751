@@ -20,7 +20,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SwerveDrive extends SubsystemBase {
-    public StructArrayPublisher<SwerveModuleState> publisher;
+    public StructArrayPublisher<SwerveModuleState> actualPublisher;
+    public StructArrayPublisher<SwerveModuleState> desirePublisher;
     public SwerveDriveOdometry swerveOdometry;
     public Odometry odometry;
     public SwerveModule[] mSwerveMods;
@@ -41,7 +42,8 @@ public class SwerveDrive extends SubsystemBase {
         };
         //odometry = new Odometry(limelight.getPose(), Constants.Swerve.swerveKinematics, getHeading(), getModulePositions());
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());//, new Pose2d());
-        publisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveStates", SwerveModuleState.struct).publish();
+        actualPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveActualStates", SwerveModuleState.struct).publish();
+        desirePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveDesiredStates", SwerveModuleState.struct).publish();
     }
 
     public void setPosition(Pose2d desiredLocation, Rotation2d desiredHeading){
@@ -56,7 +58,10 @@ public class SwerveDrive extends SubsystemBase {
         // precision mode
         Double xSpeed = !isPrecise ? translation.getX(): translation.getX() * Constants.Swerve.preciseControlFactor;
         Double ySpeed = !isPrecise ? translation.getY(): translation.getY() * Constants.Swerve.preciseControlFactor;
+        xSpeed = xSpeed * Constants.Swerve.speedMultiplier;
+        ySpeed = ySpeed * Constants.Swerve.speedMultiplier;
         Double rot = !isPrecise ? rotation: rotation * Constants.Swerve.preciseControlFactor;
+        rot = rot * Math.max(Constants.Swerve.maxAngularVelocity / 10, 1);
 
         SwerveModuleState[] swerveModuleStates =
             Constants.Swerve.swerveKinematics.toSwerveModuleStates(
@@ -91,6 +96,14 @@ public class SwerveDrive extends SubsystemBase {
         SwerveModuleState[] states = new SwerveModuleState[4];
         for(SwerveModule mod : mSwerveMods){
             states[mod.moduleNumber] = mod.getState();
+        }
+        return states;
+    }
+
+    public SwerveModuleState[] getDesiredModuleStates(){
+        SwerveModuleState[] states = new SwerveModuleState[4];
+        for(SwerveModule mod : mSwerveMods){
+            states[mod.moduleNumber] = mod.desiredState;
         }
         return states;
     }
@@ -168,9 +181,11 @@ public class SwerveDrive extends SubsystemBase {
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
         }
-        // use mSwerveMods to get the state of each module and publish it to the network table in an array
-        publisher.set(getModuleStates());
-        //SmartDashboard.putNumber("Odometry X", odometry.getPoseMeters().getX());
-        //SmartDashboard.putNumber("Odometry Y", odometry.getPoseMeters().getY());
+        
+        desirePublisher.set(getDesiredModuleStates());
+        
+        actualPublisher.set(getModuleStates());
+
+        SmartDashboard.putNumber("Robot Angle", getHeading().getDegrees());
     }
 }
