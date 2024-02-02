@@ -17,6 +17,7 @@ import frc.robot.Robot;
 
 public class SwerveModule {
     public int moduleNumber;
+    public SwerveModuleState desiredState;
     private Rotation2d angleOffset;
 
     private TalonFX mAngleMotor;
@@ -55,6 +56,7 @@ public class SwerveModule {
         desiredState = SwerveModuleState.optimize(desiredState, getState().angle); 
         mAngleMotor.setControl(anglePosition.withPosition(desiredState.angle.getRotations()));
         setSpeed(desiredState, isOpenLoop);
+        this.desiredState = desiredState;
     }
 
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop){

@@ -48,7 +48,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-
+    HttpCamera httpCamera = new HttpCamera("Camera Feed", "http://10.7.51.11:5800/stream.mjpg", HttpCameraKind.kMJPGStreamer);
+    CameraServer.startAutomaticCapture(httpCamera);
+    Shuffleboard.getTab("Limelight").add(httpCamera);
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
