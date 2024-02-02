@@ -42,25 +42,25 @@ public class Odometry extends SwerveDriveOdometry{
 
 
     public Odometry(Pose2d limelightPosition, SwerveDriveKinematics kinematics, Rotation2d angle, SwerveModulePosition[] modulePositions){
-        super(kinematics, angle, modulePositions);
-        if (limelightPosition == null){
-            limelightPosition = new Pose2d(0, 0, new Rotation2d(0));
-        }
+        super(kinematics, angle, modulePositions, limelightPosition);
         robotX = new states(limelightPosition.getX(), 0, 0);
         robotY = new states(limelightPosition.getY(), 0, 0);
 
         limelightX = new states(limelightPosition.getX());
         limelightY = new states(limelightPosition.getY());
-        
-        resetPosition(angle, modulePositions, new Pose2d(robotX.position, robotY.position, angle));
+    }
+
+    public Odometry(SwerveDriveKinematics kinematics, Rotation2d angle, SwerveModulePosition[] modulePositions){
+        this(new Pose2d(0, 0, new Rotation2d(0)), kinematics, angle, modulePositions);
     }
 
     public Pose2d update(Pose2d limelightData, Rotation2d angle, SwerveModulePosition[] modulePositions){
         Pose2d pose = super.update(angle, modulePositions);
         updateAll(pose, limelightData);
         updateSwerveOdometry(pose, modulePositions);
-        return pose;
+        return getPoseMeters();
     }
+
     @Override
     public Pose2d update(Rotation2d angle, SwerveModulePosition[] modulePositions){
         Pose2d pose = super.update(angle, modulePositions);
@@ -102,7 +102,7 @@ public class Odometry extends SwerveDriveOdometry{
     private void updateSwerveOdometry(Pose2d newRobotPosition, SwerveModulePosition[] modulePositions){
         super.resetPosition(newRobotPosition.getRotation(), modulePositions, newRobotPosition);
     }
-
+    
     private void updateAll(Pose2d robotPosition){
         double deltaTime = getDeltaTime();
         limeTimeout += deltaTime;
@@ -118,7 +118,8 @@ public class Odometry extends SwerveDriveOdometry{
 
     private double getDeltaTime(){
         double currentTime = System.currentTimeMillis();
+        double deltaTime = currentTime - previousTime;
         previousTime = currentTime;
-        return currentTime - previousTime;
+        return deltaTime;
     }
 }

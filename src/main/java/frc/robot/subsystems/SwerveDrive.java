@@ -191,7 +191,7 @@ public class SwerveDrive extends SubsystemBase {
         actualPublisher.set(getModuleStates());
 
         SmartDashboard.putNumber("Robot Angle", getHeading().getDegrees());
-        SmartDashboard.putNumber("robot x", swerveOdometry.getPoseMeters().getX());
-        SmartDashboard.putNumber("robot y", swerveOdometry.getPoseMeters().getY());
+        SmartDashboard.putNumber("robot x", odometry.getPoseMeters().getX());
+        SmartDashboard.putNumber("robot y", odometry.getPoseMeters().getY());
     }
 }
