@@ -42,6 +42,9 @@ public class SwerveDrive extends SubsystemBase {
         };
         //odometry = new Odometry(limelight.getPose(), Constants.Swerve.swerveKinematics, getHeading(), getModulePositions());
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());//, new Pose2d());
+
+        odometry = new Odometry(limelight.getPose(), Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());
+
         actualPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveActualStates", SwerveModuleState.struct).publish();
         desirePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveDesiredStates", SwerveModuleState.struct).publish();
     }
@@ -177,6 +180,8 @@ public class SwerveDrive extends SubsystemBase {
         }*/
         
         for(SwerveModule mod : mSwerveMods){
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Current", mod.getDriveMotorCurrent());
+            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle Current", mod.getAngleMotorCurrent());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
