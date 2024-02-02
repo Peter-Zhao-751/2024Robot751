@@ -55,9 +55,9 @@ public class CurrentManager {
         return totalCurrent / maxCurrent;
     }
     public static boolean isOverNominal(){
-        return getPercent() < nominalPercent;
+        return getPercent() > nominalPercent;
     }
     public static boolean isOverMax(){
-        return getPercent() < maxPercent;
+        return getPercent() > maxPercent;
     }
 }

@@ -80,7 +80,7 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     SmartDashboard.putBoolean("Current Manager Over Nominal", CurrentManager.isOverNominal());
-    SmartDashboard.putNumber("Current Manager Over Peak", CurrentManager.getCurrent());
+    SmartDashboard.putBoolean("Current Manager Over Peak", CurrentManager.isOverMax());
     
   }
 

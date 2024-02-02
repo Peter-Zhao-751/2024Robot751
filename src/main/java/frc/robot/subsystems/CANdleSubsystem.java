@@ -81,7 +81,7 @@ public class CANdleSubsystem extends SubsystemBase{
             m_candle.animate(animationToDisplay);
         }
         
-        SmartDashboard.setDefaultString("Current Robot LED Animation", CurrentManager.isOverNominal() ? currentAnimation.name() : "Disabled due to over current");
+        SmartDashboard.setDefaultString("Current Robot LED Animation", CurrentManager.isOverNominal() ? "Disabled due to over current" : currentAnimation.name());
     }
 
     public void moduleLED(Modules module) {

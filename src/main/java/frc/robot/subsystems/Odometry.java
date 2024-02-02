@@ -43,8 +43,11 @@ public class Odometry extends SwerveDriveOdometry{
 
     public Odometry(Pose2d limelightPosition, SwerveDriveKinematics kinematics, Rotation2d angle, SwerveModulePosition[] modulePositions){
         super(kinematics, angle, modulePositions);
-        robotX = new states(limelightPosition.getX(), kinematics.toChassisSpeeds().vxMetersPerSecond, 0);
-        robotY = new states(limelightPosition.getY(), kinematics.toChassisSpeeds().vyMetersPerSecond, 0);
+        if (limelightPosition == null){
+            limelightPosition = new Pose2d(0, 0, new Rotation2d(0));
+        }
+        robotX = new states(limelightPosition.getX(), 0, 0);
+        robotY = new states(limelightPosition.getY(), 0, 0);
 
         limelightX = new states(limelightPosition.getX());
         limelightY = new states(limelightPosition.getY());

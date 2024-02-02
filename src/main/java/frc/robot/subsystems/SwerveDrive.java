@@ -161,6 +161,7 @@ public class SwerveDrive extends SubsystemBase {
         for (SwerveModule mod : mSwerveMods){
             totalCurrent += mod.getTotalCurrent();
         }
+        SmartDashboard.putNumber("total swerve current draw", totalCurrent);
         
         CurrentManager.updateCurrent(totalCurrent, CurrentManager.Subsystem.DriveTrain);
 
@@ -168,16 +169,14 @@ public class SwerveDrive extends SubsystemBase {
 
         // Experimental odometry fusion using limelight and swerve
         Pose2d newLimePosition = limelight.getPose();
+        limelight.debugDisplayValues();
 
-        SmartDashboard.putNumber("LimeLight X: ", newLimePosition.getX());
-        SmartDashboard.putNumber("LimeLight Y: ", newLimePosition.getY());
-/* 
         if (limelight.hasTarget() && newLimePosition != null){
             odometry.update(newLimePosition, getGyroYaw(), getModulePositions());
         }
         else {
             odometry.update(getGyroYaw(), getModulePositions());
-        }*/
+        }
         
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Current", mod.getDriveMotorCurrent());
@@ -192,5 +191,7 @@ public class SwerveDrive extends SubsystemBase {
         actualPublisher.set(getModuleStates());
 
         SmartDashboard.putNumber("Robot Angle", getHeading().getDegrees());
+        SmartDashboard.putNumber("robot x", swerveOdometry.getPoseMeters().getX());
+        SmartDashboard.putNumber("robot y", swerveOdometry.getPoseMeters().getY());
     }
 }
