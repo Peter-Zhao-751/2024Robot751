@@ -24,9 +24,14 @@ public class Odometry extends SwerveDriveOdometry{
           return position;
         }
         public void reset(double p){
+            reset(p, false);
+        }
+        public void reset(double p, boolean hard){
             this.position = p;
-            this.velocity = 0;
-            this.acceleration = 0;
+            if (hard){
+                this.velocity = 0;
+                this.acceleration = 0;
+            }
         }
     }
 
@@ -56,6 +61,13 @@ public class Odometry extends SwerveDriveOdometry{
 
     public Pose2d update(Pose2d limelightData, Rotation2d angle, SwerveModulePosition[] modulePositions){
         Pose2d pose = super.update(angle, modulePositions);
+
+        Pose2d oldPose = getPoseMeters();
+        if (limelightData.getX() - oldPose.getX() > 0.1 || limelightData.getY() - oldPose.getY() > 0.1){
+            updateSwerveOdometry(limelightData, modulePositions);
+            resetStates(limelightData, false);
+        }
+
         updateAll(pose, limelightData);
         updateSwerveOdometry(pose, modulePositions);
         return getPoseMeters();
@@ -65,7 +77,6 @@ public class Odometry extends SwerveDriveOdometry{
     public Pose2d update(Rotation2d angle, SwerveModulePosition[] modulePositions){
         Pose2d pose = super.update(angle, modulePositions);
         updateAll(pose);
-        updateSwerveOdometry(pose, modulePositions);
         return pose;
     }
 
@@ -84,14 +95,28 @@ public class Odometry extends SwerveDriveOdometry{
     
      private void updateAll(Pose2d robotPosition, Pose2d limelightData){
         double deltaTime = getDeltaTime();
+
+        if (limeTimeout >= maxLimeTimeout){
+            limelightX.reset(limelightData.getX(), true);
+            limelightY.reset(limelightData.getY(), true);
+        }else{
+            updateLerp(limelightX, limelightData.getX(), deltaTime);
+            updateLerp(limelightY, limelightData.getY(), deltaTime);
+        }
         limeTimeout = 0;
 
-        double robotXPosition = robotPosition.getX()*0.2 + limelightData.getX()*0.8;
-        double robotYPosition = robotPosition.getY()*0.2 + limelightData.getY()*0.8;
+        double robotXPosition = robotPosition.getX()*0.2 + limelightX.getPosition()*0.8;
+        double robotYPosition = robotPosition.getY()*0.2 + limelightY.getPosition()*0.8;
         updateLerp(robotX, robotXPosition, deltaTime);
         updateLerp(robotY, robotYPosition, deltaTime);
-        updateLerp(limelightX, robotXPosition, deltaTime);
-        updateLerp(limelightY, robotYPosition, deltaTime);
+    }
+
+    private void updateAll(Pose2d robotPosition){
+        double deltaTime = getDeltaTime();
+        limeTimeout += deltaTime;
+
+        updateLerp(robotX, robotPosition.getX(), deltaTime);
+        updateLerp(robotY, robotPosition.getY(), deltaTime);
     }
 
     @Override 
@@ -102,18 +127,12 @@ public class Odometry extends SwerveDriveOdometry{
     private void updateSwerveOdometry(Pose2d newRobotPosition, SwerveModulePosition[] modulePositions){
         super.resetPosition(newRobotPosition.getRotation(), modulePositions, newRobotPosition);
     }
-    
-    private void updateAll(Pose2d robotPosition){
-        double deltaTime = getDeltaTime();
-        limeTimeout += deltaTime;
 
-        if (limeTimeout >= maxLimeTimeout){
-            limelightX.reset(0);
-            limelightY.reset(0);
-        }
-
-        updateLerp(robotX, robotPosition.getX(), deltaTime);
-        updateLerp(robotY, robotPosition.getY(), deltaTime);
+    private void resetStates(Pose2d limePose, boolean hard){
+        robotX.reset(limePose.getX(), hard);
+        robotY.reset(limePose.getY(), hard);
+        limelightX.reset(limePose.getX(), hard);
+        limelightY.reset(limePose.getY(), hard);
     }
 
     private double getDeltaTime(){

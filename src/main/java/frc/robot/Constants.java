@@ -25,6 +25,13 @@ public final class Constants {
         public static final double nominalPercent = 0.5;
     }
 
+    public static final class Odometry{
+        public static final double maxLimeTimeout = 0.5;
+        public static final double maxLimeSwerveDeviation = 0.1;
+        public static final double kalmanGain = 0.5;
+        public static final double limeSwerveMixRatio = 0.8; // 80% limelight, 20% swerve
+    }
+
     public static final class shooter{
         public static final int shooterMotorID = 1;
         public static final int shooterMotorID2 = 2;
