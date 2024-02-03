@@ -8,10 +8,12 @@ import java.util.List;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -19,22 +21,23 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 public class MoveToLocation extends SequentialCommandGroup {
     private double ETA = 0;
-    public MoveToLocation(SwerveDrive s_Swerve, Pose2d desiredLocation, List<Translation2d> interiorWaypoints){
+    public MoveToLocation(SwerveDrive s_Swerve, Pose2d desiredLocation, List<Translation2d> interiorWaypoints, Pose2d currentLocation){
+        
+        
         TrajectoryConfig config =
             new TrajectoryConfig(
                     Constants.AutoConstants.kMaxSpeedMetersPerSecond,
                     Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
                 .setKinematics(Constants.Swerve.swerveKinematics);
 
-        Pose2d currentRobotPosition = s_Swerve.getPose();
         Trajectory exampleTrajectory =
             TrajectoryGenerator.generateTrajectory(
 
-                new Pose2d(currentRobotPosition.getX(), currentRobotPosition.getY(), currentRobotPosition.getRotation()),
+                currentLocation,
 
                 interiorWaypoints,
 
-                new Pose2d(desiredLocation.getX(), desiredLocation.getY(), desiredLocation.getRotation()),
+                desiredLocation,
                 config);
 
         var thetaController =
@@ -56,13 +59,17 @@ public class MoveToLocation extends SequentialCommandGroup {
                 s_Swerve::setModuleStates,
                 s_Swerve);
         addCommands(
-            new InstantCommand(() -> s_Swerve.setPose(exampleTrajectory.getInitialPose())),
             swerveControllerCommand
         );
     }
-    public MoveToLocation(SwerveDrive s_Swerve, Pose2d desiredLocations){
-        this(s_Swerve, desiredLocations, List.of());
+    public MoveToLocation(SwerveDrive s_Swerve, Pose2d desiredLocations, Pose2d currentPosition){
+        this(s_Swerve, desiredLocations, List.of(), currentPosition);
     }
+
+    public MoveToLocation(SwerveDrive s_Swerve, Pose2d desiredLocations){
+        this(s_Swerve, desiredLocations, List.of(), new Pose2d(0, 0, new Rotation2d(0)));
+    }
+
 
     public double ETA(){
         return ETA;

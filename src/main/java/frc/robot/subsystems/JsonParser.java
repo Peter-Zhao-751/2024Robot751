@@ -50,13 +50,17 @@ public class JsonParser {
         Iterator<JSONObject> iterator = jsonArray.iterator(); 
 
         JSONObject point = null;
+        Pose2d startPoint = null;
+
         while (iterator.hasNext()) {
             if (point == null){
                 point = iterator.next();
             }
-
+            //startPoint = new Pose2d(point.get("x"))
             if (!point.get("e").equals("")){
+                
                 Pose2d newLocation = null;
+                
                 ArrayList<Translation2d> interiorPoints = new ArrayList<Translation2d>();
                 while (iterator.hasNext()){
                     JSONObject interiorPoint = iterator.next();
@@ -69,7 +73,7 @@ public class JsonParser {
                     }
                 }
 
-                MoveToLocation newMovementCommand = new MoveToLocation(swerveSubsystem, newLocation, interiorPoints);
+                MoveToLocation newMovementCommand = new MoveToLocation(swerveSubsystem, newLocation, interiorPoints, new Pose2d());
 
                 switch ( (String) point.get("e")){
                     case "Shoot": 
@@ -84,7 +88,9 @@ public class JsonParser {
                         autonCommands.add(new AutonCommandSegment(newMovementCommand));
                         break;
                 }
+
             } else{
+                
                 point = iterator.next();
             }
         }

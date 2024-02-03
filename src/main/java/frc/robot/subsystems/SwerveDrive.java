@@ -43,7 +43,7 @@ public class SwerveDrive extends SubsystemBase {
         //odometry = new Odometry(limelight.getPose(), Constants.Swerve.swerveKinematics, getHeading(), getModulePositions());
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());//, new Pose2d());
 
-        odometry = new Odometry(limelight.getPose(), Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());
+        odometry = new Odometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());
 
         actualPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveActualStates", SwerveModuleState.struct).publish();
         desirePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveDesiredStates", SwerveModuleState.struct).publish();
@@ -193,5 +193,9 @@ public class SwerveDrive extends SubsystemBase {
         SmartDashboard.putNumber("Robot Angle", getHeading().getDegrees());
         SmartDashboard.putNumber("robot x", odometry.getPoseMeters().getX());
         SmartDashboard.putNumber("robot y", odometry.getPoseMeters().getY());
+
+        SmartDashboard.putNumber("swerve x", swerveOdometry.getPoseMeters().getX());
+        SmartDashboard.putNumber("swerve y", swerveOdometry.getPoseMeters().getY());
+
     }
 }
