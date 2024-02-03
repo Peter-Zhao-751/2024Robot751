@@ -27,7 +27,7 @@ public class AimBot extends SequentialCommandGroup {
            
         }
 
-        addCommands(new MoveToLocation(s_Swerve, new Pose2d(3, 0, new Rotation2d(0))));
+        addCommands(new Move(s_Swerve, new Pose2d(3, 0, new Rotation2d(0))));
 
     }
 
