@@ -36,12 +36,13 @@ public class Move extends Command {
 
     @Override
     public void initialize() {
+        Pose2d currentRobotPosition = s_Swerve.getPose();
+
+        if (Math.abs(desiredLocation.getX() - currentRobotPosition.getX()) < 0.1 && Math.abs(desiredLocation.getY() - currentRobotPosition.getY()) < 0.1) return;
         TrajectoryConfig config = new TrajectoryConfig(
                 Constants.AutoConstants.kMaxSpeedMetersPerSecond,
                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
                 .setKinematics(Constants.Swerve.swerveKinematics);
-
-        Pose2d currentRobotPosition = s_Swerve.getPose();
 
         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
                 currentRobotPosition,
