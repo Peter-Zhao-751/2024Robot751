@@ -2,36 +2,56 @@ package frc.robot.commands;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.SwerveDrive;
-
-import java.util.List;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.Command;
 
-public class AimBot extends SequentialCommandGroup {
-    public AimBot(SwerveDrive s_Swerve){
-        //TODO: compare how far is everything, and choses the closest one to do
-        double closestDistance = Double.MAX_VALUE;
-        Constants.FieldConstants.FieldElements closestIndex = Constants.FieldConstants.all[0];
-        
-        for(int i = 0; i < Constants.FieldConstants.all.length; i++){
-           
-        }
+public class AimBot extends Command {
+    private final SwerveDrive s_Swerve;
+    private Move move;
 
-        addCommands(new Move(s_Swerve, new Pose2d(3, 0, new Rotation2d(0))));
-
+    public AimBot(SwerveDrive s_Swerve) {
+        this.s_Swerve = s_Swerve;
+        addRequirements(s_Swerve);
     }
 
-    private void determineAim(){
+    @Override
+    public void initialize() {
+        
+        Pose2d currentPose = s_Swerve.getPose();
+        Constants.FieldConstants.FieldElements[] fieldElements = Constants.FieldConstants.red;
+        double closestDistance = Double.MAX_VALUE;
+        Constants.FieldConstants.FieldElements closestElement = null;
 
+        for (int i = 0; i < fieldElements.length; i++) {
+            double distance = Math.sqrt(Math.pow(currentPose.getX() - fieldElements[i].x, 2) + Math.pow(currentPose.getY() - fieldElements[i].y, 2));
+            if (distance < closestDistance ) {
+                closestElement = fieldElements[i];
+                closestDistance = distance;
+            }
+        }
+        //TODO: Add logic to check if it is within range
+        //TODO: Add logic to aim at the closest element 
+        move = new Move(s_Swerve, new Pose2d(closestElement.x, closestElement.y, new Rotation2d(0)));
+        move.initialize();
+    }
+
+    @Override
+    public void execute() {
+        if (move != null) {
+            move.execute();
+        }
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        if (move != null) {
+            move.end(interrupted);
+        }
+    }
+
+    @Override
+    public boolean isFinished() {
+        return move != null && move.isFinished();
     }
 }
