@@ -37,7 +37,7 @@ public class Odometry extends SwerveDriveOdometry{
 
     private static final double maxLimeTimeout = 0.5;
     private states robotX;
-    private states robotY; // no robot theta since pigeon already uses a Kalman filter
+    private states robotY;
     private states limelightX;
     private states limelightY;
 
@@ -62,8 +62,7 @@ public class Odometry extends SwerveDriveOdometry{
     public Pose2d update(Pose2d limelightData, Rotation2d angle, SwerveModulePosition[] modulePositions){
         Pose2d pose = super.update(angle, modulePositions);
 
-        Pose2d oldPose = getPoseMeters();
-        if (limelightData.getX() - oldPose.getX() > 0.1 || limelightData.getY() - oldPose.getY() > 0.1){
+        if (Math.abs(limelightData.getX() - pose.getX()) > 0.1 || Math.abs(limelightData.getY() - pose.getY()) > 0.1){
             updateSwerveOdometry(limelightData, modulePositions);
             resetStates(limelightData, false);
         }
@@ -107,7 +106,7 @@ public class Odometry extends SwerveDriveOdometry{
 
         double robotXPosition = robotPosition.getX()*0.2 + limelightX.getPosition()*0.8;
         double robotYPosition = robotPosition.getY()*0.2 + limelightY.getPosition()*0.8;
-        
+
         updateLerp(robotX, robotXPosition, deltaTime);
         updateLerp(robotY, robotYPosition, deltaTime);
     }
