@@ -44,8 +44,10 @@ public class RobotContainer {
     /*private final int intakeAxis = XboxController.Axis.kRightTrigger.value;
     private final int shootAxis = XboxController.Axis.kLeftTrigger.value;*/
     
-    private final int intakeAxis = PS5Controller.Axis.kL2.value;
-    private final int shootAxis = PS5Controller.Axis.kR2.value;
+    //private final int intakeAxis = PS5Controller.Axis.kL2.value;
+    private final JoystickButton intakeButton = new JoystickButton(driver, PS5Controller.Button.kL2.value);
+    private final JoystickButton shootButton = new JoystickButton(driver, PS5Controller.Button.kR2.value);
+    //private final int shootAxis = PS5Controller.Axis.kR2.value;
     
 
     /* Driver Buttons */
@@ -86,7 +88,7 @@ public class RobotContainer {
     /* values */
     private boolean precise = false;
 
-    /** The container for the robot. Contains subsystems, OI devices, and commands. */
+    /* The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         Shooter = new Shooter(s_Shooter);
         Intake = new Intake(s_Intake);
@@ -106,13 +108,6 @@ public class RobotContainer {
 
         configureButtonBindings();
     }
-
-    /**
-     * Use this method to define your button->command mappings. Buttons can be created by
-     * instantiating a {@link GenericHID} or one of its subclasses ({@link
-     * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-     * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-     */
     
     private void configureButtonBindings() {
         /* Driver Buttons */
@@ -123,20 +118,19 @@ public class RobotContainer {
         preciseControl.whileTrue(new InstantCommand(() -> precise = true));
         preciseControl.onFalse(new InstantCommand(() -> precise = false));
 
+        /*
         new Trigger(() -> driver.getRawAxis(intakeAxis) > 0.5)
         .whileTrue(new Shooter(s_Shooter));
 
         new Trigger(() -> driver.getRawAxis(shootAxis) > 0.5)
         .whileTrue(new Intake(s_Intake));
-        
-        aimBot.toggleOnTrue(new AimBot(s_Swerve));
+        */
+
+        intakeButton.whileTrue(new Intake(s_Intake));
+        shootButton.whileTrue(new Shooter(s_Shooter));
+        aimBot.whileTrue(new AimBot(s_Swerve));
     }
 
-    /**
-     * Use this to pass the autonomous command to the main {@link Robot} class.
-     *
-     * @return the command to run in autonomous
-     */
     public Command getAutonomousCommand() {
         // An ExampleCommand will run in autonomous
         return new Auton(s_Swerve);

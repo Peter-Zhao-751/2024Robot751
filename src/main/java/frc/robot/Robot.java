@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
 
   private static RobotModes currentMode = RobotModes.Disabled;
 
-  String[] autonPaths = {"Path A", "Path B", "Path C"};
+  String[] autonPaths = {"Gamer Path", "Path B", "Path C"};
 
   private Command m_autonomousCommand;
 

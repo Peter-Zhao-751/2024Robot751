@@ -140,10 +140,10 @@ public final class Constants {
     }
 
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
-        public static final double kMaxSpeedMetersPerSecond = 3;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 3;
-        public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-        public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+        public static final double kMaxSpeedMetersPerSecond = 0.5; // 3 
+        public static final double kMaxAccelerationMetersPerSecondSquared = 0.5; // 3
+        public static final double kMaxAngularSpeedRadiansPerSecond = 1; //Math.PI;
+        public static final double kMaxAngularSpeedRadiansPerSecondSquared = 1; //Math.PI;
     
         public static final double kPXController = 1;
         public static final double kPYController = 1;
@@ -184,10 +184,17 @@ public final class Constants {
         }
         //TODO: Spawn all actual points
         public static final FieldElements[] all = {
-            new FieldElements("Amp", 0.0, 0.0, 0.0, -1.0, 1.0, -1.0, 1.0),
-            new FieldElements("Speaker", 0.0, 0.0, 0.0, -1.0, 1.0, -1.0, 1.0),
-            new FieldElements("Stage", 0.0, 0.0, 0.0, -1.0, 1.0, -1.0, 1.0),
-            new FieldElements("Chute", 0.0, 0.0, 0.0, -1.0, 1.0, -1.0, 1.0),
+            new FieldElements("Amp", 3.57, 7.94, 0.0, -1.0, 1.0, -1.0, 1.0),
+            new FieldElements("Speaker", 2.52, 5.3, 0.0, -1.0, 1.0, -1.0, 1.0),
+            new FieldElements("Stage", 5.80, 4.01, 0.0, -1.0, 1.0, -1.0, 1.0),
+            new FieldElements("Chute", 2.8, 0.78, 0.0, -1.0, 1.0, -1.0, 1.0),
+        };
+
+        public static final FieldElements[] red = {
+            new FieldElements("Amp", 12.99, 7.95, 0.0, -1.0, 1.0, -1.0, 1.0),
+            new FieldElements("Speaker", 14.02, 5.31, 0.0, -1.0, 1.0, -1.0, 1.0),
+            new FieldElements("Stage", 10.74, 4.02, 0.0, -1.0, 1.0, -1.0, 1.0),
+            new FieldElements("Chute", 13.74, 0.80, 0.0, -1.0, 1.0, -1.0, 1.0),
         };
     }
     /* Other stuff that i probably need to organize better */
