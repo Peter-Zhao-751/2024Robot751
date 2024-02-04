@@ -7,11 +7,11 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 
 public class AutonCommandSegment extends SequentialCommandGroup{
-    public AutonCommandSegment(MoveToLocation locationCommand, SequentialCommandGroup action, String name){
+    public AutonCommandSegment(Command locationCommand, SequentialCommandGroup action, String name){
         SmartDashboard.putString("Current Command", name);
         addCommands(locationCommand, action);
     }
-    public AutonCommandSegment(MoveToLocation locationCommand,  Command action, String name){
+    public AutonCommandSegment(Command locationCommand,  Command action, String name){
         SmartDashboard.putString("Current Command", name);
         addCommands(locationCommand, action);
     }
@@ -23,7 +23,11 @@ public class AutonCommandSegment extends SequentialCommandGroup{
         SmartDashboard.putString("Current Command", name);
         addCommands(parallelCommand, action);
     }
-    public AutonCommandSegment(MoveToLocation locationCommand){
+    public AutonCommandSegment(Command action, String name){
+        SmartDashboard.putString("Current Command", name);
+        addCommands(action);
+    }
+    public AutonCommandSegment(Command locationCommand){
         addCommands(locationCommand);
     }
     public AutonCommandSegment(ParallelCommandGroup action){

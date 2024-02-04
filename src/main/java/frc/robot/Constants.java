@@ -139,7 +139,7 @@ public final class Constants {
         public static final SwerveModule backRightModule = new SwerveModule(41, 42, 43, 98);
     }
 
-    public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
+    public static final class AutoConstants { 
         public static final double kMaxSpeedMetersPerSecond = 0.5; // 3 
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.5; // 3
         public static final double kMaxAngularSpeedRadiansPerSecond = 1; //Math.PI;

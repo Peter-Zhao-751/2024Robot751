@@ -3,14 +3,13 @@ package frc.robot.subsystems;
 import java.util.ArrayList;
 import java.io.FileReader; 
 import java.util.Iterator; 
-import java.util.Map;
 
 import frc.robot.Constants;
 import frc.robot.commands.AutonCommandSegment;
-import frc.robot.commands.MoveToLocation;
 import frc.robot.commands.SpinShooter;
 import frc.robot.commands.Shooter;
 import frc.robot.commands.Intake;
+import frc.robot.commands.Move;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -50,13 +49,12 @@ public class JsonParser {
         Iterator<JSONObject> iterator = jsonArray.iterator(); 
 
         JSONObject point = null;
-        Pose2d startPoint = null;
 
         while (iterator.hasNext()) {
             if (point == null){
                 point = iterator.next();
             }
-            //startPoint = new Pose2d(point.get("x"))
+
             if (!point.get("e").equals("")){
                 
                 Pose2d newLocation = null;
@@ -73,16 +71,20 @@ public class JsonParser {
                     }
                 }
 
-                MoveToLocation newMovementCommand = new MoveToLocation(swerveSubsystem, newLocation, interiorPoints, new Pose2d());
+                Move newMovementCommand = new Move(swerveSubsystem, newLocation, interiorPoints);
+
+                double delay = newMovementCommand.getETA();
 
                 switch ( (String) point.get("e")){
                     case "Shoot": 
-                        double delay = (newMovementCommand.ETA() - Constants.shooter.spinUpTime) > 0 ? newMovementCommand.ETA() - Constants.shooter.spinUpTime : 0;
-                        ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(delay), new SpinShooter()));
+                        double primeDelay = (delay-Constants.shooter.spinUpTime) > 0 ? (delay-Constants.shooter.spinUpTime) : 0;
+                        ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new SpinShooter()));
                         autonCommands.add(new AutonCommandSegment(moveAndPrime, new Shooter(shooterSubsystem), "Shoot"));
                         break;
                     case "Pickup":
-                        autonCommands.add(new AutonCommandSegment(newMovementCommand, new Intake(intakeSubsystem), "Pickup"));
+                        double intakeDelay = (delay-5) > 0 ? (delay-5) : 0;
+                        ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new Intake(intakeSubsystem)));
+                        autonCommands.add(new AutonCommandSegment(moveAndIntake, "Pickup"));
                         break;
                     default:
                         autonCommands.add(new AutonCommandSegment(newMovementCommand));
@@ -90,7 +92,6 @@ public class JsonParser {
                 }
 
             } else{
-                
                 point = iterator.next();
             }
         }
