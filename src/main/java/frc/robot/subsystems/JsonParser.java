@@ -58,6 +58,7 @@ public class JsonParser {
             if (!point.get("e").equals("")){
                 
                 Pose2d newLocation = null;
+                boolean secondIteration = false;
                 
                 ArrayList<Translation2d> interiorPoints = new ArrayList<Translation2d>();
                 while (iterator.hasNext()){
@@ -101,7 +102,7 @@ public class JsonParser {
         return new Translation2d((double)point.get("x"), (double)point.get("y"));
     }
 
-    public Pose2d getMainPoint(JSONObject point){
+    private Pose2d getMainPoint(JSONObject point){
         return new Pose2d((double)point.get("x"), (double)point.get("y"), new Rotation2d((double)point.get("r")));
     }
 }

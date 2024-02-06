@@ -21,45 +21,60 @@ public class Move extends Command {
     private final Pose2d desiredLocation;
     private final List<Translation2d> interiorWaypoints;
     private double ETA;
+    private Trajectory movementTrajectory;
     private SwerveControllerCommand swerveControllerCommand;
 
     public Move(SwerveDrive s_Swerve, Pose2d desiredLocation, List<Translation2d> interiorWaypoints) {
         this.s_Swerve = s_Swerve;
         this.desiredLocation = desiredLocation;
         this.interiorWaypoints = interiorWaypoints;
+        this.movementTrajectory = null;
         addRequirements(s_Swerve);
     }
 
     public Move(SwerveDrive s_Swerve, Pose2d desiredLocation) {
         this(s_Swerve, desiredLocation, List.of());
+        addRequirements(s_Swerve);
     }
+
+    public Move(SwerveDrive s_Swerve, Trajectory trajectory) {
+        this.s_Swerve = s_Swerve;
+        this.desiredLocation = trajectory.getStates().get(trajectory.getStates().size() - 1).poseMeters;
+        this.interiorWaypoints = null;
+        this.movementTrajectory = trajectory;
+        addRequirements(s_Swerve);
+    }
+
 
     @Override
     public void initialize() {
         Pose2d currentRobotPosition = s_Swerve.getPose();
 
         if (Math.abs(desiredLocation.getX() - currentRobotPosition.getX()) < 0.1 && Math.abs(desiredLocation.getY() - currentRobotPosition.getY()) < 0.1) return;
-        TrajectoryConfig config = new TrajectoryConfig(
+        
+        if (this.movementTrajectory == null){
+            TrajectoryConfig config = new TrajectoryConfig(
                 Constants.AutoConstants.kMaxSpeedMetersPerSecond,
                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
                 .setKinematics(Constants.Swerve.swerveKinematics);
 
-        Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+            this.movementTrajectory = TrajectoryGenerator.generateTrajectory(
                 currentRobotPosition,
                 interiorWaypoints,
                 desiredLocation,
                 config);
+        }
 
         ProfiledPIDController thetaController = new ProfiledPIDController(
                 Constants.AutoConstants.kPThetaController, 0, 0,
                 Constants.AutoConstants.kThetaControllerConstraints);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-        ETA = exampleTrajectory.getTotalTimeSeconds();
+        ETA = movementTrajectory.getTotalTimeSeconds();
         SmartDashboard.putNumber("Auton Current Trajectory Estimated ETA", ETA);
 
         swerveControllerCommand = new SwerveControllerCommand(
-                exampleTrajectory,
+                movementTrajectory,
                 s_Swerve::getPose,
                 Constants.Swerve.swerveKinematics,
                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
