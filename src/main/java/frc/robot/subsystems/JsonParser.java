@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.util.Iterator; 
 
 import frc.robot.Constants;
-import frc.robot.commands.AutonCommandSegment;
 import frc.robot.commands.SpinShooter;
 import frc.robot.commands.Shooter;
 import frc.robot.commands.Intake;
