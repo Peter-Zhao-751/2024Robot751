@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.Command;
   
 import org.json.simple.JSONArray; 
 import org.json.simple.JSONObject;
@@ -39,13 +40,13 @@ public class JsonParser {
         jsonArray = null; 
     }
 
-    public ArrayList<AutonCommandSegment> getAutonCommands(String fileName) throws Exception{
+    public ArrayList<Command> getAutonCommands(String fileName) throws Exception{
 
         jsonObject = (JSONObject) new JSONParser().parse(new FileReader(fileName+".json"));  
         jsonArray = (JSONArray) jsonObject.get("waypoints"); 
 
 
-        ArrayList<AutonCommandSegment> autonCommands = new ArrayList<AutonCommandSegment>();
+        ArrayList<Command> autonCommands = new ArrayList<>();
         Iterator<JSONObject> iterator = jsonArray.iterator(); 
 
         JSONObject point = null;
@@ -79,26 +80,25 @@ public class JsonParser {
                     case "Shoot": 
                         double primeDelay = (delay-Constants.shooter.spinUpTime) > 0 ? (delay-Constants.shooter.spinUpTime) : 0;
                         ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new SpinShooter()));
-                        autonCommands.add(new AutonCommandSegment(moveAndPrime, new Shooter(shooterSubsystem), "Shoot"));
+                        autonCommands.add(new SequentialCommandGroup(moveAndPrime, new Shooter(shooterSubsystem)));
                         break;
                     case "Pickup":
                         double intakeDelay = (delay-5) > 0 ? (delay-5) : 0;
                         ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new Intake(intakeSubsystem)));
-                        autonCommands.add(new AutonCommandSegment(moveAndIntake, "Pickup"));
+                        autonCommands.add(moveAndIntake);
                         break;
                     default:
-                        autonCommands.add(new AutonCommandSegment(newMovementCommand));
+                        autonCommands.add(newMovementCommand);
                         break;
                 }
 
-            } else{
-                point = iterator.next();
             }
+            point = iterator.next();
         }
         return autonCommands;
     }
 
-    public Translation2d getInteriorPoint(JSONObject point){
+    private Translation2d getInteriorPoint(JSONObject point){
         return new Translation2d((double)point.get("x"), (double)point.get("y"));
     }
 

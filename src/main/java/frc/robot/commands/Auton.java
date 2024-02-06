@@ -5,6 +5,7 @@ import frc.robot.subsystems.SwerveDrive;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Command;
 
 public class Auton extends SequentialCommandGroup {
     
@@ -16,8 +17,9 @@ public class Auton extends SequentialCommandGroup {
         addCommands(moveToLocation, moveToLocation2);
         
     }
-    public Auton(SwerveDrive s_Swerve, ArrayList<AutonCommandSegment> path){
-        for (AutonCommandSegment segment : path){
+    public Auton(SwerveDrive s_Swerve, ArrayList<Command> path){
+        // actual auton
+        for (Command segment : path){
             addCommands(segment);
         }
     }
