@@ -210,7 +210,7 @@ public final class Constants {
     /* Other stuff that i probably need to organize better */
     public static final class CANdle{
         public static final int CANdleID = 2;
-        public static final int LEDCount = 0; // TODO: CHANGE TO CORRECT AMOUNT
+        public static final int LEDCount = 15; // TODO: CHANGE TO CORRECT AMOUNT
     }
 
 }
