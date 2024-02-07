@@ -49,7 +49,9 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     
-
+    HttpCamera limelightStream = new HttpCamera("LimelightStream", "http://10.7.51.11:5800", HttpCameraKind.kMJPGStreamer);
+    CameraServer.addCamera(limelightStream);
+    CameraServer.startAutomaticCapture(limelightStream);
     
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.

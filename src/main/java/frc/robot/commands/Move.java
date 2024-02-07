@@ -52,13 +52,13 @@ public class Move extends Command {
 
         if (Math.abs(desiredLocation.getX() - currentRobotPosition.getX()) < 0.1 && Math.abs(desiredLocation.getY() - currentRobotPosition.getY()) < 0.1) return;
         
-        if (this.movementTrajectory == null){
+        if (movementTrajectory == null){
             TrajectoryConfig config = new TrajectoryConfig(
                 Constants.AutoConstants.kMaxSpeedMetersPerSecond,
                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
                 .setKinematics(Constants.Swerve.swerveKinematics);
 
-            this.movementTrajectory = TrajectoryGenerator.generateTrajectory(
+            movementTrajectory = TrajectoryGenerator.generateTrajectory(
                 currentRobotPosition,
                 interiorWaypoints,
                 desiredLocation,
