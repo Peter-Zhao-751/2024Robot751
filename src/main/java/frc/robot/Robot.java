@@ -17,6 +17,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.CurrentManager;
 import java.util.Map;
+import java.io.File;
+import java.nio.file.Path;
+import edu.wpi.first.wpilibj.Filesystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -99,6 +102,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     currentMode = RobotModes.Autonomous;
+
     m_autonomousCommand = m_robotContainer.getAutonomousCommand("simpletest");
 
     if (m_autonomousCommand != null) {

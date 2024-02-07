@@ -141,6 +141,7 @@ public class RobotContainer {
             return new Auton(s_Swerve, jsonParser.getAutonCommands(path+".b2path"));
         } catch (Exception e) {
             System.out.println("Error: " + e);
+            
             return new Auton(s_Swerve);
         }
     }

@@ -1,7 +1,9 @@
 package frc.robot.subsystems;
 
 import java.util.ArrayList;
-import java.io.FileReader; 
+import java.io.File;
+import java.io.FileReader;
+import java.nio.file.Path;
 import java.util.Iterator; 
 
 import frc.robot.Constants;
@@ -11,6 +13,7 @@ import frc.robot.commands.Intake;
 import frc.robot.commands.Move;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -40,12 +43,24 @@ public class JsonParser {
     }
 
     public ArrayList<Command> getAutonCommands(String fileName) throws Exception{
+        Path deployDirectory = Filesystem.getDeployDirectory().toPath();
+        Path barn2PathDirectory = deployDirectory.resolve("barn2path");
 
-        jsonObject = (JSONObject) new JSONParser().parse(new FileReader(fileName+".json"));  
-        jsonArray = (JSONArray) jsonObject.get("waypoints"); 
+        File barn2PathDir = barn2PathDirectory.toFile();
+        File[] filesList = barn2PathDir.listFiles();
+        File pathFile = null;
+        for (File file : filesList){
+            if (file.getName().equals(fileName)){
+                pathFile = file;
+            }
+        }
 
+        jsonObject = (JSONObject) new JSONParser().parse(new FileReader(pathFile)); 
+
+        jsonArray = (JSONArray) jsonObject.get("points"); 
 
         ArrayList<Command> autonCommands = new ArrayList<>();
+
         Iterator<JSONObject> iterator = jsonArray.iterator(); 
 
         JSONObject point = null;
@@ -54,17 +69,19 @@ public class JsonParser {
             if (point == null){
                 point = iterator.next();
             }
-
-            if (!point.get("e").equals("")){
+            
+            if (!getEvent(point).equals("")){
                 
                 Pose2d newLocation = null;
                 
                 ArrayList<Translation2d> interiorPoints = new ArrayList<Translation2d>();
+                System.out.println("epic gaybi");
                 while (iterator.hasNext()){
                     JSONObject interiorPoint = iterator.next();
-                    if (interiorPoint.get("e").equals("")){
+                    if (getEvent(interiorPoint).equals("")){
                         interiorPoints.add(getInteriorPoint(interiorPoint));
                     }else{
+                        System.out.println("fsdds");
                         newLocation = getMainPoint(interiorPoint);
                         point = interiorPoint;
                         break;
@@ -74,8 +91,9 @@ public class JsonParser {
                 Move newMovementCommand = new Move(swerveSubsystem, newLocation, interiorPoints);
 
                 double delay = newMovementCommand.getETA();
+                System.out.println("not epic bayby");
 
-                switch ( (String) point.get("e")){
+                switch (getEvent(point)){
                     case "Shoot": 
                         double primeDelay = (delay-Constants.shooter.spinUpTime) > 0 ? (delay-Constants.shooter.spinUpTime) : 0;
                         ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new SpinShooter()));
@@ -90,15 +108,21 @@ public class JsonParser {
                         autonCommands.add(newMovementCommand);
                         break;
                 }
-
+                System.out.println("rerefdgfd");
             }
-            point = iterator.next();
+            if (iterator.hasNext()) point = iterator.next();
+            System.out.println("dumbbus");
+            
         }
         return autonCommands;
     }
 
     private Translation2d getInteriorPoint(JSONObject point){
         return new Translation2d((double)point.get("x"), (double)point.get("y"));
+    }
+
+    private String getEvent(JSONObject point){
+        return (String) point.get("e");
     }
 
     private Pose2d getMainPoint(JSONObject point){
