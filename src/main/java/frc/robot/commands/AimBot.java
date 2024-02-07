@@ -19,7 +19,7 @@ public class AimBot extends Command {
     public void initialize() {
         
         Pose2d currentPose = s_Swerve.getPose();
-        Constants.FieldConstants.FieldElements[] fieldElements = Constants.FieldConstants.red;
+        Constants.FieldConstants.FieldElements[] fieldElements = Constants.FieldConstants.all;
         double closestDistance = Double.MAX_VALUE;
         Constants.FieldConstants.FieldElements closestElement = null;
 
