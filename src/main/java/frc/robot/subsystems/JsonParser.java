@@ -81,7 +81,7 @@ public class JsonParser {
 
                 switch (getEvent(point)){
                     case "Shoot": 
-                        double primeDelay = (delay-Constants.shooter.spinUpTime) > 0 ? (delay-Constants.shooter.spinUpTime) : 0;
+                        double primeDelay = (delay-Constants.Shooter.spinUpTime) > 0 ? (delay-Constants.Shooter.spinUpTime) : 0;
                         ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new SpinShooter()));
                         autonCommands.add(new SequentialCommandGroup(moveAndPrime, new Shooter(shooterSubsystem)));
                         break;

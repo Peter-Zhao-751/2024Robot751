@@ -32,7 +32,7 @@ public final class Constants {
         public static final double limeSwerveMixRatio = 0.8; // 80% limelight, 20% swerve
     }
 
-    public static final class shooter{
+    public static final class Shooter{
         public static final int shooterMotorID = 1;
         public static final int shooterMotorID2 = 2;
         public static final int aimingMotorID = 3;
@@ -208,9 +208,9 @@ public final class Constants {
         };
     }
     /* Other stuff that i probably need to organize better */
-    public static final class CANdle{
+    public static final class CANdle {
         public static final int CANdleID = 2;
-        public static final int LEDCount = 15; // TODO: CHANGE TO CORRECT AMOUNT
+        public static final int LEDCount = 13; // TODO: CHANGE TO CORRECT AMOUNT
     }
 
 }
