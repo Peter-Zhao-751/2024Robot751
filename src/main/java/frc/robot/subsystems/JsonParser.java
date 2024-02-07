@@ -58,7 +58,6 @@ public class JsonParser {
             if (!point.get("e").equals("")){
                 
                 Pose2d newLocation = null;
-                boolean secondIteration = false;
                 
                 ArrayList<Translation2d> interiorPoints = new ArrayList<Translation2d>();
                 while (iterator.hasNext()){

@@ -99,7 +99,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     currentMode = RobotModes.Autonomous;
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand(autonSelector.getString(autonPaths[0]));
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand("simpletest");
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
