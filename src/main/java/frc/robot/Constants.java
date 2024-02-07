@@ -87,6 +87,7 @@ public final class Constants {
 
         /* Angle Motor PID Values */
         // KP is changed below in Swerve Profiling Values
+        public static final double angleKP = chosenModule.angleKP;
         public static final double angleKI = chosenModule.angleKI;
         public static final double angleKD = chosenModule.angleKD;
 
@@ -109,8 +110,6 @@ public final class Constants {
         public static final double speedMultiplier = 0.13; //TODO: testing speed, normal 1.0
         /** Radians per Second */
         public static final double maxAngularVelocity = maxSpeed / 2.1; // THIS IS THE MAX SPIN SPEED ROBOT
-        /* Modifier for rotating to desired angle pose speed */
-        public static final double angleKP = (10.46 * Math.exp(1.05 * speedMultiplier)); // Default: speedMultiplier 1 -> 30
         /* Neutral Modes */
         public static final NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
         public static final NeutralModeValue driveNeutralMode = NeutralModeValue.Brake;
