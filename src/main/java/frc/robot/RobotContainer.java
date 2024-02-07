@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 
+import java.io.File;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -41,15 +43,10 @@ public class RobotContainer {
     
 
     /* Bumper Buttons */
-    /*private final int intakeAxis = XboxController.Axis.kRightTrigger.value;
-    private final int shootAxis = XboxController.Axis.kLeftTrigger.value;*/
     
-    //private final int intakeAxis = PS5Controller.Axis.kL2.value;
     private final JoystickButton intakeButton = new JoystickButton(driver, PS5Controller.Button.kL2.value);
     private final JoystickButton shootButton = new JoystickButton(driver, PS5Controller.Button.kR2.value);
-    //private final int shootAxis = PS5Controller.Axis.kR2.value;
     
-
     /* Driver Buttons */
     /*private final JoystickButton preciseControl = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
     private final JoystickButton aimBot = new JoystickButton(driver, XboxController.Button.kRightBumper.value);*/
@@ -118,31 +115,20 @@ public class RobotContainer {
         preciseControl.whileTrue(new InstantCommand(() -> precise = true));
         preciseControl.onFalse(new InstantCommand(() -> precise = false));
 
-        /*
-        new Trigger(() -> driver.getRawAxis(intakeAxis) > 0.5)
-        .whileTrue(new Shooter(s_Shooter));
-
-        new Trigger(() -> driver.getRawAxis(shootAxis) > 0.5)
-        .whileTrue(new Intake(s_Intake));
-        */
-
         intakeButton.whileTrue(new Intake(s_Intake));
         shootButton.whileTrue(new Shooter(s_Shooter));
         aimBot.whileTrue(new AimBot(s_Swerve));
     }
 
     public Command getAutonomousCommand() {
-        // An ExampleCommand will run in autonomous
         return new Auton(s_Swerve);
     }
 
-    public Command getAutonomousCommand(String path){
-        try {
-            return new Auton(s_Swerve, jsonParser.getAutonCommands(path+".b2path"));
-        } catch (Exception e) {
-            System.out.println("Error: " + e);
-            
-            return new Auton(s_Swerve);
+    public Command getAutonomousCommand(File path){
+        if (path != null){
+            try { return new Auton(s_Swerve, jsonParser.getAutonCommands(path));}     
+            catch (Exception e) { System.out.println("Error: " + e);}
         }
+        return new Auton(s_Swerve);
     }
 }
