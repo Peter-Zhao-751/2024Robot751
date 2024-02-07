@@ -19,6 +19,7 @@ import frc.robot.subsystems.CurrentManager;
 import java.util.Map;
 import java.io.File;
 import java.nio.file.Path;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.Filesystem;
 
 /**
@@ -29,7 +30,9 @@ import edu.wpi.first.wpilibj.Filesystem;
  */
 public class Robot extends TimedRobot {
   public static final CTREConfigs ctreConfigs = new CTREConfigs();
-  private GenericEntry autonSelector = null;
+
+  private final SendableChooser<File> autonSelector = new SendableChooser<>();
+
   private static enum RobotModes {
     Disabled,
     Autonomous,
@@ -38,8 +41,6 @@ public class Robot extends TimedRobot {
   }
 
   private static RobotModes currentMode = RobotModes.Disabled;
-
-  String[] autonPaths = {"Gamer Path", "Path B", "Path C"};
 
   private Command m_autonomousCommand;
 
@@ -63,11 +64,21 @@ public class Robot extends TimedRobot {
 
     //sets a bunch of UI stuff
 
-    autonSelector = Shuffleboard.getTab("Autonomous")
-                               .add("Auton Selector", autonPaths[0])
-                               .withWidget("Path Chooser")
-                               .withProperties(Map.of("options", autonPaths))
-                               .getEntry();
+    Path deployDirectory = Filesystem.getDeployDirectory().toPath();
+    Path barn2PathDirectory = deployDirectory.resolve("barn2path");
+
+    File barn2PathDir = barn2PathDirectory.toFile();
+    File[] filesList = barn2PathDir.listFiles();
+
+    autonSelector.setDefaultOption("Simple Auton", null);
+    for (File file : filesList){
+      autonSelector.addOption(file.getName(), file);
+    }
+  
+    Shuffleboard.getTab("MyTab")
+      .add("MyChooser", autonSelector)
+      .withWidget("Combo Box Chooser");
+
   }
 
   /**
@@ -102,8 +113,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     currentMode = RobotModes.Autonomous;
-
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand("simpletest");
+    File selectedAuton = autonSelector.getSelected();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(selectedAuton);
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();

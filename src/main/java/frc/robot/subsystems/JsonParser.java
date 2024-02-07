@@ -42,18 +42,7 @@ public class JsonParser {
         jsonArray = null; 
     }
 
-    public ArrayList<Command> getAutonCommands(String fileName) throws Exception{
-        Path deployDirectory = Filesystem.getDeployDirectory().toPath();
-        Path barn2PathDirectory = deployDirectory.resolve("barn2path");
-
-        File barn2PathDir = barn2PathDirectory.toFile();
-        File[] filesList = barn2PathDir.listFiles();
-        File pathFile = null;
-        for (File file : filesList){
-            if (file.getName().equals(fileName)){
-                pathFile = file;
-            }
-        }
+    public ArrayList<Command> getAutonCommands(File pathFile) throws Exception{
 
         jsonObject = (JSONObject) new JSONParser().parse(new FileReader(pathFile)); 
 
@@ -75,13 +64,11 @@ public class JsonParser {
                 Pose2d newLocation = null;
                 
                 ArrayList<Translation2d> interiorPoints = new ArrayList<Translation2d>();
-                System.out.println("epic gaybi");
                 while (iterator.hasNext()){
                     JSONObject interiorPoint = iterator.next();
                     if (getEvent(interiorPoint).equals("")){
                         interiorPoints.add(getInteriorPoint(interiorPoint));
                     }else{
-                        System.out.println("fsdds");
                         newLocation = getMainPoint(interiorPoint);
                         point = interiorPoint;
                         break;
@@ -91,7 +78,6 @@ public class JsonParser {
                 Move newMovementCommand = new Move(swerveSubsystem, newLocation, interiorPoints);
 
                 double delay = newMovementCommand.getETA();
-                System.out.println("not epic bayby");
 
                 switch (getEvent(point)){
                     case "Shoot": 
@@ -108,11 +94,8 @@ public class JsonParser {
                         autonCommands.add(newMovementCommand);
                         break;
                 }
-                System.out.println("rerefdgfd");
             }
             if (iterator.hasNext()) point = iterator.next();
-            System.out.println("dumbbus");
-            
         }
         return autonCommands;
     }
