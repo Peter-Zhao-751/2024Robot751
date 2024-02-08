@@ -81,7 +81,7 @@ public class JsonParser {
 
                 switch (getEvent(point)){
                     case "Shoot": 
-                        double primeDelay = (delay-Constants.shooter.spinUpTime) > 0 ? (delay-Constants.shooter.spinUpTime) : 0;
+                        double primeDelay = (delay-Constants.Shooter.spinUpTime) > 0 ? (delay-Constants.Shooter.spinUpTime) : 0;
                         ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new SpinShooter()));
                         autonCommands.add(new SequentialCommandGroup(moveAndPrime, new Shooter(shooterSubsystem)));
                         break;
@@ -100,6 +100,11 @@ public class JsonParser {
         return autonCommands;
     }
 
+    public String getAutonPreview(File pathFile) throws Exception{
+        jsonObject = (JSONObject) new JSONParser().parse(new FileReader(pathFile)); 
+        return (String) jsonObject.get("preview");
+    }
+    
     private Translation2d getInteriorPoint(JSONObject point){
         return new Translation2d((double)point.get("x"), (double)point.get("y"));
     }

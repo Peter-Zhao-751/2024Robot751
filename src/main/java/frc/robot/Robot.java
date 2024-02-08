@@ -10,6 +10,8 @@ import edu.wpi.first.cscore.VideoSource;
 import edu.wpi.first.cscore.HttpCamera.HttpCameraKind;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,6 +23,13 @@ import java.io.File;
 import java.nio.file.Path;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.Filesystem;
+import java.util.Base64;
+import edu.wpi.first.cscore.CvSource;
+import edu.wpi.first.cscore.MjpegServer;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.imgcodecs.Imgcodecs;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -32,6 +41,9 @@ public class Robot extends TimedRobot {
   public static final CTREConfigs ctreConfigs = new CTREConfigs();
 
   private final SendableChooser<File> autonSelector = new SendableChooser<>();
+  private File selectedAuton = null;
+  private String base64Image = null;
+  private CvSource imageSource;
 
   private static enum RobotModes {
     Disabled,
@@ -56,11 +68,13 @@ public class Robot extends TimedRobot {
     HttpCamera limelightStream = new HttpCamera("LimelightStream", "http://10.7.51.11:5800", HttpCameraKind.kMJPGStreamer);
     CameraServer.addCamera(limelightStream);
     CameraServer.startAutomaticCapture(limelightStream);
+
+    imageSource = CameraServer.putVideo("Path Preview", 827, 401);
+    CameraServer.startAutomaticCapture(imageSource);
     
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-
 
     //sets a bunch of UI stuff
 
@@ -74,9 +88,9 @@ public class Robot extends TimedRobot {
     for (File file : filesList){
       autonSelector.addOption(file.getName(), file);
     }
-  
-    Shuffleboard.getTab("MyTab")
-      .add("MyChooser", autonSelector)
+    
+    Shuffleboard.getTab("Auton Selector")
+      .add("Select a Path:", autonSelector)
       .withWidget("Combo Box Chooser");
 
   }
@@ -98,6 +112,19 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Current Manager Over Nominal", CurrentManager.isOverNominal());
     SmartDashboard.putBoolean("Current Manager Over Peak", CurrentManager.isOverMax());
     
+    File currentSelection = autonSelector.getSelected();
+    if(!(currentSelection == null)) {
+      if(!currentSelection.equals(selectedAuton)){
+        selectedAuton = currentSelection;
+        if (selectedAuton != null) {
+          base64Image = m_robotContainer.getAutonomousPreview(selectedAuton);
+          System.err.println(base64Image);
+          byte [] base64ImageByte = Base64.getDecoder().decode(base64Image);
+          Mat image = Imgcodecs.imdecode(new MatOfByte(base64ImageByte), Imgcodecs.IMREAD_UNCHANGED);
+          imageSource.putFrame(image);
+        }
+      }
+    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
