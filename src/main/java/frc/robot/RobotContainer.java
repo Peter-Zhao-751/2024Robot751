@@ -131,4 +131,12 @@ public class RobotContainer {
         }
         return new Auton(s_Swerve);
     }
+
+    public String getAutonomousPreview(File path){
+        if (path != null){
+            try { return jsonParser.getAutonPreview(path);}     
+            catch (Exception e) { System.out.println("Error: " + e);}
+        }
+        return "No Path";
+    }
 }

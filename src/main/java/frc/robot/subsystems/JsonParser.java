@@ -100,6 +100,11 @@ public class JsonParser {
         return autonCommands;
     }
 
+    public String getAutonPreview(File pathFile) throws Exception{
+        jsonObject = (JSONObject) new JSONParser().parse(new FileReader(pathFile)); 
+        return (String) jsonObject.get("preview");
+    }
+    
     private Translation2d getInteriorPoint(JSONObject point){
         return new Translation2d((double)point.get("x"), (double)point.get("y"));
     }
