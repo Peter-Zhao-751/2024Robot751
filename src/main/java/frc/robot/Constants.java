@@ -192,8 +192,8 @@ public final class Constants {
                 return robotPose.getX() > minX && robotPose.getX() < maxX && robotPose.getY() > minY && robotPose.getY() < maxY;
             }
         }
-        //TODO: Spawn all actual points
-        public static final FieldElements[] all = {
+
+        public static final FieldElements[] blue = {
             new FieldElements("Amp", 3.57, 7.94, 0.0, -1.0, 1.0, -1.0, 1.0),
             new FieldElements("Speaker", 2.52, 5.3, 0.0, -1.0, 1.0, -1.0, 1.0),
             new FieldElements("Stage", 5.80, 4.01, 0.0, -1.0, 1.0, -1.0, 1.0),
@@ -210,7 +210,7 @@ public final class Constants {
     /* Other stuff that i probably need to organize better */
     public static final class CANdle{
         public static final int CANdleID = 2;
-        public static final int LEDCount = 15; // TODO: CHANGE TO CORRECT AMOUNT
+        public static final int LEDCount = 21; // TODO: CHANGE TO CORRECT AMOUNT (x = strip + 8)
     }
 
 }

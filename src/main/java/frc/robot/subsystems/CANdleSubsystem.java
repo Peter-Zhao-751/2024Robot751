@@ -70,9 +70,16 @@ public class CANdleSubsystem extends SubsystemBase{
         switch (newAnimation){
             case Shoot: 
                 animationToDisplay = new ColorFlowAnimation(128, 20, 70, 0, 0.7, LEDCount, Direction.Forward);
+            case Idle : 
+                boolean isRed = SmartDashboard.getBoolean("isRedAlliance", true);
+                animationToDisplay = isRed ? (new SingleFadeAnimation(235, 64, 52, 0, 0.5, LEDCount)) : (new SingleFadeAnimation(0, 76, 255, 0, 0.5, LEDCount));
             default:
                 animationToDisplay = new SingleFadeAnimation(50, 2, 200, 0, 0.5, LEDCount);
         }
+    }
+
+    public AnimationTypes getAnimation(){
+        return currentAnimation;
     }
 
     @Override
@@ -82,15 +89,5 @@ public class CANdleSubsystem extends SubsystemBase{
         }
         
         SmartDashboard.setDefaultString("Current Robot LED Animation", CurrentManager.isOverNominal() ? "Disabled due to over current" : currentAnimation.name());
-    }
-
-    public void moduleLED(Modules module) {
-        if(module.isInitialized()) m_candle.setLEDs(0, 255, 0, 0, module.getLEDIndex(), 1);
-        else m_candle.setLEDs(255, 0, 0, 0, module.getLEDIndex(), 1);
-    }
-
-    public void onboardLED(Modules module) {
-        module.setInitialized(!module.isInitialized());
-        moduleLED(module);
     }
 }

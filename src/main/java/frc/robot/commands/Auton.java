@@ -16,7 +16,6 @@ public class Auton extends SequentialCommandGroup {
         
         Move moveToLocation2 = new Move(s_Swerve, new Pose2d(1, 0, new Rotation2d(0)));
         addCommands(moveToLocation,  moveToLocation2);
-        
     }
     public Auton(SwerveDrive s_Swerve, ArrayList<Command> path){
         // actual auton

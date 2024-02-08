@@ -16,12 +16,14 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SwerveDrive extends SubsystemBase {
     public StructArrayPublisher<SwerveModuleState> actualPublisher;
     public StructArrayPublisher<SwerveModuleState> desirePublisher;
+    private final Field2d m_field = new Field2d();
     public SwerveDriveOdometry swerveOdometry;
     public Odometry odometry;
     public SwerveModule[] mSwerveMods;
@@ -47,6 +49,7 @@ public class SwerveDrive extends SubsystemBase {
 
         actualPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveActualStates", SwerveModuleState.struct).publish();
         desirePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveDesiredStates", SwerveModuleState.struct).publish();
+        SmartDashboard.putData("Field", m_field);
     }
 
     public void setPosition(Pose2d desiredLocation, Rotation2d desiredHeading){
@@ -196,6 +199,8 @@ public class SwerveDrive extends SubsystemBase {
 
         SmartDashboard.putNumber("swerve x", swerveOdometry.getPoseMeters().getX());
         SmartDashboard.putNumber("swerve y", swerveOdometry.getPoseMeters().getY());
+
+        m_field.setRobotPose(odometry.getPoseMeters());
 
     }
 }
