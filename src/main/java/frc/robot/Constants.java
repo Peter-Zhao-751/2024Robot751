@@ -196,7 +196,7 @@ public final class Constants {
         public static final FieldElements[] blue = {
             new FieldElements("Amp", 3.57, 7.94, 0.0, -1.0, 1.0, -1.0, 1.0),
             new FieldElements("Speaker", 2.52, 5.3, 0.0, -1.0, 1.0, -1.0, 1.0),
-            new FieldElements("Stage", 5.80, 4.01, 0.0, -1.0, 1.0, -1.0, 1.0),
+            new FieldElements("Stage", 0, 5, 0.0, -1.0, 1.0, -1.0, 1.0),
             new FieldElements("Chute", 2.8, 0.78, 0.0, -1.0, 1.0, -1.0, 1.0),
         };
 
