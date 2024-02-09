@@ -30,6 +30,8 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
+import frc.robot.subsystems.JsonParser;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -113,16 +115,14 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Current Manager Over Peak", CurrentManager.isOverMax());
     
     File currentSelection = autonSelector.getSelected();
-    if(!(currentSelection == null)) {
-      if(!currentSelection.equals(selectedAuton)){
-        selectedAuton = currentSelection;
-        if (selectedAuton != null) {
-          base64Image = m_robotContainer.getAutonomousPreview(selectedAuton);
-          System.err.println(base64Image);
-          byte [] base64ImageByte = Base64.getDecoder().decode(base64Image);
-          Mat image = Imgcodecs.imdecode(new MatOfByte(base64ImageByte), Imgcodecs.IMREAD_UNCHANGED);
-          imageSource.putFrame(image);
-        }
+    if(!(currentSelection == null) && !currentSelection.equals(selectedAuton)){
+      selectedAuton = currentSelection;
+      if (selectedAuton != null) {
+        base64Image = JsonParser.getAutonPreview(selectedAuton);
+        System.out.println("\n\nupdated auton path\n\n");
+        byte [] base64ImageByte = Base64.getDecoder().decode(base64Image);
+        Mat image = Imgcodecs.imdecode(new MatOfByte(base64ImageByte), Imgcodecs.IMREAD_UNCHANGED);
+        imageSource.putFrame(image);
       }
     }
   }

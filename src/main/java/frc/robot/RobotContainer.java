@@ -79,9 +79,6 @@ public class RobotContainer {
     private final SwerveDrive s_Swerve = new SwerveDrive();
     private final CANdleSubsystem s_CANdle = new CANdleSubsystem();
 
-
-    private final JsonParser jsonParser;
-
     /* values */
     private boolean precise = false;
 
@@ -90,7 +87,7 @@ public class RobotContainer {
         Shooter = new Shooter(s_Shooter);
         Intake = new Intake(s_Intake);
 
-        jsonParser = new JsonParser(s_Intake, s_Shooter, s_Swerve);
+        JsonParser.JsonParser(s_Intake, s_Shooter, s_Swerve);
 
         s_Swerve.setDefaultCommand(
             new Teleop(
@@ -126,17 +123,9 @@ public class RobotContainer {
 
     public Command getAutonomousCommand(File path){
         if (path != null){
-            try { return new Auton(s_Swerve, jsonParser.getAutonCommands(path));}     
+            try { return new Auton(s_Swerve, JsonParser.getAutonCommands(path));}     
             catch (Exception e) { System.out.println("Error: " + e);}
         }
         return new Auton(s_Swerve);
-    }
-
-    public String getAutonomousPreview(File path){
-        if (path != null){
-            try { return jsonParser.getAutonPreview(path);}     
-            catch (Exception e) { System.out.println("Error: " + e);}
-        }
-        return "No Path";
     }
 }

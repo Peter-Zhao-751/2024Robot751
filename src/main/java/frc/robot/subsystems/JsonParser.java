@@ -27,22 +27,22 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 public class JsonParser {
-    private IntakeSubsystem intakeSubsystem;
-    private ShooterSubsystem shooterSubsystem;
-    private SwerveDrive swerveSubsystem;
-    private JSONObject jsonObject;
-    private JSONArray jsonArray;
+    private static IntakeSubsystem intakeSubsystem;
+    private static ShooterSubsystem shooterSubsystem;
+    private static SwerveDrive swerveSubsystem;
+    private static JSONObject jsonObject;
+    private static JSONArray jsonArray;
 
-    public JsonParser(IntakeSubsystem intakeSubsystem, ShooterSubsystem shooterSubsystem, SwerveDrive swerveSubsystem){
-        this.intakeSubsystem = intakeSubsystem;
-        this.shooterSubsystem = shooterSubsystem;
-        this.swerveSubsystem = swerveSubsystem;
+    public static void JsonParser(IntakeSubsystem intakeSubsystem, ShooterSubsystem shooterSubsystem, SwerveDrive swerveSubsystem){
+        JsonParser.intakeSubsystem = intakeSubsystem;
+        JsonParser.shooterSubsystem = shooterSubsystem;
+        JsonParser.swerveSubsystem = swerveSubsystem;
 
         jsonObject = null;
         jsonArray = null; 
     }
 
-    public ArrayList<Command> getAutonCommands(File pathFile) throws Exception{
+    public static ArrayList<Command> getAutonCommands(File pathFile) throws Exception{
 
         jsonObject = (JSONObject) new JSONParser().parse(new FileReader(pathFile)); 
 
@@ -100,20 +100,27 @@ public class JsonParser {
         return autonCommands;
     }
 
-    public String getAutonPreview(File pathFile) throws Exception{
-        jsonObject = (JSONObject) new JSONParser().parse(new FileReader(pathFile)); 
-        return (String) jsonObject.get("preview");
+    public static String getAutonPreview(File pathFile){
+        if (pathFile != null){
+            try { 
+                jsonObject = (JSONObject) new JSONParser().parse(new FileReader(pathFile)); 
+                return (String) jsonObject.get("preview");
+            }     
+            catch (Exception e) { System.out.println("Error: " + e);}
+        }
+        return "No Path";
     }
+
     
-    private Translation2d getInteriorPoint(JSONObject point){
+    private static Translation2d getInteriorPoint(JSONObject point){
         return new Translation2d((double)point.get("x"), (double)point.get("y"));
     }
 
-    private String getEvent(JSONObject point){
+    private static String getEvent(JSONObject point){
         return (String) point.get("e");
     }
 
-    private Pose2d getMainPoint(JSONObject point){
+    private static Pose2d getMainPoint(JSONObject point){
         return new Pose2d((double)point.get("x"), (double)point.get("y"), new Rotation2d((double)point.get("r")));
     }
 }
