@@ -96,6 +96,7 @@ public class JsonParser {
             }
             if (iterator.hasNext()) point = iterator.next();
         }
+        System.out.println(autonCommands);
         return autonCommands;
     }
 
