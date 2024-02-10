@@ -1,4 +1,6 @@
 package frc.robot.subsystems;
+import java.util.Optional;
+
 import com.ctre.phoenix.led.*;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
@@ -8,50 +10,35 @@ import edu.wpi.first.units.Current;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+
 
 public class CANdleSubsystem extends SubsystemBase{
     
     private final CANdle m_candle = new CANdle(Constants.CANdle.CANdleID, Constants.CANivoreID);
-    private final int LEDCount = Constants.CANdle.LEDCount;
-    public enum Modules {
 
-        SwerveBL (false, 0),
-        SwerveBR (false, 1),
-        SwerveFL (false, 2),
-        SwerveFR (false, 3),
-        Shooter (false, 4),
-        Intake (false, 5),
-        Climber (false, 6),
-        Debug (false, 7);
-
-        private boolean initialized;
-        private int LEDIndex;
-        private Modules (boolean initialized, int LEDIndex){
-            this.initialized = initialized;
-            this.LEDIndex = LEDIndex;
-        }
-        public boolean isInitialized() {
-            return initialized;
-        }
-        public int getLEDIndex() {
-            return LEDIndex;
-        }
-        public void setInitialized(boolean initialized) {
-            this.initialized = initialized;
-        }
-    }
     public enum AnimationTypes {
-        Shoot,
-        Auton,
-        TeleopMovement,
-        InTake,
-        Climb,
-        Dance,
-        Idle
+        Shoot(new ColorFlowAnimation(128, 20, 70, 0, 0.7, Constants.CANdle.LEDCount, Direction.Forward)),
+        Auton(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount)),
+        TeleopMovement(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount)),
+        InTake(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount)),
+        Climb(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount)),
+        Dance(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount)),
+        Idle(null);
+
+        private Animation animation;
+
+        private AnimationTypes(Animation animation){
+            this.animation = animation;
+        }
+        public Animation getAnimation(){
+            return animation;
+        }
     }
-    
+
     private AnimationTypes currentAnimation;
-    private Animation animationToDisplay = null;
+    private AnimationTypes lastAnimation;
  
     public CANdleSubsystem() {
 
@@ -67,15 +54,6 @@ public class CANdleSubsystem extends SubsystemBase{
 
     public void changeAnimation(AnimationTypes newAnimation){
         currentAnimation = newAnimation;
-        switch (newAnimation){
-            case Shoot: 
-                animationToDisplay = new ColorFlowAnimation(128, 20, 70, 0, 0.7, LEDCount, Direction.Forward);
-            case Idle : 
-                boolean isRed = SmartDashboard.getBoolean("isRedAlliance", true);
-                animationToDisplay = isRed ? (new SingleFadeAnimation(235, 64, 52, 0, 0.5, LEDCount)) : (new SingleFadeAnimation(0, 76, 255, 0, 0.5, LEDCount));
-            default:
-                animationToDisplay = new SingleFadeAnimation(50, 2, 200, 0, 0.5, LEDCount);
-        }
     }
 
     public AnimationTypes getAnimation(){
@@ -84,10 +62,26 @@ public class CANdleSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
-        if(animationToDisplay != null) {
-            m_candle.animate(animationToDisplay);
+        if (currentAnimation != lastAnimation){
+            lastAnimation = currentAnimation;
+
+            if(currentAnimation.getAnimation() != null) {
+                m_candle.animate(currentAnimation.getAnimation());
+            }else{
+                Optional<Alliance> alliance = DriverStation.getAlliance();
+                if (alliance.isPresent()) {
+                    if (alliance.get() == Alliance.Red) {
+                        m_candle.setLEDs(255, 56, 56);
+                    }
+                    if (alliance.get() == Alliance.Blue) {
+                        m_candle.setLEDs(41, 118, 242);
+                    }
+                }else{
+                    m_candle.setLEDs(255, 255, 255);
+                }
+                
+            }
+            SmartDashboard.setDefaultString("Current Robot LED Animation", CurrentManager.isOverNominal() ? "Disabled due to over current" : currentAnimation.name());
         }
-        
-        SmartDashboard.setDefaultString("Current Robot LED Animation", CurrentManager.isOverNominal() ? "Disabled due to over current" : currentAnimation.name());
     }
 }

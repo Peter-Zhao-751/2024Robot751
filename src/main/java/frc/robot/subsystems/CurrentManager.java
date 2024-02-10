@@ -1,53 +1,58 @@
 package frc.robot.subsystems;
+import java.util.ArrayList;
+import java.util.Comparator;
+
 import frc.robot.Constants;
 
 public class CurrentManager {
-    private static double tempCurrent = 0;
-    private static boolean hasSetDriveTrain = false;
-    private static boolean hasSetShooter = false;
-    private static boolean hasSetIntake = false;
-    private static boolean hasSetClimber = false;
-
-    public static double totalCurrent = 0;
-
-    static enum Subsystem {
-        DriveTrain,
-        Shooter,
-        Intake,
-        Climber
-    }
-
     public static final double maxCurrent = Constants.CurrentManager.maxCurrent;
     public static final double maxPercent = Constants.CurrentManager.maxPercent;
     public static final double nominalPercent = Constants.CurrentManager.nominalPercent;
+    public static double totalCurrent = 0;
 
-    public static void updateCurrent(double current, Subsystem part){
-        if(part == Subsystem.DriveTrain && !hasSetDriveTrain){
-            hasSetDriveTrain = true;
-            tempCurrent += current;
-        }
-        else if(part == Subsystem.Shooter && !hasSetShooter){
-            hasSetShooter = true;
-            tempCurrent += current;
-        }
-        else if(part == Subsystem.Intake && !hasSetIntake){
-            hasSetIntake = true;
-            tempCurrent += current;
-        }
-        else if(part == Subsystem.Climber && !hasSetClimber){
-            hasSetClimber = true;
-            tempCurrent += current;
+    private static ArrayList<Component> components = new ArrayList<Component>();
+
+    public static void addComponent(Component component) {
+        components.add(component);
+    }
+
+    public void allocateCurrent() {
+        components.sort(Comparator.comparingInt(Component::getPriority));
+        double totalAvailableCurrent = maxCurrent*maxPercent;
+
+        double totalRequested = components.stream().mapToDouble(Component::getRequestedCurrent).sum();
+        double allocationRatio = totalAvailableCurrent / totalRequested;
+        double remainingCurrent = totalAvailableCurrent;
+
+        if (allocationRatio >= 1) {
+            // Enough current for all requests
+            components.forEach(c -> c.allocateCurrent(c.getRequestedCurrent()));
+            return;
         }
 
-        if (hasSetClimber && hasSetDriveTrain && hasSetIntake && hasSetShooter ){
-            hasSetClimber = false;
-            hasSetDriveTrain = false;
-            hasSetIntake = false;
-            hasSetShooter = false;
-            totalCurrent = tempCurrent;
-            tempCurrent = 0;
+        // Allocate minimum possible current to all components
+        int maxPriority = 0;
+        int totalPriority = 0;
+        for (Component component : components) {
+            remainingCurrent -= component.getRequestedCurrent() / allocationRatio * 0.8;
+            totalPriority += component.getPriority();
+            maxPriority = Math.max(maxPriority, component.getPriority());
+        }
+
+        double noneFinalRemainingCurrent = remainingCurrent;
+            
+        for (Component component : components) {
+            double additionalNeeded = component.getRequestedCurrent() - (component.getRequestedCurrent() * allocationRatio * 0.8);
+            double additionalFairShare = (maxPriority-component.getPriority()) / totalPriority * noneFinalRemainingCurrent;
+            double finalAdditionalAllocated = Math.min(additionalNeeded, additionalFairShare);
+            component.allocateCurrent(component.getRequestedCurrent() * allocationRatio + finalAdditionalAllocated);
+            remainingCurrent -= finalAdditionalAllocated;
         }
     }
+
+    
+
+
     public static double getCurrent(){
         return totalCurrent;
     }

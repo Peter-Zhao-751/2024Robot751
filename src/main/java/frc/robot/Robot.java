@@ -6,27 +6,19 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.HttpCamera;
-import edu.wpi.first.cscore.VideoSource;
 import edu.wpi.first.cscore.HttpCamera.HttpCameraKind;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.CurrentManager;
-import java.util.Map;
 import java.io.File;
 import java.nio.file.Path;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.Filesystem;
 import java.util.Base64;
 import edu.wpi.first.cscore.CvSource;
-import edu.wpi.first.cscore.MjpegServer;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -66,35 +58,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    
-    HttpCamera limelightStream = new HttpCamera("LimelightStream", "http://10.7.51.11:5800", HttpCameraKind.kMJPGStreamer);
-    CameraServer.addCamera(limelightStream);
-    CameraServer.startAutomaticCapture(limelightStream);
-
-    imageSource = CameraServer.putVideo("Path Preview", 827, 401);
-    CameraServer.startAutomaticCapture(imageSource);
-    
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
+    // robot container
     m_robotContainer = new RobotContainer();
-
-    //sets a bunch of UI stuff
-
-    Path deployDirectory = Filesystem.getDeployDirectory().toPath();
-    Path barn2PathDirectory = deployDirectory.resolve("barn2path");
-
-    File barn2PathDir = barn2PathDirectory.toFile();
-    File[] filesList = barn2PathDir.listFiles();
-
-    autonSelector.setDefaultOption("Simple Auton", null);
-    for (File file : filesList){
-      autonSelector.addOption(file.getName(), file);
-    }
-    
-    Shuffleboard.getTab("Auton Selector")
-      .add("Select a Path:", autonSelector)
-      .withWidget("Combo Box Chooser");
-
+    initializeUI();
   }
 
   /**
@@ -104,27 +70,17 @@ public class Robot extends TimedRobot {
    * <p>This runs after the mode specific periodic functions, but before LiveWindow and
    * SmartDashboard integrated updating.
    */
+
   @Override
   public void robotPeriodic() {
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
-    CommandScheduler.getInstance().run();
-    SmartDashboard.putBoolean("Current Manager Over Nominal", CurrentManager.isOverNominal());
-    SmartDashboard.putBoolean("Current Manager Over Peak", CurrentManager.isOverMax());
     
-    File currentSelection = autonSelector.getSelected();
-    if(!(currentSelection == null) && !currentSelection.equals(selectedAuton)){
-      selectedAuton = currentSelection;
-      if (selectedAuton != null) {
-        base64Image = JsonParser.getAutonPreview(selectedAuton);
-        System.out.println("\n\nupdated auton path\n\n");
-        byte [] base64ImageByte = Base64.getDecoder().decode(base64Image);
-        Mat image = Imgcodecs.imdecode(new MatOfByte(base64ImageByte), Imgcodecs.IMREAD_UNCHANGED);
-        imageSource.putFrame(image);
-      }
-    }
+    // updating ui
+    updateTelemetry();
+    CommandScheduler.getInstance().run();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -141,6 +97,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     currentMode = RobotModes.Autonomous;
     File selectedAuton = autonSelector.getSelected();
+    SmartDashboard.putString("Current Action", "Autonomous: " + selectedAuton.getName());
     m_autonomousCommand = m_robotContainer.getAutonomousCommand(selectedAuton);
 
     if (m_autonomousCommand != null) {
@@ -155,6 +112,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     currentMode = RobotModes.Teleop;
+    SmartDashboard.putString("Current Action", "Standard teleop");
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -178,4 +136,52 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+
+  // updating ui methods
+  private void updatePathPreview(){
+    File currentSelection = autonSelector.getSelected();
+    if(!(currentSelection == null) && !currentSelection.equals(selectedAuton)){
+      selectedAuton = currentSelection;
+      if (selectedAuton != null) {
+        base64Image = JsonParser.getAutonPreview(selectedAuton);
+        System.out.println("\n\nupdated auton path\n\n");
+        byte [] base64ImageByte = Base64.getDecoder().decode(base64Image);
+        Mat image = Imgcodecs.imdecode(new MatOfByte(base64ImageByte), Imgcodecs.IMREAD_UNCHANGED);
+        imageSource.putFrame(image);
+      }
+    }
+  }
+
+  private void updateTelemetry(){
+    SmartDashboard.putBoolean("Current Manager Over Nominal", CurrentManager.isOverNominal());
+    SmartDashboard.putBoolean("Current Manager Over Peak", CurrentManager.isOverMax());
+
+    updatePathPreview();
+  }
+
+  private void initializeUI(){
+    // initialling camera
+    HttpCamera limelightStream = new HttpCamera("LimelightStream", "http://10.7.51.11:5800", HttpCameraKind.kMJPGStreamer);
+    CameraServer.addCamera(limelightStream);
+    CameraServer.startAutomaticCapture(limelightStream);
+
+    imageSource = CameraServer.putVideo("Path Preview", 827, 401);
+    CameraServer.startAutomaticCapture(imageSource);
+
+    //sets a bunch of UI stuff
+    Path deployDirectory = Filesystem.getDeployDirectory().toPath();
+    Path barn2PathDirectory = deployDirectory.resolve("barn2path");
+
+    File barn2PathDir = barn2PathDirectory.toFile();
+    File[] filesList = barn2PathDir.listFiles();
+
+    autonSelector.setDefaultOption("Simple Auton", null);
+    for (File file : filesList){
+      autonSelector.addOption(file.getName(), file);
+    }
+    
+    Shuffleboard.getTab("Auton Selector")
+      .add("Select a Path:", autonSelector)
+      .withWidget("Combo Box Chooser");
+  }
 }

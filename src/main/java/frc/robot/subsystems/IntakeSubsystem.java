@@ -9,6 +9,7 @@ public class IntakeSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
-        CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Intake);
+        
+        //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Intake);
     }
 }

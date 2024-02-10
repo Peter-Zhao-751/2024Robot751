@@ -166,7 +166,7 @@ public class SwerveDrive extends SubsystemBase {
         }
         SmartDashboard.putNumber("total swerve current draw", totalCurrent);
         
-        CurrentManager.updateCurrent(totalCurrent, CurrentManager.Subsystem.DriveTrain);
+        //CurrentManager.updateCurrent(totalCurrent, CurrentManager.Subsystem.DriveTrain);
 
         swerveOdometry.update(getGyroYaw(), getModulePositions());
 
