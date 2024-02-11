@@ -81,7 +81,8 @@ public class CANdleSubsystem extends SubsystemBase{
                 }
                 
             }
-            SmartDashboard.setDefaultString("Current Robot LED Animation", CurrentManager.isOverNominal() ? "Disabled due to over current" : currentAnimation.name());
+            SmartDashboard.putString("Current Robot LED Animation", CurrentManager.isOverNominal() ? "Disabled due to over current" : currentAnimation.name());
+            SmartDashboard.putNumber("CANdle current draw" , m_candle.getCurrent());
         }
     }
 }
