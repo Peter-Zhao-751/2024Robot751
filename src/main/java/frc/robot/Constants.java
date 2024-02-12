@@ -51,6 +51,7 @@ public final class Constants {
 
     public static final class Swerve {
         public static final int pigeonID = 1;
+        public static final boolean enableFOC = true;
 
         public static final COTSTalonFXSwerveConstants chosenModule =  //TODO: This must be tuned to specific robot
         COTSTalonFXSwerveConstants.SDS.MK4i.KrakenX60(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L2);
