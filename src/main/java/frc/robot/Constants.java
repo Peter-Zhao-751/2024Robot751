@@ -53,8 +53,8 @@ public final class Constants {
         public static final int pigeonID = 1;
         public static final boolean enableFOC = true;
 
-        public static final COTSTalonFXSwerveConstants chosenModule =  //TODO: This must be tuned to specific robot
-        COTSTalonFXSwerveConstants.SDS.MK4i.KrakenX60(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L2);
+        public static final COTSTalonFXSwerveConstants chosenModule =
+        COTSTalonFXSwerveConstants.SDS.MK4i.KrakenX60(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L3);
 
         /* Drivetrain Constants */
         public static final double trackWidth = Units.inchesToMeters(21.75); // 27 (Frame width) - 2*2.625 (SDS wheel offset)
@@ -86,7 +86,7 @@ public final class Constants {
         public static final double angleCurrentThresholdTime = 0.1;
         public static final boolean angleEnableCurrentLimit = true;
 
-        public static final int driveCurrentLimit = 30;
+        public static final int driveCurrentLimit = 30; // maybe change to 40
         public static final int driveCurrentThreshold = 50;
         public static final double driveCurrentThresholdTime = 0.1;
         public static final boolean driveEnableCurrentLimit = true;
@@ -143,7 +143,8 @@ public final class Constants {
                 this.constants = new SwerveModuleConstants(driveMotorID, angleMotorID, CANCoderID, angleOffset);
             }
         }
-
+        
+        //TODO: Tune module angles to be closer bc there are maybe off by a few degrees
         public static final SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, 280);
         public static final SwerveModule frontRightModule = new SwerveModule(21, 22, 23, -60);
         public static final SwerveModule backLeftModule = new SwerveModule(31, 32, 33, 280.7);
