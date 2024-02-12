@@ -43,10 +43,7 @@ public final class Constants {
         public static final int intakeMotorID = 4;
         public static final int intakeMotorID2 = 5;
         
-        
-
         public static final double intakeTime = 3.0;
-
     }
 
     public static final class Swerve {
