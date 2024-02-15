@@ -67,11 +67,13 @@ public class SwerveModule {
 
         if(isOpenLoop){
             driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
+            driveDutyCycle.EnableFOC = Constants.Swerve.enableFOC; // I think this how it works
             mDriveMotor.setControl(driveDutyCycle);
         }
         else {
             driveVelocity.Velocity = Conversions.MPSToRPS(desiredState.speedMetersPerSecond, Constants.Swerve.wheelCircumference);
             driveVelocity.FeedForward = driveFeedForward.calculate(desiredState.speedMetersPerSecond);
+            driveVelocity.EnableFOC = Constants.Swerve.enableFOC; // I think this how it works
             mDriveMotor.setControl(driveVelocity);
         }
     }
