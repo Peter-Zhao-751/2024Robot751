@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 
-public class CANdleSubsystem extends SubsystemBase{
+public class CANdleSubsystem extends SubsystemBase implements Component{
     
     private final CANdle m_candle = new CANdle(Constants.CANdle.CANdleID, Constants.CANivoreID);
 
@@ -59,6 +59,7 @@ public class CANdleSubsystem extends SubsystemBase{
     public AnimationTypes getAnimation(){
         return currentAnimation;
     }
+    
 
     @Override
     public void periodic() {
@@ -84,5 +85,21 @@ public class CANdleSubsystem extends SubsystemBase{
             SmartDashboard.putString("Current Robot LED Animation", CurrentManager.isOverNominal() ? "Disabled due to over current" : currentAnimation.name());
             SmartDashboard.putNumber("CANdle current draw" , m_candle.getCurrent());
         }
+    }
+    @Override
+    public double getRequestedCurrent(){
+        return 0;
+    }
+    @Override
+    public void allocateCurrent(double current){
+        //set motor controller current
+    }
+    @Override
+    public int getPriority(){
+        return 6;
+    }
+    @Override
+    public void updateBasedOnAllocatedCurrent(){
+        //update motor controller based on allocated current
     }
 }

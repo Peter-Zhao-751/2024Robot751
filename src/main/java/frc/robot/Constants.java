@@ -33,20 +33,32 @@ public final class Constants {
     }
 
     public static final class Shooter{
-        public static final int shooterMotorID = 1;
+        // 2 krakens for shooting, one neo for the transfer belts. 
+        public static final int shooterMotorID1 = 1;
         public static final int shooterMotorID2 = 2;
-        public static final int aimingMotorID = 3;
+
+        public static final int transferMotorID1 = 3;
+        public static final int transferMotorID2 = 4;
+
         public static final double spinUpTime = 2.0;
+        public static final double transferSpeed = 0.3;
+        public static final double feedTime = 0.2;
     }
 
     public static final class Intake{
+        // 1 falcon for intake, 2 NEOs for moving intake TBD gear ratio, 1 neo for transporting the game piece
         public static final int intakeMotorID = 4;
-        public static final int intakeMotorID2 = 5;
-        
-        
+        public static final int swivelMotorID1 = 5;
+        public static final int swivelMotorID2 = 6;
+        public static final int transportMotorID = 7;
 
+        public static final double swivelGearRatio = 60.0;
         public static final double intakeTime = 3.0;
+    }
 
+    public static final class Climber{
+        public static final int climberMotorID1 = 8;
+        public static final int climberMotorID2 = 9;
     }
 
     public static final class Swerve {

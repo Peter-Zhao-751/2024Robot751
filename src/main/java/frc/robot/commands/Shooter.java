@@ -1,4 +1,5 @@
 package frc.robot.commands;
+import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -7,27 +8,40 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class Shooter extends Command{
     private ShooterSubsystem shooterSubsystem;
     private double startTime;
-    public Shooter(ShooterSubsystem shooterSubsystem) {
+    private double speed;
+    private double totalRunTime;
+    public Shooter(ShooterSubsystem shooterSubsystem, double speed) {
         this.shooterSubsystem = shooterSubsystem;
+        this.speed = speed;
         addRequirements(shooterSubsystem);
+    }
+    public Shooter(ShooterSubsystem shooterSubsystem) {
+        this(shooterSubsystem, 0.75);
     }
     @Override
     public void initialize() {
+        double currentSpeed = shooterSubsystem.getShooterSpeed();
+
+        double ratio = 1 - currentSpeed / speed;
+        totalRunTime = ratio * Constants.Shooter.spinUpTime * 1000 + Constants.Shooter.feedTime * 1000 + 500; // magic number is for safety
+
         startTime = System.currentTimeMillis();
-        //motorSubsystem.runMotor(speed);
+        shooterSubsystem.shoot(speed);
     }
 
     @Override
     public void execute() {
-        // The actual motor control is handled in the subsystem
+        if (Math.abs(shooterSubsystem.getShooterSpeed() - speed) <= 0.05 || System.currentTimeMillis() - startTime <= Constants.Shooter.feedTime * 1000) {
+            shooterSubsystem.transfer(Constants.Shooter.transferSpeed);
+        }
     }
 
     @Override
     public void end(boolean interrupted) {
-        //motorSubsystem.stopMotor(); // Stop the motor when the command ends
+        shooterSubsystem.stop();
     }
     @Override
     public boolean isFinished() {
-        return System.currentTimeMillis() - startTime >= 3000; // Ends the command after 3 seconds
+        return System.currentTimeMillis() - startTime >= totalRunTime;
     }
 }

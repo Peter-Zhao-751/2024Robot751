@@ -1,15 +1,59 @@
 package frc.robot.subsystems;
-import edu.wpi.first.units.Current;
+import edu.wpi.first.wpilibj.CAN;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
-public class ShooterSubsystem extends SubsystemBase {
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
+public class ShooterSubsystem extends SubsystemBase implements Component{
+    
+    private TalonFX shooterMotor1;
+    private TalonFX shooterMotor2;
+    private CANSparkMax transferMotor;
+
+    public ShooterSubsystem(){
+        shooterMotor1 = new TalonFX(Constants.Shooter.shooterMotorID1);
+        shooterMotor2 = new TalonFX(Constants.Shooter.shooterMotorID2);
+        transferMotor = new CANSparkMax(Constants.Shooter.transferMotorID1, MotorType.kBrushless);
+    }
+    public void shoot(double speed){
+        shooterMotor1.set(speed);
+        shooterMotor2.set(speed);
+    }
+    public void transfer(double speed){
+        transferMotor.set(speed);
+    }
+    public void stop(){
+        shooterMotor1.set(0);
+        shooterMotor2.set(0);
+        transferMotor.set(0);
+    }
+    public double getShooterSpeed(){
+        return (shooterMotor1.get()+shooterMotor2.get())/2;
+    }
     @Override
     public void periodic() {
         //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Shooter);
+        SmartDashboard.putNumber("Total Shooter Current Draw", shooterMotor1.getSupplyCurrent().getValue() + shooterMotor2.getSupplyCurrent().getValue()  + transferMotor.getOutputCurrent());
     }
 
     @Override
-    public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
+    public double getRequestedCurrent(){
+        return 0;
+    }
+    @Override
+    public void allocateCurrent(double current){
+        //set motor controller current
+    }
+    @Override
+    public int getPriority(){
+        return 5;
+    }
+    @Override
+    public void updateBasedOnAllocatedCurrent(){
+        //update motor controller based on allocated current
     }
 }
