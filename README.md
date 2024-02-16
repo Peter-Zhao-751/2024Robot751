@@ -5,6 +5,4 @@ Swerve fork of [BaseTalonFXSwerver](https://github.com/dirtbikerxz/BaseTalonFXSw
 
 **For robot name:** *TBD*
 
-**Owned by:** Peter Zhao 
-
-**Contributors:** Alex Petry, Owen Gregson
+**Contributors:** Peter Zhao, Owen Gregson, Alex Petry
