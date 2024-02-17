@@ -12,8 +12,8 @@ git pull
 
 4. When you are finished, you can push to development branch.
 
-git add -all
-git commit --all -m "your commit message"
+git add --all
+git commit -m "your commit message"
 git push
 
 5. Once you have *TESTED YOUR CODE ON THE ROBOT AND VERIFIED IT WORKS 100% AS INTENDED* you can push to main.

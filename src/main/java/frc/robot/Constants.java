@@ -62,6 +62,8 @@ public final class Constants {
         public static final int intakeMotorID2 = 5;
         
         public static final double intakeTime = 3.0;
+
+        public static final double climberSpringThickness = 0.5; // units in centimeters
     }
 
     public static final class Swerve {

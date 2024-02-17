@@ -12,12 +12,12 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 public class ClimberSubsystem extends SubsystemBase implements Component{
     private CANSparkMax climbMotor1;
     private CANSparkMax climbMotor2;
-    private double currentClimberPosition;
+    private KalmanFilter.States currentEncoderStates;
     
     public ClimberSubsystem(){
         climbMotor1 = new CANSparkMax(Constants.Climber.climberMotorID1, MotorType.kBrushless);
         climbMotor2 = new CANSparkMax(Constants.Climber.climberMotorID2, MotorType.kBrushless);
-        currentClimberPosition = 0;
+        currentEncoderStates = new KalmanFilter.States(0);
     }
     public void climb(double speed){
         climbMotor1.set(speed);
@@ -31,8 +31,18 @@ public class ClimberSubsystem extends SubsystemBase implements Component{
     public void periodic() {
         SmartDashboard.putNumber("Total Climber Current Draw", climbMotor1.getOutputCurrent() + climbMotor2.getOutputCurrent());
         climbMotor1.getEncoder().getVelocity();
+
+        //TODO: update encoder states with velocity
         //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Climber);
     }
+    private double getCurrentPosition(){
+        //basically a solved differential equation for the extension of the spring as a function of how many rotations it has done. r = (k-TR)  c = 2pi(k-TR)                                          actually d = (r sub0 + T * R)^2, where r sub 0 is the max radius and 
+
+
+
+        return climbMotor1.getEncoder().getPosition();
+    }
+
     @Override
     public double getRequestedCurrent(){
         return 0;
