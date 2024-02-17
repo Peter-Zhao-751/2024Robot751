@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicVelocityDutyCycle;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -67,13 +68,15 @@ public class SwerveModule {
 
         if(isOpenLoop){
             driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
-            driveDutyCycle.EnableFOC = Constants.Swerve.enableFOC; // I think this how it works
+            driveDutyCycle.EnableFOC = Constants.Swerve.enableFOC;
+            // TODO: Maybe look into changing this to be MotionMagicDutyCycle
+            // instead of just DutyCycle to allow us to ease in and out better
             mDriveMotor.setControl(driveDutyCycle);
         }
         else {
             driveVelocity.Velocity = Conversions.MPSToRPS(desiredState.speedMetersPerSecond, Constants.Swerve.wheelCircumference);
             driveVelocity.FeedForward = driveFeedForward.calculate(desiredState.speedMetersPerSecond);
-            driveVelocity.EnableFOC = Constants.Swerve.enableFOC; // I think this how it works
+            driveVelocity.EnableFOC = Constants.Swerve.enableFOC;
             mDriveMotor.setControl(driveVelocity);
         }
     }
