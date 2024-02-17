@@ -1,0 +1,23 @@
+1. First, you will need to switch to DEVELOPMENT branch using:
+
+git switch development
+
+2. Then you need to pull the latest development code
+
+git pull
+
+3. Now you can make any changes you like to the code and test them.
+
+</>
+
+4. When you are finished, you can push to development branch.
+
+git add -all
+git commit --all -m "your commit message"
+git push
+
+5. Once you have *TESTED YOUR CODE ON THE ROBOT AND VERIFIED IT WORKS 100% AS INTENDED* you can push to main.
+
+git checkout main
+git reset --hard development
+git push -f origin main
