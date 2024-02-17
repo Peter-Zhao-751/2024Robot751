@@ -12,7 +12,7 @@ git pull
 
 4. When you are finished, you can push to development branch.
 
-git add -all
+git add --all
 git commit --all -m "your commit message"
 git push
 
