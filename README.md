@@ -2,7 +2,7 @@
 
 ## For FIRST Robotics Competition: CRESCENDO
 
-Swerve fork of [BaseTalonFXSwerver](https://github.com/dirtbikerxz/BaseTalonFXSwerve) by [dirtbikerxz](https://github.com/dirtbikerxz)
+most epic branch
 
 **For robot name:** *TBD*
 
