@@ -65,6 +65,13 @@ public class SwerveModule {
         if(CurrentManager.isOverMax()){
             desiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond/2;
         }
+        
+        /* Figuring out if we are in open loop or closed loop 
+         * drive() in SwerveDrive.java is called with isOpenLoop = false most of the time
+         * but Teleop.java calls it with isOpenLoop = true
+         * So I think in teleop, we are in open loop, and in auto, we are in closed loop
+        */
+        
 
         if(isOpenLoop){
             driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
