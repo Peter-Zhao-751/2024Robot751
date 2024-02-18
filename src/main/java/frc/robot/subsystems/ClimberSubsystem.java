@@ -15,8 +15,8 @@ public class ClimberSubsystem extends SubsystemBase implements Component{
     private KalmanFilter.States currentEncoderStates;
     
     public ClimberSubsystem(){
-        climbMotor1 = new CANSparkMax(Constants.Climber.climberMotorID1, MotorType.kBrushless);
-        climbMotor2 = new CANSparkMax(Constants.Climber.climberMotorID2, MotorType.kBrushless);
+        climbMotor1 = new CANSparkMax(Constants.Climber.leftClimberMotorID, MotorType.kBrushless);
+        climbMotor2 = new CANSparkMax(Constants.Climber.rightClimberMotorID, MotorType.kBrushless);
         currentEncoderStates = new KalmanFilter.States(0);
     }
     public void climb(double speed){

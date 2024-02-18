@@ -26,19 +26,18 @@ public final class Constants {
     }
 
     public static final class Odometry{
-        public static final double maxLimeTimeout = 0.5;
-        public static final double maxLimeSwerveDeviation = 0.1;
-        public static final double kalmanGain = 0.5;
+        public static final double maxLimeTimeout = 0.5; // seconds
+        public static final double maxLimeSwerveDeviation = 0.1; // meters
+        public static final double kalmanGain = 0.5; // bro guess too lazy
         public static final double limeSwerveMixRatio = 0.8; // 80% limelight, 20% swerve
     }
 
     public static final class Shooter{
         // 2 krakens for shooting, one neo for the transfer belts. 
-        public static final int shooterMotorID1 = 1;
-        public static final int shooterMotorID2 = 2;
+        public static final int leftShooterMotorID = 51;
+        public static final int rightShooterMotorID = 52;
 
-        public static final int transferMotorID1 = 3;
-        public static final int transferMotorID2 = 4;
+        public static final int transferMotorID = 3;
 
         public static final double spinUpTime = 2.0;
         public static final double transferSpeed = 0.3;
@@ -47,19 +46,26 @@ public final class Constants {
 
     public static final class Intake{
         // 1 falcon for intake, 2 NEOs for moving intake TBD gear ratio, 1 neo for transporting the game piece
-        public static final int intakeMotorID = 4;
-        public static final int swivelMotorID1 = 5;
-        public static final int swivelMotorID2 = 6;
+        public static final int intakeMotorID = 56;
+        public static final int leftSwivelMotorID = 57;
+        public static final int rightSwivelMotorID = 58;
         public static final int transportMotorID = 7;
 
-        public static final double swivelGearRatio = 60.0;
+        public static final double swivelGearRatio = 15.0; 
+        public static final double maxSwivelSpeed = 0.5;
         public static final double intakeTime = 3.0;
+
+        public static final double kPSwivelController = 0.8; // TODO: tune these values
+        public static final double kISwivelController = 0.0;
+        public static final double kDSwivelController = 0.0;
+
+        public static final double kSwivelExtendedAngle = 0.0; // TODO: find this value
+        public static final double kSwivelRetractedAngle = 0.0; // TODO: find this value
     }
 
     public static final class Climber{
-        public static final int climberMotorID1 = 8;
-        public static final int climberMotorID2 = 9;
-        public static final int intakeMotorID2 = 5;
+        public static final int leftClimberMotorID = 61;
+        public static final int rightClimberMotorID = 62;
         
         public static final double intakeTime = 3.0;
 
@@ -98,12 +104,12 @@ public final class Constants {
         public static final SensorDirectionValue CANCoderInvert = chosenModule.cancoderInvert;
 
         /* Swerve Current Limiting */
-        public static final int angleCurrentLimit = 25;
+        public static final int angleCurrentLimit = 30;
         public static final int angleCurrentThreshold = 40;
         public static final double angleCurrentThresholdTime = 0.1;
         public static final boolean angleEnableCurrentLimit = true;
 
-        public static final int driveCurrentLimit = 30; // maybe change to 40
+        public static final int driveCurrentLimit = 40; 
         public static final int driveCurrentThreshold = 50;
         public static final double driveCurrentThresholdTime = 0.1;
         public static final boolean driveEnableCurrentLimit = true;
@@ -134,7 +140,7 @@ public final class Constants {
         /** Meters per Second */
         public static final double maxSpeed = 4.5; //TODO: testing speed, normal: 4.5
         /** Multiplier */
-        public static final double speedMultiplier = 0.13; //TODO: testing speed, normal 1.0
+        public static final double speedMultiplier = 0.5; //TODO: testing speed, normal 1.0
         /** Radians per Second */
         public static final double maxAngularVelocity = maxSpeed / 2.1; // THIS IS THE MAX SPIN SPEED ROBOT
         /* Modifier for rotating to desired angle pose speed */

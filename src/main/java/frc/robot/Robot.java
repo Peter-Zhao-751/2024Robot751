@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.HttpCamera;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cscore.HttpCamera.HttpCameraKind;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -160,9 +161,15 @@ public class Robot extends TimedRobot {
   }
 
   private void initializeUI(){
-    // initialling camera
+    // initializing limelight
     HttpCamera limelightStream = new HttpCamera("LimelightStream", "http://10.7.51.11:5800", HttpCameraKind.kMJPGStreamer);
     CameraServer.addCamera(limelightStream);
+
+    // initializing webcam
+    //UsbCamera webcam = new UsbCamera("WebcameStream", 0);
+    //webcam.setResolution(640, 480);
+    //CameraServer.addCamera(webcam);
+
     CameraServer.startAutomaticCapture(limelightStream);
 
     imageSource = CameraServer.putVideo("Path Preview", 827, 401);

@@ -76,6 +76,7 @@ public class RobotContainer {
     //private final CANdle s_CANdle = new CANdle();
     private final ShooterSubsystem s_Shooter = new ShooterSubsystem();
     private final IntakeSubsystem s_Intake = new IntakeSubsystem();
+    private final ClimberSubsystem s_Climber = new ClimberSubsystem();
     private final SwerveDrive s_Swerve = new SwerveDrive();
     private final CANdleSubsystem s_CANdle = new CANdleSubsystem();
 

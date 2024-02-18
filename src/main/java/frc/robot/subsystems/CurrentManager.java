@@ -12,6 +12,10 @@ public class CurrentManager {
 
     private static ArrayList<Component> components = new ArrayList<Component>();
 
+    private CurrentManager() {
+        throw new UnsupportedOperationException("CurrentManager class cannot be instantiated");
+    }
+
     public static void addComponent(Component component) {
         components.add(component);
     }
@@ -49,9 +53,6 @@ public class CurrentManager {
             remainingCurrent -= finalAdditionalAllocated;
         }
     }
-
-    
-
 
     public static double getCurrent(){
         return totalCurrent;

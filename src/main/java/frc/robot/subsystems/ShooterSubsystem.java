@@ -13,11 +13,15 @@ public class ShooterSubsystem extends SubsystemBase implements Component{
     private TalonFX shooterMotor1;
     private TalonFX shooterMotor2;
     private CANSparkMax transferMotor;
+    private double acceleration;
+    private double maxSpeed;
+    private boolean isPriming;
+    private double targetSpeed;
 
     public ShooterSubsystem(){
-        shooterMotor1 = new TalonFX(Constants.Shooter.shooterMotorID1);
-        shooterMotor2 = new TalonFX(Constants.Shooter.shooterMotorID2);
-        transferMotor = new CANSparkMax(Constants.Shooter.transferMotorID1, MotorType.kBrushless);
+        shooterMotor1 = new TalonFX(Constants.Shooter.leftShooterMotorID);
+        shooterMotor2 = new TalonFX(Constants.Shooter.rightShooterMotorID);
+        transferMotor = new CANSparkMax(Constants.Shooter.transferMotorID, MotorType.kBrushless);
     }
     public void shoot(double speed){
         shooterMotor1.set(speed);
@@ -26,18 +30,22 @@ public class ShooterSubsystem extends SubsystemBase implements Component{
     public void transfer(double speed){
         transferMotor.set(speed);
     }
+    
     public void stop(){
         shooterMotor1.set(0);
         shooterMotor2.set(0);
         transferMotor.set(0);
     }
+
     public double getShooterSpeed(){
         return (shooterMotor1.get()+shooterMotor2.get())/2;
     }
     @Override
     public void periodic() {
+
         //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Shooter);
         SmartDashboard.putNumber("Total Shooter Current Draw", shooterMotor1.getSupplyCurrent().getValue() + shooterMotor2.getSupplyCurrent().getValue()  + transferMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Shooter Speed", getShooterSpeed());
     }
 
     @Override
