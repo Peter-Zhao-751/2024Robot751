@@ -26,9 +26,11 @@ public class IntakeSubsystem extends SubsystemBase implements Component{
 
         swivelPIDController = new PIDController(Constants.Intake.kPSwivelController, Constants.Intake.kISwivelController, Constants.Intake.kDSwivelController);
     }
+    
     public void setSwivelSpeed(double speed){
         swivelMotor1.set(speed);
         swivelMotor2.set(speed);
+
     }
     public void setTransferSpeed(double speed){
         transferMotor.set(speed);
@@ -50,7 +52,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component{
     public void periodic() {
         SmartDashboard.putNumber("Total Intake Current Draw", swivelMotor1.getOutputCurrent() + swivelMotor2.getOutputCurrent() + transferMotor.getOutputCurrent() + intakeMotor.getSupplyCurrent().getValue());
         SmartDashboard.putNumber("Intake Swivel Position", getSwivelPosition());
-        
+
 
         //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Intake);
     }

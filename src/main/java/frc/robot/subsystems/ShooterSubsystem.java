@@ -2,9 +2,14 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.ctre.phoenix6.configs.*;
+import com.ctre.phoenix6.controls.*;
 import frc.robot.Constants;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -20,6 +25,8 @@ public class ShooterSubsystem extends SubsystemBase implements Component{
 
     public ShooterSubsystem(){
         shooterMotor1 = new TalonFX(Constants.Shooter.leftShooterMotorID);
+        shooterMotor1.setNeutralMode(NeutralModeValue.Coast);
+
         shooterMotor2 = new TalonFX(Constants.Shooter.rightShooterMotorID);
         transferMotor = new CANSparkMax(Constants.Shooter.transferMotorID, MotorType.kBrushless);
     }
