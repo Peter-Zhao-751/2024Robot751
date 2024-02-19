@@ -1,7 +1,13 @@
 package frc.robot.subsystems;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
+import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.*;
 import frc.robot.Constants;
@@ -27,6 +33,7 @@ public class ShooterSubsystem extends SubsystemBase implements Component{
     private boolean isPriming;
     private double targetSpeed;
     private final MotionMagicVelocityVoltage motionMagicVelocityVoltage;
+    private final SysIdRoutine routine;
 
     public ShooterSubsystem(){
         shooterMotor1 = new TalonFX(Constants.Shooter.leftShooterMotorID);
@@ -58,6 +65,13 @@ public class ShooterSubsystem extends SubsystemBase implements Component{
         motionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0);
 
         transferMotor = new CANSparkMax(Constants.Shooter.transferMotorID, MotorType.kBrushless);
+
+        routine = new SysIdRoutine(
+            new SysIdRoutine.Config(), 
+            new SysIdRoutine.Mechanism(
+                (Measure<Voltage> volts) -> {
+                shooterMotor1.setVoltage(volts.in(Volts));
+            }, null, this));
     }
     public void shoot(double speed){
         // shooterMotor1.set(speed);
@@ -85,6 +99,14 @@ public class ShooterSubsystem extends SubsystemBase implements Component{
         //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Shooter);
         SmartDashboard.putNumber("Total Shooter Current Draw", shooterMotor1.getSupplyCurrent().getValue() + shooterMotor2.getSupplyCurrent().getValue()  + transferMotor.getOutputCurrent());
         SmartDashboard.putNumber("Shooter Speed", getShooterSpeed());
+    }
+
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return routine.quasistatic(direction);
+    }
+    
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return routine.dynamic(direction);
     }
 
     @Override

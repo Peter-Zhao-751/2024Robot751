@@ -2,6 +2,9 @@ package frc.robot;
 
 import javax.swing.JList.DropLocation;
 import com.ctre.phoenix.led.CANdle;
+import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -106,16 +109,22 @@ public class RobotContainer {
     
     private void configureButtonBindings() {
         /* Driver Buttons */
-        zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+        // zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
 
-        zeroModules.onTrue(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()));
+        // zeroModules.onTrue(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()));
 
-        preciseControl.whileTrue(new InstantCommand(() -> precise = true));
-        preciseControl.onFalse(new InstantCommand(() -> precise = false));
+        // preciseControl.whileTrue(new InstantCommand(() -> precise = true));
+        // preciseControl.onFalse(new InstantCommand(() -> precise = false));
 
-        intakeButton.whileTrue(new Intake(s_Intake));
-        shootButton.whileTrue(new Shooter(s_Shooter));
-        aimBot.whileTrue(new AimBot(s_Swerve));
+        // intakeButton.whileTrue(new Intake(s_Intake));
+        // shootButton.whileTrue(new Shooter(s_Shooter));
+        intakeButton.whileTrue(s_Shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        preciseControl.whileTrue(s_Shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        
+        shootButton.whileTrue(s_Shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        aimBot.whileTrue(s_Shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
+
+        // aimBot.whileTrue(new AimBot(s_Swerve));
     }
 
     public Command getAutonomousCommand() {
