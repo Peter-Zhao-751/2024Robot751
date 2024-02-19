@@ -23,6 +23,9 @@ import edu.wpi.first.cscore.CvSource;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
+
+import com.ctre.phoenix6.CANBus;
+
 import frc.robot.subsystems.JsonParser;
 
 
@@ -125,7 +128,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    SmartDashboard.putString("CAN Bus Utilization", CANBus.getStatus(Constants.CANivoreID).BusUtilization * 100 + "%");
+  }
 
   @Override
   public void testInit() {
