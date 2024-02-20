@@ -32,7 +32,7 @@ public class RobotContainer {
      * 
      * zero pigeon (for field based control and stuff): triangle
      * zero modules (should be automatic, but incase somehting goes wrong in the game): circle
-     * cross wheels: square
+     * cross wheels (maybe auto do this when shooting?): square
      * 
      * https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/PS5Controller.Button.html
      */

@@ -9,6 +9,7 @@ import frc.robot.Constants;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -23,7 +24,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 // import edu.wpi.first.units.Voltage;
 // import static edu.wpi.first.units.Units.Volts;
 
-public class ShooterSubsystem extends SubsystemBase implements Component{
+public class ShooterSubsystem extends SubsystemBase implements Component {
     
     private TalonFX shooterMotor1;
     private TalonFX shooterMotor2;
@@ -40,6 +41,7 @@ public class ShooterSubsystem extends SubsystemBase implements Component{
         shooterMotor1.setNeutralMode(NeutralModeValue.Coast);
 
         shooterMotor2 = new TalonFX(Constants.Shooter.rightShooterMotorID, Constants.CANivoreID);
+        shooterMotor2.setNeutralMode(NeutralModeValue.Coast);
         
 
         // in init function
@@ -90,8 +92,8 @@ public class ShooterSubsystem extends SubsystemBase implements Component{
     // }
 
     public void shoot(double speed){
-        shooterMotor1.setControl(motionMagicVelocityVoltage.withVelocity(speed));
-        shooterMotor2.setControl(motionMagicVelocityVoltage.withVelocity(speed));
+        shooterMotor1.setControl(motionMagicVelocityVoltage.withVelocity(-speed));
+        shooterMotor2.setControl(new Follower(shooterMotor1.getDeviceID(), true));
     }
 
     public void transfer(double speed) { // TODO: #2 Implemenet a closed loop system for the transfer motor
@@ -116,6 +118,10 @@ public class ShooterSubsystem extends SubsystemBase implements Component{
         ShuffleboardTab tab = Shuffleboard.getTab("Shooter");
         tab.add("Total Shooter Current Draw", shooterMotor1.getSupplyCurrent().getValue() + shooterMotor2.getSupplyCurrent().getValue()  + transferMotor.getOutputCurrent());
 
+        tab.add("Shooter Velocity", Math.abs(shooterMotor1.getRotorVelocity().getValue() + shooterMotor2.getRotorVelocity().getValue()) / 2);
+        tab.add("Shooter Voltage", Math.abs(shooterMotor1.getMotorVoltage().getValue() + shooterMotor2.getMotorVoltage().getValue()) / 2);
+        tab.add("Shooter Current", Math.abs(shooterMotor1.getSupplyCurrent().getValue() + shooterMotor2.getSupplyCurrent().getValue()) / 2);
+
         tab.add("Shooter Left Velocity", Math.abs(shooterMotor1.getRotorVelocity().getValue()));
         tab.add("Shooter Left Voltage", Math.abs(shooterMotor1.getMotorVoltage().getValue()));
         tab.add("Shooter Left Current", Math.abs(shooterMotor1.getSupplyCurrent().getValue()));
@@ -133,14 +139,17 @@ public class ShooterSubsystem extends SubsystemBase implements Component{
     public double getRequestedCurrent(){
         return 0;
     }
+
     @Override
     public void allocateCurrent(double current){
         //set motor controller current
     }
+
     @Override
     public int getPriority(){
         return 5;
     }
+
     @Override
     public void updateBasedOnAllocatedCurrent(){
         //update motor controller based on allocated current
