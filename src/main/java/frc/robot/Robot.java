@@ -176,6 +176,7 @@ public class Robot extends TimedRobot {
     // initializing limelight
     HttpCamera limelightStream = new HttpCamera("LimelightStream", "http://10.7.51.11:5800", HttpCameraKind.kMJPGStreamer);
     CameraServer.addCamera(limelightStream);
+    SmartDashboard.putNumber("Shooter Speed", 0);
 
     // initializing webcam
     //UsbCamera webcam = new UsbCamera("WebcameStream", 0);
