@@ -58,8 +58,8 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
 
         // set Motion Magic Velocity settings
         var motionMagicConfigs = talonFXConfigs.MotionMagic;
-        motionMagicConfigs.MotionMagicAcceleration = 400; // Target acceleration of 400 rps/s (0.25 seconds to max)
-        motionMagicConfigs.MotionMagicJerk = 4000; // Target jerk of 4000 rps/s/s (0.1 seconds)
+        motionMagicConfigs.MotionMagicAcceleration = 40; // Target acceleration of 400 rps/s (0.25 seconds to max)
+        motionMagicConfigs.MotionMagicJerk = 400; // Target jerk of 4000 rps/s/s (0.1 seconds)
 
         shooterMotor1.getConfigurator().apply(talonFXConfigs);
         shooterMotor2.getConfigurator().apply(talonFXConfigs);
@@ -103,7 +103,6 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
     public void stop(){
         shooterMotor1.set(0);
         shooterMotor2.set(0);
-        transferMotor.set(0);
     }
 
     public double getShooterSpeed(){
@@ -115,24 +114,23 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
 
         //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Shooter);
 
-        ShuffleboardTab tab = Shuffleboard.getTab("Shooter");
-        tab.add("Total Shooter Current Draw", shooterMotor1.getSupplyCurrent().getValue() + shooterMotor2.getSupplyCurrent().getValue()  + transferMotor.getOutputCurrent());
+        // ShuffleboardTab tab = Shuffleboard.getTab("Shooter");
 
-        tab.add("Shooter Velocity", Math.abs(shooterMotor1.getRotorVelocity().getValue() + shooterMotor2.getRotorVelocity().getValue()) / 2);
-        tab.add("Shooter Voltage", Math.abs(shooterMotor1.getMotorVoltage().getValue() + shooterMotor2.getMotorVoltage().getValue()) / 2);
-        tab.add("Shooter Current", Math.abs(shooterMotor1.getSupplyCurrent().getValue() + shooterMotor2.getSupplyCurrent().getValue()) / 2);
+        // tab.add("Shooter Velocity", Math.abs(shooterMotor1.getRotorVelocity().getValue() + shooterMotor2.getRotorVelocity().getValue()) / 2);
+        // tab.add("Shooter Voltage", Math.abs(shooterMotor1.getMotorVoltage().getValue() + shooterMotor2.getMotorVoltage().getValue()) / 2);
+        // tab.add("Shooter Current", Math.abs(shooterMotor1.getSupplyCurrent().getValue() + shooterMotor2.getSupplyCurrent().getValue()) / 2);
 
-        tab.add("Shooter Left Velocity", Math.abs(shooterMotor1.getRotorVelocity().getValue()));
-        tab.add("Shooter Left Voltage", Math.abs(shooterMotor1.getMotorVoltage().getValue()));
-        tab.add("Shooter Left Current", Math.abs(shooterMotor1.getSupplyCurrent().getValue()));
+        // tab.add("Shooter Left Velocity", Math.abs(shooterMotor1.getRotorVelocity().getValue()));
+        // tab.add("Shooter Left Voltage", Math.abs(shooterMotor1.getMotorVoltage().getValue()));
+        // tab.add("Shooter Left Current", Math.abs(shooterMotor1.getSupplyCurrent().getValue()));
 
-        tab.add("Shooter Right Velocity", Math.abs(shooterMotor2.getRotorVelocity().getValue()));
-        tab.add("Shooter Right Voltage", Math.abs(shooterMotor2.getMotorVoltage().getValue()));
-        tab.add("Shooter Right Current", Math.abs(shooterMotor2.getSupplyCurrent().getValue()));
+        // tab.add("Shooter Right Velocity", Math.abs(shooterMotor2.getRotorVelocity().getValue()));
+        // tab.add("Shooter Right Voltage", Math.abs(shooterMotor2.getMotorVoltage().getValue()));
+        // tab.add("Shooter Right Current", Math.abs(shooterMotor2.getSupplyCurrent().getValue()));
 
 
-        tab.add("Transfer Velocity", Math.abs(transferMotor.getEncoder().getVelocity()));
-        tab.add("Transfer Voltage", Math.abs(transferMotor.getAppliedOutput()));
+        // tab.add("Transfer Velocity", Math.abs(transferMotor.getEncoder().getVelocity()));
+        // tab.add("Transfer Voltage", Math.abs(transferMotor.getAppliedOutput()));
     }
 
     @Override

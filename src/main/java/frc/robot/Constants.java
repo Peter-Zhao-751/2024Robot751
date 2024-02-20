@@ -52,7 +52,7 @@ public final class Constants {
         public static final int transportMotorID = 59;
 
         public static final double swivelGearRatio = 15.0; 
-        public static final double maxSwivelSpeed = 0.5;
+        public static final double maxSwivelSpeed = 0.15;
         public static final double intakeTime = 3.0;
 
         public static final double kPSwivelController = 0.8; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
@@ -172,10 +172,10 @@ public final class Constants {
         // MAY HAVE TO DO INDIVIDUAL MODULE PID VALUES
         
         //TODO: #6 Tune module angles to be closer bc there are maybe off by a few degrees
-        public static final SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, 0);
-        public static final SwerveModule frontRightModule = new SwerveModule(21, 22, 23, 0);
-        public static final SwerveModule backLeftModule = new SwerveModule(31, 32, 33, 0);
-        public static final SwerveModule backRightModule = new SwerveModule(41, 42, 43, 0);
+        public static final SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, -82.177);
+        public static final SwerveModule frontRightModule = new SwerveModule(21, 22, 23, -60.292);
+        public static final SwerveModule backLeftModule = new SwerveModule(31, 32, 33, -79.365);
+        public static final SwerveModule backRightModule = new SwerveModule(41, 42, 43, 97.910);
     }
 
     public static final class AutoConstants { 

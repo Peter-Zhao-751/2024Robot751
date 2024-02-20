@@ -111,30 +111,29 @@ public class RobotContainer {
     
     private void configureButtonBindings() {
         /* Util Commands */
-        optionsButton.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        playstationButton.onTrue(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()));
+        circleButton.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+        triangleButton.onTrue(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()));
 
         // leftBumper.whileTrue(new InstantCommand(() -> precise = true));
         // leftBumper.onFalse(new InstantCommand(() -> precise = false));
 
         // SHOOTER STUFF
-        // // 42-44 seems to work well
-        // rightTrigger.whileTrue(new InstantCommand(() -> s_Shooter.shoot(42)));
-        // rightTrigger.whileFalse(new InstantCommand(() -> s_Shooter.stop()));
+        // 42-44 seems to work well
+        rightTrigger.whileTrue(new InstantCommand(() -> s_Shooter.shoot(SmartDashboard.getNumber("Shooter Speed", 0))));
+        rightTrigger.whileFalse(new InstantCommand(() -> s_Shooter.stop()));
 
-        // rightBumper.whileTrue(new InstantCommand(() -> s_Shooter.transfer(-0.25)));
-        // rightBumper.whileFalse(new InstantCommand(() -> s_Shooter.transfer(0)));
-
-        // rightBumper.whileTrue(new InstantCommand(() -> s_Shooter.transfer(-0.25)));
-        // rightBumper.whileFalse(new InstantCommand(() -> s_Shooter.transfer(0)));
+        rightBumper.whileTrue(new InstantCommand(() -> s_Shooter.transfer(-0.25)));
+        rightBumper.whileFalse(new InstantCommand(() -> s_Shooter.transfer(0)));
+        leftBumper.whileTrue(new InstantCommand(() -> s_Shooter.transfer(0.125)));
+        leftBumper.whileFalse(new InstantCommand(() -> s_Shooter.transfer(0)));
 
         // LOGGING STUFF FOR DRIVETRAIN
         // TODO: #8 Run logging for the swerve drive
-        leftTrigger.whileTrue(s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        leftBumper.whileTrue(s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // leftTrigger.whileTrue(s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // leftBumper.whileTrue(s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         
-        rightTrigger.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-        rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // rightTrigger.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        // rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         
         /* Drivetrain Commands */
         squareButton.whileTrue(new InstantCommand(() -> s_Swerve.crossWheels()));
