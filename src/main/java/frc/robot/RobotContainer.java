@@ -70,13 +70,13 @@ public class RobotContainer {
     
     /* Commands */
     private final Command Shooter;
-    private final Command Intake;
+   // private final Command Intake;
 
     /* Subsystems */
     //private final CANdle s_CANdle = new CANdle();
     private final ShooterSubsystem s_Shooter = new ShooterSubsystem();
-    private final IntakeSubsystem s_Intake = new IntakeSubsystem();
-    private final ClimberSubsystem s_Climber = new ClimberSubsystem();
+    //private final IntakeSubsystem s_Intake = new IntakeSubsystem();
+    //private final ClimberSubsystem s_Climber = new ClimberSubsystem();
     private final SwerveDrive s_Swerve = new SwerveDrive();
     private final CANdleSubsystem s_CANdle = new CANdleSubsystem();
 
@@ -86,9 +86,9 @@ public class RobotContainer {
     /* The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         Shooter = new Shooter(s_Shooter);
-        Intake = new Intake(s_Intake);
+        //Intake = new Intake(s_Intake);
 
-        JsonParser.JsonParser(s_Intake, s_Shooter, s_Swerve);
+        JsonParser.JsonParser(null, s_Shooter, s_Swerve);
 
         s_Swerve.setDefaultCommand(
             new Teleop(
@@ -113,7 +113,7 @@ public class RobotContainer {
         preciseControl.whileTrue(new InstantCommand(() -> precise = true));
         preciseControl.onFalse(new InstantCommand(() -> precise = false));
 
-        intakeButton.whileTrue(new Intake(s_Intake));
+        //intakeButton.whileTrue(new Intake(s_Intake));
         shootButton.whileTrue(new Shooter(s_Shooter));
         aimBot.whileTrue(new AimBot(s_Swerve));
     }

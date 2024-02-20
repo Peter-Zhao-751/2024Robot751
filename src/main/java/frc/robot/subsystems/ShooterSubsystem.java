@@ -1,7 +1,12 @@
 package frc.robot.subsystems;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.CAN;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.util.Map;
+
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.*;
 import frc.robot.Constants;
@@ -17,6 +22,10 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.networktables.GenericEntry;
+
+
 public class ShooterSubsystem extends SubsystemBase implements Component{
     
     private TalonFX shooterMotor1;
@@ -26,9 +35,18 @@ public class ShooterSubsystem extends SubsystemBase implements Component{
     private double maxSpeed;
     private boolean isPriming;
     private double targetSpeed;
+    private GenericEntry sliderEntry;
     private final MotionMagicVelocityVoltage motionMagicVelocityVoltage;
 
     public ShooterSubsystem(){
+
+        sliderEntry = Shuffleboard.getTab("Gamer") // Create or get a tab named "Tuning"
+                          .add("shooter motor voltage", 0) // Add a slider widget with a default value of 0
+                          .withWidget("voltage Slider") // Specify the widget type
+                          .withProperties(Map.of("min", -1, "max", 1)) // Set the range from -1 to 1
+                          .getEntry(); // Get the NetworkTableEntry associated with the slider
+
+
         shooterMotor1 = new TalonFX(Constants.Shooter.leftShooterMotorID);
         shooterMotor1.setNeutralMode(NeutralModeValue.Coast);
 
@@ -79,8 +97,11 @@ public class ShooterSubsystem extends SubsystemBase implements Component{
     public double getShooterSpeed(){
         return (shooterMotor1.get()+shooterMotor2.get())/2;
     }
+
     @Override
     public void periodic() {
+        shooterMotor1.setVoltage(sliderEntry.getDouble(0));
+
 
         //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Shooter);
         SmartDashboard.putNumber("Total Shooter Current Draw", shooterMotor1.getSupplyCurrent().getValue() + shooterMotor2.getSupplyCurrent().getValue()  + transferMotor.getOutputCurrent());

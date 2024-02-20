@@ -131,6 +131,8 @@ public final class Constants {
         public static final double driveKF = 0.0;
 
         /* Drive Motor Characterization Values From SYSID */
+
+        //TODO: we are not using these yet because we are openlooped, but i think we should use them
         public static final double driveKS = 0.32; //TODO: This must be tuned to specific robot
         public static final double driveKV = 1.51; //1.51
         public static final double driveKA = 0.27;
@@ -175,11 +177,14 @@ public final class Constants {
     }
 
     public static final class AutoConstants { 
+        //TODO: tune everything here
         public static final double kMaxSpeedMetersPerSecond = 0.5; // 3 
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.5; // 3
         public static final double kMaxAngularSpeedRadiansPerSecond = 1; //Math.PI;
         public static final double kMaxAngularSpeedRadiansPerSecondSquared = 1; //Math.PI;
-    
+        
+
+        //especially these values
         public static final double kPXController = 0.8;
         public static final double kPYController = 0.8;
         public static final double kPThetaController = 1;
