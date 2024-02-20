@@ -7,6 +7,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
@@ -18,7 +19,13 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
+import static edu.wpi.first.units.Units.Volts;
 
 public class SwerveDrive extends SubsystemBase {
     public StructArrayPublisher<SwerveModuleState> actualPublisher;
@@ -29,6 +36,7 @@ public class SwerveDrive extends SubsystemBase {
     public SwerveModule[] mSwerveMods;
     public Pigeon2 gyro;
     public Limelight limelight;
+    public SysIdRoutine routine;
 
     public SwerveDrive() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.CANivoreID);
@@ -37,11 +45,12 @@ public class SwerveDrive extends SubsystemBase {
         gyro.setYaw(0);
 
         mSwerveMods = new SwerveModule[] {
-            new SwerveModule(0, Constants.Swerve.frontLeftModule),
-            new SwerveModule(1, Constants.Swerve.frontRightModule),
-            new SwerveModule(2, Constants.Swerve.backLeftModule),
-            new SwerveModule(3, Constants.Swerve.backRightModule)
+            new SwerveModule(1, Constants.Swerve.frontLeftModule),
+            new SwerveModule(2, Constants.Swerve.frontRightModule),
+            new SwerveModule(3, Constants.Swerve.backLeftModule),
+            new SwerveModule(4, Constants.Swerve.backRightModule)
         };
+
         //odometry = new Odometry(limelight.getPose(), Constants.Swerve.swerveKinematics, getHeading(), getModulePositions());
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());//, new Pose2d());
 
@@ -50,6 +59,30 @@ public class SwerveDrive extends SubsystemBase {
         actualPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveActualStates", SwerveModuleState.struct).publish();
         desirePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveDesiredStates", SwerveModuleState.struct).publish();
         SmartDashboard.putData("Field", m_field);
+
+        routine = new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,
+                null,
+                null,
+                (state) -> SignalLogger.writeString("state", state.toString())
+            ), 
+            new SysIdRoutine.Mechanism(
+                (Measure<Voltage> volts) -> {
+                    for(SwerveModule mod : mSwerveMods){
+                        mod.setDriveVoltage(volts.in(Volts));
+                    }
+                System.out.println("Volts: " + volts.in(Volts));
+            }, null, this)
+        );
+    }
+
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return routine.quasistatic(direction);
+    }
+    
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return routine.dynamic(direction);
     }
 
     public void setPosition(Pose2d desiredLocation, Rotation2d desiredHeading){
@@ -84,8 +117,14 @@ public class SwerveDrive extends SubsystemBase {
                                 );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
 
+        for(SwerveModule mod : mSwerveMods) {
+            mod.setDesiredState(swerveModuleStates[mod.moduleNumber-1], isOpenLoop);
+        }
+    }
+
+    public void crossWheels() { // TODO: #7 Check cross wheels works
         for(SwerveModule mod : mSwerveMods){
-            mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
+            mod.setDesiredState(new SwerveModuleState(0, new Rotation2d((mod.moduleNumber-1) * Math.PI/2 + Math.PI/4)), false);
         }
     }
 
@@ -94,14 +133,14 @@ public class SwerveDrive extends SubsystemBase {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
         
         for(SwerveModule mod : mSwerveMods){
-            mod.setDesiredState(desiredStates[mod.moduleNumber], false);
+            mod.setDesiredState(desiredStates[mod.moduleNumber-1], false);
         }
     }
 
     public SwerveModuleState[] getModuleStates(){
         SwerveModuleState[] states = new SwerveModuleState[4];
         for(SwerveModule mod : mSwerveMods){
-            states[mod.moduleNumber] = mod.getState();
+            states[mod.moduleNumber-1] = mod.getState();
         }
         return states;
     }
@@ -109,7 +148,7 @@ public class SwerveDrive extends SubsystemBase {
     public SwerveModuleState[] getDesiredModuleStates(){
         SwerveModuleState[] states = new SwerveModuleState[4];
         for(SwerveModule mod : mSwerveMods){
-            states[mod.moduleNumber] = mod.desiredState;
+            states[mod.moduleNumber-1] = mod.desiredState;
         }
         return states;
     }
@@ -117,7 +156,7 @@ public class SwerveDrive extends SubsystemBase {
     public SwerveModulePosition[] getModulePositions(){
         SwerveModulePosition[] positions = new SwerveModulePosition[4];
         for(SwerveModule mod : mSwerveMods){
-            positions[mod.moduleNumber] = mod.getPosition();
+            positions[mod.moduleNumber-1] = mod.getPosition();
         }
         return positions;
     }
@@ -131,7 +170,6 @@ public class SwerveDrive extends SubsystemBase {
     }
 
     public Rotation2d getHeading(){
-        
         return getPose().getRotation();
     }
 
@@ -176,8 +214,7 @@ public class SwerveDrive extends SubsystemBase {
 
         if (limelight.hasTarget() && newLimePosition != null){
             odometry.update(newLimePosition, getGyroYaw(), getModulePositions());
-        }
-        else {
+        } else {
             odometry.update(getGyroYaw(), getModulePositions());
         }
         
@@ -201,6 +238,5 @@ public class SwerveDrive extends SubsystemBase {
         SmartDashboard.putNumber("swerve y", swerveOdometry.getPoseMeters().getY());
 
         m_field.setRobotPose(odometry.getPoseMeters());
-
     }
 }

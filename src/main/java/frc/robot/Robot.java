@@ -25,6 +25,7 @@ import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.SignalLogger;
 
 import frc.robot.subsystems.JsonParser;
 
@@ -64,6 +65,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // robot container
     m_robotContainer = new RobotContainer();
+    SignalLogger.setPath("/media/sda1/");
     initializeUI();
   }
 
@@ -91,6 +93,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     currentMode = RobotModes.Disabled;
+    SignalLogger.stop();
   }
 
   @Override
@@ -103,6 +106,7 @@ public class Robot extends TimedRobot {
     File selectedAuton = autonSelector.getSelected();
     SmartDashboard.putString("Current Action", "Autonomous: " + selectedAuton.getName());
     m_autonomousCommand = m_robotContainer.getAutonomousCommand(selectedAuton);
+    SignalLogger.start();
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -115,6 +119,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    SignalLogger.start();
+
     currentMode = RobotModes.Teleop;
     SmartDashboard.putString("Current Action", "Standard teleop");
     // This makes sure that the autonomous stops running when
@@ -135,6 +141,7 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
     currentMode = RobotModes.Test;
+    SignalLogger.start();
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
   }
@@ -195,5 +202,7 @@ public class Robot extends TimedRobot {
     Shuffleboard.getTab("Auton Selector")
       .add("Select a Path:", autonSelector)
       .withWidget("Combo Box Chooser");
+
+    SmartDashboard.putString("Current Mode", currentMode.toString());
   }
 }

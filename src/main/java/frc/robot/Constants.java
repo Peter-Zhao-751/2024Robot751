@@ -49,18 +49,18 @@ public final class Constants {
         public static final int intakeMotorID = 56;
         public static final int leftSwivelMotorID = 57;
         public static final int rightSwivelMotorID = 58;
-        public static final int transportMotorID = 7;
+        public static final int transportMotorID = 59;
 
         public static final double swivelGearRatio = 15.0; 
         public static final double maxSwivelSpeed = 0.5;
         public static final double intakeTime = 3.0;
 
-        public static final double kPSwivelController = 0.8; // TODO: tune these values
+        public static final double kPSwivelController = 0.8; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
         public static final double kISwivelController = 0.0;
         public static final double kDSwivelController = 0.0;
 
-        public static final double kSwivelExtendedAngle = 0.0; // TODO: find this value
-        public static final double kSwivelRetractedAngle = 0.0; // TODO: find this value
+        public static final double kSwivelExtendedAngle = 0.0; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
+        public static final double kSwivelRetractedAngle = 0.0; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
     }
 
     public static final class Climber{
@@ -76,8 +76,7 @@ public final class Constants {
         public static final int pigeonID = 1;
         public static final boolean enableFOC = true;
 
-        public static final COTSTalonFXSwerveConstants chosenModule =
-        COTSTalonFXSwerveConstants.SDS.MK4i.KrakenX60(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L3);
+        public static final COTSTalonFXSwerveConstants chosenModule = COTSTalonFXSwerveConstants.SDS.MK4i.KrakenX60(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L3);
 
         /* Drivetrain Constants */
         public static final double trackWidth = Units.inchesToMeters(21.75); // 27 (Frame width) - 2*2.625 (SDS wheel offset)
@@ -90,7 +89,8 @@ public final class Constants {
             new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
             new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
             new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
-            new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
+            new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0)
+        );
 
         /* Module Gear Ratios */
         public static final double driveGearRatio = chosenModule.driveGearRatio;
@@ -125,15 +125,13 @@ public final class Constants {
         public static final double angleKD = chosenModule.angleKD;
 
         /* Drive Motor PID Values */
-        public static final double driveKP = 0.12; //TODO: This must be tuned to specific robot
+        public static final double driveKP = 0.12; //TODO: #4 Tune Drivetrain PID Values
         public static final double driveKI = 0.0;
         public static final double driveKD = 0.0;
         public static final double driveKF = 0.0;
 
         /* Drive Motor Characterization Values From SYSID */
-
-        //TODO: we are not using these yet because we are openlooped, but i think we should use them
-        public static final double driveKS = 0.32; //TODO: This must be tuned to specific robot
+        public static final double driveKS = 0.32; //TODO: #4 Tune Drivetrain PID Values
         public static final double driveKV = 1.51; //1.51
         public static final double driveKA = 0.27;
 
@@ -144,9 +142,11 @@ public final class Constants {
         /** Multiplier */
         public static final double speedMultiplier = 0.5; //TODO: testing speed, normal 1.0
         /** Radians per Second */
-        public static final double maxAngularVelocity = maxSpeed / 2.1; // THIS IS THE MAX SPIN SPEED ROBOT
+        public static final double maxAngularVelocity = maxSpeed / 1.5; // THIS IS THE MAX SPIN SPEED ROBOT, tested 2.1, feels sluggish
+
         /* Modifier for rotating to desired angle pose speed */
-        public static final double angleKP = (10.46 * Math.exp(1.05 * speedMultiplier)); // Default: speedMultiplier 1 -> 30
+        public static final double angleKP = (10.46 * Math.exp(1.05 * speedMultiplier)); // I dont think this is right, take from SYSID instead
+
         /* Neutral Modes */
         public static final NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
         public static final NeutralModeValue driveNeutralMode = NeutralModeValue.Brake;
@@ -168,12 +168,14 @@ public final class Constants {
                 this.constants = new SwerveModuleConstants(driveMotorID, angleMotorID, CANCoderID, angleOffset);
             }
         }
+
+        // MAY HAVE TO DO INDIVIDUAL MODULE PID VALUES
         
-        //TODO: Tune module angles to be closer bc there are maybe off by a few degrees
-        public static final SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, 280);
-        public static final SwerveModule frontRightModule = new SwerveModule(21, 22, 23, -60);
-        public static final SwerveModule backLeftModule = new SwerveModule(31, 32, 33, 280.7);
-        public static final SwerveModule backRightModule = new SwerveModule(41, 42, 43, 98);
+        //TODO: #6 Tune module angles to be closer bc there are maybe off by a few degrees
+        public static final SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, 0);
+        public static final SwerveModule frontRightModule = new SwerveModule(21, 22, 23, 0);
+        public static final SwerveModule backLeftModule = new SwerveModule(31, 32, 33, 0);
+        public static final SwerveModule backRightModule = new SwerveModule(41, 42, 43, 0);
     }
 
     public static final class AutoConstants { 
@@ -237,10 +239,9 @@ public final class Constants {
             new FieldElements("Chute", 13.74, 0.80, 0.0, -1.0, 1.0, -1.0, 1.0),
         };
     }
-    /* Other stuff that i probably need to organize better */
+    /* Other stuff that I probably need to organize better */
     public static final class CANdle {
         public static final int CANdleID = 2;
         public static final int LEDCount = 21; // TODO: CHANGE TO CORRECT AMOUNT (x = strip + 8)
     }
-
 }

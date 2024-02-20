@@ -11,10 +11,13 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.units.Current;
 import frc.lib.math.Conversions;
 import frc.robot.Constants;
 import frc.robot.Robot;
+
+import edu.wpi.first.units.Current;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
 
 public class SwerveModule {
     public int moduleNumber;
@@ -79,11 +82,10 @@ public class SwerveModule {
         if(isOpenLoop){
             driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
             driveDutyCycle.EnableFOC = Constants.Swerve.enableFOC;
-            // TODO: Maybe look into changing this to be MotionMagicDutyCycle
+            // TODO: #3 Maybe look into changing this to be MotionMagicDutyCycle
             // instead of just DutyCycle to allow us to ease in and out better
             mDriveMotor.setControl(driveDutyCycle);
-        }
-        else {
+        } else {
             driveVelocity.Velocity = Conversions.MPSToRPS(desiredState.speedMetersPerSecond, Constants.Swerve.wheelCircumference);
             driveVelocity.FeedForward = driveFeedForward.calculate(desiredState.speedMetersPerSecond);
             driveVelocity.EnableFOC = Constants.Swerve.enableFOC;
@@ -132,5 +134,13 @@ public class SwerveModule {
             Conversions.rotationsToMeters(mDriveMotor.getPosition().getValue(), Constants.Swerve.wheelCircumference), 
             Rotation2d.fromRotations(mAngleMotor.getPosition().getValue())
         );
+    }
+
+    public void setDriveVoltage(double voltage) {
+        mDriveMotor.setVoltage(voltage);
+    }
+
+    public void setAngleVoltage(double voltage) {
+        mAngleMotor.setVoltage(voltage);
     }
 }
