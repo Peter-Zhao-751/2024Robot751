@@ -2,9 +2,13 @@ package frc.robot;
 
 import javax.swing.JList.DropLocation;
 import com.ctre.phoenix.led.CANdle;
+import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PS5Controller;
 // POV import
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -106,16 +110,44 @@ public class RobotContainer {
     
     private void configureButtonBindings() {
         /* Driver Buttons */
-        zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+        // zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
 
-        zeroModules.onTrue(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()));
+        // zeroModules.onTrue(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()));
 
-        preciseControl.whileTrue(new InstantCommand(() -> precise = true));
-        preciseControl.onFalse(new InstantCommand(() -> precise = false));
+        // preciseControl.whileTrue(new InstantCommand(() -> precise = true));
+        // preciseControl.onFalse(new InstantCommand(() -> precise = false));
 
-        //intakeButton.whileTrue(new Intake(s_Intake));
-        shootButton.whileTrue(new Shooter(s_Shooter));
-        aimBot.whileTrue(new AimBot(s_Swerve));
+        // intakeButton.whileTrue(new Intake(s_Intake));
+        // shootButton.whileTrue(new Shooter(s_Shooter));
+
+        SmartDashboard.putNumber("Shooter Speed", 0);
+        // 42-44 seems to work well
+        shootButton.whileTrue(new InstantCommand(() -> s_Shooter.shoot(SmartDashboard.getNumber("Shooter Speed", 0))));
+        shootButton.whileFalse(new InstantCommand(() -> s_Shooter.stop()));
+
+        aimBot.whileTrue(new InstantCommand(() -> s_Shooter.transfer(-0.25)));
+        aimBot.whileFalse(new InstantCommand(() -> s_Shooter.transfer(0)));
+
+        p.whileTrue(new InstantCommand(() -> s_Shooter.transfer(-0.25)));
+        aimBot.whileFalse(new InstantCommand(() -> s_Shooter.transfer(0)));
+
+        // intakeButton.whileTrue(s_Shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // preciseControl.whileTrue(s_Shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        
+        // shootButton.whileTrue(s_Shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        // aimBot.whileTrue(s_Shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
+
+        // zeroModules.onTrue(new InstantCommand(() -> {
+        //     SignalLogger.stop();
+        //     for(int i = 0; i < 10; i++) System.out.println("Logger Stopped");
+        // }));
+
+        // zeroGyro.onTrue(new InstantCommand(() -> {
+        //     SignalLogger.start();
+        //     for (int i = 0; i < 10; i++) System.out.println("Logger Started");
+        // }));
+
+        // aimBot.whileTrue(new AimBot(s_Swerve));
     }
 
     public Command getAutonomousCommand() {

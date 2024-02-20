@@ -70,6 +70,9 @@ public class SwerveModule {
          * drive() in SwerveDrive.java is called with isOpenLoop = false most of the time
          * but Teleop.java calls it with isOpenLoop = true
          * So I think in teleop, we are in open loop, and in auto, we are in closed loop
+         * 
+         * maybe also change to always closed loop (motionMagic?!?)
+         * to make driving more consistent
         */
         
 
