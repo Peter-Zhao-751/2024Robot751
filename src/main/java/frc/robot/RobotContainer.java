@@ -3,11 +3,13 @@ package frc.robot;
 import javax.swing.JList.DropLocation;
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
+import com.ctre.phoenix6.SignalLogger;
+
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
+// import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PS5Controller;
 // POV import
@@ -21,57 +23,56 @@ import frc.robot.subsystems.*;
 
 import java.io.File;
 
-
-/**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and button mappings) should be declared here.
- */
 public class RobotContainer {
+    /*  
+     * precise control: left bumper
+     * aimbot: right bumper
+     * shoot: right trigger
+     * intake: left trigger
+     * 
+     * zero pigeon (for field based control and stuff): triangle
+     * zero modules (should be automatic, but incase somehting goes wrong in the game): circle
+     * cross wheels: square
+     * 
+     * https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/PS5Controller.Button.html
+     */
+
     /* Controllers */
     private final Joystick driver = new Joystick(0);
 
-    /* Drive Controls */
-    /* PS5 Versions are commented below the Xbox implementation. */
-    
-    /*private final int translationAxis = XboxController.Axis.kLeftY.value;
-    private final int strafeAxis = XboxController.Axis.kLeftX.value;
-    private final int rotationAxis = XboxController.Axis.kRightX.value;
-    private final int armAxis = XboxController.Axis.kRightY.value;*/
-    
+    /* Joysticks */
+
     private final int translationAxis = PS5Controller.Axis.kLeftY.value;
     private final int strafeAxis = PS5Controller.Axis.kLeftX.value;
     private final int rotationAxis = PS5Controller.Axis.kRightX.value;
-    
-    
 
-    /* Bumper Buttons */
+    /* Triggers */
     
-    private final JoystickButton intakeButton = new JoystickButton(driver, PS5Controller.Button.kL2.value);
-    private final JoystickButton shootButton = new JoystickButton(driver, PS5Controller.Button.kR2.value);
-    
-    /* Driver Buttons */
-    /*private final JoystickButton preciseControl = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
-    private final JoystickButton aimBot = new JoystickButton(driver, XboxController.Button.kRightBumper.value);*/
-    
-    private final JoystickButton preciseControl = new JoystickButton(driver, PS5Controller.Button.kL1.value);
-    private final JoystickButton aimBot = new JoystickButton(driver, PS5Controller.Button.kR1.value);
-    
+    private final JoystickButton leftTrigger = new JoystickButton(driver, PS5Controller.Button.kL2.value); // INTAKE
+    private final JoystickButton rightTrigger = new JoystickButton(driver, PS5Controller.Button.kR2.value); // SHOOT
 
-    /*private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
-    private final JoystickButton zeroModules = new JoystickButton(driver, XboxController.Button.kX.value);*/
-    
-    private final JoystickButton zeroGyro = new JoystickButton(driver, PS5Controller.Button.kTriangle.value);
-    private final JoystickButton zeroModules = new JoystickButton(driver, PS5Controller.Button.kCircle.value);
-    
+    /* Trigger Buttons */
 
-    /* Climb Buttons */
-    /*
-    private final POVButton climbUp = new POVButton(driver, 0);
-    private final POVButton climbDown = new POVButton(driver, 180);
-    */
+    private final JoystickButton leftTriggerButton = new JoystickButton(driver, PS5Controller.Button.kL3.value); // unassigned
+    private final JoystickButton rightTriggerButton = new JoystickButton(driver, PS5Controller.Button.kR3.value); // unassigned
     
+    /* Bumpers */
+    
+    private final JoystickButton leftBumper = new JoystickButton(driver, PS5Controller.Button.kL1.value); // AIM BOT
+    private final JoystickButton rightBumper = new JoystickButton(driver, PS5Controller.Button.kR1.value); // PRECISE CONTROL
+    
+    /* Buttons */
+
+    private final JoystickButton triangleButton = new JoystickButton(driver, PS5Controller.Button.kTriangle.value); 
+    private final JoystickButton circleButton = new JoystickButton(driver, PS5Controller.Button.kCircle.value);
+    private final JoystickButton squareButton = new JoystickButton(driver, PS5Controller.Button.kSquare.value);
+    private final JoystickButton crossButton = new JoystickButton(driver, PS5Controller.Button.kCross.value);
+
+    /* Other Buttons */
+
+    private final JoystickButton optionsButton = new JoystickButton(driver, PS5Controller.Button.kOptions.value); // ZERO PIGEON
+    private final JoystickButton playstationButton = new JoystickButton(driver, PS5Controller.Button.kPS.value); // ZERO MODULES
+
     /* Commands */
     private final Command Shooter;
     private final Command Intake;
@@ -110,44 +111,42 @@ public class RobotContainer {
     
     private void configureButtonBindings() {
         /* Driver Buttons */
-        // zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+        optionsButton.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+        playstationButton.onTrue(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()));
 
-        // zeroModules.onTrue(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()));
+        // leftBumper.whileTrue(new InstantCommand(() -> precise = true));
+        // leftBumper.onFalse(new InstantCommand(() -> precise = false));
 
-        // preciseControl.whileTrue(new InstantCommand(() -> precise = true));
-        // preciseControl.onFalse(new InstantCommand(() -> precise = false));
+        // SHOOTER STUFF
+        // // 42-44 seems to work well
+        // rightTrigger.whileTrue(new InstantCommand(() -> s_Shooter.shoot(42)));
+        // rightTrigger.whileFalse(new InstantCommand(() -> s_Shooter.stop()));
 
-        // intakeButton.whileTrue(new Intake(s_Intake));
-        // shootButton.whileTrue(new Shooter(s_Shooter));
+        // rightBumper.whileTrue(new InstantCommand(() -> s_Shooter.transfer(-0.25)));
+        // rightBumper.whileFalse(new InstantCommand(() -> s_Shooter.transfer(0)));
 
-        SmartDashboard.putNumber("Shooter Speed", 0);
-        // 42-44 seems to work well
-        shootButton.whileTrue(new InstantCommand(() -> s_Shooter.shoot(SmartDashboard.getNumber("Shooter Speed", 0))));
-        shootButton.whileFalse(new InstantCommand(() -> s_Shooter.stop()));
+        // rightBumper.whileTrue(new InstantCommand(() -> s_Shooter.transfer(-0.25)));
+        // rightBumper.whileFalse(new InstantCommand(() -> s_Shooter.transfer(0)));
 
-        aimBot.whileTrue(new InstantCommand(() -> s_Shooter.transfer(-0.25)));
-        aimBot.whileFalse(new InstantCommand(() -> s_Shooter.transfer(0)));
-
-        p.whileTrue(new InstantCommand(() -> s_Shooter.transfer(-0.25)));
-        aimBot.whileFalse(new InstantCommand(() -> s_Shooter.transfer(0)));
-
-        // intakeButton.whileTrue(s_Shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        // preciseControl.whileTrue(s_Shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // LOGGING STUFF FOR DRIVETRAIN
+        leftTrigger.whileTrue(s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        leftBumper.whileTrue(s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         
-        // shootButton.whileTrue(s_Shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-        // aimBot.whileTrue(s_Shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        rightTrigger.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
 
-        // zeroModules.onTrue(new InstantCommand(() -> {
-        //     SignalLogger.stop();
-        //     for(int i = 0; i < 10; i++) System.out.println("Logger Stopped");
-        // }));
+        squareButton.whileTrue(new InstantCommand(() -> s_Swerve.crossWheels()));
 
-        // zeroGyro.onTrue(new InstantCommand(() -> {
-        //     SignalLogger.start();
-        //     for (int i = 0; i < 10; i++) System.out.println("Logger Started");
-        // }));
+        // START / STOP LOGGING
+        crossButton.onTrue(new InstantCommand(() -> {
+            SignalLogger.stop();
+            for(int i = 0; i < 10; i++) System.out.println("Logger Stopped");
+        }));
 
-        // aimBot.whileTrue(new AimBot(s_Swerve));
+        triangleButton.onTrue(new InstantCommand(() -> {
+            SignalLogger.start();
+            for (int i = 0; i < 10; i++) System.out.println("Logger Started");
+        }));
     }
 
     public Command getAutonomousCommand() {

@@ -1,16 +1,10 @@
 package frc.robot.subsystems;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Voltage;
-import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.controls.*;
 import frc.robot.Constants;
@@ -26,6 +20,13 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+// Logging stuff for Characterization
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import com.ctre.phoenix6.SignalLogger;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
+import static edu.wpi.first.units.Units.Volts;
+
 public class ShooterSubsystem extends SubsystemBase implements Component{
     
     private TalonFX shooterMotor1;
@@ -36,8 +37,7 @@ public class ShooterSubsystem extends SubsystemBase implements Component{
     private boolean isPriming;
     private double targetSpeed;
     private final MotionMagicVelocityVoltage motionMagicVelocityVoltage;
-    private final SysIdRoutine routine;
-    private final SimpleMotorFeedforward feedforward;
+    // private final SysIdRoutine routine;
 
     public ShooterSubsystem(){
         shooterMotor1 = new TalonFX(Constants.Shooter.leftShooterMotorID, Constants.CANivoreID);
@@ -70,17 +70,28 @@ public class ShooterSubsystem extends SubsystemBase implements Component{
 
         transferMotor = new CANSparkMax(Constants.Shooter.transferMotorID, MotorType.kBrushless);
     
-        routine = new SysIdRoutine(
-            new SysIdRoutine.Config(
-                // MISSING CODE CRY
-                // For the state thingy
-            ), 
-            new SysIdRoutine.Mechanism(
-                (Measure<Voltage> volts) -> {
-                shooterMotor1.setVoltage(volts.in(Volts));
-                System.out.println("Volts: " + volts.in(Volts));
-            }, null, this));
+        // routine = new SysIdRoutine(
+        //     new SysIdRoutine.Config(
+        //         null,
+        //         null,
+        //         null,
+        //         (state) -> SignalLogger.writeString("state", state.toString())
+        //     ), 
+        //     new SysIdRoutine.Mechanism(
+        //         (Measure<Voltage> volts) -> {
+        //         shooterMotor1.setVoltage(volts.in(Volts));
+        //         System.out.println("Volts: " + volts.in(Volts));
+        //     }, null, this)
+        // );
     }
+
+    // public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    //     return routine.quasistatic(direction);
+    // }
+    
+    // public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    //     return routine.dynamic(direction);
+    // }
 
     public void shoot(double speed){
         // shooterMotor1.set(speed);
@@ -103,20 +114,13 @@ public class ShooterSubsystem extends SubsystemBase implements Component{
     public double getShooterSpeed(){
         return (shooterMotor1.get()+shooterMotor2.get())/2;
     }
+
     @Override
     public void periodic() {
 
         //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Shooter);
         SmartDashboard.putNumber("Total Shooter Current Draw", shooterMotor1.getSupplyCurrent().getValue() + shooterMotor2.getSupplyCurrent().getValue()  + transferMotor.getOutputCurrent());
         SmartDashboard.putNumber("Shooter Left Velocity", Math.abs(shooterMotor1.getRotorVelocity().getValue()));
-    }
-
-    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-        return routine.quasistatic(direction);
-    }
-    
-    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-        return routine.dynamic(direction);
     }
 
     @Override
