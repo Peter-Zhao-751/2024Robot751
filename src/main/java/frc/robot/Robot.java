@@ -25,6 +25,7 @@ import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.SignalLogger;
 
 import frc.robot.subsystems.JsonParser;
 
@@ -115,6 +116,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    SignalLogger.setPath("/media/sda1/");
     currentMode = RobotModes.Teleop;
     SmartDashboard.putString("Current Action", "Standard teleop");
     // This makes sure that the autonomous stops running when
