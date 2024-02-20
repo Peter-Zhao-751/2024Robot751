@@ -55,12 +55,12 @@ public final class Constants {
         public static final double maxSwivelSpeed = 0.5;
         public static final double intakeTime = 3.0;
 
-        public static final double kPSwivelController = 0.8; // TODO: tune these values
+        public static final double kPSwivelController = 0.8; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
         public static final double kISwivelController = 0.0;
         public static final double kDSwivelController = 0.0;
 
-        public static final double kSwivelExtendedAngle = 0.0; // TODO: find this value
-        public static final double kSwivelRetractedAngle = 0.0; // TODO: find this value
+        public static final double kSwivelExtendedAngle = 0.0; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
+        public static final double kSwivelRetractedAngle = 0.0; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
     }
 
     public static final class Climber{
@@ -125,13 +125,13 @@ public final class Constants {
         public static final double angleKD = chosenModule.angleKD;
 
         /* Drive Motor PID Values */
-        public static final double driveKP = 0.12; //TODO: This must be tuned to specific robot
+        public static final double driveKP = 0.12; //TODO: #4 Tune Drivetrain PID Values
         public static final double driveKI = 0.0;
         public static final double driveKD = 0.0;
         public static final double driveKF = 0.0;
 
         /* Drive Motor Characterization Values From SYSID */
-        public static final double driveKS = 0.32; //TODO: This must be tuned to specific robot
+        public static final double driveKS = 0.32; //TODO: #4 Tune Drivetrain PID Values
         public static final double driveKV = 1.51; //1.51
         public static final double driveKA = 0.27;
 
@@ -171,7 +171,7 @@ public final class Constants {
 
         // MAY HAVE TO DO INDIVIDUAL MODULE PID VALUES
         
-        //TODO: Tune module angles to be closer bc there are maybe off by a few degrees
+        //TODO: #6 Tune module angles to be closer bc there are maybe off by a few degrees
         public static final SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, 0);
         public static final SwerveModule frontRightModule = new SwerveModule(21, 22, 23, 0);
         public static final SwerveModule backLeftModule = new SwerveModule(31, 32, 33, 0);

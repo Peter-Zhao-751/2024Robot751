@@ -110,7 +110,7 @@ public class RobotContainer {
     }
     
     private void configureButtonBindings() {
-        /* Driver Buttons */
+        /* Util Commands */
         optionsButton.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         playstationButton.onTrue(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()));
 
@@ -129,12 +129,14 @@ public class RobotContainer {
         // rightBumper.whileFalse(new InstantCommand(() -> s_Shooter.transfer(0)));
 
         // LOGGING STUFF FOR DRIVETRAIN
+        // TODO: #8 Run logging for the swerve drive
         leftTrigger.whileTrue(s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         leftBumper.whileTrue(s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         
         rightTrigger.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
-
+        
+        /* Drivetrain Commands */
         squareButton.whileTrue(new InstantCommand(() -> s_Swerve.crossWheels()));
     }
 

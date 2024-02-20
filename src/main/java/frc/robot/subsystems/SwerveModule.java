@@ -82,7 +82,7 @@ public class SwerveModule {
         if(isOpenLoop){
             driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
             driveDutyCycle.EnableFOC = Constants.Swerve.enableFOC;
-            // TODO: Maybe look into changing this to be MotionMagicDutyCycle
+            // TODO: #3 Maybe look into changing this to be MotionMagicDutyCycle
             // instead of just DutyCycle to allow us to ease in and out better
             mDriveMotor.setControl(driveDutyCycle);
         } else {

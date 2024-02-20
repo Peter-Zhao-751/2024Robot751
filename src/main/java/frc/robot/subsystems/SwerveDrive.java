@@ -122,7 +122,7 @@ public class SwerveDrive extends SubsystemBase {
         }
     }
 
-    public void crossWheels() {
+    public void crossWheels() { // TODO: #7 Check cross wheels works
         for(SwerveModule mod : mSwerveMods){
             mod.setDesiredState(new SwerveModuleState(0, new Rotation2d((mod.moduleNumber-1) * Math.PI/2 + Math.PI/4)), false);
         }

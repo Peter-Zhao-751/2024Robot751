@@ -1,4 +1,6 @@
 package frc.robot.subsystems;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -88,14 +90,11 @@ public class ShooterSubsystem extends SubsystemBase implements Component{
     // }
 
     public void shoot(double speed){
-        // shooterMotor1.set(speed);
-        // shooterMotor2.set(speed);
-        
         shooterMotor1.setControl(motionMagicVelocityVoltage.withVelocity(speed));
         shooterMotor2.setControl(motionMagicVelocityVoltage.withVelocity(speed));
     }
 
-    public void transfer(double speed){
+    public void transfer(double speed) { // TODO: #2 Implemenet a closed loop system for the transfer motor
         transferMotor.set(speed);
     }
     
@@ -113,8 +112,21 @@ public class ShooterSubsystem extends SubsystemBase implements Component{
     public void periodic() {
 
         //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Shooter);
-        SmartDashboard.putNumber("Total Shooter Current Draw", shooterMotor1.getSupplyCurrent().getValue() + shooterMotor2.getSupplyCurrent().getValue()  + transferMotor.getOutputCurrent());
-        SmartDashboard.putNumber("Shooter Left Velocity", Math.abs(shooterMotor1.getRotorVelocity().getValue()));
+
+        ShuffleboardTab tab = Shuffleboard.getTab("Shooter");
+        tab.add("Total Shooter Current Draw", shooterMotor1.getSupplyCurrent().getValue() + shooterMotor2.getSupplyCurrent().getValue()  + transferMotor.getOutputCurrent());
+
+        tab.add("Shooter Left Velocity", Math.abs(shooterMotor1.getRotorVelocity().getValue()));
+        tab.add("Shooter Left Voltage", Math.abs(shooterMotor1.getMotorVoltage().getValue()));
+        tab.add("Shooter Left Current", Math.abs(shooterMotor1.getSupplyCurrent().getValue()));
+
+        tab.add("Shooter Right Velocity", Math.abs(shooterMotor2.getRotorVelocity().getValue()));
+        tab.add("Shooter Right Voltage", Math.abs(shooterMotor2.getMotorVoltage().getValue()));
+        tab.add("Shooter Right Current", Math.abs(shooterMotor2.getSupplyCurrent().getValue()));
+
+
+        tab.add("Transfer Velocity", Math.abs(transferMotor.getEncoder().getVelocity()));
+        tab.add("Transfer Voltage", Math.abs(transferMotor.getAppliedOutput()));
     }
 
     @Override
