@@ -1,31 +1,25 @@
 package frc.robot.subsystems;
-import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix6.configs.*;
-import com.ctre.phoenix6.controls.*;
 import frc.robot.Constants;
 
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-// Logging stuff for Characterization
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import com.ctre.phoenix6.SignalLogger;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Voltage;
-import static edu.wpi.first.units.Units.Volts;
+// // Logging stuff for Characterization
+// import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+// import com.ctre.phoenix6.SignalLogger;
+// import edu.wpi.first.units.Measure;
+// import edu.wpi.first.units.Voltage;
+// import static edu.wpi.first.units.Units.Volts;
 
 public class ShooterSubsystem extends SubsystemBase implements Component{
     
