@@ -37,7 +37,7 @@ public final class Constants {
         public static final int leftShooterMotorID = 51;
         public static final int rightShooterMotorID = 52;
 
-        public static final int transferMotorID = 3;
+        public static final int transferMotorID = 53;
 
         public static final double spinUpTime = 2.0;
         public static final double transferSpeed = 0.3;
