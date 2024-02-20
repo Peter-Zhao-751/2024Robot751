@@ -136,17 +136,6 @@ public class RobotContainer {
         rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
 
         squareButton.whileTrue(new InstantCommand(() -> s_Swerve.crossWheels()));
-
-        // START / STOP LOGGING
-        crossButton.onTrue(new InstantCommand(() -> {
-            SignalLogger.stop();
-            for(int i = 0; i < 10; i++) System.out.println("Logger Stopped");
-        }));
-
-        triangleButton.onTrue(new InstantCommand(() -> {
-            SignalLogger.start();
-            for (int i = 0; i < 10; i++) System.out.println("Logger Started");
-        }));
     }
 
     public Command getAutonomousCommand() {
