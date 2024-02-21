@@ -2,7 +2,7 @@ package frc.robot.commands;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
-
+import frc.robot.subsystems.TransferSubsystem;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -14,10 +14,16 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class Intake extends Command {
     private IntakeSubsystem intakeSubsystem;
+    private TransferSubsystem transferSubsystem;
+
     private double startTime;
-    public Intake(IntakeSubsystem intakeSubsystem) {
+
+    public Intake(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem) {
         this.intakeSubsystem = intakeSubsystem;
+        this.transferSubsystem = transferSubsystem;
         addRequirements(intakeSubsystem);
+
+        new Transfer(2.0, transferSubsystem);
     }
     @Override
     public void initialize() {

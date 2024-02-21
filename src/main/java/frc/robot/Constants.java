@@ -37,8 +37,6 @@ public final class Constants {
         public static final int leftShooterMotorID = 51;
         public static final int rightShooterMotorID = 52;
 
-        public static final int transferMotorID = 53;
-
         public static final double spinUpTime = 2.0;
         public static final double transferSpeed = 0.3;
         public static final double feedTime = 0.2;
@@ -49,9 +47,6 @@ public final class Constants {
         public static final int intakeMotorID = 56;
         public static final int leftSwivelMotorID = 57;
         public static final int rightSwivelMotorID = 58;
-        public static final int transportMotorID = 59;
-
-        public static final int beamBreakPort = 0;
 
         public static final double swivelGearRatio = 15.0; 
         public static final double maxSwivelSpeed = 0.15;
@@ -63,6 +58,16 @@ public final class Constants {
 
         public static final double kSwivelExtendedAngle = 0.0; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
         public static final double kSwivelRetractedAngle = 0.0; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
+    }
+
+    public static final class Transfer{
+        public static final int shooterTransferID = 53;
+        public static final double shooterTransferRadius = 1.125; // units in inches
+
+        public static final int intakeTransferID = 59;
+        public static final double intakeTransferRadius = 2.0; // units in inches
+
+        public static final int beamBreakID = 0;
     }
 
     public static final class Climber{

@@ -14,38 +14,32 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 public class IntakeSubsystem extends SubsystemBase implements Component{
     private CANSparkMax swivelMotor1;
     private CANSparkMax swivelMotor2;
-    private CANSparkMax transferMotor;
     private TalonFX intakeMotor;
-    private final DigitalInput beamBreak;
 
     private PIDController swivelPIDController;
     
     public IntakeSubsystem(){
         swivelMotor1 = new CANSparkMax(Constants.Intake.leftSwivelMotorID, MotorType.kBrushless);
         swivelMotor2 = new CANSparkMax(Constants.Intake.rightSwivelMotorID, MotorType.kBrushless);
+        swivelMotor1.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        swivelMotor2.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        swivelMotor1.follow(swivelMotor1);
+
         intakeMotor = new TalonFX(Constants.Intake.intakeMotorID);
-        transferMotor = new CANSparkMax(Constants.Intake.transportMotorID, MotorType.kBrushless);
 
         swivelPIDController = new PIDController(Constants.Intake.kPSwivelController, Constants.Intake.kISwivelController, Constants.Intake.kDSwivelController);
-
-        beamBreak = new DigitalInput(Constants.Intake.beamBreakPort);
     }
     
     public void setSwivelSpeed(double speed){
         swivelMotor1.set(speed);
-        swivelMotor2.set(speed);
-
     }
-    public void setTransferSpeed(double speed){
-        transferMotor.set(speed);
-    }
+    
     public void setIntakeSpeed(double speed){
         intakeMotor.set(speed);
     }
+
     public void stopAll(){
         swivelMotor1.set(0);
-        swivelMotor2.set(0);
-        transferMotor.set(0);
         intakeMotor.set(0);
     }
     public double getSwivelPosition(){
@@ -54,16 +48,10 @@ public class IntakeSubsystem extends SubsystemBase implements Component{
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Total Intake Current Draw", swivelMotor1.getOutputCurrent() + swivelMotor2.getOutputCurrent() + transferMotor.getOutputCurrent() + intakeMotor.getSupplyCurrent().getValue());
+        SmartDashboard.putNumber("Total Intake Current Draw", swivelMotor1.getOutputCurrent() + swivelMotor2.getOutputCurrent() + intakeMotor.getSupplyCurrent().getValue());
         SmartDashboard.putNumber("Intake Swivel Position", getSwivelPosition());
         
-        SmartDashboard.putBoolean("Beam Break", !beamBreak.get());
-
         //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Intake);
-    }
-
-    public boolean beamBreak() {
-        return !beamBreak.get();
     }
 
     @Override
