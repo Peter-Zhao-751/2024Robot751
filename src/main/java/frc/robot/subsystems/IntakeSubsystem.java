@@ -11,12 +11,12 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-public class IntakeSubsystem extends SubsystemBase implements Component{
-    private CANSparkMax swivelMotor1;
-    private CANSparkMax swivelMotor2;
-    private TalonFX intakeMotor;
+public class IntakeSubsystem extends SubsystemBase implements Component {
+    private final CANSparkMax swivelMotor1;
+    private final CANSparkMax swivelMotor2;
+    private final TalonFX intakeMotor;
 
-    private PIDController swivelPIDController;
+    private final PIDController swivelPIDController;
     
     public IntakeSubsystem(){
         swivelMotor1 = new CANSparkMax(Constants.Intake.leftSwivelMotorID, MotorType.kBrushless);

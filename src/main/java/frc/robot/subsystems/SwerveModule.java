@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVelocityDutyCycle;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -20,13 +21,13 @@ import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 
 public class SwerveModule {
-    public int moduleNumber;
+    public final int moduleNumber;
     public SwerveModuleState desiredState;
     private Rotation2d angleOffset;
 
-    private TalonFX mAngleMotor;
-    private TalonFX mDriveMotor;
-    private CANcoder angleEncoder;
+    private final TalonFX mAngleMotor;
+    private final TalonFX mDriveMotor;
+    private final CANcoder angleEncoder;
 
     private final SimpleMotorFeedforward driveFeedForward = new SimpleMotorFeedforward(Constants.Swerve.driveKS, Constants.Swerve.driveKV, Constants.Swerve.driveKA);
 

@@ -30,9 +30,9 @@ public class TransferSubsystem extends SubsystemBase implements Component {
         shooterTransfer.set(speed);
     }
 
-    public void transfer(double speed) {
-        setIntakeTransfer(speed * intakeTransferRadius / shooterTransferRadius);
-        setShooterTransfer(speed);
+    public void transfer(double speed) { // in inches per second of surface speed
+        setIntakeTransfer(speed / (2 * Math.PI * intakeTransferRadius));
+        setShooterTransfer(speed / (2 * Math.PI * shooterTransferRadius));
     }
 
     public boolean beamBroken() { // True when beam is broken
@@ -55,7 +55,7 @@ public class TransferSubsystem extends SubsystemBase implements Component {
 
     @Override
     public int getPriority() {
-        return 0; // CHANGE
+        return 1; // CHANGE
     }
 
     @Override
