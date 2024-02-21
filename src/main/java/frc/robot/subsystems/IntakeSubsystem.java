@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.Current;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -15,6 +16,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component{
     private CANSparkMax swivelMotor2;
     private CANSparkMax transferMotor;
     private TalonFX intakeMotor;
+    private final DigitalInput beamBreak;
 
     private PIDController swivelPIDController;
     
@@ -25,6 +27,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component{
         transferMotor = new CANSparkMax(Constants.Intake.transportMotorID, MotorType.kBrushless);
 
         swivelPIDController = new PIDController(Constants.Intake.kPSwivelController, Constants.Intake.kISwivelController, Constants.Intake.kDSwivelController);
+
+        beamBreak = new DigitalInput(Constants.Intake.beamBreakPort);
     }
     
     public void setSwivelSpeed(double speed){
@@ -52,18 +56,26 @@ public class IntakeSubsystem extends SubsystemBase implements Component{
     public void periodic() {
         SmartDashboard.putNumber("Total Intake Current Draw", swivelMotor1.getOutputCurrent() + swivelMotor2.getOutputCurrent() + transferMotor.getOutputCurrent() + intakeMotor.getSupplyCurrent().getValue());
         SmartDashboard.putNumber("Intake Swivel Position", getSwivelPosition());
-
+        
+        SmartDashboard.putBoolean("Beam Break", !beamBreak.get());
 
         //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Intake);
     }
+
+    public boolean beamBreak() {
+        return !beamBreak.get();
+    }
+
     @Override
     public double getRequestedCurrent(){
         return 0;
     }
+
     @Override
     public void allocateCurrent(double current){
         //set motor controller current
     }
+
     @Override
     public int getPriority(){
         return 2;

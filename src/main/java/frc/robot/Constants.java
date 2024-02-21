@@ -51,6 +51,8 @@ public final class Constants {
         public static final int rightSwivelMotorID = 58;
         public static final int transportMotorID = 59;
 
+        public static final int beamBreakPort = 0;
+
         public static final double swivelGearRatio = 15.0; 
         public static final double maxSwivelSpeed = 0.15;
         public static final double intakeTime = 3.0;
