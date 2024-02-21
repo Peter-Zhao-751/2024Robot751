@@ -10,51 +10,63 @@ import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 public class ClimberSubsystem extends SubsystemBase implements Component{
-    private final CANSparkMax climbMotor1;
-    private final CANSparkMax climbMotor2;
+    private final CANSparkMax leftClimberMotor;
+    private final CANSparkMax rightClimberMotor;
     private final KalmanFilter.States currentEncoderStates;
     
     public ClimberSubsystem(){
-        climbMotor1 = new CANSparkMax(Constants.Climber.leftClimberMotorID, MotorType.kBrushless);
-        climbMotor2 = new CANSparkMax(Constants.Climber.rightClimberMotorID, MotorType.kBrushless);
+        leftClimberMotor = new CANSparkMax(Constants.Climber.leftClimberMotorID, MotorType.kBrushless);
+        rightClimberMotor = new CANSparkMax(Constants.Climber.rightClimberMotorID, MotorType.kBrushless);
         currentEncoderStates = new KalmanFilter.States(0);
     }
+
     public void climb(double speed){
-        climbMotor1.set(speed);
-        climbMotor2.set(speed);
+        leftClimberMotor.set(speed);
+        rightClimberMotor.set(speed);
     }
+
+    public void retract(double speed){
+        leftClimberMotor.set(-speed);
+        rightClimberMotor.set(-speed);
+    }
+
     public void stop(){
-        climbMotor1.set(0);
-        climbMotor2.set(0);
+        leftClimberMotor.set(0);
+        rightClimberMotor.set(0);
     }
+
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Total Climber Current Draw", climbMotor1.getOutputCurrent() + climbMotor2.getOutputCurrent());
-        climbMotor1.getEncoder().getVelocity();
+        SmartDashboard.putNumber("Total Climber Current Draw", leftClimberMotor.getOutputCurrent() + rightClimberMotor.getOutputCurrent());
+        leftClimberMotor.getEncoder().getVelocity();
 
         //TODO: update encoder states with velocity
         //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Climber);
     }
+
     private double getCurrentPosition(){
         //basically a solved differential equation for the extension of the spring as a function of how many rotations it has done. r = (k-TR)  c = 2pi(k-TR)                                          actually d = (r sub0 + T * R)^2, where r sub 0 is the max radius and 
 
 
 
-        return climbMotor1.getEncoder().getPosition();
+        return leftClimberMotor.getEncoder().getPosition();
     }
 
     @Override
     public double getRequestedCurrent(){
         return 0;
     }
+
     @Override
     public void allocateCurrent(double current){
         //set motor controller current
     }
+
     @Override
     public int getPriority(){
         return 5;
     }
+
     @Override
     public void updateBasedOnAllocatedCurrent(){
         //update motor controller based on allocated current
