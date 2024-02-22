@@ -37,6 +37,8 @@ public class RobotContainer {
      * https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/PS5Controller.Button.html
      */
 
+    private boolean climberMode = false;
+
     /* Controllers */
     private final Joystick driver = new Joystick(0);
 
@@ -114,18 +116,19 @@ public class RobotContainer {
         /* Util Commands */
         circleButton.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         triangleButton.onTrue(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()));
+        crossButton.onTrue(new InstantCommand(() -> climberMode = !climberMode));
 
         // leftBumper.whileTrue(new InstantCommand(() -> precise = true));
         // leftBumper.onFalse(new InstantCommand(() -> precise = false));
 
         // SHOOTER STUFF
         // 42-44 seems to work well
-        rightTrigger.whileTrue(new InstantCommand(() -> s_Shooter.shoot(SmartDashboard.getNumber("Shooter Speed", 0))));
-        rightTrigger.whileFalse(new InstantCommand(() -> s_Shooter.stop()));
+        rightTrigger.onTrue(new InstantCommand(() -> s_Shooter.shoot(SmartDashboard.getNumber("Shooter Speed", 0))));
+        rightTrigger.onFalse(new InstantCommand(() -> s_Shooter.stop()));
 
-        rightBumper.whileTrue(new InstantCommand(() -> s_Transfer.setShooterTransfer(-0.25)));
+        rightBumper.onTrue(new InstantCommand(() -> s_Transfer.setShooterTransfer(-0.25)));
         rightBumper.whileFalse(new InstantCommand(() -> s_Transfer.setShooterTransfer(0)));
-        leftBumper.whileTrue(new Transfer(0.25, s_Transfer));
+        leftBumper.onTrue(new Transfer(0.25, s_Transfer));
 
         // LOGGING STUFF FOR DRIVETRAIN
         // TODO: #8 Run logging for the swerve drive
