@@ -85,7 +85,7 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
     //     return routine.dynamic(direction);
     // }
 
-    public void shoot(double speed){
+    public void setSpeed(double speed){
         shooterMotor1.setControl(motionMagicVelocityVoltage.withVelocity(-speed));
         shooterMotor2.setControl(new Follower(shooterMotor1.getDeviceID(), true));
     }
@@ -95,8 +95,19 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
         shooterMotor2.set(0);
     }
 
+    public double getShooterMotor1Speed(){
+        return shooterMotor1.getRotorVelocity().getValue();
+    }
+    public double getShooterMotor2Speed(){
+        return shooterMotor2.getRotorVelocity().getValue();
+    }
+
     public double getShooterSpeed(){
-        return (shooterMotor1.get()+shooterMotor2.get())/2;
+        return (getShooterMotor1Speed() + getShooterMotor2Speed()) / 2;
+    }
+
+    public double getEstimatedSpinUpTime(double speed){
+        return 0.2;
     }
 
     @Override
@@ -134,7 +145,7 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
 
     @Override
     public int getPriority(){
-        return 5;
+        return 1;
     }
 
     @Override

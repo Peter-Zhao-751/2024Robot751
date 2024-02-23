@@ -53,14 +53,20 @@ public final class Constants {
         public static final double maxSwivelSpeed = 0.15;
         public static final double intakeTime = 3.0;
 
-        public static final double kPSwivelController = 0.8; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
+        public static final double kPSwivelController = 0.1; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
         public static final double kISwivelController = 0.0;
         public static final double kDSwivelController = 0.0;
 
+        public static final double kSSwivelFeedforward = 1.0;
+        public static final double kVSwivelFeedforward = 0.0;
+        public static final double kASwivelFeedforward = 0.0;
+        
         public static final double kSwivelExtendedAngle = 0.0; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
         public static final double kSwivelRetractedAngle = 90.0; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
 
         public static final double kSwivelencoderOffset = 0.0; // TODO: find this
+
+
     }
 
     public static final class Transfer{
@@ -76,6 +82,10 @@ public final class Constants {
         public static final double kPShooterController = 1.0;
 
         public static final double feedSpeed = 30; // units in centimeters per second
+
+        public static final double transferSystemLength = 50; // units in centimeters
+
+        public static final double maxTransferTime = 3.0; // unit in seconds
     }
 
     public static final class Climber{

@@ -93,7 +93,7 @@ public class RobotContainer {
 
     /* The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        Shooter = new Shooter(s_Shooter, s_Transfer);
+        Shooter = new Shoot(s_Shooter, s_Transfer);
         //Intake = new Intake(s_Intake, s_Transfer);
 
         JsonParser.JsonParser(null, s_Transfer, s_Shooter, s_Swerve);
@@ -124,7 +124,7 @@ public class RobotContainer {
 
         // SHOOTER STUFF
         // 42-44 seems to work well
-        rightTrigger.onTrue(new InstantCommand(() -> s_Shooter.shoot(SmartDashboard.getNumber("Shooter Speed", 0))));
+        rightTrigger.onTrue(new InstantCommand(() -> s_Shooter.setSpeed(SmartDashboard.getNumber("Shooter Speed", 0))));
         rightTrigger.onFalse(new InstantCommand(() -> s_Shooter.stop()));
 
         rightBumper.onTrue(new InstantCommand(() -> s_Transfer.setShooterTransfer(-0.25)));

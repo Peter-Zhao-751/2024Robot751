@@ -6,9 +6,6 @@ import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 import com.ctre.phoenix.led.TwinkleAnimation;
-import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
-
-import edu.wpi.first.units.Current;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -70,7 +67,7 @@ public class CANdleSubsystem extends SubsystemBase implements Component{
     public CANdleSubsystem() {
         currentAnimation = AnimationTypes.Idle;
         changeAnimation(AnimationTypes.Idle);
-        
+
         CANdleConfiguration configAll = new CANdleConfiguration();
         configAll.statusLedOffWhenActive = true;
         configAll.disableWhenLOS = false;
@@ -104,6 +101,7 @@ public class CANdleSubsystem extends SubsystemBase implements Component{
             }
         }else{
             m_candle.setLEDs(255, 255, 255);
+            System.err.println("Candle error, Alliance not found (not epic gamer moment)");
         }
     }
     @Override
