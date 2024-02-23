@@ -20,6 +20,14 @@ public class ClimberSubsystem extends SubsystemBase implements Component{
         currentEncoderStates = new KalmanFilter.States(0);
     }
 
+    public void rightMotor(double speed){
+        rightClimberMotor.set(speed);
+    }
+
+    public void leftMotor(double speed){
+        leftClimberMotor.set(speed);
+    }
+
     public void climb(double speed){
         leftClimberMotor.set(speed);
         rightClimberMotor.set(speed);
