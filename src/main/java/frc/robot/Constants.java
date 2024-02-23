@@ -47,6 +47,7 @@ public final class Constants {
         public static final int intakeMotorID = 56;
         public static final int leftSwivelMotorID = 57;
         public static final int rightSwivelMotorID = 58;
+        public static final int encoderID = 0;
 
         public static final double swivelGearRatio = 15.0; 
         public static final double maxSwivelSpeed = 0.15;
@@ -57,7 +58,9 @@ public final class Constants {
         public static final double kDSwivelController = 0.0;
 
         public static final double kSwivelExtendedAngle = 0.0; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
-        public static final double kSwivelRetractedAngle = 0.0; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
+        public static final double kSwivelRetractedAngle = 90.0; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
+
+        public static final double kSwivelencoderOffset = 0.0; // TODO: find this
     }
 
     public static final class Transfer{

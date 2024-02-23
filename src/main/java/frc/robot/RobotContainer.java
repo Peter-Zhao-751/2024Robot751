@@ -116,10 +116,11 @@ public class RobotContainer {
         /* Util Commands */
         circleButton.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         triangleButton.onTrue(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()));
-        crossButton.onTrue(new InstantCommand(() -> climberMode = !climberMode));
+        crossButton.onTrue(new InstantCommand(() -> s_Swerve.crossWheels()));
+        squareButton.onTrue(new InstantCommand(() -> climberMode = !climberMode));
 
-        // leftBumper.whileTrue(new InstantCommand(() -> precise = true));
-        // leftBumper.onFalse(new InstantCommand(() -> precise = false));
+        //leftBumper.whileTrue(new InstantCommand(() -> precise = true));
+        //leftBumper.onFalse(new InstantCommand(() -> precise = false));
 
         // SHOOTER STUFF
         // 42-44 seems to work well

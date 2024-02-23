@@ -4,6 +4,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.Current;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -15,20 +16,25 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     private final CANSparkMax swivelMotor1;
     private final CANSparkMax swivelMotor2;
     private final TalonFX intakeMotor;
+    private final DutyCycleEncoder angleEncoder;
 
     private final PIDController swivelPIDController;
     
     public IntakeSubsystem(){
         swivelMotor1 = new CANSparkMax(Constants.Intake.leftSwivelMotorID, MotorType.kBrushless);
         swivelMotor2 = new CANSparkMax(Constants.Intake.rightSwivelMotorID, MotorType.kBrushless);
+
         swivelMotor1.setIdleMode(CANSparkMax.IdleMode.kBrake);
         swivelMotor2.setIdleMode(CANSparkMax.IdleMode.kBrake);
+
         swivelMotor1.follow(swivelMotor1);
+
+        angleEncoder = new DutyCycleEncoder(Constants.Intake.encoderID);
 
         intakeMotor = new TalonFX(Constants.Intake.intakeMotorID);
 
         swivelPIDController = new PIDController(Constants.Intake.kPSwivelController, Constants.Intake.kISwivelController, Constants.Intake.kDSwivelController);
-    }
+    } 
     
     public void setSwivelSpeed(double speed){
         swivelMotor1.set(speed);
@@ -43,7 +49,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         intakeMotor.set(0);
     }
     public double getSwivelPosition(){
-        return swivelMotor1.getEncoder().getPosition();
+        return angleEncoder.getAbsolutePosition();
     }
 
     @Override
