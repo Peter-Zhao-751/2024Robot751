@@ -21,7 +21,7 @@ public class CANdleSubsystem extends SubsystemBase implements Component{
         Shoot(new ColorFlowAnimation(128, 20, 70, 0, 0.7, Constants.CANdle.LEDCount, Direction.Forward, 8)),
         Auton(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount, 8)),
         TeleopMovement(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount)),
-        InTake(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount)),
+        Intake(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount)),
         Climb(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount)),
         Dance(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount)),
         Alert(new TwinkleAnimation(255, 255, 255, 255, 0.5, Constants.CANdle.LEDCount, TwinkleAnimation.TwinklePercent.Percent100, 8)),
@@ -101,7 +101,7 @@ public class CANdleSubsystem extends SubsystemBase implements Component{
             }
         }else{
             m_candle.setLEDs(255, 255, 255);
-            System.err.println("Candle error, Alliance not found (not epic gamer moment)");
+            System.err.println("CANdle error, Alliance not found (not epic gamer moment)");
         }
     }
     @Override
