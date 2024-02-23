@@ -75,7 +75,7 @@ public class RobotContainer {
 
     /* Commands */
     private final Command Shooter;
-   // private final Command Intake;
+    //private final Command Intake;
 
     /* Subsystems */
     //private final CANdle s_CANdle = new CANdle();
@@ -84,16 +84,17 @@ public class RobotContainer {
     //private final ClimberSubsystem s_Climber = new ClimberSubsystem();
     private final SwerveDrive s_Swerve = new SwerveDrive();
     private final CANdleSubsystem s_CANdle = new CANdleSubsystem();
+    private final TransferSubsystem s_Transfer = new TransferSubsystem();
 
     /* values */
     private boolean precise = false;
 
     /* The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        Shooter = new Shooter(s_Shooter);
-        //Intake = new Intake(s_Intake);
+        Shooter = new Shooter(s_Shooter, s_Transfer);
+        //Intake = new Intake(s_Intake, s_Transfer);
 
-        JsonParser.JsonParser(null, s_Shooter, s_Swerve);
+        JsonParser.JsonParser(null, s_Transfer, s_Shooter, s_Swerve);
 
         s_Swerve.setDefaultCommand(
             new Teleop(
@@ -122,10 +123,9 @@ public class RobotContainer {
         rightTrigger.whileTrue(new InstantCommand(() -> s_Shooter.shoot(SmartDashboard.getNumber("Shooter Speed", 0))));
         rightTrigger.whileFalse(new InstantCommand(() -> s_Shooter.stop()));
 
-        rightBumper.whileTrue(new InstantCommand(() -> s_Shooter.transfer(-0.25)));
-        rightBumper.whileFalse(new InstantCommand(() -> s_Shooter.transfer(0)));
-        leftBumper.whileTrue(new InstantCommand(() -> s_Shooter.transfer(0.125)));
-        leftBumper.whileFalse(new InstantCommand(() -> s_Shooter.transfer(0)));
+        rightBumper.whileTrue(new InstantCommand(() -> s_Transfer.setShooterTransfer(-0.25)));
+        rightBumper.whileFalse(new InstantCommand(() -> s_Transfer.setShooterTransfer(0)));
+        leftBumper.whileTrue(new Transfer(0.25, s_Transfer));
 
         // LOGGING STUFF FOR DRIVETRAIN
         // TODO: #8 Run logging for the swerve drive

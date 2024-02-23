@@ -8,14 +8,11 @@ import frc.robot.Constants;
 
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
 
 // // Logging stuff for Characterization
 // import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -26,13 +23,12 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 public class ShooterSubsystem extends SubsystemBase implements Component {
     
-    private TalonFX shooterMotor1;
-    private TalonFX shooterMotor2;
-    private CANSparkMax transferMotor;
-    private double acceleration;
-    private double maxSpeed;
-    private boolean isPriming;
-    private double targetSpeed;
+    private final TalonFX shooterMotor1;
+    private final TalonFX shooterMotor2;
+    // private final double acceleration;
+    // private final double maxSpeed;
+    // private final boolean isPriming;
+    // private final double targetSpeed;
     private final MotionMagicVelocityVoltage motionMagicVelocityVoltage;
     // private final SysIdRoutine routine;
 
@@ -65,8 +61,6 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
         shooterMotor2.getConfigurator().apply(talonFXConfigs);
 
         motionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0);
-
-        transferMotor = new CANSparkMax(Constants.Shooter.transferMotorID, MotorType.kBrushless);
     
         // routine = new SysIdRoutine(
         //     new SysIdRoutine.Config(
@@ -94,10 +88,6 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
     public void shoot(double speed){
         shooterMotor1.setControl(motionMagicVelocityVoltage.withVelocity(-speed));
         shooterMotor2.setControl(new Follower(shooterMotor1.getDeviceID(), true));
-    }
-
-    public void transfer(double speed) { // TODO: #2 Implemenet a closed loop system for the transfer motor
-        transferMotor.set(speed);
     }
     
     public void stop(){

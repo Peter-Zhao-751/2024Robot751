@@ -28,13 +28,15 @@ import org.json.simple.parser.JSONParser;
 
 public class JsonParser {
     private static IntakeSubsystem intakeSubsystem;
+    private static TransferSubsystem transferSubsystem;
     private static ShooterSubsystem shooterSubsystem;
     private static SwerveDrive swerveSubsystem;
     private static JSONObject jsonObject;
     private static JSONArray jsonArray;
 
-    public static void JsonParser(IntakeSubsystem intakeSubsystem, ShooterSubsystem shooterSubsystem, SwerveDrive swerveSubsystem){
+    public static void JsonParser(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, ShooterSubsystem shooterSubsystem, SwerveDrive swerveSubsystem){
         JsonParser.intakeSubsystem = intakeSubsystem;
+        JsonParser.transferSubsystem = transferSubsystem;
         JsonParser.shooterSubsystem = shooterSubsystem;
         JsonParser.swerveSubsystem = swerveSubsystem;
 
@@ -82,11 +84,11 @@ public class JsonParser {
                     case "Shoot": 
                         double primeDelay = (delay-Constants.Shooter.spinUpTime) > 0 ? (delay-Constants.Shooter.spinUpTime) : 0;
                         ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new SpinShooter()));
-                        autonCommands.add(new SequentialCommandGroup(moveAndPrime, new Shooter(shooterSubsystem)));
+                        autonCommands.add(new SequentialCommandGroup(moveAndPrime, new Shooter(shooterSubsystem, transferSubsystem)));
                         break;
                     case "Pickup":
                         double intakeDelay = (delay-5) > 0 ? (delay-5) : 0;
-                        ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new Intake(intakeSubsystem)));
+                        ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new Intake(intakeSubsystem, transferSubsystem)));
                         autonCommands.add(moveAndIntake);
                         break;
                     default:

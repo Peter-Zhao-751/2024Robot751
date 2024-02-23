@@ -28,15 +28,15 @@ import edu.wpi.first.units.Voltage;
 import static edu.wpi.first.units.Units.Volts;
 
 public class SwerveDrive extends SubsystemBase {
-    public StructArrayPublisher<SwerveModuleState> actualPublisher;
-    public StructArrayPublisher<SwerveModuleState> desirePublisher;
+    public final StructArrayPublisher<SwerveModuleState> actualPublisher;
+    public final StructArrayPublisher<SwerveModuleState> desirePublisher;
     private final Field2d m_field = new Field2d();
-    public SwerveDriveOdometry swerveOdometry;
-    public Odometry odometry;
-    public SwerveModule[] mSwerveMods;
-    public Pigeon2 gyro;
-    public Limelight limelight;
-    public SysIdRoutine routine;
+    public final SwerveDriveOdometry swerveOdometry;
+    public final Odometry odometry;
+    public final SwerveModule[] mSwerveMods;
+    public final Pigeon2 gyro;
+    public final Limelight limelight;
+    public final SysIdRoutine routine;
 
     public SwerveDrive() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.CANivoreID);

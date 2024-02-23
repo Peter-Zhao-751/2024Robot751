@@ -2,21 +2,24 @@ package frc.robot.commands;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.TransferSubsystem;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class Shooter extends Command{
     private ShooterSubsystem shooterSubsystem;
+    private TransferSubsystem transferSubsystem;
     private double startTime;
     private double speed;
     private double totalRunTime;
-    public Shooter(ShooterSubsystem shooterSubsystem, double speed) {
+    public Shooter(ShooterSubsystem shooterSubsystem, TransferSubsystem transferSubsystem, double speed) {
         this.shooterSubsystem = shooterSubsystem;
+        this.transferSubsystem = transferSubsystem;
         this.speed = speed;
         addRequirements(shooterSubsystem);
     }
-    public Shooter(ShooterSubsystem shooterSubsystem) {
-        this(shooterSubsystem, 0.75);
+    public Shooter(ShooterSubsystem shooterSubsystem, TransferSubsystem transferSubsystem) {
+        this(shooterSubsystem, transferSubsystem, 0.75);
     }
     @Override
     public void initialize() {
@@ -32,7 +35,7 @@ public class Shooter extends Command{
     @Override
     public void execute() {
         if (Math.abs(shooterSubsystem.getShooterSpeed() - speed) <= 0.05 || System.currentTimeMillis() - startTime <= Constants.Shooter.feedTime * 1000) {
-            shooterSubsystem.transfer(Constants.Shooter.transferSpeed);
+            transferSubsystem.transfer(Constants.Shooter.transferSpeed);
         }
     }
 

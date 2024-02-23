@@ -37,8 +37,6 @@ public final class Constants {
         public static final int leftShooterMotorID = 51;
         public static final int rightShooterMotorID = 52;
 
-        public static final int transferMotorID = 53;
-
         public static final double spinUpTime = 2.0;
         public static final double transferSpeed = 0.3;
         public static final double feedTime = 0.2;
@@ -49,9 +47,6 @@ public final class Constants {
         public static final int intakeMotorID = 56;
         public static final int leftSwivelMotorID = 57;
         public static final int rightSwivelMotorID = 58;
-        public static final int transportMotorID = 59;
-
-        public static final int beamBreakPort = 0;
 
         public static final double swivelGearRatio = 15.0; 
         public static final double maxSwivelSpeed = 0.15;
@@ -63,6 +58,21 @@ public final class Constants {
 
         public static final double kSwivelExtendedAngle = 0.0; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
         public static final double kSwivelRetractedAngle = 0.0; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
+    }
+
+    public static final class Transfer{
+        public static final int shooterTransferID = 53;
+        public static final double shooterTransferRadius = 2.8575; // units in centimeters
+
+        public static final int intakeTransferID = 59;
+        public static final double intakeTransferRadius = 5.08; // units in centimeters
+
+        public static final int beamBreakID = 0;
+
+        public static final double kPIntakeController = 1.0;
+        public static final double kPShooterController = 1.0;
+
+        public static final double feedSpeed = 30; // units in centimeters per second
     }
 
     public static final class Climber{
@@ -81,8 +91,8 @@ public final class Constants {
         public static final COTSTalonFXSwerveConstants chosenModule = COTSTalonFXSwerveConstants.SDS.MK4i.KrakenX60(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L3);
 
         /* Drivetrain Constants */
-        public static final double trackWidth = Units.inchesToMeters(21.75); // 27 (Frame width) - 2*2.625 (SDS wheel offset)
-        public static final double wheelBase = Units.inchesToMeters(21.75);
+        public static final double trackWidth = 0.55245; //21.75 inches // 27 (Frame width) - 2*2.625 (SDS wheel offset)
+        public static final double wheelBase = 0.55245;
         public static final double wheelCircumference = chosenModule.wheelCircumference;
 
         /* Swerve Kinematics 
