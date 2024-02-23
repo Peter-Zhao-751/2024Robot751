@@ -195,6 +195,12 @@ public class SwerveDrive extends SubsystemBase {
         }
     }
 
+    public void crossModules(){
+        for(SwerveModule mod : mSwerveMods){
+            mod.setDesiredState(new SwerveModuleState(0, new Rotation2d((mod.moduleNumber-1) * 90 + 45)), false);
+        }
+    }
+
     @Override
     public void periodic(){
         // update current

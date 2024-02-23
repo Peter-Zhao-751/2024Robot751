@@ -77,13 +77,13 @@ public class RobotContainer {
 
     /* Commands */
     private final Command Shooter;
-    private final Command Intake;
+    //private final Command Intake;
 
     /* Subsystems */
     //private final CANdle s_CANdle = new CANdle();
     private final ShooterSubsystem s_Shooter = new ShooterSubsystem();
-    private final IntakeSubsystem s_Intake = new IntakeSubsystem();
-    private final ClimberSubsystem s_Climber = new ClimberSubsystem();
+    //private final IntakeSubsystem s_Intake = new IntakeSubsystem();
+    //private final ClimberSubsystem s_Climber = new ClimberSubsystem();
     private final SwerveDrive s_Swerve = new SwerveDrive();
     private final CANdleSubsystem s_CANdle = new CANdleSubsystem();
     private final TransferSubsystem s_Transfer = new TransferSubsystem();
@@ -94,9 +94,9 @@ public class RobotContainer {
     /* The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         Shooter = new Shooter(s_Shooter, s_Transfer);
-        Intake = new Intake(s_Intake, s_Transfer);
+        //Intake = new Intake(s_Intake, s_Transfer);
 
-        JsonParser.JsonParser(s_Intake, s_Transfer, s_Shooter, s_Swerve);
+        JsonParser.JsonParser(null, s_Transfer, s_Shooter, s_Swerve);
 
         s_Swerve.setDefaultCommand(
             new Teleop(
@@ -116,10 +116,11 @@ public class RobotContainer {
         /* Util Commands */
         circleButton.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         triangleButton.onTrue(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()));
-        crossButton.onTrue(new InstantCommand(() -> climberMode = !climberMode));
+        crossButton.onTrue(new InstantCommand(() -> s_Swerve.crossWheels()));
+        squareButton.onTrue(new InstantCommand(() -> climberMode = !climberMode));
 
-        // leftBumper.whileTrue(new InstantCommand(() -> precise = true));
-        // leftBumper.onFalse(new InstantCommand(() -> precise = false));
+        //leftBumper.whileTrue(new InstantCommand(() -> precise = true));
+        //leftBumper.onFalse(new InstantCommand(() -> precise = false));
 
         // SHOOTER STUFF
         // 42-44 seems to work well

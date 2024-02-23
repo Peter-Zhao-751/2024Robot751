@@ -33,7 +33,7 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
     // private final SysIdRoutine routine;
 
     public ShooterSubsystem(){
-        shooterMotor1 = new TalonFX(Constants.Shooter.leftShooterMotorID, Constants.CANivoreID);
+        shooterMotor1 = new TalonFX(Constants.Shooter.leftShooterMotorID);
         shooterMotor1.setNeutralMode(NeutralModeValue.Coast);
 
         shooterMotor2 = new TalonFX(Constants.Shooter.rightShooterMotorID, Constants.CANivoreID);
@@ -101,7 +101,6 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
 
     @Override
     public void periodic() {
-
         //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Shooter);
 
         // ShuffleboardTab tab = Shuffleboard.getTab("Shooter");
