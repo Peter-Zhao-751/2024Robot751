@@ -9,12 +9,10 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 public class ClimberSubsystem extends SubsystemBase implements Component{
     private final CANSparkMax leftClimberMotor;
     private final CANSparkMax rightClimberMotor;
-    private final KalmanFilter.States currentEncoderStates;
     
     public ClimberSubsystem(){
         leftClimberMotor = new CANSparkMax(Constants.Climber.leftClimberMotorID, MotorType.kBrushless);
         rightClimberMotor = new CANSparkMax(Constants.Climber.rightClimberMotorID, MotorType.kBrushless);
-        currentEncoderStates = new KalmanFilter.States(0);
     }
 
     public void rightMotor(double speed){
