@@ -61,16 +61,19 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     @Override
     public void periodic() {
         double currentAngle = getSwivelPosition();
-        double pidOutput = swivelPIDController.calculate(currentAngle, swivelSetpoint);
 
-        double targetAngleRadians = Math.toRadians(swivelSetpoint);
+        if (Math.abs(currentAngle - swivelSetpoint) > 3){
+            double pidOutput = swivelPIDController.calculate(currentAngle, swivelSetpoint);
 
-        double feedforwardOutput = swivelFeedforwardController.calculate(targetAngleRadians, 0, 0);
+            double targetAngleRadians = Math.toRadians(swivelSetpoint);
 
-        double output = pidOutput + feedforwardOutput;
+            double feedforwardOutput = swivelFeedforwardController.calculate(targetAngleRadians, 0, 0);
 
-        leftSwivelMotor.setVoltage(output);
-        leftSwivelMotor.setVoltage(output); // Follows motor1, inverted if necessary
+            double output = pidOutput + feedforwardOutput;
+
+            leftSwivelMotor.setVoltage(output);
+            rightSwivelMotor.setVoltage(output);
+        }
 
         SmartDashboard.putNumber("Total Intake Current Draw", leftSwivelMotor.getOutputCurrent() + rightSwivelMotor.getOutputCurrent() + intakeMotor.getSupplyCurrent().getValue());
         SmartDashboard.putNumber("Intake Swivel Position", getSwivelPosition());
