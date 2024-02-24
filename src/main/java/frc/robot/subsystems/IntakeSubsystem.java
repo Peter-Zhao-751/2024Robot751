@@ -2,15 +2,13 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.units.Current;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 public class IntakeSubsystem extends SubsystemBase implements Component {
@@ -20,7 +18,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
     private final TalonFX intakeMotor;
 
-    private final DutyCycleEncoder angleEncoder;
+    private final SparkAbsoluteEncoder angleEncoder;
 
     private final ArmFeedforward swivelFeedforwardController;
     private final PIDController swivelPIDController;
@@ -34,7 +32,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         leftSwivelMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         rightSwivelMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
-        angleEncoder = new DutyCycleEncoder(Constants.Intake.encoderID);
+        angleEncoder = leftSwivelMotor.getAbsoluteEncoder();
 
         intakeMotor = new TalonFX(Constants.Intake.intakeMotorID);
 
@@ -46,6 +44,10 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         intakeMotor.set(speed);
     }
 
+    public void setSwivelPosition(double position){
+        swivelSetpoint = position;
+    }
+
     public void stopAll(){
         leftSwivelMotor.set(0);
         rightSwivelMotor.set(0);
@@ -53,16 +55,15 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     }
 
     public double getSwivelPosition(){
-        return angleEncoder.getAbsolutePosition();
+        return angleEncoder.getPosition() % 1 * 360;
     }
 
     @Override
     public void periodic() {
-        double currentAngle = angleEncoder.getAbsolutePosition();
+        double currentAngle = getSwivelPosition();
         double pidOutput = swivelPIDController.calculate(currentAngle, swivelSetpoint);
 
         double targetAngleRadians = Math.toRadians(swivelSetpoint);
-        double currentAngleRadians = Math.toRadians(currentAngle);
 
         double feedforwardOutput = swivelFeedforwardController.calculate(targetAngleRadians, 0, 0);
 

@@ -8,7 +8,7 @@ import java.util.Iterator;
 
 import frc.robot.Constants;
 import frc.robot.commands.Shoot;
-import frc.robot.commands.Intake;
+import frc.robot.commands.lowLevelCommands.Intake;
 import frc.robot.commands.Move;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -82,9 +82,9 @@ public class JsonParser {
 
                 switch (getEvent(point)){
                     case "Shoot": 
-                        double primeDelay = (delay-Constants.Shooter.spinUpTime) > 0 ? (delay-Constants.Shooter.spinUpTime) : 0;
-                        ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new InstantCommand()));
-                        autonCommands.add(new SequentialCommandGroup(moveAndPrime, new Shoot(shooterSubsystem, transferSubsystem)));
+                        //double primeDelay = (delay-Constants.Shooter.spinUpTime) > 0 ? (delay-Constants.Shooter.spinUpTime) : 0;
+                        //ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new InstantCommand()));
+                        autonCommands.add(new SequentialCommandGroup(newMovementCommand, new Shoot(shooterSubsystem, transferSubsystem)));
                         break;
                     case "Pickup":
                         double intakeDelay = (delay-5) > 0 ? (delay-5) : 0;
