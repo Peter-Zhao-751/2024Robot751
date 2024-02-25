@@ -203,6 +203,21 @@ public class SwerveDrive extends SubsystemBase {
 
     @Override
     public void periodic(){
+        double accelerationX = gyro.getAccelerationX().getValue();
+        double accelerationY = gyro.getAccelerationY().getValue();
+        double accelerationZ = gyro.getAccelerationZ().getValue();
+
+        double yaw = gyro.getYaw().getValue();
+        double pitch = gyro.getPitch().getValue();
+        double roll = gyro.getRoll().getValue();
+        
+        double yawRadians = Math.toRadians(yaw);
+        double fieldAccelerationX = accelerationX * Math.cos(yawRadians) - accelerationY * Math.sin(yawRadians);
+        double fieldAccelerationY = accelerationX * Math.sin(yawRadians) + accelerationY * Math.cos(yawRadians);
+
+        SmartDashboard.putNumber("fieldAccelerationX", fieldAccelerationX);
+        SmartDashboard.putNumber("fieldAccelerationY", fieldAccelerationY);
+
         // update current
         double totalCurrent = 0;
         for (SwerveModule mod : mSwerveMods){
