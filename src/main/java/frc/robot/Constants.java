@@ -40,6 +40,17 @@ public final class Constants {
         public static final double spinUpTime = 2.0;
         public static final double transferSpeed = 0.3;
         public static final double feedTime = 0.2;
+
+        public static final double kSFlyWheelFeedforward = 0.25;
+        public static final double kVFlyWheelFeedforward = 0.12;
+        public static final double kAFlyWheelFeedforward = 0.01;
+
+        public static final double kPFlyWheelController = 0.11;
+        public static final double kIFlyWheelController = 0.0;
+        public static final double kDFlyWheelController = 0.0;
+
+        public static final double kProcessNoise = 3.0;
+        public static final double kMeasurementNoise = 0.01;
     }
 
     public static final class Intake{

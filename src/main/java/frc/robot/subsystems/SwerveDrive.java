@@ -27,6 +27,10 @@ import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import static edu.wpi.first.units.Units.Volts;
 
+// import sendable and sendable buffer
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+
 public class SwerveDrive extends SubsystemBase {
     public final StructArrayPublisher<SwerveModuleState> actualPublisher;
     public final StructArrayPublisher<SwerveModuleState> desirePublisher;
@@ -199,7 +203,7 @@ public class SwerveDrive extends SubsystemBase {
         for(SwerveModule mod : mSwerveMods){
             mod.setDesiredState(new SwerveModuleState(0, new Rotation2d((mod.moduleNumber-1) * 90 + 45)), false);
         }
-    }
+    } 
 
     @Override
     public void periodic(){
@@ -289,5 +293,26 @@ public class SwerveDrive extends SubsystemBase {
         SmartDashboard.putNumber("swerve y", swerveOdometry.getPoseMeters().getY());
 
         m_field.setRobotPose(odometry.getPoseMeters());
+
+        SmartDashboard.putData("Swerve Drive", new Sendable() {
+            @Override
+            public void initSendable(SendableBuilder builder) {
+                builder.setSmartDashboardType("SwerveDrive");
+          
+                builder.addDoubleProperty("Front Left Angle", () -> mSwerveMods[0].getPosition().angle.getRadians(), null);
+                builder.addDoubleProperty("Front Left Velocity", () -> mSwerveMods[0].getState().speedMetersPerSecond, null);
+
+                builder.addDoubleProperty("Front Right Angle", () -> mSwerveMods[1].getPosition().angle.getRadians(), null);
+                builder.addDoubleProperty("Front Right Velocity", () -> mSwerveMods[1].getState().speedMetersPerSecond, null);
+
+                builder.addDoubleProperty("Back Left Angle", () -> mSwerveMods[2].getPosition().angle.getRadians(), null);
+                builder.addDoubleProperty("Back Left Velocity", () -> mSwerveMods[2].getState().speedMetersPerSecond, null);
+
+                builder.addDoubleProperty("Back Right Angle", () -> mSwerveMods[3].getPosition().angle.getRadians(), null);
+                builder.addDoubleProperty("Back Right Velocity", () -> mSwerveMods[3].getState().speedMetersPerSecond, null);
+          
+                builder.addDoubleProperty("Robot Angle", () -> getGyroYaw().getRadians(), null);
+            }
+        });
     }
 }
