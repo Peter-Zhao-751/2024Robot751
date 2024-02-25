@@ -215,8 +215,38 @@ public class SwerveDrive extends SubsystemBase {
         double fieldAccelerationX = accelerationX * Math.cos(yawRadians) - accelerationY * Math.sin(yawRadians);
         double fieldAccelerationY = accelerationX * Math.sin(yawRadians) + accelerationY * Math.cos(yawRadians);
 
-        SmartDashboard.putNumber("fieldAccelerationX", fieldAccelerationX);
-        SmartDashboard.putNumber("fieldAccelerationY", fieldAccelerationY);
+        SmartDashboard.putNumber("traditional fieldAccelerationX", fieldAccelerationX);
+        SmartDashboard.putNumber("traditional fieldAccelerationY", fieldAccelerationY);
+
+
+        double quatW = gyro.getQuatW().getValue();
+        double quatX = gyro.getQuatX().getValue();
+        double quatY = gyro.getQuatY().getValue();
+        double quatZ = gyro.getQuatZ().getValue();
+
+        double[][] rotationMatrix = new double[3][3];
+
+        rotationMatrix[0][0] = 1.0 - 2.0 * (quatY * quatY + quatZ * quatZ);
+        rotationMatrix[0][1] = 2.0 * (quatX * quatY - quatZ * quatW);
+        rotationMatrix[0][2] = 2.0 * (quatX * quatZ + quatY * quatW);
+
+        rotationMatrix[1][0] = 2.0 * (quatX * quatY + quatZ * quatW);
+        rotationMatrix[1][1] = 1.0 - 2.0 * (quatX * quatX + quatZ * quatZ);
+        rotationMatrix[1][2] = 2.0 * (quatY * quatZ - quatX * quatW);
+
+        rotationMatrix[2][0] = 2.0 * (quatX * quatZ - quatY * quatW);
+        rotationMatrix[2][1] = 2.0 * (quatY * quatZ + quatX * quatW);
+        rotationMatrix[2][2] = 1.0 - 2.0 * (quatX * quatX + quatY * quatY);
+
+        double[] fieldAcceleration = new double[3];
+        fieldAcceleration[0] = rotationMatrix[0][0] * accelerationX + rotationMatrix[0][1] * accelerationY + rotationMatrix[0][2] * accelerationZ;
+        fieldAcceleration[1] = rotationMatrix[1][0] * accelerationX + rotationMatrix[1][1] * accelerationY + rotationMatrix[1][2] * accelerationZ;
+        fieldAcceleration[2] = rotationMatrix[2][0] * accelerationX + rotationMatrix[2][1] * accelerationY + rotationMatrix[2][2] * accelerationZ;
+
+        SmartDashboard.putNumber("fieldAccelerationX", fieldAcceleration[0]);
+        SmartDashboard.putNumber("fieldAccelerationY", fieldAcceleration[1]);
+        SmartDashboard.putNumber("fieldAccelerationZ", fieldAcceleration[2]);
+
 
         // update current
         double totalCurrent = 0;
