@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 public class KalmanFilter {
@@ -155,7 +156,7 @@ public class KalmanFilter {
         yState.updateAcceleration(sensorAccY, noise.R_acceleration);
     }
 
-    public void update(double currentTime, double sensorPosX, double sensorPosY, double sensorVelX, double sensorVelY, double sensorAccX, double sensorAccY) {
+    public void update(double sensorPosX, double sensorPosY, double sensorVelX, double sensorVelY, double sensorAccX, double sensorAccY) {
         double deltaTime = predictAndUpdateTime();
         if (deltaTime > Constants.Odometry.maxLimeTimeout) {
             reset(sensorPosX, sensorPosY, sensorVelX, sensorVelY, sensorAccX, sensorAccY);
@@ -165,8 +166,25 @@ public class KalmanFilter {
         updateVelocityAndAcceleration(sensorVelX, sensorVelY, sensorAccX, sensorAccY);
     }
 
-    public void update(double currentTime, double sensorVelX, double sensorVelY, double sensorAccX, double sensorAccY) {
+    public void update(double sensorVelX, double sensorVelY, double sensorAccX, double sensorAccY) {
         predictAndUpdateTime();
         updateVelocityAndAcceleration(sensorVelX, sensorVelY, sensorAccX, sensorAccY);
+    }
+
+    public double getPosX() {
+        return xState.position;
+    }
+
+    public double getPosY() {
+        return yState.position;
+    }
+
+    public void debugDisplayValues(){
+        SmartDashboard.putNumber("Kalman X Position", xState.position);
+        SmartDashboard.putNumber("Kalman Y Position", yState.position);
+
+        SmartDashboard.putNumber("Kalman Measurement Noise R Position", noise.R_position);
+        SmartDashboard.putNumber("Kalman Measurement Noise R Velocity", noise.R_velocity);
+        SmartDashboard.putNumber("Kalman Measurement Noise R Acceleration", noise.R_acceleration);
     }
 }

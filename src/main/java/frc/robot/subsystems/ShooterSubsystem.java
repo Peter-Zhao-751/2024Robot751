@@ -21,7 +21,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.estimator.KalmanFilter;
 
 // // Logging stuff for Characterization
-// import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 // import com.ctre.phoenix6.SignalLogger;
 // import edu.wpi.first.units.Measure;
 // import edu.wpi.first.units.Voltage;
@@ -85,7 +85,7 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
         targetSpeed = 0;
 
         motionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0);
-    
+        
         // routine = new SysIdRoutine(
         //     new SysIdRoutine.Config(
         //         null,

@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.CurrentManager;
 import java.io.File;
 import java.nio.file.Path;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.Filesystem;
 import java.util.Base64;
@@ -63,6 +65,36 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    // Robot Preferences
+
+    // Go through every constant in Constants.java check if the Preference exists.
+    // add it if it doesn't. if it does, overwrite it.
+    
+    Field[] fields = Constants.class.getDeclaredFields();
+
+    for (Field field : fields) {
+        // Only log public static fields
+        if (Modifier.isPublic(field.getModifiers()) && Modifier.isStatic(field.getModifiers())) {
+            //
+            System.out.println("Variable name: " + field.getName());
+        }
+    }
+
+    // Logging names of all fields in inner classes of Constants
+    Class<?>[] innerClasses = Constants.class.getDeclaredClasses();
+    
+    for (Class<?> innerClass : innerClasses) {
+        System.out.println("Inner class: " + innerClass.getSimpleName());
+        fields = innerClass.getDeclaredFields();
+        for (Field field : fields) {
+            // Only log public static fields
+            if (Modifier.isPublic(field.getModifiers()) && Modifier.isStatic(field.getModifiers())) {
+                System.out.println("Variable name: " + field.getName());
+            }
+        }
+    }
+
+    
     // robot container
     m_robotContainer = new RobotContainer();
     SignalLogger.setPath("/media/sda1/");
