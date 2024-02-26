@@ -118,7 +118,7 @@ public class KalmanFilter {
     private double adjustR(double currentR, double innovation) {
         // Example: Increase R if the innovation is large
         double adjustedR = currentR + Math.abs(innovation) * 0.1; // This is a simplistic approach
-        return adjustedR;
+        return currentR; // adjustedR
     }
 
     public void setMeasurementNoise(double positionNoiseVar, double velocityNoiseVar, double accelerationNoiseVar) {
