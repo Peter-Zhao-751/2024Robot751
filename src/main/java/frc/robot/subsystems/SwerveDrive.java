@@ -118,7 +118,7 @@ public class SwerveDrive extends SubsystemBase {
                                     xSpeed, 
                                     ySpeed, 
                                     rot, 
-                                    getHeading()
+                                    getGyroYaw()
                                 )
                                 : new ChassisSpeeds(
                                     xSpeed, 
@@ -177,10 +177,6 @@ public class SwerveDrive extends SubsystemBase {
 
     public void setPose(Pose2d pose) {
         swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
-    }
-
-    public Rotation2d getHeading(){
-        return getPose().getRotation();
     }
 
     public void setHeading(Rotation2d heading){
@@ -280,12 +276,18 @@ public class SwerveDrive extends SubsystemBase {
         SmartDashboard.putNumber("Chassis Speeds Y", speeds.vyMetersPerSecond);
 
 
+        double fieldChassisSpeedX = rotationMatrix[0][0] * speeds.vxMetersPerSecond + rotationMatrix[0][1] * speeds.vyMetersPerSecond;
+        double fieldChassisSpeedY = rotationMatrix[1][0] * speeds.vxMetersPerSecond + rotationMatrix[1][1] * speeds.vyMetersPerSecond;
+
+        SmartDashboard.putNumber("Field Space Chassis Speeds Y", fieldChassisSpeedX);
+        SmartDashboard.putNumber("Field Space Chassis Speeds Y", fieldChassisSpeedY);
+
         if (limelight.hasTarget() && newLimePosition != null){
-            kalmanFilter.update(newLimePosition.getX(), newLimePosition.getY(), speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, fieldAcceleration[0], fieldAcceleration[1]);
+            kalmanFilter.update(newLimePosition.getX(), newLimePosition.getY(), fieldChassisSpeedX, fieldChassisSpeedY, fieldAcceleration[0], fieldAcceleration[1]);
             odometry.update(newLimePosition, getGyroYaw(), getModulePositions());
         } else {
             odometry.update(getGyroYaw(), getModulePositions());
-            kalmanFilter.update(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, fieldAcceleration[0], fieldAcceleration[1]);
+            kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY, fieldAcceleration[0], fieldAcceleration[1]);
         }
 
         kalmanFilter.debugDisplayValues();
@@ -302,12 +304,18 @@ public class SwerveDrive extends SubsystemBase {
         
         actualPublisher.set(getModuleStates());
 
-        SmartDashboard.putNumber("Robot Angle", getHeading().getDegrees());
         SmartDashboard.putNumber("robot x", odometry.getPoseMeters().getX());
         SmartDashboard.putNumber("robot y", odometry.getPoseMeters().getY());
 
         SmartDashboard.putNumber("swerve x", swerveOdometry.getPoseMeters().getX());
         SmartDashboard.putNumber("swerve y", swerveOdometry.getPoseMeters().getY());
+
+        SmartDashboard.putNumber("Robot Yaw", gyro.getYaw().getValue());
+        SmartDashboard.putNumber("Robot Pitch", gyro.getPitch().getValue());
+        SmartDashboard.putNumber("Robot Roll", gyro.getRoll().getValue());
+
+
+
 
         m_field.setRobotPose(odometry.getPoseMeters());
 

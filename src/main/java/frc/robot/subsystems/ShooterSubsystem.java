@@ -142,27 +142,27 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
 
         //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Shooter);
 
-        ShuffleboardTab tab = Shuffleboard.getTab("Shooter");
+        //ShuffleboardTab tab = Shuffleboard.getTab("Robot Shooter132");
 
-        tab.add("Shooter Velocity", Math.abs(shooterMotor1.getRotorVelocity().getValue() + shooterMotor2.getRotorVelocity().getValue()) / 2);
-        tab.add("Shooter Voltage", Math.abs(shooterMotor1.getMotorVoltage().getValue() + shooterMotor2.getMotorVoltage().getValue()) / 2);
-        tab.add("Shooter Current", Math.abs(shooterMotor1.getSupplyCurrent().getValue() + shooterMotor2.getSupplyCurrent().getValue()) / 2);
+        // tab.add("Shooter Velocity", Math.abs(shooterMotor1.getRotorVelocity().getValue() + shooterMotor2.getRotorVelocity().getValue()) / 2);
+        // tab.add("Shooter Voltage", Math.abs(shooterMotor1.getMotorVoltage().getValue() + shooterMotor2.getMotorVoltage().getValue()) / 2);
+        // tab.add("Shooter Current", Math.abs(shooterMotor1.getSupplyCurrent().getValue() + shooterMotor2.getSupplyCurrent().getValue()) / 2);
 
-        tab.add("Shooter Left Velocity", Math.abs(shooterMotor1.getRotorVelocity().getValue()));
-        tab.add("Shooter Left Voltage", Math.abs(shooterMotor1.getMotorVoltage().getValue()));
-        tab.add("Shooter Left Current", Math.abs(shooterMotor1.getSupplyCurrent().getValue()));
+        // tab.add("Shooter Left Velocity", Math.abs(shooterMotor1.getRotorVelocity().getValue()));
+        // tab.add("Shooter Left Voltage", Math.abs(shooterMotor1.getMotorVoltage().getValue()));
+        // tab.add("Shooter Left Current", Math.abs(shooterMotor1.getSupplyCurrent().getValue()));
 
-        tab.add("Shooter Right Velocity", Math.abs(shooterMotor2.getRotorVelocity().getValue()));
-        tab.add("Shooter Right Voltage", Math.abs(shooterMotor2.getMotorVoltage().getValue()));
-        tab.add("Shooter Right Current", Math.abs(shooterMotor2.getSupplyCurrent().getValue()));
+        // tab.add("Shooter Right Velocity", Math.abs(shooterMotor2.getRotorVelocity().getValue()));
+        // tab.add("Shooter Right Voltage", Math.abs(shooterMotor2.getMotorVoltage().getValue()));
+        // tab.add("Shooter Right Current", Math.abs(shooterMotor2.getSupplyCurrent().getValue()));
 
         kalmanFilter.correct(VecBuilder.fill(targetSpeed), VecBuilder.fill(getShooterMotor1Speed()));
 
-        tab.add("Kalman Filter X-hat 0", kalmanFilter.getXhat(0));
+        SmartDashboard.putNumber("Kalman Filter X-hat 0", kalmanFilter.getXhat(0));
         try{
-            tab.add("Kalman Filter X-hat 1", kalmanFilter.getXhat(1));
+            SmartDashboard.putNumber("Kalman Filter X-hat 1", kalmanFilter.getXhat(1));
         } catch (Exception e){
-            tab.add("Kalman Filter X-hat 1", "dumb");
+            SmartDashboard.putString("Kalman Filter X-hat 1", "dumb");
         }
     }
 
