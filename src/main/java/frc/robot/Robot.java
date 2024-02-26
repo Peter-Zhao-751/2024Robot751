@@ -168,7 +168,6 @@ public class Robot extends TimedRobot {
   private void updateTelemetry(){
     SmartDashboard.putBoolean("Current Manager Over Nominal", CurrentManager.isOverNominal());
     SmartDashboard.putBoolean("Current Manager Over Peak", CurrentManager.isOverMax());
-
     updatePathPreview();
   }
 
