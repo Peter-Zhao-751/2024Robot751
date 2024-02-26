@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import static edu.wpi.first.units.Units.Volts;
+//import edu.wpi.first.math.estimator.UnscentedKalmanFilter;
 
 // import sendable and sendable buffer
 import edu.wpi.first.util.sendable.Sendable;
@@ -41,6 +42,9 @@ public class SwerveDrive extends SubsystemBase {
     public final Pigeon2 gyro;
     public final Limelight limelight;
     public final SysIdRoutine routine;
+
+    private final KalmanFilter kalmanFilter;
+
 
     public SwerveDrive() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.CANivoreID);
@@ -79,6 +83,8 @@ public class SwerveDrive extends SubsystemBase {
                 System.out.println("Volts: " + volts.in(Volts));
             }, null, this)
         );
+
+        kalmanFilter = new KalmanFilter(0, 0, 0, 0, 0, 0, Constants.Odometry.kPositionNoiseVar, Constants.Odometry.kVelocityNoiseVar, Constants.Odometry.kAccelerationNoiseVar, Constants.Odometry.kPositionProcessNoise, Constants.Odometry.kVelocityProcessNoise, Constants.Odometry.kAccelerationProcessNoise);
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
@@ -251,7 +257,6 @@ public class SwerveDrive extends SubsystemBase {
         SmartDashboard.putNumber("fieldAccelerationY", fieldAcceleration[1]);
         SmartDashboard.putNumber("fieldAccelerationZ", fieldAcceleration[2]);
 
-
         // update current
         double totalCurrent = 0;
         for (SwerveModule mod : mSwerveMods){
@@ -267,11 +272,23 @@ public class SwerveDrive extends SubsystemBase {
         Pose2d newLimePosition = limelight.getPose();
         limelight.debugDisplayValues();
 
+        // Chassis speeds
+
+        ChassisSpeeds speeds = Constants.Swerve.swerveKinematics.toChassisSpeeds(getModuleStates());
+
+        SmartDashboard.putNumber("Chassis Speeds X", speeds.vxMetersPerSecond);
+        SmartDashboard.putNumber("Chassis Speeds Y", speeds.vyMetersPerSecond);
+
+
         if (limelight.hasTarget() && newLimePosition != null){
+            kalmanFilter.update(newLimePosition.getX(), newLimePosition.getY(), speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, fieldAcceleration[0], fieldAcceleration[1]);
             odometry.update(newLimePosition, getGyroYaw(), getModulePositions());
         } else {
             odometry.update(getGyroYaw(), getModulePositions());
+            kalmanFilter.update(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, fieldAcceleration[0], fieldAcceleration[1]);
         }
+
+        kalmanFilter.debugDisplayValues();
         
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Current", mod.getDriveMotorCurrent());
