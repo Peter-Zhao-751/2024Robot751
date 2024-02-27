@@ -27,17 +27,21 @@ public class Intake extends Command {
         intakeDuration = -1;
         addRequirements(intakeSubsystem);
     }
+    
     public Intake(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, double intakeDuration) {
         this(intakeSubsystem, transferSubsystem, false);
         this.intakeDuration = intakeDuration;
     }
+    
     public Intake(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, double intakeDuration, boolean extend) {
         this(intakeSubsystem, transferSubsystem, extend);
         this.intakeDuration = intakeDuration;
     }
+
     public Intake(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem) {
         this(intakeSubsystem, transferSubsystem, false);
     }
+
     @Override
     public void initialize() {
         startTime = System.currentTimeMillis();
@@ -58,5 +62,4 @@ public class Intake extends Command {
     public boolean isFinished() {
         return intakeDuration > 0 && System.currentTimeMillis() - startTime >= intakeDuration;
     }
-
 }

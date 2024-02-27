@@ -159,11 +159,6 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
         kalmanFilter.correct(VecBuilder.fill(targetSpeed), VecBuilder.fill(getShooterMotor1Speed()));
 
         SmartDashboard.putNumber("Kalman Filter X-hat 0", kalmanFilter.getXhat(0));
-        try{
-            SmartDashboard.putNumber("Kalman Filter X-hat 1", kalmanFilter.getXhat(1));
-        } catch (Exception e){
-            SmartDashboard.putString("Kalman Filter X-hat 1", "dumb");
-        }
     }
 
     @Override
