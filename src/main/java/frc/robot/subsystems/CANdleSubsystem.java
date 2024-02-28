@@ -25,7 +25,9 @@ public class CANdleSubsystem extends SubsystemBase implements Component{
         Climb(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount)),
         Dance(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount)),
         Alert(new TwinkleAnimation(255, 255, 255, 255, 0.5, Constants.CANdle.LEDCount, TwinkleAnimation.TwinklePercent.Percent100, 8)),
-        Idle(null);
+        Aimbot(new TwinkleAnimation(0, 0, 255, 0, 0.5, Constants.CANdle.LEDCount, TwinkleAnimation.TwinklePercent.Percent100, 8)),
+        Idle(null),
+        Disabled(null);
 
         private Animation animation;
         private double decay;
@@ -118,6 +120,8 @@ public class CANdleSubsystem extends SubsystemBase implements Component{
             SmartDashboard.putNumber("CANdle current draw" , m_candle.getCurrent());
         }else if (currentAnimation.isDone()){
             changeAnimation(lastAnimation);
+            currentAnimation = lastAnimation;
+            desiredAnimation = lastAnimation;
         }
     }
 

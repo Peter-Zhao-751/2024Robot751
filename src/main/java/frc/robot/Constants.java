@@ -81,12 +81,11 @@ public class Constants {
         public static double kVSwivelFeedforward = 0.0;
         public static double kASwivelFeedforward = 0.0;
         
-        public static double kSwivelExtendedAngle = 0.0; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
-        public static double kSwivelRetractedAngle = 90.0; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
+        public static double kSwivelExtendedAngle = 0.0; 
+        public static double kSwivelRetractedAngle = 90.0;
+        public static double kSwivelMaintenanceAngle = 45.0;
 
         public static double kSwivelencoderOffset = 0.0; // TODO: find this
-
-
     }
 
     public static class Transfer{

@@ -29,14 +29,14 @@ public class TransferSubsystem extends SubsystemBase implements Component {
         intakeTransferPIDController = new PIDController(Constants.Transfer.kPShooterController, 0, 0);
     }
 
-    public void setIntakeTransfer(double speed) { // in rpm
-        double currentSpeed = intakeTransfer.getEncoder().getVelocity();
+    public void setIntakeTransfer(double speed) { // in rps
+        double currentSpeed = intakeTransfer.getEncoder().getVelocity() / 60;
         double output = intakeTransferPIDController.calculate(currentSpeed, speed);
         intakeTransfer.set(output);
     }
 
-    public void setShooterTransfer(double speed) { // in rpm
-        double currentSpeed = shooterTransfer.getEncoder().getVelocity();
+    public void setShooterTransfer(double speed) { // in rps
+        double currentSpeed = shooterTransfer.getEncoder().getVelocity() / 60;
         double output = shooterTransferPIDController.calculate(currentSpeed, speed);
         shooterTransfer.set(output);
     }
