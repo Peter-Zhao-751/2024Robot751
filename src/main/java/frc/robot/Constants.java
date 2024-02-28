@@ -73,15 +73,17 @@ public class Constants {
         public static double maxSwivelSpeed = 0.15;
         public static double intakeTime = 3.0;
 
-        public static double kPSwivelController = 0.1; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
+        public static double kPSwivelController = 0.25; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
         public static double kISwivelController = 0.0;
         public static double kDSwivelController = 0.0;
 
-        public static double kSSwivelFeedforward = 1.0;
-        public static double kVSwivelFeedforward = 0.0;
+        public static double kSwivelTime = 0.17;
+
+        public static double kSSwivelFeedforward = 0.19; // TODO: find this
+        public static double kVSwivelFeedforward = 1.17;
         public static double kASwivelFeedforward = 0.0;
         
-        public static double kSwivelExtendedAngle = 0.0; 
+        public static double kSwivelExtendedAngle = 0.0;  
         public static double kSwivelRetractedAngle = 90.0;
         public static double kSwivelMaintenanceAngle = 45.0;
 

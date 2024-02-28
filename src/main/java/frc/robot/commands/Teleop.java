@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
+import frc.robot.subsystems.StateMachine;
 import frc.robot.subsystems.SwerveDrive;
 
 import java.util.function.BooleanSupplier;
@@ -39,12 +40,15 @@ public class Teleop extends Command {
 
         /* Drive */
         
-        s_Swerve.drive(
+        boolean isDriving = s_Swerve.drive(
             new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed), 
             rotationVal * Constants.Swerve.maxAngularVelocity, 
             !robotCentricSup.getAsBoolean(), 
             true, 
             preciseControl.getAsBoolean()
         );
+
+        if (isDriving) StateMachine.setState(StateMachine.State.TeleopDrive);
+        else StateMachine.setState(StateMachine.State.Idle);
     }
 }

@@ -22,7 +22,6 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
     private final ArmFeedforward swivelFeedforwardController;
     private final PIDController swivelPIDController;
-    
  
     private double swivelSetpoint;
     
@@ -55,7 +54,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         intakeMotor.set(0);
     }
 
-    public double getSwivelPosition(){
+    public double getSwivelPosition(){ // returns the angle of the swivel in degrees
         return angleEncoder.getPosition() % 1 * 360;
     }
 

@@ -103,7 +103,7 @@ public class SwerveDrive extends SubsystemBase {
         drive(translation, rotation, fieldRelative, isOpenLoop, false);
     }
 
-    public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean isPrecise) {
+    public boolean drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean isPrecise) {
         // precision mode
         Double xSpeed = !isPrecise ? translation.getX(): translation.getX() * Constants.Swerve.preciseControlFactor;
         Double ySpeed = !isPrecise ? translation.getY(): translation.getY() * Constants.Swerve.preciseControlFactor;
@@ -130,6 +130,8 @@ public class SwerveDrive extends SubsystemBase {
         for(SwerveModule mod : mSwerveMods) {
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber-1], isOpenLoop);
         }
+
+        return (xSpeed >= 0.05 && ySpeed >= 0.05 && rot >= 0.2); // thing 
     }
 
     public void crossWheels() { // TODO: #7 Check cross wheels works
