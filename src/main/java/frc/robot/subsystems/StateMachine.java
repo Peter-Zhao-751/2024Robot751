@@ -11,7 +11,7 @@ public class StateMachine {
         TeleopDrive,
         Auton,
         Aimbot,
-        Shooter,
+        Shoot,
         Intake,
         Disabled,
         Climb,
@@ -48,7 +48,7 @@ public class StateMachine {
                 SmartDashboard.putString("Robot State", "Aimbot");
                 CANdleController.changeAnimation(CANdleSubsystem.AnimationTypes.Aimbot);
                 break;
-            case Shooter:
+            case Shoot:
                 SmartDashboard.putString("Robot State", "Shoot");
                 CANdleController.changeAnimation(CANdleSubsystem.AnimationTypes.Shoot);
                 break;

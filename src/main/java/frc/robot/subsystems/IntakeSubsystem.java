@@ -52,6 +52,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         leftSwivelMotor.set(0);
         rightSwivelMotor.set(0);
         intakeMotor.set(0);
+        
     }
 
     public double getSwivelPosition(){ // returns the angle of the swivel in degrees

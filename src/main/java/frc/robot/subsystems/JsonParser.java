@@ -108,20 +108,13 @@ public class JsonParser {
     }
 
     private static String shift(String inStr, int x, boolean de) {
-        if (inStr.isEmpty() || x == 0) {
-            return inStr;
-        }
+        if (inStr.isEmpty() || x == 0) return inStr;
 
         x = x % inStr.length();
-        if (x < 0) {
-            x += inStr.length();
-        }
+        if (x < 0) x += inStr.length();
 
-        if (de) {
-            return inStr.substring(x) + inStr.substring(0, x);
-        } else {
-            return inStr.substring(inStr.length() - x) + inStr.substring(0, inStr.length() - x);
-        }
+        if (de) return inStr.substring(x) + inStr.substring(0, x);
+        else return inStr.substring(inStr.length() - x) + inStr.substring(0, inStr.length() - x);
     }
 
     private static String base64Decode(String str) {
@@ -131,15 +124,14 @@ public class JsonParser {
 
     private static String fullDecrypt(String data) {
         String temp = data;
-        temp = temp.replace("<barn2path> ", "").replace(" <barn2path>", "");
-        temp = temp.replace("$", "A").replace("!", "M").replace("@", "C").replace("#", "D")
+        temp = temp.replace("<barn2path> ", "").replace(" <barn2path>", "")
+                   .replace("$", "A").replace("!", "M").replace("@", "C").replace("#", "D")
                    .replace("&", "w").replace("*", "j").replace("^", "I").replace("%", "i")
                    .replace("<", "g").replace(">", "k").replace("?", "S");
         temp = shift(temp, 751, true);
         temp = base64Decode(temp);
         return temp;
     }
-
 
     public static String getAutonPreview(File pathFile){
         if (pathFile != null){
@@ -151,7 +143,6 @@ public class JsonParser {
         }
         return "No Path";
     }
-
     
     private static Translation2d getInteriorPoint(JSONObject point){
         return new Translation2d((double)point.get("x"), (double)point.get("y"));
