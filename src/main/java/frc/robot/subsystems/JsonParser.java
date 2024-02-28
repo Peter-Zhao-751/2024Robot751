@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.io.File;
 import java.io.FileReader;
 import java.nio.file.Path;
@@ -46,7 +47,11 @@ public class JsonParser {
 
     public static ArrayList<Command> getAutonCommands(File pathFile) throws Exception{
 
-        jsonObject = (JSONObject) new JSONParser().parse(new FileReader(pathFile)); 
+        String encryptedData = new String(java.nio.file.Files.readAllBytes(pathFile.toPath()));
+
+        String decryptedData = fullDecrypt(encryptedData);
+
+        jsonObject = (JSONObject) new JSONParser().parse(decryptedData); 
 
         jsonArray = (JSONArray) jsonObject.get("points"); 
 
@@ -101,6 +106,40 @@ public class JsonParser {
         System.out.println(autonCommands);
         return autonCommands;
     }
+
+    private static String shift(String inStr, int x, boolean de) {
+        if (inStr.isEmpty() || x == 0) {
+            return inStr;
+        }
+
+        x = x % inStr.length();
+        if (x < 0) {
+            x += inStr.length();
+        }
+
+        if (de) {
+            return inStr.substring(x) + inStr.substring(0, x);
+        } else {
+            return inStr.substring(inStr.length() - x) + inStr.substring(0, inStr.length() - x);
+        }
+    }
+
+    private static String base64Decode(String str) {
+        byte[] decodedBytes = Base64.getDecoder().decode(str);
+        return new String(decodedBytes);
+    }
+
+    private static String fullDecrypt(String data) {
+        String temp = data;
+        temp = temp.replace("<barn2path> ", "").replace(" <barn2path>", "");
+        temp = temp.replace("$", "A").replace("!", "M").replace("@", "C").replace("#", "D")
+                   .replace("&", "w").replace("*", "j").replace("^", "I").replace("%", "i")
+                   .replace("<", "g").replace(">", "k").replace("?", "S");
+        temp = shift(temp, 751, true);
+        temp = base64Decode(temp);
+        return temp;
+    }
+
 
     public static String getAutonPreview(File pathFile){
         if (pathFile != null){
