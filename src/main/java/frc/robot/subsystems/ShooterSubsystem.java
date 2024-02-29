@@ -32,8 +32,8 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 public class ShooterSubsystem extends SubsystemBase implements Component {
     
-    private final TalonFX shooterMotor1;
-    private final TalonFX shooterMotor2;
+    private final TalonFX leftShooterMotor;
+    private final TalonFX rightShooterMotor;
 
     private double targetSpeed;
 
@@ -47,16 +47,16 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
 
     private final KalmanFilter<N1, N1, N1> kalmanFilter;
 
-
+    private final double allocatedCurrent;
 
     // private final SysIdRoutine routine;
 
     public ShooterSubsystem(){
-        shooterMotor1 = new TalonFX(Constants.Shooter.leftShooterMotorID);
-        shooterMotor1.setNeutralMode(NeutralModeValue.Coast);
+        leftShooterMotor = new TalonFX(Constants.Shooter.leftShooterMotorID);
+        leftShooterMotor.setNeutralMode(NeutralModeValue.Coast);
 
-        shooterMotor2 = new TalonFX(Constants.Shooter.rightShooterMotorID, Constants.CANivoreID);
-        shooterMotor2.setNeutralMode(NeutralModeValue.Coast);
+        rightShooterMotor = new TalonFX(Constants.Shooter.rightShooterMotorID, Constants.CANivoreID);
+        rightShooterMotor.setNeutralMode(NeutralModeValue.Coast);
 
         flyWheelPlant = LinearSystemId.identifyVelocitySystem(Constants.Shooter.kVFlyWheelFeedforward, Constants.Shooter.kAFlyWheelFeedforward);
 
@@ -79,8 +79,8 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
         motionMagicConfigs.MotionMagicAcceleration = 40; // Target acceleration of 400 rps/s (0.25 seconds to max)
         motionMagicConfigs.MotionMagicJerk = 400; // Target jerk of 4000 rps/s/s (0.1 seconds)
 
-        shooterMotor1.getConfigurator().apply(talonFXConfigs);
-        shooterMotor2.getConfigurator().apply(talonFXConfigs);
+        leftShooterMotor.getConfigurator().apply(talonFXConfigs);
+        rightShooterMotor.getConfigurator().apply(talonFXConfigs);
 
         targetSpeed = 0;
 
@@ -99,6 +99,8 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
         //         System.out.println("Volts: " + volts.in(Volts));
         //     }, null, this)
         // );
+
+        allocatedCurrent = 0;
     }
 
     // public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
@@ -111,21 +113,21 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
 
     public void setSpeed(double speed){
         targetSpeed = speed;
-        shooterMotor1.setControl(motionMagicVelocityVoltage.withVelocity(-speed));
-        shooterMotor2.setControl(new Follower(shooterMotor1.getDeviceID(), true));
+        leftShooterMotor.setControl(motionMagicVelocityVoltage.withVelocity(-speed));
+        rightShooterMotor.setControl(new Follower(leftShooterMotor.getDeviceID(), true));
     }
     
     public void stop(){
         targetSpeed = 0;
-        shooterMotor1.set(0);
-        shooterMotor2.set(0);
+        leftShooterMotor.set(0);
+        rightShooterMotor.set(0);
     }
 
     public double getShooterMotor1Speed(){
-        return shooterMotor1.getRotorVelocity().getValue();
+        return leftShooterMotor.getRotorVelocity().getValue();
     }
     public double getShooterMotor2Speed(){
-        return shooterMotor2.getRotorVelocity().getValue();
+        return rightShooterMotor.getRotorVelocity().getValue();
     }
 
     public double getShooterSpeed(){
@@ -159,11 +161,12 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
         kalmanFilter.correct(VecBuilder.fill(targetSpeed), VecBuilder.fill(getShooterMotor1Speed()));
 
         SmartDashboard.putNumber("Kalman Filter X-hat 0", kalmanFilter.getXhat(0));
+        SmartDashboard.putNumber("Shooter Current Draw", getCurrentDraw());
     }
 
     @Override
-    public double getRequestedCurrent(){
-        return 0;
+    public double getCurrentDraw(){
+        return leftShooterMotor.getSupplyCurrent().getValue() + rightShooterMotor.getSupplyCurrent().getValue();
     }
 
     @Override
@@ -174,10 +177,5 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
     @Override
     public int getPriority(){
         return 1;
-    }
-
-    @Override
-    public void updateBasedOnAllocatedCurrent(){
-        //update motor controller based on allocated current
     }
 }

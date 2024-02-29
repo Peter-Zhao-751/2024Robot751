@@ -24,6 +24,9 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     private final PIDController swivelPIDController;
  
     private double swivelSetpoint;
+
+    private double currentDraw;
+    private double allocatedCurrent;
     
     public IntakeSubsystem(){
         leftSwivelMotor = new CANSparkMax(Constants.Intake.leftSwivelMotorID, MotorType.kBrushless);
@@ -38,6 +41,10 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         swivelPIDController = new PIDController(Constants.Intake.kPSwivelController, Constants.Intake.kISwivelController, Constants.Intake.kDSwivelController);
         swivelFeedforwardController = new ArmFeedforward(Constants.Intake.kSSwivelFeedforward, Constants.Intake.kVSwivelFeedforward, Constants.Intake.kASwivelFeedforward);
+
+        swivelSetpoint = getSwivelPosition();
+        currentDraw = 0;
+        allocatedCurrent = 0;
     }
     
     public void setIntakeSpeed(double speed){
@@ -76,14 +83,14 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
             rightSwivelMotor.setVoltage(output);
         }
 
-        SmartDashboard.putNumber("Total Intake Current Draw", leftSwivelMotor.getOutputCurrent() + rightSwivelMotor.getOutputCurrent() + intakeMotor.getSupplyCurrent().getValue());
+        SmartDashboard.putNumber("Total Intake Current Draw", getCurrentDraw());
         SmartDashboard.putNumber("Intake Swivel Position", getSwivelPosition());
         //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Intake);
     }
 
     @Override
-    public double getRequestedCurrent(){
-        return 0;
+    public double getCurrentDraw(){
+        return leftSwivelMotor.getOutputCurrent() + rightSwivelMotor.getOutputCurrent() + intakeMotor.getSupplyCurrent().getValue();
     }
 
     @Override
@@ -94,9 +101,5 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     @Override
     public int getPriority(){
         return 2;
-    }
-    @Override
-    public void updateBasedOnAllocatedCurrent(){
-        //update motor controller based on allocated current
     }
 }

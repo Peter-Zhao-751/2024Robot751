@@ -20,10 +20,10 @@ public class CANdleSubsystem extends SubsystemBase implements Component{
     public enum AnimationTypes {
         Shoot(new ColorFlowAnimation(128, 20, 70, 0, 0.7, Constants.CANdle.LEDCount, Direction.Forward, 8)),
         Auton(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount, 8)),
-        TeleopMovement(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount)),
-        Intake(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount)),
-        Climb(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount)),
-        Dance(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount)),
+        TeleopMovement(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount, 8)),
+        Intake(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount, 8)),
+        Climb(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount, 8)),
+        Dance(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount, 8)),
         Alert(new TwinkleAnimation(255, 255, 255, 255, 0.5, Constants.CANdle.LEDCount, TwinkleAnimation.TwinklePercent.Percent100, 8)),
         Aimbot(new TwinkleAnimation(0, 0, 255, 0, 0.5, Constants.CANdle.LEDCount, TwinkleAnimation.TwinklePercent.Percent100, 8)),
         Idle(null),
@@ -65,6 +65,8 @@ public class CANdleSubsystem extends SubsystemBase implements Component{
     private AnimationTypes desiredAnimation;
     private AnimationTypes currentAnimation;
     private AnimationTypes lastAnimation;
+
+    private double allocatedCurrent;
  
     public CANdleSubsystem() {
         currentAnimation = AnimationTypes.Idle;
@@ -81,7 +83,7 @@ public class CANdleSubsystem extends SubsystemBase implements Component{
 
     public void changeAnimation(AnimationTypes newAnimation){
         desiredAnimation = newAnimation;
-        lastAnimation = currentAnimation;
+        if (currentAnimation.decay < 0) lastAnimation = currentAnimation;
     }
 
     public AnimationTypes getAnimation(){
@@ -117,7 +119,6 @@ public class CANdleSubsystem extends SubsystemBase implements Component{
             currentAnimation = desiredAnimation;
 
             SmartDashboard.putString("Current Robot LED Animation", CurrentManager.isOverNominal() ? "Disabled due to over current" : currentAnimation.name());
-            SmartDashboard.putNumber("CANdle current draw" , m_candle.getCurrent());
         }else if (currentAnimation.isDone()){
             changeAnimation(lastAnimation);
             currentAnimation = lastAnimation;
@@ -126,8 +127,8 @@ public class CANdleSubsystem extends SubsystemBase implements Component{
     }
 
     @Override
-    public double getRequestedCurrent(){
-        return 0;
+    public double getCurrentDraw(){
+        return m_candle.getCurrent();
     }
     @Override
     public void allocateCurrent(double current){
@@ -136,9 +137,5 @@ public class CANdleSubsystem extends SubsystemBase implements Component{
     @Override
     public int getPriority(){
         return 6;
-    }
-    @Override
-    public void updateBasedOnAllocatedCurrent(){
-        //update motor controller based on allocated current
     }
 }

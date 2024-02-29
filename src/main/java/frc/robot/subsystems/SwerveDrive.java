@@ -316,9 +316,6 @@ public class SwerveDrive extends SubsystemBase {
         SmartDashboard.putNumber("Robot Pitch", gyro.getPitch().getValue());
         SmartDashboard.putNumber("Robot Roll", gyro.getRoll().getValue());
 
-
-
-
         m_field.setRobotPose(odometry.getPoseMeters());
 
         SmartDashboard.putData("Swerve Drive", new Sendable() {

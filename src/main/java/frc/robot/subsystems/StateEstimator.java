@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.estimator.UnscentedKalmanFilter;
+
+import com.ctre.phoenix6.hardware.Pigeon2;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.numbers.N6;

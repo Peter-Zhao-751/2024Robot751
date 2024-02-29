@@ -9,6 +9,8 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 public class ClimberSubsystem extends SubsystemBase implements Component{
     private final CANSparkMax leftClimberMotor;
     private final CANSparkMax rightClimberMotor;
+
+    private double allocatedCurrent;
     
     public ClimberSubsystem(){
         leftClimberMotor = new CANSparkMax(Constants.Climber.leftClimberMotorID, MotorType.kBrushless);
@@ -40,24 +42,18 @@ public class ClimberSubsystem extends SubsystemBase implements Component{
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Total Climber Current Draw", leftClimberMotor.getOutputCurrent() + rightClimberMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Climber Current Draw", getCurrentDraw());
         leftClimberMotor.getEncoder().getVelocity();
-
-        //TODO: update encoder states with velocity
-        //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Climber);
     }
 
     private double getCurrentPosition(){
-        //basically a solved differential equation for the extension of the spring as a function of how many rotations it has done. r = (k-TR)  c = 2pi(k-TR)                                          actually d = (r sub0 + T * R)^2, where r sub 0 is the max radius and 
-
-
 
         return leftClimberMotor.getEncoder().getPosition();
     }
 
     @Override
-    public double getRequestedCurrent(){
-        return 0;
+    public double getCurrentDraw(){
+        return leftClimberMotor.getOutputCurrent() + rightClimberMotor.getOutputCurrent();
     }
 
     @Override
@@ -68,10 +64,5 @@ public class ClimberSubsystem extends SubsystemBase implements Component{
     @Override
     public int getPriority(){
         return 5;
-    }
-
-    @Override
-    public void updateBasedOnAllocatedCurrent(){
-        //update motor controller based on allocated current
     }
 }

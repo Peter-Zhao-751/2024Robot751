@@ -20,6 +20,9 @@ public class TransferSubsystem extends SubsystemBase implements Component {
     private final PIDController shooterTransferPIDController;
     private final PIDController intakeTransferPIDController;
 
+    private double currentDraw;
+    private double allocatedCurrent;
+
     public TransferSubsystem() {
         shooterTransfer = new CANSparkMax(Constants.Transfer.shooterTransferID, MotorType.kBrushless);
         intakeTransfer = new CANSparkMax(Constants.Transfer.intakeTransferID, MotorType.kBrushless);
@@ -27,6 +30,9 @@ public class TransferSubsystem extends SubsystemBase implements Component {
 
         shooterTransferPIDController = new PIDController(Constants.Transfer.kPIntakeController, 0, 0);
         intakeTransferPIDController = new PIDController(Constants.Transfer.kPShooterController, 0, 0);
+
+        currentDraw = 0;
+        allocatedCurrent = 0;
     }
 
     public void setIntakeTransfer(double speed) { // in rps
@@ -56,7 +62,7 @@ public class TransferSubsystem extends SubsystemBase implements Component {
     }
 
     @Override
-    public double getRequestedCurrent() {
+    public double getCurrentDraw() {
         return shooterTransfer.getOutputCurrent() + intakeTransfer.getOutputCurrent();
     }
 
@@ -66,9 +72,6 @@ public class TransferSubsystem extends SubsystemBase implements Component {
 
     @Override
     public int getPriority() {
-        return 9; // CHANGE
+        return 5; // CHANGE
     }
-
-    @Override
-    public void updateBasedOnAllocatedCurrent() {}
 }

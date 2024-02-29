@@ -24,13 +24,13 @@ public class CurrentManager {
         components.sort(Comparator.comparingInt(Component::getPriority));
         double totalAvailableCurrent = maxCurrent*maxPercent;
 
-        double totalRequested = components.stream().mapToDouble(Component::getRequestedCurrent).sum();
+        double totalRequested = components.stream().mapToDouble(Component::getCurrentDraw).sum();
         double allocationRatio = totalAvailableCurrent / totalRequested;
         double remainingCurrent = totalAvailableCurrent;
 
         if (allocationRatio >= 1) {
             // Enough current for all requests
-            components.forEach(c -> c.allocateCurrent(c.getRequestedCurrent()));
+            components.forEach(c -> c.allocateCurrent(c.getCurrentDraw()));
             return;
         }
 
@@ -38,7 +38,7 @@ public class CurrentManager {
         int maxPriority = 0;
         int totalPriority = 0;
         for (Component component : components) {
-            remainingCurrent -= component.getRequestedCurrent() / allocationRatio * 0.8;
+            remainingCurrent -= component.getCurrentDraw() / allocationRatio * 0.8;
             totalPriority += component.getPriority();
             maxPriority = Math.max(maxPriority, component.getPriority());
         }
@@ -46,10 +46,10 @@ public class CurrentManager {
         double noneFinalRemainingCurrent = remainingCurrent;
             
         for (Component component : components) {
-            double additionalNeeded = component.getRequestedCurrent() - (component.getRequestedCurrent() * allocationRatio * 0.8);
+            double additionalNeeded = component.getCurrentDraw() - (component.getCurrentDraw() * allocationRatio * 0.8);
             double additionalFairShare = (maxPriority-component.getPriority()) / totalPriority * noneFinalRemainingCurrent;
             double finalAdditionalAllocated = Math.min(additionalNeeded, additionalFairShare);
-            component.allocateCurrent(component.getRequestedCurrent() * allocationRatio + finalAdditionalAllocated);
+            component.allocateCurrent(component.getCurrentDraw() * allocationRatio + finalAdditionalAllocated);
             remainingCurrent -= finalAdditionalAllocated;
         }
     }

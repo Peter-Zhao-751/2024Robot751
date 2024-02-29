@@ -7,14 +7,22 @@ import frc.robot.commands.lowLevelCommands.CANdleController;
 public class StateMachine {
 
     public enum State {
-        Idle,
-        TeleopDrive,
-        Auton,
-        Aimbot,
-        Shoot,
-        Intake,
-        Disabled,
-        Climb,
+        Idle("Idle", CANdleSubsystem.AnimationTypes.Idle),
+        TeleopDrive("Teleop Drive", CANdleSubsystem.AnimationTypes.TeleopMovement),
+        Auton("Auton", CANdleSubsystem.AnimationTypes.Auton),
+        Aimbot("Aimbot", CANdleSubsystem.AnimationTypes.Aimbot),
+        Shoot("Shoot", CANdleSubsystem.AnimationTypes.Shoot),
+        Intake("Intake", CANdleSubsystem.AnimationTypes.Intake),
+        Disabled("Disabled", CANdleSubsystem.AnimationTypes.Disabled),
+        Climb("Climb", CANdleSubsystem.AnimationTypes.Climb);
+
+        public String stateName;
+        public CANdleSubsystem.AnimationTypes animation;
+
+        private State(String stateName, CANdleSubsystem.AnimationTypes animation) {
+            this.stateName = stateName;
+            this.animation = animation;
+        }
     }
 
     private StateMachine(){
@@ -31,39 +39,7 @@ public class StateMachine {
     }
 
     public static void update() {
-        switch (state) {
-            case Idle:
-                SmartDashboard.putString("Robot State", "Idle");
-                CANdleController.changeAnimation(CANdleSubsystem.AnimationTypes.Idle);
-                break;
-            case TeleopDrive:
-                SmartDashboard.putString("Robot State", "Teloep Drive");
-                CANdleController.changeAnimation(CANdleSubsystem.AnimationTypes.TeleopMovement);
-                break;
-            case Auton:
-                SmartDashboard.putString("Robot State", "Auton");
-                CANdleController.changeAnimation(CANdleSubsystem.AnimationTypes.Auton);
-                break;
-            case Aimbot:
-                SmartDashboard.putString("Robot State", "Aimbot");
-                CANdleController.changeAnimation(CANdleSubsystem.AnimationTypes.Aimbot);
-                break;
-            case Shoot:
-                SmartDashboard.putString("Robot State", "Shoot");
-                CANdleController.changeAnimation(CANdleSubsystem.AnimationTypes.Shoot);
-                break;
-            case Intake:
-                SmartDashboard.putString("Robot State", "Intake");
-                CANdleController.changeAnimation(CANdleSubsystem.AnimationTypes.Intake);
-                break;
-            case Disabled:
-                SmartDashboard.putString("Robot State", "Disabled");
-                CANdleController.changeAnimation(CANdleSubsystem.AnimationTypes.Disabled);
-                break;
-            case Climb:
-                SmartDashboard.putString("Robot State", "Climb");
-                CANdleController.changeAnimation(CANdleSubsystem.AnimationTypes.Climb);
-                break;
-        }
+        SmartDashboard.putString("Robot State", state.stateName);
+        CANdleController.changeAnimation(state.animation);
     }
 }

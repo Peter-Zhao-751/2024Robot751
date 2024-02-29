@@ -9,42 +9,43 @@ import frc.robot.subsystems.StateMachine;
 public class Intake extends Command {
 
     public enum IntakeSwivelState {
-        Extended,
-        Retracted,
-        Maintenance
+        Extended(Constants.Intake.kSwivelExtendedAngle),
+        Retracted(Constants.Intake.kSwivelRetractedAngle),
+        Maintenance(Constants.Intake.kSwivelMaintenanceAngle);
+
+        public double desiredAngle;
+
+        private IntakeSwivelState(double desiredAngle) {
+            this.desiredAngle = desiredAngle;
+        }
     }
     private IntakeSubsystem intakeSubsystem;
     private TransferSubsystem transferSubsystem;
 
     private Transfer transferCommand;
 
-    private double startTime;
-
     private IntakeSwivelState desiredSwivelState;
 
-    public Intake(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, IntakeSwivelState extend) {
+    public Intake(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, IntakeSwivelState extend, boolean smartMode) {
         this.desiredSwivelState = extend;
         this.intakeSubsystem = intakeSubsystem;
         this.transferSubsystem = transferSubsystem;
-        this.transferCommand = new Transfer(0.2, transferSubsystem); // TODO: Change speed it is in m/s
+        this.transferCommand = new Transfer(0.2, transferSubsystem, smartMode); // TODO: Change speed it is in m/s
         addRequirements(intakeSubsystem);
     }
 
+    public Intake(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, IntakeSwivelState extend) {
+        this(intakeSubsystem, transferSubsystem, extend, false);
+    }
+
     public Intake(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem) {
-        this(intakeSubsystem, transferSubsystem, IntakeSwivelState.Retracted);
+        this(intakeSubsystem, transferSubsystem, IntakeSwivelState.Retracted, false);
     }
 
     @Override
     public void initialize() {
         StateMachine.setState(StateMachine.State.Intake);
-        startTime = System.currentTimeMillis();
-        double swivelAngle;
-        switch (desiredSwivelState) {
-            case Extended -> swivelAngle = Constants.Intake.kSwivelExtendedAngle;
-            case Maintenance -> swivelAngle = Constants.Intake.kSwivelMaintenanceAngle;
-            default -> swivelAngle = Constants.Intake.kSwivelRetractedAngle;
-        }
-        intakeSubsystem.setSwivelPosition(swivelAngle);
+        intakeSubsystem.setSwivelPosition(desiredSwivelState.desiredAngle);
         if (desiredSwivelState == IntakeSwivelState.Extended) {
             transferCommand.schedule();
         }
@@ -61,8 +62,9 @@ public class Intake extends Command {
         transferSubsystem.setIntakeTransfer(0);
         StateMachine.setState(StateMachine.State.Idle);
     }
+    
     @Override
     public boolean isFinished() {
-        return transferSubsystem.beamBroken() || System.currentTimeMillis() - startTime >= Constants.Transfer.maxTransferTime * 1000 || desiredSwivelState == IntakeSwivelState.Retracted || desiredSwivelState == IntakeSwivelState.Maintenance;
+        return desiredSwivelState == IntakeSwivelState.Retracted || desiredSwivelState == IntakeSwivelState.Maintenance || transferCommand.isFinished();
     }
 }

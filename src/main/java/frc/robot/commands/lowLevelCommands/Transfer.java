@@ -5,14 +5,20 @@ import frc.robot.Constants;
 import frc.robot.subsystems.TransferSubsystem;
 
 public class Transfer extends Command {
-    private double speed;
-    private long startTime;
     private TransferSubsystem transferSubsystem;
 
-    public Transfer(double speed, TransferSubsystem transferSubsystem) {
+    private double speed;
+    private long startTime;
+    private boolean smartMode;
+
+    public Transfer(double speed, TransferSubsystem transferSubsystem, boolean smartMode) {
         this.speed = speed;
         this.transferSubsystem = transferSubsystem;
+        this.smartMode = smartMode;
         addRequirements(transferSubsystem);
+    }
+    public Transfer(double speed, TransferSubsystem transferSubsystem) {
+        this(speed, transferSubsystem, false);
     }
 
     public double getEstimatedTransferTime(){
@@ -36,6 +42,6 @@ public class Transfer extends Command {
 
     @Override
     public boolean isFinished() {
-        return System.currentTimeMillis() - startTime >= Constants.Transfer.maxTransferTime * 1000 || transferSubsystem.beamBroken();
+        return transferSubsystem.beamBroken() || smartMode ? System.currentTimeMillis() - startTime >= Constants.Transfer.maxTransferTime * 1000 : false;
     }
 }
