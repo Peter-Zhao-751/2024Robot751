@@ -79,9 +79,9 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     }
 
     public void stopAll(){
-        leftSwivelMotor.set(0);
-        rightSwivelMotor.set(0);
-        intakeMotor.set(0);
+        leftSwivelMotor.setVoltage(0);
+        rightSwivelMotor.setVoltage(0);
+        intakeMotor.setControl(intakeMotionMagicVelocityVoltage.withVelocity(0));
     }
 
     public double getSwivelPosition(){ // returns the angle of the swivel in degrees

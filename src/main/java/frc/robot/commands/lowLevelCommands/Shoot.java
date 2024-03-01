@@ -3,6 +3,7 @@ import frc.robot.Constants;
 import frc.robot.commands.lowLevelCommands.Transfer.TransferMode;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransferSubsystem;
+import frc.robot.subsystems.StateMachine;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class Shoot extends Command{
@@ -21,6 +22,7 @@ public class Shoot extends Command{
 
     @Override
     public void initialize() {
+        StateMachine.setState(StateMachine.State.Shoot);
         shooterSubsystem.setSpeed(speed);
         transfer.initialize();
     }
@@ -31,6 +33,7 @@ public class Shoot extends Command{
     @Override
     public void end(boolean interrupted) {
         shooterSubsystem.stop();
+        StateMachine.setState(StateMachine.State.Idle);
         // doesnt need its own end method because transfer.end() will be called in the end method of this command
     }
 

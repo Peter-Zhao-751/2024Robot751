@@ -49,7 +49,7 @@ public class Intake extends Command {
     @Override
     public void end(boolean interrupted) {
         intakeSubsystem.setSwivelPosition(Constants.Intake.kSwivelRetractedAngle);
-        transferCommand.end(interrupted);
+        // transferCommand.end(interrupted); i don't think this is necessary
         StateMachine.setState(StateMachine.State.Idle);
     }
     

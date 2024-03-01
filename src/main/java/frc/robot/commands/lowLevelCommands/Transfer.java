@@ -45,7 +45,7 @@ public class Transfer extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        transferSubsystem.setIntakeTransfer(0);
+        transferSubsystem.stop();
     }
 
     @Override

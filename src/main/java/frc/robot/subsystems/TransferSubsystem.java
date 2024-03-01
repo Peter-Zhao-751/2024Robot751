@@ -52,6 +52,11 @@ public class TransferSubsystem extends SubsystemBase implements Component {
         setShooterTransfer(speed / (2 * Math.PI * shooterTransferRadius));
     }
 
+    public void stop() {
+        intakeTransfer.set(0);
+        shooterTransfer.set(0);
+    }
+
     public boolean beamBroken() { // True when beam is broken
         return !beamBreak.get();
     }
