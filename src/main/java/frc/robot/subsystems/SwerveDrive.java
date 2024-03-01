@@ -45,7 +45,6 @@ public class SwerveDrive extends SubsystemBase {
 
     private final KalmanFilter kalmanFilter;
 
-
     public SwerveDrive() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.CANivoreID);
         limelight = new Limelight();
@@ -131,12 +130,12 @@ public class SwerveDrive extends SubsystemBase {
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber-1], isOpenLoop);
         }
 
-        return (xSpeed >= 0.05 && ySpeed >= 0.05 && rot >= 0.2); // thing 
+        return (xSpeed >= 0.05 && ySpeed >= 0.05 && rot >= 0.2); // TODO: tune these values
     }
 
     public void crossWheels() { // TODO: #7 Check cross wheels works
         for(SwerveModule mod : mSwerveMods){
-            mod.setDesiredState(new SwerveModuleState(0, new Rotation2d((mod.moduleNumber-1) * Math.PI/2 + Math.PI/4)), false);
+            mod.setDesiredState(new SwerveModuleState(0, new Rotation2d((mod.moduleNumber-1) * 90 + 45)), false);
         }
     }
 
