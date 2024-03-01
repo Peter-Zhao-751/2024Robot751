@@ -23,14 +23,14 @@ public class CANdleSubsystem extends SubsystemBase implements Component{
         TeleopMovement(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount, 8)),
         Intake(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount, 8)),
         Climb(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount, 8)),
-        Dance(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount, 8)),
+        Dance(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount, 8), 2000),
         Alert(new TwinkleAnimation(255, 255, 255, 255, 0.5, Constants.CANdle.LEDCount, TwinkleAnimation.TwinklePercent.Percent100, 8)),
         Aimbot(new TwinkleAnimation(0, 0, 255, 0, 0.5, Constants.CANdle.LEDCount, TwinkleAnimation.TwinklePercent.Percent100, 8)),
         Idle(null),
         Disabled(null);
 
         private Animation animation;
-        private double decay;
+        private double decay; // in milliseconds
         private double startAnimationTime;
 
         private AnimationTypes(Animation animation){
@@ -118,7 +118,7 @@ public class CANdleSubsystem extends SubsystemBase implements Component{
 
             currentAnimation = desiredAnimation;
 
-            SmartDashboard.putString("Current Robot LED Animation", CurrentManager.isOverNominal() ? "Disabled due to over current" : currentAnimation.name());
+            SmartDashboard.putString("Current Robot LED Animation", CurrentManager.isOverNominal() ? "Disabled due to over-current" : currentAnimation.name());
         }else if (currentAnimation.isDone()){
             changeAnimation(lastAnimation);
             currentAnimation = lastAnimation;

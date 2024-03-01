@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.*;
+import frc.robot.commands.lowLevelCommands.Shoot;
 import frc.robot.commands.lowLevelCommands.Transfer;
 import frc.robot.subsystems.*;
 
@@ -95,7 +96,7 @@ public class RobotContainer {
 
     /* The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        Shooter = new Shoot(s_Shooter, s_Transfer);
+        Shooter = new Shoot(s_Shooter, s_Transfer, 200, false);
         //Intake = new Intake(s_Intake, s_Transfer);
 
         JsonParser.JsonParser(null, s_Transfer, s_Shooter, s_Swerve);
@@ -131,7 +132,7 @@ public class RobotContainer {
 
         rightBumper.onTrue(new InstantCommand(() -> s_Transfer.setShooterTransfer(-0.25)));
         rightBumper.whileFalse(new InstantCommand(() -> s_Transfer.setShooterTransfer(0)));
-        leftBumper.onTrue(new Transfer(0.25, s_Transfer));
+        leftBumper.onTrue(new Transfer(0.25, s_Transfer, Transfer.TransferMode.Intake, false));
 
         // LOGGING STUFF FOR DRIVETRAIN
         // TODO: #8 Run logging for the swerve drive

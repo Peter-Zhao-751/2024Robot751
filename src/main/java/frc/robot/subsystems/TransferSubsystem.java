@@ -35,19 +35,19 @@ public class TransferSubsystem extends SubsystemBase implements Component {
         allocatedCurrent = 0;
     }
 
-    public void setIntakeTransfer(double speed) { // in rps
+    public void setIntakeTransfer(double speed) { // in rpm
         double currentSpeed = intakeTransfer.getEncoder().getVelocity() / 60;
         double output = intakeTransferPIDController.calculate(currentSpeed, speed);
         intakeTransfer.set(output);
     }
 
-    public void setShooterTransfer(double speed) { // in rps
+    public void setShooterTransfer(double speed) { // in rpm
         double currentSpeed = shooterTransfer.getEncoder().getVelocity() / 60;
         double output = shooterTransferPIDController.calculate(currentSpeed, speed);
         shooterTransfer.set(output);
     }
 
-    public void transfer(double speed) { // in centimeters per second of surface speed
+    public void transfer(double speed) { // in centimeters per second
         setIntakeTransfer(speed / (2 * Math.PI * intakeTransferRadius));
         setShooterTransfer(speed / (2 * Math.PI * shooterTransferRadius));
     }

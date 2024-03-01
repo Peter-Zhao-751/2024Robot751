@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;
@@ -22,10 +24,11 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
     private final ArmFeedforward swivelFeedforwardController;
     private final PIDController swivelPIDController;
+    private final MotionMagicVelocityVoltage intakeMotionMagicVelocityVoltage;
  
     private double swivelSetpoint;
+    private double targetIntakeSpeed;
 
-    private double currentDraw;
     private double allocatedCurrent;
     
     public IntakeSubsystem(){
@@ -42,13 +45,33 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         swivelPIDController = new PIDController(Constants.Intake.kPSwivelController, Constants.Intake.kISwivelController, Constants.Intake.kDSwivelController);
         swivelFeedforwardController = new ArmFeedforward(Constants.Intake.kSSwivelFeedforward, Constants.Intake.kVSwivelFeedforward, Constants.Intake.kASwivelFeedforward);
 
+        TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
+
+        // set slot 0 gains
+        var slot0Configs = talonFXConfigs.Slot0;
+        slot0Configs.kS = Constants.Intake.kSIntakeFeedforward;
+        slot0Configs.kV = Constants.Intake.kVIntakeFeedforward;
+        slot0Configs.kA = Constants.Intake.kAIntakeFeedforward;
+        slot0Configs.kP = Constants.Intake.kPIntakeController;
+        slot0Configs.kI = Constants.Intake.kIIntakeController;
+        slot0Configs.kD = Constants.Intake.kDIntakeController;
+
+        // set Motion Magic Velocity settings
+        var motionMagicConfigs = talonFXConfigs.MotionMagic;
+        motionMagicConfigs.MotionMagicAcceleration = 40; // Target acceleration of 400 rps/s (0.25 seconds to max)
+        motionMagicConfigs.MotionMagicJerk = 400; // Target jerk of 4000 rps/s/s (0.1 seconds)
+
+        intakeMotor.getConfigurator().apply(talonFXConfigs);
+
+        intakeMotionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0);
+
         swivelSetpoint = getSwivelPosition();
-        currentDraw = 0;
         allocatedCurrent = 0;
     }
     
     public void setIntakeSpeed(double speed){
-        intakeMotor.set(speed);
+        double intakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius) * 60; // convert from cm/s to rpm
+        intakeMotor.setControl(intakeMotionMagicVelocityVoltage.withVelocity(intakeSpeed));
     }
 
     public void setSwivelPosition(double position){
@@ -59,18 +82,21 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         leftSwivelMotor.set(0);
         rightSwivelMotor.set(0);
         intakeMotor.set(0);
-        
     }
 
     public double getSwivelPosition(){ // returns the angle of the swivel in degrees
         return angleEncoder.getPosition() % 1 * 360;
     }
 
+    public double getIntakeSpeed(){
+        return intakeMotor.getRotorVelocity().getValue();
+    }
+
     @Override
     public void periodic() {
         double currentAngle = getSwivelPosition();
 
-        if (Math.abs(currentAngle - swivelSetpoint) > 3){
+        if (Math.abs(currentAngle - swivelSetpoint) > 3){ //TODO: deadband of 3 degrees
             double pidOutput = swivelPIDController.calculate(currentAngle, swivelSetpoint);
 
             double targetAngleRadians = Math.toRadians(swivelSetpoint);
@@ -85,7 +111,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         SmartDashboard.putNumber("Total Intake Current Draw", getCurrentDraw());
         SmartDashboard.putNumber("Intake Swivel Position", getSwivelPosition());
-        //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Intake);
+        SmartDashboard.putNumber("Intake Speed", getIntakeSpeed());
     }
 
     @Override

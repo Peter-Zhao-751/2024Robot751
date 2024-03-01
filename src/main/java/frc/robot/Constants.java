@@ -47,7 +47,7 @@ public class Constants {
         public static int rightShooterMotorID = 52;
 
         public static double spinUpTime = 2.0;
-        public static double transferSpeed = 0.3;
+        public static double transferSpeed = 20.0; // units in centimeters per second
         public static double feedTime = 0.2;
 
         public static double kSFlyWheelFeedforward = 0.25;
@@ -73,6 +73,8 @@ public class Constants {
         public static double maxSwivelSpeed = 0.15;
         public static double intakeTime = 3.0;
 
+        public static double intakeRollerRadius = 2.54; // units in centimeters
+
         public static double kPSwivelController = 0.25; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
         public static double kISwivelController = 0.0;
         public static double kDSwivelController = 0.0;
@@ -82,6 +84,14 @@ public class Constants {
         public static double kSSwivelFeedforward = 0.19; // TODO: find this
         public static double kVSwivelFeedforward = 1.17;
         public static double kASwivelFeedforward = 0.0;
+
+        public static double kPIntakeController = 0.5;
+        public static double kIIntakeController = 0.0;
+        public static double kDIntakeController = 0.0;
+
+        public static double kSIntakeFeedforward = 0.15;
+        public static double kVIntakeFeedforward = 1.0;
+        public static double kAIntakeFeedforward = 0.0;
         
         public static double kSwivelExtendedAngle = 0.0;  
         public static double kSwivelRetractedAngle = 90.0;
@@ -103,8 +113,6 @@ public class Constants {
         public static double kPShooterController = 1.0;
 
         public static double feedSpeed = 30; // units in centimeters per second
-
-        public static double transferSystemLength = 50; // units in centimeters
 
         public static double maxTransferTime = 3.0; // unit in seconds
     }

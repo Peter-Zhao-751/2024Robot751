@@ -1,38 +1,46 @@
 package frc.robot.commands.lowLevelCommands;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.TransferSubsystem;
 
 public class Transfer extends Command {
-    private TransferSubsystem transferSubsystem;
 
+    public enum TransferMode {
+        Intake,
+        Outtake,
+        Shoot;
+    }
+
+    private TransferSubsystem transferSubsystem;
+    Debouncer beamDebouncer;
     private double speed;
     private long startTime;
+    private TransferMode transferMode;
     private boolean smartMode;
+    private boolean isBeamBroken;
 
-    public Transfer(double speed, TransferSubsystem transferSubsystem, boolean smartMode) {
-        this.speed = speed;
+    public Transfer(double speed, TransferSubsystem transferSubsystem, TransferMode transferMode, boolean smartMode) {
+        this.beamDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
+        this.speed = (transferMode == TransferMode.Outtake) ? - speed : speed;
         this.transferSubsystem = transferSubsystem;
+        this.transferMode = transferMode;
         this.smartMode = smartMode;
-        addRequirements(transferSubsystem);
-    }
-    public Transfer(double speed, TransferSubsystem transferSubsystem) {
-        this(speed, transferSubsystem, false);
-    }
+        this.isBeamBroken = false;
 
-    public double getEstimatedTransferTime(){
-        return Constants.Transfer.transferSystemLength / speed;
+        addRequirements(transferSubsystem);
     }
 
     @Override
     public void initialize() {
         startTime = System.currentTimeMillis();
+        transferSubsystem.setIntakeTransfer(speed);
     }
 
     @Override
     public void execute() {
-        transferSubsystem.setIntakeTransfer(speed);
+        isBeamBroken = beamDebouncer.calculate(transferSubsystem.beamBroken());
     }
 
     @Override
@@ -42,6 +50,18 @@ public class Transfer extends Command {
 
     @Override
     public boolean isFinished() {
-        return transferSubsystem.beamBroken() || smartMode ? System.currentTimeMillis() - startTime >= Constants.Transfer.maxTransferTime * 1000 : false;
+        if (transferMode == TransferMode.Intake) {
+            if (smartMode) {
+                return isBeamBroken || (System.currentTimeMillis() - startTime) > Constants.Transfer.maxTransferTime;
+            } else {
+                return isBeamBroken;
+            }
+        } else {
+            if (smartMode) {
+                return !isBeamBroken || (System.currentTimeMillis() - startTime) > Constants.Transfer.maxTransferTime;
+            } else {
+                return false;
+            }
+        }
     }
 }

@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.io.File;
 import java.io.FileReader;
-import java.nio.file.Path;
 import java.util.Iterator; 
 
-import frc.robot.Constants;
-import frc.robot.commands.Shoot;
 import frc.robot.commands.lowLevelCommands.Intake;
+import frc.robot.commands.lowLevelCommands.Shoot;
+import frc.robot.commands.lowLevelCommands.Intake.IntakeSwivelMode;
 import frc.robot.commands.Move;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -89,11 +88,11 @@ public class JsonParser {
                     case "Shoot": 
                         //double primeDelay = (delay-Constants.Shooter.spinUpTime) > 0 ? (delay-Constants.Shooter.spinUpTime) : 0;
                         //ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new InstantCommand()));
-                        autonCommands.add(new SequentialCommandGroup(newMovementCommand, new Shoot(shooterSubsystem, transferSubsystem)));
+                        autonCommands.add(new SequentialCommandGroup(newMovementCommand, new Shoot(shooterSubsystem, transferSubsystem, 200, true)));
                         break;
                     case "Pickup":
                         double intakeDelay = (delay-5) > 0 ? (delay-5) : 0;
-                        ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new Intake(intakeSubsystem, transferSubsystem)));
+                        ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new Intake(intakeSubsystem, transferSubsystem, IntakeSwivelMode.Extend, true)));
                         autonCommands.add(moveAndIntake);
                         break;
                     default:
