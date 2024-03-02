@@ -4,8 +4,8 @@ import frc.robot.commands.lowLevelCommands.Transfer.TransferMode;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransferSubsystem;
+import frc.robot.utility.StateMachine;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.StateMachine;
 
 public class Intake extends Command {
 

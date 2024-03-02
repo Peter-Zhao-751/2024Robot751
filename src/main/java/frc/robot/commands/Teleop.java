@@ -1,8 +1,8 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
-import frc.robot.subsystems.StateMachine;
-import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.utility.StateMachine;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -13,14 +13,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 
 public class Teleop extends Command {    
-    private SwerveDrive s_Swerve;    
+    private SwerveSubsystem s_Swerve;    
     private DoubleSupplier translationSup;
     private DoubleSupplier strafeSup;
     private DoubleSupplier rotationSup;
     private BooleanSupplier robotCentricSup;
     private BooleanSupplier preciseControl;
 
-    public Teleop(SwerveDrive s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier preciseControl) {
+    public Teleop(SwerveSubsystem s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier preciseControl) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
 

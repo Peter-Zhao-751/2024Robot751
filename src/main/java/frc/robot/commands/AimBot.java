@@ -1,8 +1,8 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
-import frc.robot.subsystems.StateMachine;
-import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.utility.StateMachine;
 
 import java.util.Optional;
 
@@ -13,11 +13,11 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class Aimbot extends Command {
-    private final SwerveDrive s_Swerve;
+public class AimBot extends Command {
+    private final SwerveSubsystem s_Swerve;
     private Move move;
 
-    public Aimbot(SwerveDrive s_Swerve) {
+    public AimBot(SwerveSubsystem s_Swerve) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
     }

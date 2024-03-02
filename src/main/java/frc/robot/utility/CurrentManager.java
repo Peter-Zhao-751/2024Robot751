@@ -1,8 +1,9 @@
-package frc.robot.subsystems;
+package frc.robot.utility;
 import java.util.ArrayList;
 import java.util.Comparator;
 
 import frc.robot.Constants;
+import frc.robot.subsystems.Component;
 
 public class CurrentManager {
     public static final double maxCurrent = Constants.CurrentManager.maxCurrent;

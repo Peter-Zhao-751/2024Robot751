@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.utility;
 
 import java.util.ArrayList;
 import java.util.Base64;
@@ -9,6 +9,10 @@ import java.util.Iterator;
 import frc.robot.commands.lowLevelCommands.Intake;
 import frc.robot.commands.lowLevelCommands.Shoot;
 import frc.robot.commands.lowLevelCommands.Intake.IntakeSwivelMode;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.TransferSubsystem;
 import frc.robot.commands.Move;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -30,11 +34,11 @@ public class JsonParser {
     private static IntakeSubsystem intakeSubsystem;
     private static TransferSubsystem transferSubsystem;
     private static ShooterSubsystem shooterSubsystem;
-    private static SwerveDrive swerveSubsystem;
+    private static SwerveSubsystem swerveSubsystem;
     private static JSONObject jsonObject;
     private static JSONArray jsonArray;
 
-    public static void JsonParser(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, ShooterSubsystem shooterSubsystem, SwerveDrive swerveSubsystem){
+    public static void JsonParser(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, ShooterSubsystem shooterSubsystem, SwerveSubsystem swerveSubsystem){
         JsonParser.intakeSubsystem = intakeSubsystem;
         JsonParser.transferSubsystem = transferSubsystem;
         JsonParser.shooterSubsystem = shooterSubsystem;

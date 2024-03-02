@@ -41,6 +41,11 @@ public class Constants {
         public static double kAccelerationProcessNoise = 0.15;
     }
 
+    public static class Limelight{
+        public static double version = 3.0;
+        public static String streamIp = "http://10.7.51.11:5800";
+    }
+
     public static class Shooter{
         // 2 krakens for shooting, one neo for the transfer belts. 
         public static int leftShooterMotorID = 51;
@@ -134,7 +139,7 @@ public class Constants {
         public static COTSTalonFXSwerveConstants chosenModule = COTSTalonFXSwerveConstants.SDS.MK4i.KrakenX60(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L3);
 
         /* Drivetrain Constants */
-        public static double trackWidth = 0.55245; //21.75 inches // 27 (Frame width) - 2*2.625 (SDS wheel offset)
+        public static double trackWidth = 0.55245; //21.75 inches // 27 (Frame width) - 2*2.625 (SDS wheel offset) to meters
         public static double wheelBase = 0.55245;
         public static double wheelCircumference = chosenModule.wheelCircumference;
 
@@ -223,10 +228,7 @@ public class Constants {
                 this.constants = new SwerveModuleConstants(driveMotorID, angleMotorID, CANCoderID, angleOffset);
             }
         }
-
-        // MAY HAVE TO DO INDIVIDUAL MODULE PID VALUES
         
-        //TODO: #6 Tune module angles to be closer bc there are maybe off by a few degrees
         public static SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, -82.177);
         public static SwerveModule frontRightModule = new SwerveModule(21, 22, 23, -60.292);
         public static SwerveModule backLeftModule = new SwerveModule(31, 32, 33, -79.365);
