@@ -56,6 +56,7 @@ public class Robot extends TimedRobot {
 
     // robot container
     m_robotContainer = new RobotContainer();
+
     SignalLogger.setPath("/media/sda1/");
     UISubsystem.initializeUI(currentMode);
   }
