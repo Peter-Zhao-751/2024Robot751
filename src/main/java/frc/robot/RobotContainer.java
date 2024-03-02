@@ -89,7 +89,6 @@ public class RobotContainer {
     //private final IntakeSubsystem s_Intake = new IntakeSubsystem();
     //private final ClimberSubsystem s_Climber = new ClimberSubsystem();
     private final SwerveSubsystem s_Swerve = new SwerveSubsystem();
-    private final CANdleSubsystem s_CANdle = new CANdleSubsystem();
     private final TransferSubsystem s_Transfer = new TransferSubsystem();
 
     /* values */
@@ -121,7 +120,7 @@ public class RobotContainer {
         circleButton.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         triangleButton.onTrue(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()));
         crossButton.onTrue(new InstantCommand(() -> s_Swerve.crossWheels()));
-        squareButton.onTrue(new InstantCommand(() -> climberMode = !climberMode));
+        //squareButton.onTrue(new InstantCommand(() -> climberMode = !climberMode));
 
         //leftBumper.whileTrue(new InstantCommand(() -> precise = true));
         //leftBumper.onFalse(new InstantCommand(() -> precise = false));
@@ -131,9 +130,9 @@ public class RobotContainer {
         rightTrigger.onTrue(new InstantCommand(() -> s_Shooter.setSpeed(SmartDashboard.getNumber("Shooter Speed", 0))));
         rightTrigger.onFalse(new InstantCommand(() -> s_Shooter.stop()));
 
-        rightBumper.onTrue(new InstantCommand(() -> s_Transfer.setShooterTransfer(-0.25)));
-        rightBumper.whileFalse(new InstantCommand(() -> s_Transfer.setShooterTransfer(0)));
-        leftBumper.onTrue(new Transfer(0.25, s_Transfer, Transfer.TransferMode.Intake, false));
+        //rightBumper.onTrue(new InstantCommand(() -> s_Transfer.setShooterTransfer(-0.25)));
+        //rightBumper.whileFalse(new InstantCommand(() -> s_Transfer.setShooterTransfer(0)));
+        leftBumper.onTrue(new Transfer(10, s_Transfer, Transfer.TransferMode.Intake, false));
 
         // LOGGING STUFF FOR DRIVETRAIN
         // TODO: #8 Run logging for the swerve drive

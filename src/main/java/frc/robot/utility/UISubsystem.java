@@ -6,13 +6,13 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.Base64;
 
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.CvSource;
-import edu.wpi.first.cscore.HttpCamera;
+import edu.wpi.first.cscore.*;
 import edu.wpi.first.cscore.HttpCamera.HttpCameraKind;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -30,6 +30,11 @@ public class UISubsystem {
     private static File selectedAuton = null;
     private static String base64Image = null;
     private static CvSource imageSource;
+
+    private static CvSink webcamCVSink;
+    private static CvSource webcamOutputStream;
+    private static Mat webcamSource;
+    private static Mat webcamOutput;
 
     // updating ui methods
     public static void updatePathPreview() {
@@ -152,6 +157,19 @@ public class UISubsystem {
     }
 
     public static void updateTelemetry() {
+
+        if (webcamCVSink.grabFrame(webcamSource) == 0) {
+            // Send error message to dashboard to ensure the stream works even if there's an error
+            webcamOutputStream.notifyError(webcamCVSink.getError());
+            return;
+        }
+
+        // Rotate the image frame
+        Core.rotate(webcamSource, webcamOutput, Core.ROTATE_180);
+
+        // Send the processed frame to the Dashboard
+        webcamOutputStream.putFrame(webcamOutput);
+
         SmartDashboard.putBoolean("Current Manager Over Nominal", CurrentManager.isOverNominal());
         SmartDashboard.putBoolean("Current Manager Over Peak", CurrentManager.isOverMax());
 
@@ -166,18 +184,21 @@ public class UISubsystem {
     }
 
     public static <CurrentMode> void initializeUI(CurrentMode currentMode) {
-        // initializing limelight
-        HttpCamera limelightStream = new HttpCamera("LimelightStream", Constants.Limelight.streamIp,
-                HttpCameraKind.kMJPGStreamer);
-        CameraServer.addCamera(limelightStream);
-        SmartDashboard.putNumber("Shooter Speed", 0);
-
         // initializing webcam
-        // UsbCamera webcam = new UsbCamera("WebcameStream", 0);
-        // webcam.setResolution(640, 480);
-        // CameraServer.addCamera(webcam);
+        UsbCamera webcam = new UsbCamera("WebcameStream", 0);
+        webcam.setResolution(640, 480);
 
+        webcamCVSink = CameraServer.getVideo(webcam);
+        webcamOutputStream = CameraServer.putVideo("RotateCamera", 640, 480);
+        webcamSource = new Mat();
+        webcamOutput = new Mat();
+        
+        // initializing limelight
+        HttpCamera limelightStream = new HttpCamera("LimelightStream", Constants.Limelight.streamIp, HttpCameraKind.kMJPGStreamer);
+        CameraServer.addCamera(limelightStream);
         CameraServer.startAutomaticCapture(limelightStream);
+
+        // initializing path stream
 
         imageSource = CameraServer.putVideo("Path Preview", 827, 401);
         CameraServer.startAutomaticCapture(imageSource);

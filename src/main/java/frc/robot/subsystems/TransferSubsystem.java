@@ -29,7 +29,7 @@ public class TransferSubsystem extends SubsystemBase implements Component {
 
         shooterTransferPIDController = new PIDController(Constants.Transfer.kPIntakeController, 0, 0);
         intakeTransferPIDController = new PIDController(Constants.Transfer.kPShooterController, 0, 0);
-        
+
         allocatedCurrent = 0;
     }
 
@@ -62,6 +62,9 @@ public class TransferSubsystem extends SubsystemBase implements Component {
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("Beam Break", beamBroken());
+        SmartDashboard.putNumber("Transfer Current Draw", getCurrentDraw());
+        SmartDashboard.putNumber("Intake Transfer Speed", intakeTransfer.getEncoder().getVelocity());
+        SmartDashboard.putNumber("Shooter Transfer Speed", shooterTransfer.getEncoder().getVelocity());
     }
 
     @Override

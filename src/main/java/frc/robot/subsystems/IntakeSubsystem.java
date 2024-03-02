@@ -24,7 +24,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
     private final ArmFeedforward swivelFeedforwardController;
     private final PIDController swivelPIDController;
-    private final MotionMagicVelocityVoltage intakeMotionMagicVelocityVoltage;
+    private final PIDController intakePIDController;
  
     private double swivelSetpoint;
     private double targetIntakeSpeed;
@@ -39,39 +39,22 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         rightSwivelMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
         angleEncoder = leftSwivelMotor.getAbsoluteEncoder();
+        angleEncoder.setZeroOffset(Constants.Intake.kSwivelencoderOffset);
 
         intakeMotor = new TalonFX(Constants.Intake.intakeMotorID);
 
         swivelPIDController = new PIDController(Constants.Intake.kPSwivelController, Constants.Intake.kISwivelController, Constants.Intake.kDSwivelController);
         swivelFeedforwardController = new ArmFeedforward(Constants.Intake.kSSwivelFeedforward, Constants.Intake.kVSwivelFeedforward, Constants.Intake.kASwivelFeedforward);
 
-        TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
-
-        // set slot 0 gains
-        var slot0Configs = talonFXConfigs.Slot0;
-        slot0Configs.kS = Constants.Intake.kSIntakeFeedforward;
-        slot0Configs.kV = Constants.Intake.kVIntakeFeedforward;
-        slot0Configs.kA = Constants.Intake.kAIntakeFeedforward;
-        slot0Configs.kP = Constants.Intake.kPIntakeController;
-        slot0Configs.kI = Constants.Intake.kIIntakeController;
-        slot0Configs.kD = Constants.Intake.kDIntakeController;
-
-        // set Motion Magic Velocity settings
-        var motionMagicConfigs = talonFXConfigs.MotionMagic;
-        motionMagicConfigs.MotionMagicAcceleration = 40; // Target acceleration of 400 rps/s (0.25 seconds to max)
-        motionMagicConfigs.MotionMagicJerk = 400; // Target jerk of 4000 rps/s/s (0.1 seconds)
-
-        intakeMotor.getConfigurator().apply(talonFXConfigs);
-
-        intakeMotionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0);
+        intakePIDController = new PIDController(Constants.Intake.kPIntakeController, Constants.Intake.kIIntakeController, Constants.Intake.kDIntakeController);
 
         swivelSetpoint = getSwivelPosition();
+        targetIntakeSpeed = 0;
         allocatedCurrent = 0;
     }
     
     public void setIntakeSpeed(double speed){
-        double intakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius) * 60; // convert from cm/s to rpm
-        intakeMotor.setControl(intakeMotionMagicVelocityVoltage.withVelocity(intakeSpeed));
+        targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius) * 60; // convert from cm/s to rpm
     }
 
     public void setSwivelPosition(double position){
@@ -81,7 +64,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     public void stopAll(){
         leftSwivelMotor.setVoltage(0);
         rightSwivelMotor.setVoltage(0);
-        intakeMotor.setControl(intakeMotionMagicVelocityVoltage.withVelocity(0));
+        intakeMotor.set(0);
     }
 
     public double getSwivelPosition(){ // returns the angle of the swivel in degrees
@@ -107,6 +90,11 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
             leftSwivelMotor.setVoltage(output);
             rightSwivelMotor.setVoltage(output);
+        }
+
+        if (Math.abs(targetIntakeSpeed - 0) >= 5){ // TODO: deadband of 5 rpm
+            double pidOutput = intakePIDController.calculate(intakeMotor.getRotorVelocity().getValue(), targetIntakeSpeed);
+            intakeMotor.setVoltage(pidOutput);
         }
 
         SmartDashboard.putNumber("Total Intake Current Draw", getCurrentDraw());

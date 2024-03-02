@@ -90,13 +90,10 @@ public class Constants {
         public static double kVSwivelFeedforward = 1.17;
         public static double kASwivelFeedforward = 0.0;
 
-        public static double kPIntakeController = 0.5;
+        public static double kPIntakeController = 0.1; // TODO: erwqf
         public static double kIIntakeController = 0.0;
         public static double kDIntakeController = 0.0;
 
-        public static double kSIntakeFeedforward = 0.15;
-        public static double kVIntakeFeedforward = 1.0;
-        public static double kAIntakeFeedforward = 0.0;
         
         public static double kSwivelExtendedAngle = 0.0;  
         public static double kSwivelRetractedAngle = 90.0;
