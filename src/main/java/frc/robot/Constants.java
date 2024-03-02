@@ -68,10 +68,10 @@ public class Constants {
     }
 
     public static class Intake{
-        // 1 falcon for intake, 2 NEOs for moving intake TBD gear ratio, 1 neo for transporting the game piece
-        public static int intakeMotorID = 56;
-        public static int leftSwivelMotorID = 57;
-        public static int rightSwivelMotorID = 58;
+        // 1 falcon for intake, 2 NEOs for moving intake TBD gear ratio
+        public static int intakeMotorID = 58;
+        public static int leftSwivelMotorID = 55;
+        public static int rightSwivelMotorID = 56;
         public static int encoderID = 0;
 
         public static double swivelGearRatio = 15.0; 
@@ -106,7 +106,7 @@ public class Constants {
         public static int shooterTransferID = 53;
         public static double shooterTransferRadius = 2.8575; // units in centimeters
 
-        public static int intakeTransferID = 59;
+        public static int intakeTransferID = 57;
         public static double intakeTransferRadius = 5.08; // units in centimeters
 
         public static int beamBreakID = 0;
