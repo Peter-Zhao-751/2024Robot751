@@ -41,6 +41,11 @@ public class Constants {
         public static double kAccelerationProcessNoise = 0.15;
     }
 
+    public static class Limelight{
+        public static double version = 3.0;
+        public static String streamIp = "http://10.7.51.11:5800";
+    }
+
     public static class Shooter{
         // 2 krakens for shooting, one neo for the transfer belts. 
         public static int leftShooterMotorID = 51;
