@@ -20,7 +20,6 @@ public class TransferSubsystem extends SubsystemBase implements Component {
     private final PIDController shooterTransferPIDController;
     private final PIDController intakeTransferPIDController;
 
-    private double currentDraw;
     private double allocatedCurrent;
 
     public TransferSubsystem() {
@@ -30,8 +29,7 @@ public class TransferSubsystem extends SubsystemBase implements Component {
 
         shooterTransferPIDController = new PIDController(Constants.Transfer.kPIntakeController, 0, 0);
         intakeTransferPIDController = new PIDController(Constants.Transfer.kPShooterController, 0, 0);
-
-        currentDraw = 0;
+        
         allocatedCurrent = 0;
     }
 

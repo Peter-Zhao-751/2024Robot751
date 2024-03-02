@@ -32,7 +32,7 @@ import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
-public class SwerveDrive extends SubsystemBase {
+public class SwerveDrive extends SubsystemBase implements Component{
     public final StructArrayPublisher<SwerveModuleState> actualPublisher;
     public final StructArrayPublisher<SwerveModuleState> desirePublisher;
     private final Field2d m_field = new Field2d();
@@ -44,6 +44,7 @@ public class SwerveDrive extends SubsystemBase {
     public final SysIdRoutine routine;
 
     private final KalmanFilter kalmanFilter;
+    private double allocatedCurrent;
 
     public SwerveDrive() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.CANivoreID);
@@ -337,5 +338,17 @@ public class SwerveDrive extends SubsystemBase {
                 builder.addDoubleProperty("Robot Angle", () -> getGyroYaw().getRadians(), null);
             }
         });
+    }
+    @Override
+    public void allocateCurrent(double current){
+        //set motor controller current
+    }
+    @Override
+    public double getCurrentDraw(){
+        return 0;
+    }
+    @Override
+    public int getPriority(){
+        return 1;
     }
 }

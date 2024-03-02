@@ -47,8 +47,9 @@ public class Teleop extends Command {
             true, 
             preciseControl.getAsBoolean()
         );
-
-        if (isDriving) StateMachine.setState(StateMachine.State.TeleopDrive);
-        else StateMachine.setState(StateMachine.State.Idle);
+        if (!StateMachine.isPerformingAction()){
+            if (isDriving) StateMachine.setState(StateMachine.State.TeleopDrive);
+            else StateMachine.setState(StateMachine.State.Idle);
+        }
     }
 }
