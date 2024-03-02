@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.Aimbot;
+import frc.robot.commands.AimBot;
 import frc.robot.commands.lowLevelCommands.CANdleController;
 
 public class StateMachine {
