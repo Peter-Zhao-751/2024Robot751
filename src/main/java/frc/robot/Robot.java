@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.subsystems.CurrentManager;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.lang.reflect.Field;
@@ -27,7 +27,9 @@ import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
-import frc.robot.subsystems.JsonParser;
+
+import frc.robot.utility.CurrentManager;
+import frc.robot.utility.JsonParser;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;

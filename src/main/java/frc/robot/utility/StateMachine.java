@@ -1,8 +1,10 @@
-package frc.robot.subsystems;
+package frc.robot.utility;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.AimBot;
 import frc.robot.commands.lowLevelCommands.CANdleController;
+import frc.robot.subsystems.CANdleSubsystem;
+import frc.robot.subsystems.CANdleSubsystem.AnimationTypes;
 
 public class StateMachine {
 
@@ -27,13 +29,15 @@ public class StateMachine {
 
     private StateMachine(){
         // This is a utility class and should not be instantiated.
+        throw new UnsupportedOperationException("This is a utility class and should not be instantiated.");
     }
 
-    public static State state = State.Idle;
+    private static State state = State.Idle;
 
     public static void setState(State newState) {
         state = newState;
     }
+    
     public static State getState() {
         return state;
     }

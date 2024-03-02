@@ -3,7 +3,7 @@ import frc.robot.Constants;
 import frc.robot.commands.lowLevelCommands.Transfer.TransferMode;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransferSubsystem;
-import frc.robot.subsystems.StateMachine;
+import frc.robot.utility.StateMachine;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class Shoot extends Command{

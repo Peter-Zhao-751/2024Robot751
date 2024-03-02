@@ -15,7 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.lib.math.Conversions;
 import frc.robot.Constants;
 import frc.robot.Robot;
-
+import frc.robot.utility.CurrentManager;
 import edu.wpi.first.units.Current;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
@@ -74,17 +74,12 @@ public class SwerveModule {
          * drive() in SwerveDrive.java is called with isOpenLoop = false most of the time
          * but Teleop.java calls it with isOpenLoop = true
          * So I think in teleop, we are in open loop, and in auto, we are in closed loop
-         * 
-         * maybe also change to always closed loop (motionMagic?!?)
-         * to make driving more consistent
         */
         
 
         if(isOpenLoop){
             driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
             driveDutyCycle.EnableFOC = Constants.Swerve.enableFOC;
-            // TODO: #3 Maybe look into changing this to be MotionMagicDutyCycle
-            // instead of just DutyCycle to allow us to ease in and out better
             mDriveMotor.setControl(driveDutyCycle);
         } else {
             driveVelocity.Velocity = Conversions.MPSToRPS(desiredState.speedMetersPerSecond, Constants.Swerve.wheelCircumference);
