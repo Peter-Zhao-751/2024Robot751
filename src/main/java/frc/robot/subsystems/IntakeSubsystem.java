@@ -2,6 +2,9 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -10,9 +13,12 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVLibError;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
+
+import java.util.Map;
 
 public class IntakeSubsystem extends SubsystemBase implements Component {
 
@@ -29,6 +35,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
  
     private double swivelSetpoint;
     private double targetIntakeSpeed;
+    private GenericEntry slider;
 
     private double allocatedCurrent;
     
@@ -36,11 +43,15 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         leftSwivelMotor = new CANSparkMax(Constants.Intake.leftSwivelMotorID, MotorType.kBrushless);
         rightSwivelMotor = new CANSparkMax(Constants.Intake.rightSwivelMotorID, MotorType.kBrushless);
 
-        leftSwivelMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        rightSwivelMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        leftSwivelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        rightSwivelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        leftSwivelMotor.setInverted(true);
 
-        angleEncoder = leftSwivelMotor.getAbsoluteEncoder(Type.kDutyCycle);
-        angleEncoder.setZeroOffset(Constants.Intake.k);
+        angleEncoder = rightSwivelMotor.getAbsoluteEncoder(Type.kDutyCycle);
+        angleEncoder.setInverted(true);
+        angleEncoder.setPositionConversionFactor(360);
+        REVLibError thing =  angleEncoder.setZeroOffset(Constants.Intake.kSwivelencoderOffset);
+        SmartDashboard.putString("bob", thing.name());
 
         intakeMotor = new TalonFX(Constants.Intake.intakeMotorID);
 
@@ -52,6 +63,12 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         swivelSetpoint = getSwivelPosition();
         targetIntakeSpeed = 0;
         allocatedCurrent = 0;
+
+        slider = Shuffleboard.getTab("intake")
+        .add("Slider", 0)
+        .withWidget(BuiltInWidgets.kNumberSlider)
+        .withProperties(Map.of("min", 0, "max", 1))
+        .getEntry();
     }
     
     public void setIntakeSpeed(double speed){
@@ -69,7 +86,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     }
 
     public double getSwivelPosition(){ // returns the angle of the swivel in degrees
-        return angleEncoder.getPosition() % 1 * 360;
+        return angleEncoder.getPosition() % 360;
     }
 
     public double getIntakeSpeed(){
@@ -79,6 +96,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     @Override
     public void periodic() {
         double currentAngle = getSwivelPosition();
+        //rightSwivelMotor.setVoltage(slider.getDouble(0));
+        leftSwivelMotor.setVoltage(slider.getDouble(0));
 
         if (Math.abs(currentAngle - swivelSetpoint) > 3){ //TODO: deadband of 3 degrees
             double pidOutput = swivelPIDController.calculate(currentAngle, swivelSetpoint);
@@ -89,8 +108,10 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
             double output = pidOutput + feedforwardOutput;
 
-            leftSwivelMotor.setVoltage(output);
-            rightSwivelMotor.setVoltage(output);
+            SmartDashboard.putNumber("Swivel Output Voltage", output);
+            
+            //leftSwivelMotor.setVoltage(output);
+            //rightSwivelMotor.setVoltage(output);
         }
 
         if (Math.abs(targetIntakeSpeed - 0) >= 5){ // TODO: deadband of 5 rpm
@@ -99,7 +120,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         }
 
         SmartDashboard.putNumber("Total Intake Current Draw", getCurrentDraw());
-        SmartDashboard.putNumber("Intake Swivel Position", getSwivelPosition());
+        SmartDashboard.putNumber("Intake Swivel Position", angleEncoder.getPosition());
         SmartDashboard.putNumber("Intake Speed", getIntakeSpeed());
     }
 

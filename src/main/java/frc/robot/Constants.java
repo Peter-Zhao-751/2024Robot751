@@ -16,8 +16,9 @@ import frc.lib.util.SwerveModuleConstants;
 public class Constants {
 
     // Everything on the drive train is on the CANivore, so we use this ID for all CTRE configs
-    public static String CANivoreID = "2003 Nissan Ultima";
+    public static String CANivoreID = "2003 Nissan Ultima"; // Don't ask Spencer why this is named this
     public static double stickDeadband = 0.1;
+    public static int teamNumber = 751;
 
     public static class CurrentManager{
         public static double maxCurrent = 180.0;
@@ -68,9 +69,9 @@ public class Constants {
     }
 
     public static class Intake{
-        // 1 falcon for intake, 2 NEOs for moving intake TBD gear ratio, 1 neo for transporting the game piece
+        // 1 falcon for intake, 2 NEOs for moving intake TBD gear ratio
         public static int intakeMotorID = 56;
-        public static int leftSwivelMotorID = 57;
+        public static int leftSwivelMotorID = 55;
         public static int rightSwivelMotorID = 58;
         public static int encoderID = 0;
 
@@ -80,13 +81,13 @@ public class Constants {
 
         public static double intakeRollerRadius = 2.54; // units in centimeters
 
-        public static double kPSwivelController = 0.25; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
+        public static double kPSwivelController = 0.5; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
         public static double kISwivelController = 0.0;
         public static double kDSwivelController = 0.0;
 
         public static double kSwivelTime = 0.17;
 
-        public static double kSSwivelFeedforward = 0.19; // TODO: find this
+        public static double kSSwivelFeedforward = 0.25; // TODO: find this
         public static double kVSwivelFeedforward = 1.17;
         public static double kASwivelFeedforward = 0.0;
 
@@ -95,18 +96,18 @@ public class Constants {
         public static double kDIntakeController = 0.0;
 
         
-        public static double kSwivelExtendedAngle = 0.0;  
-        public static double kSwivelRetractedAngle = 90.0;
+        public static double kSwivelExtendedAngle = 10.0;  
+        public static double kSwivelRetractedAngle = 60.0;
         public static double kSwivelMaintenanceAngle = 45.0;
 
-        public static double kSwivelencoderOffset = 0.0; // TODO: find this
+        public static double kSwivelencoderOffset = 312;
     }
 
     public static class Transfer{
         public static int shooterTransferID = 53;
         public static double shooterTransferRadius = 2.8575; // units in centimeters
 
-        public static int intakeTransferID = 59;
+        public static int intakeTransferID = 57;
         public static double intakeTransferRadius = 5.08; // units in centimeters
 
         public static int beamBreakID = 0;
