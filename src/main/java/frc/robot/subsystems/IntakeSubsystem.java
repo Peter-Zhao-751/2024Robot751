@@ -12,6 +12,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 public class IntakeSubsystem extends SubsystemBase implements Component {
 
@@ -38,8 +39,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         leftSwivelMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         rightSwivelMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
-        angleEncoder = leftSwivelMotor.getAbsoluteEncoder();
-        angleEncoder.setZeroOffset(Constants.Intake.kSwivelencoderOffset);
+        angleEncoder = leftSwivelMotor.getAbsoluteEncoder(Type.kDutyCycle);
+        angleEncoder.setZeroOffset(Constants.Intake.k);
 
         intakeMotor = new TalonFX(Constants.Intake.intakeMotorID);
 
