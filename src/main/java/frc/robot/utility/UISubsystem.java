@@ -158,17 +158,17 @@ public class UISubsystem {
 
     public static void updateTelemetry() {
 
-        if (webcamCVSink.grabFrame(webcamSource) == 0) {
-            // Send error message to dashboard to ensure the stream works even if there's an error
-            webcamOutputStream.notifyError(webcamCVSink.getError());
-            return;
-        }
+        // if (webcamCVSink.grabFrame(webcamSource) == 0) {
+        //     // Send error message to dashboard to ensure the stream works even if there's an error
+        //     webcamOutputStream.notifyError(webcamCVSink.getError());
+        //     return;
+        // }
 
         // Rotate the image frame
-        Core.rotate(webcamSource, webcamOutput, Core.ROTATE_180);
+        //Core.rotate(webcamSource, webcamOutput, Core.ROTATE_180);
 
         // Send the processed frame to the Dashboard
-        webcamOutputStream.putFrame(webcamOutput);
+        //webcamOutputStream.putFrame(webcamOutput);
 
         SmartDashboard.putBoolean("Current Manager Over Nominal", CurrentManager.isOverNominal());
         SmartDashboard.putBoolean("Current Manager Over Peak", CurrentManager.isOverMax());
@@ -185,13 +185,15 @@ public class UISubsystem {
 
     public static <CurrentMode> void initializeUI(CurrentMode currentMode) {
         // initializing webcam
-        UsbCamera webcam = new UsbCamera("WebcameStream", 0);
-        webcam.setResolution(640, 480);
+        //UsbCamera webcam = new UsbCamera("WebcameStream", 0);
+        //webcam.setResolution(640, 480);
 
-        webcamCVSink = CameraServer.getVideo(webcam);
-        webcamOutputStream = CameraServer.putVideo("RotateCamera", 640, 480);
-        webcamSource = new Mat();
-        webcamOutput = new Mat();
+        //webcamCVSink = CameraServer.getVideo(webcam);
+        //CameraServer.addCamera(webcam);
+        //CameraServer.startAutomaticCapture(webcam);
+        // webcamOutputStream = CameraServer.putVideo("RotateCamera", 640, 480);
+        // webcamSource = new Mat();
+        // webcamOutput = new Mat();
         
         // initializing limelight
         HttpCamera limelightStream = new HttpCamera("LimelightStream", Constants.Limelight.streamIp, HttpCameraKind.kMJPGStreamer);

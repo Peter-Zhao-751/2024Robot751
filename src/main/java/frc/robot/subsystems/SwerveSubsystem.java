@@ -81,6 +81,7 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
                     for(SwerveModule mod : mSwerveMods){
                         mod.setDriveVoltage(volts.in(Volts));
                     }
+                    resetModulesToAbsolute();
                 System.out.println("Volts: " + volts.in(Volts));
             }, null, this)
         );
@@ -211,7 +212,7 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
     } 
 
     @Override
-    public void periodic(){
+    public void periodic() {
         double accelerationX = gyro.getAccelerationX().getValue();
         double accelerationY = gyro.getAccelerationY().getValue();
         double accelerationZ = gyro.getAccelerationZ().getValue();

@@ -86,7 +86,7 @@ public class RobotContainer {
     /* Subsystems */
     //private final CANdle s_CANdle = new CANdle();
     private final ShooterSubsystem s_Shooter = new ShooterSubsystem();
-    //private final IntakeSubsystem s_Intake = new IntakeSubsystem();
+    private final IntakeSubsystem s_Intake = new IntakeSubsystem();
     //private final ClimberSubsystem s_Climber = new ClimberSubsystem();
     private final SwerveSubsystem s_Swerve = new SwerveSubsystem();
     private final TransferSubsystem s_Transfer = new TransferSubsystem();
@@ -130,9 +130,9 @@ public class RobotContainer {
         rightTrigger.onTrue(new InstantCommand(() -> s_Shooter.setSpeed(SmartDashboard.getNumber("Shooter Speed", 0))));
         rightTrigger.onFalse(new InstantCommand(() -> s_Shooter.stop()));
 
-        //rightBumper.onTrue(new InstantCommand(() -> s_Transfer.setShooterTransfer(-0.25)));
+        rightBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(60.0)));
         //rightBumper.whileFalse(new InstantCommand(() -> s_Transfer.setShooterTransfer(0)));
-        leftBumper.onTrue(new Transfer(10, s_Transfer, Transfer.TransferMode.Intake, false));
+        leftBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(10.0)));
 
         // LOGGING STUFF FOR DRIVETRAIN
         // TODO: #8 Run logging for the swerve drive
