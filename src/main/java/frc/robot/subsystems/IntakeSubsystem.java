@@ -50,8 +50,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         angleEncoder = rightSwivelMotor.getAbsoluteEncoder(Type.kDutyCycle);
         angleEncoder.setInverted(true);
         angleEncoder.setPositionConversionFactor(360);
-        REVLibError thing =  angleEncoder.setZeroOffset(Constants.Intake.kSwivelencoderOffset);
-        SmartDashboard.putString("bob", thing.name());
+        REVLibError encoderConfirmation =  angleEncoder.setZeroOffset(Constants.Intake.kSwivelencoderOffset);
+        SmartDashboard.putString("Encoder Confirmation", encoderConfirmation.name());
 
         intakeMotor = new TalonFX(Constants.Intake.intakeMotorID);
 
@@ -107,11 +107,12 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
             double feedforwardOutput = swivelFeedforwardController.calculate(targetAngleRadians, 0, 0);
 
             double output = pidOutput + feedforwardOutput;
+            output *= leftSwivelMotor.getBusVoltage(); // convert from percent to voltage
 
             SmartDashboard.putNumber("Swivel Output Voltage", output);
             
-            //leftSwivelMotor.setVoltage(output);
-            //rightSwivelMotor.setVoltage(output);
+            leftSwivelMotor.setVoltage(output);
+            rightSwivelMotor.setVoltage(output);
         }
 
         if (Math.abs(targetIntakeSpeed - 0) >= 5){ // TODO: deadband of 5 rpm

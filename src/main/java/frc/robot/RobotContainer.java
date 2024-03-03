@@ -81,6 +81,7 @@ public class RobotContainer {
     private final JoystickButton playstationButton = new JoystickButton(driver, PS5Controller.Button.kPS.value); // ZERO MODULES
 
     /* Commands */
+    
     private final Command Shooter;
     //private final Command Intake;
 
@@ -125,7 +126,6 @@ public class RobotContainer {
 
         //leftBumper.whileTrue(new InstantCommand(() -> precise = true));
         //leftBumper.onFalse(new InstantCommand(() -> precise = false));
-u8
 
 
         // SHOOTER STUFF
@@ -146,7 +146,7 @@ u8
         // rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         
         /* Drivetrain Commands */
-        squareButton.whileTrue(new InstantCommand(() -> s_Swerve.crossWheels()));
+        squareButton.toggleOnTrue(new InstantCommand(() -> s_Swerve.crossWheels()));
     }
 
     public Command getAutonomousCommand() {
