@@ -196,7 +196,7 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
     }
 
     public Pose2d fuseLimelightSwerveData(Pose2d limelightData, Pose2d swerveData){
-        return new Pose2d();
+        return new Pose2d(); // TODO
     }
 
     public void resetModulesToAbsolute(){
@@ -213,6 +213,10 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
 
     @Override
     public void periodic() {
+        swerveUi();
+    }
+
+    private void swerveUi() {
         double accelerationX = gyro.getAccelerationX().getValue();
         double accelerationY = gyro.getAccelerationY().getValue();
         double accelerationZ = gyro.getAccelerationZ().getValue();
@@ -341,6 +345,7 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
             }
         });
     }
+
     @Override
     public void allocateCurrent(double current){
         //set motor controller current

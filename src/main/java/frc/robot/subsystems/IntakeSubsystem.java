@@ -51,8 +51,6 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         angleEncoder = rightSwivelMotor.getAbsoluteEncoder(Type.kDutyCycle);
         angleEncoder.setInverted(true);
         angleEncoder.setPositionConversionFactor(360);
-        REVLibError thing =  angleEncoder.setZeroOffset(Constants.Intake.kSwivelEncoderZeroOffset);
-        SmartDashboard.putString("bob", thing.name());
 
         intakeMotor = new TalonFX(Constants.Intake.intakeMotorID);
 

@@ -81,6 +81,7 @@ public class RobotContainer {
     private final JoystickButton playstationButton = new JoystickButton(driver, PS5Controller.Button.kPS.value); // ZERO MODULES
 
     /* Commands */
+    
     private final Command Shooter;
     //private final Command Intake;
 
@@ -127,7 +128,6 @@ public class RobotContainer {
         //leftBumper.onFalse(new InstantCommand(() -> precise = false));
 
 
-
         // SHOOTER STUFF
         // 42-44 seems to work well
         rightTrigger.onTrue(new InstantCommand(() -> s_Shooter.setSpeed(SmartDashboard.getNumber("Shooter Speed", 0))));
@@ -146,7 +146,7 @@ public class RobotContainer {
         // rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         
         /* Drivetrain Commands */
-        squareButton.whileTrue(new InstantCommand(() -> s_Swerve.crossWheels()));
+        squareButton.toggleOnTrue(new InstantCommand(() -> s_Swerve.crossWheels()));
     }
 
     public Command getAutonomousCommand() {
