@@ -15,6 +15,8 @@ public class ClimberSubsystem extends SubsystemBase implements Component{
     public ClimberSubsystem(){
         leftClimberMotor = new CANSparkMax(Constants.Climber.leftClimberMotorID, MotorType.kBrushless);
         rightClimberMotor = new CANSparkMax(Constants.Climber.rightClimberMotorID, MotorType.kBrushless);
+        leftClimberMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        rightClimberMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     }
 
     /**
