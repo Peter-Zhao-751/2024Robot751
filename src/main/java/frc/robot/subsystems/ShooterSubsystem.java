@@ -123,7 +123,7 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
         rightShooterMotor.set(0);
     }
 
-    public double getShooterMotor1Speed(){
+    public double getShooterMotor1Speed(){ // rps
         return leftShooterMotor.getRotorVelocity().getValue();
     }
     public double getShooterMotor2Speed(){

@@ -96,6 +96,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     @Override
     public void periodic() {
         double currentAngle = getSwivelPosition();
+
+        // debug shit
         rightSwivelMotor.setVoltage(slider.getDouble(0));
         leftSwivelMotor.setVoltage(slider.getDouble(0));
 
