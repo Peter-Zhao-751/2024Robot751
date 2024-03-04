@@ -111,25 +111,60 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
     //     return routine.dynamic(direction);
     // }
 
+    /**
+     * <p> Sets the speed of the shooter motors in rotations per second using the motion magic control mode </p> 
+     * <ul>
+     * <li> Targets the given velocity and uses the feedforward gains to achieve the target speed </li> 
+     * <li> Additionally, reduces the acceleration to target a certain jerk </li> 
+     * </ul>
+     *
+     * @param speed                Set the speed of the shooter motors in rotations per second
+     * @return void
+     */
     public void setSpeed(double speed){
         targetSpeed = speed;
         leftShooterMotor.setControl(motionMagicVelocityVoltage.withVelocity(-speed));
         rightShooterMotor.setControl(new Follower(leftShooterMotor.getDeviceID(), true));
     }
     
+    /**
+     * <p> Stops the shooter motors </p> 
+     * <ul>
+     * <li> Sets the target speed to 0 </li> 
+     * <li> Sets the voltage of the shooter motors to 0 </li> 
+     * </ul>
+     *
+     * @return void
+     */
     public void stop(){
         targetSpeed = 0;
         leftShooterMotor.set(0);
         rightShooterMotor.set(0);
     }
 
+    /**
+     * <p> Returns the speed of the left shooter motor in rotations per second </p> 
+     *
+     * @return double, the speed of the left shooter motor in rotations per second
+     */
     public double getShooterMotor1Speed(){
         return leftShooterMotor.getRotorVelocity().getValue();
     }
+
+    /**
+     * <p> Returns the speed of the right shooter motor in rotations per second </p> 
+     *
+     * @return double, the speed of the right shooter motor in rotations per second
+     */
     public double getShooterMotor2Speed(){
         return rightShooterMotor.getRotorVelocity().getValue();
     }
 
+    /**
+     * <p> Returns the average speed of the shooter motors in rotations per second </p> 
+     *
+     * @return double
+     */
     public double getShooterSpeed(){
         return (getShooterMotor1Speed() + getShooterMotor2Speed()) / 2;
     }

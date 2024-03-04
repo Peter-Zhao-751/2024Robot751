@@ -136,12 +136,6 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
         return (xSpeed >= 0.05 && ySpeed >= 0.05 && rot >= 0.2); // TODO: tune these values
     }
 
-    public void crossWheels() { // TODO: #7 Check cross wheels works
-        for(SwerveModule mod : mSwerveMods){
-            mod.setDesiredState(new SwerveModuleState(0, new Rotation2d((mod.moduleNumber-1) * 90 + 45)), false);
-        }
-    }
-
     /* Used by SwerveControllerCommand in Auto */
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
@@ -199,12 +193,23 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
         return new Pose2d(); // TODO
     }
 
+    /**
+     * <p> Resets the swerve modules to their absolute positions </p>
+     * <p> Align all wheels forwards </p>
+     * @return void
+     */
     public void resetModulesToAbsolute(){
         for(SwerveModule mod : mSwerveMods){
             mod.resetToAbsolute();
         }
     }
 
+    /**
+     * <p> Crosses the swerve modules </p>
+     * <p> Sets the desired state of each module to a 0 speed and a offset rotation of 45 degrees </p>
+     * <p> used to prevent defense </p>
+     * @return void
+     */
     public void crossModules(){
         for(SwerveModule mod : mSwerveMods){
             mod.setDesiredState(new SwerveModuleState(0, new Rotation2d((mod.moduleNumber-1) * 90 + 45)), false);
@@ -216,6 +221,10 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
         swerveUi();
     }
 
+    /**
+     * <p> Updates the SmartDashboard with the current state of the swerve drive </p>
+     * @return void
+     */
     private void swerveUi() {
         double accelerationX = gyro.getAccelerationX().getValue();
         double accelerationY = gyro.getAccelerationY().getValue();

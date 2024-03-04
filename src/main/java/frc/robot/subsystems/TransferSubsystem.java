@@ -33,28 +33,51 @@ public class TransferSubsystem extends SubsystemBase implements Component {
         allocatedCurrent = 0;
     }
 
+    /**
+     * Set the speed of the intake transfer motor
+     * @param speed in rotations per minute
+     * @return null
+     */
     public void setIntakeTransfer(double speed) { // in rpm
         double currentSpeed = intakeTransfer.getEncoder().getVelocity() / 60;
         double output = intakeTransferPIDController.calculate(currentSpeed, speed);
         intakeTransfer.set(output);
     }
 
+    /**
+     * Set the speed of the shooter transfer motor
+     * @param speed in rotations per minute
+     * @return null
+     */
     public void setShooterTransfer(double speed) { // in rpm
         double currentSpeed = shooterTransfer.getEncoder().getVelocity() / 60;
         double output = shooterTransferPIDController.calculate(currentSpeed, speed);
         shooterTransfer.set(output);
     }
 
+    /**
+     * Set the speed of both transfer motors
+     * @param speed in centimeters per second
+     * @return null
+     */
     public void transfer(double speed) { // in centimeters per second
         setIntakeTransfer(speed / (2 * Math.PI * intakeTransferRadius));
         setShooterTransfer(speed / (2 * Math.PI * shooterTransferRadius));
     }
 
+    /**
+     * Stop both transfer motors
+     * @return null
+     */
     public void stop() {
         intakeTransfer.set(0);
         shooterTransfer.set(0);
     }
 
+    /**
+     * Returns if the beam is broken
+     * @return boolean, true if the beam is broken
+     */
     public boolean beamBroken() { // True when beam is broken
         return !beamBreak.get();
     }

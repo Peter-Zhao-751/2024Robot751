@@ -71,24 +71,46 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         .getEntry();
     }
     
+    /**
+     * Sets the speed of the intake motor
+     * @param speed the speed of the intake motor in cm/s
+     * @return void
+     */
     public void setIntakeSpeed(double speed){
         targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius); // convert from cm/s to rps
     }
 
+    /**
+     * Sets the position of the swivel
+     * @param position the position of the swivel in degrees
+     * @return void
+     */
     public void setSwivelPosition(double position){
         swivelSetpoint = position;
     }
 
+    /**
+     * Stops the intake and swivel motors
+     * @return void
+     */
     public void stopAll(){
         leftSwivelMotor.setVoltage(0);
         rightSwivelMotor.setVoltage(0);
         intakeMotor.set(0);
     }
 
+    /**
+     * Returns the position of the swivel in degrees
+     * @return double, the position of the swivel in degrees
+     */
     public double getSwivelPosition(){ // returns the angle of the swivel in degrees
         return angleEncoder.getPosition() % 360 - Constants.Intake.kSwivelAnglePrecisionOffset;
     }
 
+    /**
+     * Returns the speed of the intake motor in rotations per second
+     * @return double, the speed of the intake motor in rotations per second
+     */
     public double getIntakeSpeed(){
         return intakeMotor.getRotorVelocity().getValue();
     }

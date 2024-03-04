@@ -17,24 +17,48 @@ public class ClimberSubsystem extends SubsystemBase implements Component{
         rightClimberMotor = new CANSparkMax(Constants.Climber.rightClimberMotorID, MotorType.kBrushless);
     }
 
+    /**
+     * Set the speed of the right climber motor
+     * @param speed in the range of -1 to 1
+     * @return null
+     */
     public void rightMotor(double speed){
         rightClimberMotor.set(speed);
     }
-
+ 
+    /**
+     * Set the speed of the left climber motor
+     * @param speed in the range of -1 to 1
+     * @return null
+     */
     public void leftMotor(double speed){
         leftClimberMotor.set(speed);
     }
 
+    /**
+     * Set the speed of both climber motors
+     * @param speed in the range of -1 to 1
+     * @return null
+     */
     public void climb(double speed){
         leftClimberMotor.set(speed);
         rightClimberMotor.set(speed);
     }
 
+    /**
+     * Set the speed of both climber motors to retract
+     * @param speed in the range of -1 to 1
+     * @return null
+     */
     public void retract(double speed){
         leftClimberMotor.set(-speed);
         rightClimberMotor.set(-speed);
     }
 
+    /**
+     * Stop both climber motors
+     * @return null
+     */
     public void stop(){
         leftClimberMotor.set(0);
         rightClimberMotor.set(0);
