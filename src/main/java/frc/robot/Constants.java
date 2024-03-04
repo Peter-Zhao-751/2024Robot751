@@ -91,7 +91,7 @@ public class Constants {
         public static double kVSwivelFeedforward = 1.17;
         public static double kASwivelFeedforward = 0.0;
 
-        public static double kPIntakeController = 0.1; // TODO: erwqf
+        public static double kPIntakeController = 0.01; // TODO: this is a low value as the motor is using duty cycle, voltage
         public static double kIIntakeController = 0.0;
         public static double kDIntakeController = 0.0;
 
@@ -100,7 +100,8 @@ public class Constants {
         public static double kSwivelRetractedAngle = 60.0;
         public static double kSwivelMaintenanceAngle = 45.0;
 
-        public static double kSwivelencoderOffset = 312;
+        public static double kSwivelEncoderZeroOffset = 290;
+        public static double kSwivelAnglePrecisionOffset = 30;
     }
 
     public static class Transfer{
