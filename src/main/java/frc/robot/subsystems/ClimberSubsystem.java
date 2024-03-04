@@ -5,7 +5,7 @@ import frc.robot.Constants;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
+// not done yet dont kill me
 public class ClimberSubsystem extends SubsystemBase implements Component{
     private final CANSparkMax leftClimberMotor;
     private final CANSparkMax rightClimberMotor;
