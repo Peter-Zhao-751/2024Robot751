@@ -121,7 +121,6 @@ public class RobotContainer {
         /* Util Commands */
         circleButton.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
         triangleButton.onTrue(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()));
-        crossButton.onTrue(new InstantCommand(() -> s_Swerve.crossWheels()));
         //squareButton.onTrue(new InstantCommand(() -> climberMode = !climberMode));
 
         //leftBumper.whileTrue(new InstantCommand(() -> precise = true));
@@ -146,7 +145,7 @@ public class RobotContainer {
         // rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         
         /* Drivetrain Commands */
-        squareButton.toggleOnTrue(new InstantCommand(() -> s_Swerve.crossWheels()));
+        crossButton.toggleOnTrue(new InstantCommand(() -> s_Swerve.crossModules()));
     }
 
     public Command getAutonomousCommand() {

@@ -127,8 +127,14 @@ public class Constants {
         
         public static double intakeTime = 3.0;
 
-        public static double climberSpringThickness = 0.5; // units in centimeters
-        public static double climberSpeed = 0.0;
+        public static double climberSpeed = 5.0;
+
+        public static double kGearRatio = 16.0;
+        public static double kSpoolRadius = 1.0; // units in centimeters
+
+        public static double kPClimbController = 0.05;
+        public static double kIClimbController = 0.0;
+        public static double kDClimbController = 0.0;
     }
 
     public static class Swerve {

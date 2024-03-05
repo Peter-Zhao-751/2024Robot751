@@ -16,9 +16,6 @@ import frc.lib.math.Conversions;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.utility.CurrentManager;
-import edu.wpi.first.units.Current;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Voltage;
 
 public class SwerveModule {
     public final int moduleNumber;
@@ -89,15 +86,27 @@ public class SwerveModule {
         }
     }
 
+    /**
+     * Gets the angle of the module in radians from the CANCoder
+     * @return the angle of the module in radians
+     */
     public Rotation2d getCANcoder(){
         return Rotation2d.fromRotations(angleEncoder.getAbsolutePosition().getValue());
     }
 
+    /**
+     * Zeros the angle of the module
+     * @return void
+     */
     public void resetToAbsolute(){
         double absolutePosition = getCANcoder().getRotations() - angleOffset.getRotations();
         mAngleMotor.setPosition(absolutePosition);
     }
 
+    /**
+     * Get the current state of the module
+     * @return the current state of the module in a SwerveModuleState object
+     */
     public SwerveModuleState getState(){
         return new SwerveModuleState(
             Conversions.RPSToMPS(mDriveMotor.getVelocity().getValue(), Constants.Swerve.wheelCircumference), 
@@ -132,10 +141,22 @@ public class SwerveModule {
         );
     }
 
+    /**
+     * Sets the voltage of the drive motor
+     * Used for SysId characterization commands
+     * @param voltage the voltage to set the drive motor to
+     * @return void
+     */
     public void setDriveVoltage(double voltage) {
         mDriveMotor.setVoltage(voltage);
     }
 
+    /**
+     * Sets the voltage of the angle motor
+     * Used for SysId characterization commands
+     * @param voltage the voltage to set the angle motor to
+     * @return void
+     */
     public void setAngleVoltage(double voltage) {
         mAngleMotor.setVoltage(voltage);
     }

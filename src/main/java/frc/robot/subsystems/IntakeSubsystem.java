@@ -55,6 +55,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         intakeMotor = new TalonFX(Constants.Intake.intakeMotorID);
 
         swivelPIDController = new PIDController(Constants.Intake.kPSwivelController, Constants.Intake.kISwivelController, Constants.Intake.kDSwivelController);
+        swivelPIDController.enableContinuousInput(0, 360);
         swivelFeedforwardController = new ArmFeedforward(Constants.Intake.kSSwivelFeedforward, Constants.Intake.kVSwivelFeedforward, Constants.Intake.kASwivelFeedforward);
 
         intakePIDController = new PIDController(Constants.Intake.kPIntakeController, Constants.Intake.kIIntakeController, Constants.Intake.kDIntakeController);
@@ -71,24 +72,46 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         .getEntry();
     }
     
+    /**
+     * Sets the speed of the intake motor
+     * @param speed the speed of the intake motor in cm/s
+     * @return void
+     */
     public void setIntakeSpeed(double speed){
-        targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius); // convert from cm/s to rps
+        targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius);
     }
 
+    /**
+     * Sets the position of the swivel
+     * @param position the position of the swivel in degrees
+     * @return void
+     */
     public void setSwivelPosition(double position){
         swivelSetpoint = position;
     }
 
+    /**
+     * Stops the intake and swivel motors
+     * @return void
+     */
     public void stopAll(){
         leftSwivelMotor.setVoltage(0);
         rightSwivelMotor.setVoltage(0);
         intakeMotor.set(0);
     }
 
-    public double getSwivelPosition(){ // returns the angle of the swivel in degrees
+    /**
+     * Returns the position of the swivel in degrees
+     * @return double, the position of the swivel in degrees
+     */
+    public double getSwivelPosition() { 
         return angleEncoder.getPosition() % 360 - Constants.Intake.kSwivelAnglePrecisionOffset;
     }
 
+    /**
+     * Returns the speed of the intake motor in rotations per second
+     * @return double, the speed of the intake motor in rotations per second
+     */
     public double getIntakeSpeed(){
         return intakeMotor.getRotorVelocity().getValue();
     }
@@ -101,35 +124,26 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         rightSwivelMotor.setVoltage(slider.getDouble(0));
         leftSwivelMotor.setVoltage(slider.getDouble(0));
 
-        if (Math.abs(currentAngle - swivelSetpoint) > 3){ //TODO: deadband of 3 degrees
-            double maxVoltage = RobotController.getBatteryVoltage() * 0.95;
-            double pidOutput = swivelPIDController.calculate(currentAngle, swivelSetpoint);
+        double maxVoltage = RobotController.getBatteryVoltage() * 0.95;
+        double swivelPidOutput = swivelPIDController.calculate(currentAngle, swivelSetpoint);
+        
+        double targetAngleRadians = Math.toRadians(swivelSetpoint);
 
-            double targetAngleRadians = Math.toRadians(swivelSetpoint);
+        double feedforwardOutput = swivelFeedforwardController.calculate(targetAngleRadians, 0, 0);
 
-            double feedforwardOutput = swivelFeedforwardController.calculate(targetAngleRadians, 0, 0);
+        double combinedOutput = swivelPidOutput + feedforwardOutput;
 
-            double combinedOutput = pidOutput + feedforwardOutput;
+        combinedOutput = Math.min(combinedOutput, maxVoltage);
+        combinedOutput = Math.max(combinedOutput, -maxVoltage);
 
-            combinedOutput = Math.min(combinedOutput, maxVoltage);
-            combinedOutput = Math.max(combinedOutput, -maxVoltage);
-
-            SmartDashboard.putString("Swivel Mode", "ACTIVE");
-
-            SmartDashboard.putNumber("Swivel Output Voltage", combinedOutput);
+        SmartDashboard.putNumber("Swivel Output Voltage", combinedOutput);
             
-            //leftSwivelMotor.setVoltage(output);
-            //rightSwivelMotor.setVoltage(output);
-        }else SmartDashboard.putString("Swivel Mode", "IDLE");
+        //leftSwivelMotor.setVoltage(output);
+        //rightSwivelMotor.setVoltage(output);
 
-        double currentIntakeSpeed = getIntakeSpeed();
-
-        if (Math.abs(targetIntakeSpeed - currentIntakeSpeed) >= 5){ // TODO: deadband of 5 rpm
-            double pidOutput = intakePIDController.calculate(currentIntakeSpeed, targetIntakeSpeed);
-            // the values should be in the range of -1 to 1 and it will be clamped in the motor's api
-            intakeMotor.set(pidOutput);
-            SmartDashboard.putString("Intake Mode", "ACTIVE");
-        } else SmartDashboard.putString("Intake Mode", "IDLE");
+        double intakePidOutput = intakePIDController.calculate(getIntakeSpeed(), targetIntakeSpeed);
+        // the values should be in the range of -1 to 1 and it will be clamped in the motor's api
+        intakeMotor.set(intakePidOutput);
 
         SmartDashboard.putNumber("Total Intake Current Draw", getCurrentDraw());
         SmartDashboard.putNumber("Intake Swivel Position", angleEncoder.getPosition());
