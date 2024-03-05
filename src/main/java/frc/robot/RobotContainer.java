@@ -129,20 +129,20 @@ public class RobotContainer {
 
         // SHOOTER STUFF
         // 42-44 seems to work well
-        rightTrigger.onTrue(new InstantCommand(() -> s_Shooter.setSpeed(SmartDashboard.getNumber("Shooter Speed", 0))));
-        rightTrigger.onFalse(new InstantCommand(() -> s_Shooter.stop()));
+        // rightTrigger.onTrue(new InstantCommand(() -> s_Shooter.setSpeed(SmartDashboard.getNumber("Shooter Speed", 0))));
+        // rightTrigger.onFalse(new InstantCommand(() -> s_Shooter.stop()));
 
-        rightBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(60.0)));
-        //rightBumper.whileFalse(new InstantCommand(() -> s_Transfer.setShooterTransfer(0)));
-        leftBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(10.0)));
+        // rightBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(60.0)));
+        // //rightBumper.whileFalse(new InstantCommand(() -> s_Transfer.setShooterTransfer(0)));
+        // leftBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(10.0)));
 
         // LOGGING STUFF FOR DRIVETRAIN
         // TODO: #8 Run logging for the swerve drive
-        // leftTrigger.whileTrue(s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        // leftBumper.whileTrue(s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        leftTrigger.whileTrue(s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        leftBumper.whileTrue(s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         
-        // rightTrigger.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-        // rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        rightTrigger.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         
         /* Drivetrain Commands */
         crossButton.toggleOnTrue(new InstantCommand(() -> s_Swerve.crossModules()));
