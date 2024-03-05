@@ -4,9 +4,9 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 
 public final class CTREConfigs {
-    public TalonFXConfiguration swerveAngleFXConfig = new TalonFXConfiguration();
-    public TalonFXConfiguration swerveDriveFXConfig = new TalonFXConfiguration();
-    public CANcoderConfiguration swerveCANcoderConfig = new CANcoderConfiguration();
+    public final TalonFXConfiguration swerveAngleFXConfig = new TalonFXConfiguration();
+    public final TalonFXConfiguration swerveDriveFXConfig = new TalonFXConfiguration();
+    public final CANcoderConfiguration swerveCANcoderConfig = new CANcoderConfiguration();
 
     public CTREConfigs(){
         /** Swerve CANCoder Configuration */

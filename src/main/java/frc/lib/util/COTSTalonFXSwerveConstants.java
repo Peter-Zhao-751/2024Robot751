@@ -269,7 +269,7 @@ public class COTSTalonFXSwerveConstants {
                 /** (150 / 7) : 1 */
                 double angleGearRatio = ((150.0 / 7.0) / 1.0);
         
-                double angleKP = 30.0; // defualt 100.0
+                double angleKP = 30.0; // default 100.0
                 double angleKI = 0.0;
                 double angleKD = 0.0;
         

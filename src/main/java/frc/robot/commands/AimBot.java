@@ -1,7 +1,8 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
-import frc.robot.subsystems.SwerveDrive;
+import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.utility.StateMachine;
 
 import java.util.Optional;
 
@@ -13,10 +14,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class AimBot extends Command {
-    private final SwerveDrive s_Swerve;
+    private final SwerveSubsystem s_Swerve;
     private Move move;
 
-    public AimBot(SwerveDrive s_Swerve) {
+    public AimBot(SwerveSubsystem s_Swerve) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
     }
@@ -45,7 +46,7 @@ public class AimBot extends Command {
             }
         }
 
-        SmartDashboard.putString("Current Action", "Aimbot moving to " + alliance.get().name()+" "+closestElement.name);
+        StateMachine.setState(StateMachine.State.Aimbot);
 
         move = new Move(s_Swerve, new Pose2d(closestElement.x, closestElement.y, new Rotation2d(0)));
         move.initialize();
@@ -60,10 +61,9 @@ public class AimBot extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        if (move != null) {
-            SmartDashboard.putString("Current Action", "Standard teleop");
-            move.end(interrupted);
-        }
+        if (move != null) move.end(interrupted);
+        
+        StateMachine.setState(StateMachine.State.Idle);
     }
 
     @Override

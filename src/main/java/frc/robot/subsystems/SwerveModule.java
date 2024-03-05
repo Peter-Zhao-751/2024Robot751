@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicVelocityDutyCycle;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -10,19 +12,22 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.units.Current;
 import frc.lib.math.Conversions;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.utility.CurrentManager;
+import edu.wpi.first.units.Current;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
 
 public class SwerveModule {
-    public int moduleNumber;
+    public final int moduleNumber;
     public SwerveModuleState desiredState;
     private Rotation2d angleOffset;
 
-    private TalonFX mAngleMotor;
-    private TalonFX mDriveMotor;
-    private CANcoder angleEncoder;
+    private final TalonFX mAngleMotor;
+    private final TalonFX mDriveMotor;
+    private final CANcoder angleEncoder;
 
     private final SimpleMotorFeedforward driveFeedForward = new SimpleMotorFeedforward(Constants.Swerve.driveKS, Constants.Swerve.driveKV, Constants.Swerve.driveKA);
 
@@ -64,16 +69,22 @@ public class SwerveModule {
         if(CurrentManager.isOverMax()){
             desiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond/2;
         }
+        
+        /* Figuring out if we are in open loop or closed loop 
+         * drive() in SwerveDrive.java is called with isOpenLoop = false most of the time
+         * but Teleop.java calls it with isOpenLoop = true
+         * So I think in teleop, we are in open loop, and in auto, we are in closed loop
+        */
+        
 
         if(isOpenLoop){
             driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
-            driveDutyCycle.EnableFOC = Constants.Swerve.enableFOC; // I think this how it works
+            driveDutyCycle.EnableFOC = Constants.Swerve.enableFOC;
             mDriveMotor.setControl(driveDutyCycle);
-        }
-        else {
+        } else {
             driveVelocity.Velocity = Conversions.MPSToRPS(desiredState.speedMetersPerSecond, Constants.Swerve.wheelCircumference);
             driveVelocity.FeedForward = driveFeedForward.calculate(desiredState.speedMetersPerSecond);
-            driveVelocity.EnableFOC = Constants.Swerve.enableFOC; // I think this how it works
+            driveVelocity.EnableFOC = Constants.Swerve.enableFOC;
             mDriveMotor.setControl(driveVelocity);
         }
     }
@@ -119,5 +130,13 @@ public class SwerveModule {
             Conversions.rotationsToMeters(mDriveMotor.getPosition().getValue(), Constants.Swerve.wheelCircumference), 
             Rotation2d.fromRotations(mAngleMotor.getPosition().getValue())
         );
+    }
+
+    public void setDriveVoltage(double voltage) {
+        mDriveMotor.setVoltage(voltage);
+    }
+
+    public void setAngleVoltage(double voltage) {
+        mAngleMotor.setVoltage(voltage);
     }
 }
