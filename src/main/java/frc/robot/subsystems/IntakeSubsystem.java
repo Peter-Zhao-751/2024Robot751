@@ -60,7 +60,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         intakePIDController = new PIDController(Constants.Intake.kPIntakeController, Constants.Intake.kIIntakeController, Constants.Intake.kDIntakeController);
 
-        swivelSetpoint = getSwivelPosition();
+        swivelSetpoint = 50;
         targetIntakeSpeed = 0;
 
         allocatedCurrent = 0;
@@ -121,8 +121,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         double currentAngle = getSwivelPosition();
 
         // debug shit
-        rightSwivelMotor.setVoltage(slider.getDouble(0));
-        leftSwivelMotor.setVoltage(slider.getDouble(0));
+        //rightSwivelMotor.setVoltage(slider.getDouble(0));
+        //leftSwivelMotor.setVoltage(slider.getDouble(0));
 
         double maxVoltage = RobotController.getBatteryVoltage() * 0.95;
         double swivelPidOutput = swivelPIDController.calculate(currentAngle, swivelSetpoint);
@@ -133,21 +133,21 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         double combinedOutput = swivelPidOutput + feedforwardOutput;
 
-        combinedOutput = Math.min(combinedOutput, maxVoltage);
-        combinedOutput = Math.max(combinedOutput, -maxVoltage);
+        combinedOutput = Math.min(combinedOutput, 3);
+        combinedOutput = Math.max(combinedOutput, -3);
 
         SmartDashboard.putNumber("Swivel Output Voltage", combinedOutput);
             
-        //leftSwivelMotor.setVoltage(output);
-        //rightSwivelMotor.setVoltage(output);
+        leftSwivelMotor.setVoltage(combinedOutput);
+        rightSwivelMotor.setVoltage(combinedOutput);
 
         double intakePidOutput = intakePIDController.calculate(getIntakeSpeed(), targetIntakeSpeed);
         // the values should be in the range of -1 to 1 and it will be clamped in the motor's api
         intakeMotor.set(intakePidOutput);
 
-        SmartDashboard.putNumber("Total Intake Current Draw", getCurrentDraw());
+        // SmartDashboard.putNumber("Total Intake Current Draw", getCurrentDraw());
         SmartDashboard.putNumber("Intake Swivel Position", angleEncoder.getPosition());
-        SmartDashboard.putNumber("Intake Speed", getIntakeSpeed());
+        // SmartDashboard.putNumber("Intake Speed", getIntakeSpeed());
     }
 
     @Override

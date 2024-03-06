@@ -196,14 +196,14 @@ public class UISubsystem {
         // webcamOutput = new Mat();
         
         // initializing limelight
-        HttpCamera limelightStream = new HttpCamera("LimelightStream", Constants.Limelight.streamIp, HttpCameraKind.kMJPGStreamer);
-        CameraServer.addCamera(limelightStream);
-        CameraServer.startAutomaticCapture(limelightStream);
+        //HttpCamera limelightStream = new HttpCamera("LimelightStream", Constants.Limelight.streamIp, HttpCameraKind.kMJPGStreamer);
+        //CameraServer.addCamera(limelightStream);
+        //CameraServer.startAutomaticCapture(limelightStream);
 
         // initializing path stream
 
         imageSource = CameraServer.putVideo("Path Preview", 827, 401);
-        CameraServer.startAutomaticCapture(imageSource);
+        //CameraServer.startAutomaticCapture(imageSource);
 
         // sets a bunch of UI stuff
         Path deployDirectory = Filesystem.getDeployDirectory().toPath();

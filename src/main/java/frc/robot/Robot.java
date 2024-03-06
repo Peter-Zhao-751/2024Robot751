@@ -72,8 +72,8 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     
     // updating ui
-    UISubsystem.updateTelemetry();
-    UISubsystem.updatePathPreview();
+    //UISubsystem.updateTelemetry();
+    //UISubsystem.updatePathPreview();
     CommandScheduler.getInstance().run();
   }
 

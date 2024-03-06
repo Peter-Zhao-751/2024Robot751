@@ -211,9 +211,10 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
      * @return void
      */
     public void crossModules(){
-        for(SwerveModule mod : mSwerveMods){
-            mod.setDesiredState(new SwerveModuleState(0, new Rotation2d((mod.moduleNumber-1) * 90 + 45)), false);
-        }
+        // for(SwerveModule mod : mSwerveMods){
+        //     System.out.println("Zeroing " + mod.moduleNumber);
+        //     mod.setDesiredState(new SwerveModuleState(0, new Rotation2d((mod.moduleNumber-1) * 90 - 45)), false);
+        // }
     } 
 
     @Override
@@ -235,12 +236,6 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
         double roll = gyro.getRoll().getValue();
         
         double yawRadians = Math.toRadians(yaw);
-        double fieldAccelerationX = accelerationX * Math.cos(yawRadians) - accelerationY * Math.sin(yawRadians);
-        double fieldAccelerationY = accelerationX * Math.sin(yawRadians) + accelerationY * Math.cos(yawRadians);
-
-        SmartDashboard.putNumber("traditional fieldAccelerationX", fieldAccelerationX);
-        SmartDashboard.putNumber("traditional fieldAccelerationY", fieldAccelerationY);
-
 
         double quatW = gyro.getQuatW().getValue();
         double quatX = gyro.getQuatX().getValue();
@@ -269,6 +264,7 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
         SmartDashboard.putNumber("fieldAccelerationX", fieldAcceleration[0]);
         SmartDashboard.putNumber("fieldAccelerationY", fieldAcceleration[1]);
         SmartDashboard.putNumber("fieldAccelerationZ", fieldAcceleration[2]);
+        
 
         // update current
         double totalCurrent = 0;
@@ -289,10 +285,6 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
 
         ChassisSpeeds speeds = Constants.Swerve.swerveKinematics.toChassisSpeeds(getModuleStates());
 
-        SmartDashboard.putNumber("Chassis Speeds X", speeds.vxMetersPerSecond);
-        SmartDashboard.putNumber("Chassis Speeds Y", speeds.vyMetersPerSecond);
-
-
         double fieldChassisSpeedX = rotationMatrix[0][0] * speeds.vxMetersPerSecond + rotationMatrix[0][1] * speeds.vyMetersPerSecond;
         double fieldChassisSpeedY = rotationMatrix[1][0] * speeds.vxMetersPerSecond + rotationMatrix[1][1] * speeds.vyMetersPerSecond;
 
@@ -309,20 +301,13 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
 
         kalmanFilter.debugDisplayValues();
         
-        for(SwerveModule mod : mSwerveMods){
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Current", mod.getDriveMotorCurrent());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle Current", mod.getAngleMotorCurrent());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
-            SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
-        }
-        
-        desirePublisher.set(getDesiredModuleStates());
-        
-        actualPublisher.set(getModuleStates());
-
-        SmartDashboard.putNumber("robot x", odometry.getPoseMeters().getX());
-        SmartDashboard.putNumber("robot y", odometry.getPoseMeters().getY());
+        // for(SwerveModule mod : mSwerveMods){
+        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Current", mod.getDriveMotorCurrent());
+        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle Current", mod.getAngleMotorCurrent());
+        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
+        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
+        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
+        // }
 
         SmartDashboard.putNumber("swerve x", swerveOdometry.getPoseMeters().getX());
         SmartDashboard.putNumber("swerve y", swerveOdometry.getPoseMeters().getY());
@@ -331,28 +316,28 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
         SmartDashboard.putNumber("Robot Pitch", gyro.getPitch().getValue());
         SmartDashboard.putNumber("Robot Roll", gyro.getRoll().getValue());
 
-        m_field.setRobotPose(odometry.getPoseMeters());
+        //m_field.setRobotPose(odometry.getPoseMeters());
 
-        SmartDashboard.putData("Swerve Drive", new Sendable() {
-            @Override
-            public void initSendable(SendableBuilder builder) {
-                builder.setSmartDashboardType("SwerveDrive");
+        // SmartDashboard.putData("Swerve Drive", new Sendable() {
+        //     @Override
+        //     public void initSendable(SendableBuilder builder) {
+        //         builder.setSmartDashboardType("SwerveDrive");
           
-                builder.addDoubleProperty("Front Left Angle", () -> mSwerveMods[0].getPosition().angle.getRadians(), null);
-                builder.addDoubleProperty("Front Left Velocity", () -> mSwerveMods[0].getState().speedMetersPerSecond, null);
+        //         builder.addDoubleProperty("Front Left Angle", () -> mSwerveMods[0].getPosition().angle.getRadians(), null);
+        //         builder.addDoubleProperty("Front Left Velocity", () -> mSwerveMods[0].getState().speedMetersPerSecond, null);
 
-                builder.addDoubleProperty("Front Right Angle", () -> mSwerveMods[1].getPosition().angle.getRadians(), null);
-                builder.addDoubleProperty("Front Right Velocity", () -> mSwerveMods[1].getState().speedMetersPerSecond, null);
+        //         builder.addDoubleProperty("Front Right Angle", () -> mSwerveMods[1].getPosition().angle.getRadians(), null);
+        //         builder.addDoubleProperty("Front Right Velocity", () -> mSwerveMods[1].getState().speedMetersPerSecond, null);
 
-                builder.addDoubleProperty("Back Left Angle", () -> mSwerveMods[2].getPosition().angle.getRadians(), null);
-                builder.addDoubleProperty("Back Left Velocity", () -> mSwerveMods[2].getState().speedMetersPerSecond, null);
+        //         builder.addDoubleProperty("Back Left Angle", () -> mSwerveMods[2].getPosition().angle.getRadians(), null);
+        //         builder.addDoubleProperty("Back Left Velocity", () -> mSwerveMods[2].getState().speedMetersPerSecond, null);
 
-                builder.addDoubleProperty("Back Right Angle", () -> mSwerveMods[3].getPosition().angle.getRadians(), null);
-                builder.addDoubleProperty("Back Right Velocity", () -> mSwerveMods[3].getState().speedMetersPerSecond, null);
+        //         builder.addDoubleProperty("Back Right Angle", () -> mSwerveMods[3].getPosition().angle.getRadians(), null);
+        //         builder.addDoubleProperty("Back Right Velocity", () -> mSwerveMods[3].getState().speedMetersPerSecond, null);
           
-                builder.addDoubleProperty("Robot Angle", () -> getGyroYaw().getRadians(), null);
-            }
-        });
+        //         builder.addDoubleProperty("Robot Angle", () -> getGyroYaw().getRadians(), null);
+        //     }
+        // });
     }
 
     @Override
