@@ -20,55 +20,6 @@ public class Constants {
     public static double stickDeadband = 0.1;
     public static int teamNumber = 751;
 
-    public static class CurrentManager{
-        public static double maxCurrent = 180.0;
-        public static double maxPercent = 0.8;
-        public static double nominalPercent = 0.5;
-    }
-
-    public static class Odometry{
-        public static double maxLimeTimeout = 0.5; // seconds
-        public static double maxLimeSwerveDeviation = 0.1; // meters
-        public static double kalmanGain = 0.5; // bro guess too lazy
-        public static double limeSwerveMixRatio = 0.8; // 80% limelight, 20% swerve
-
-
-        public static double kPositionNoiseVar = 0.075;
-        public static double kVelocityNoiseVar = 0.025;
-        public static double kAccelerationNoiseVar = 0.25; 
-
-        public static double kPositionProcessNoise = 0.015;
-        public static double kVelocityProcessNoise = 0.075;
-        public static double kAccelerationProcessNoise = 0.15;
-    }
-
-    public static class Limelight{
-        public static double version = 3.0;
-        public static String streamIp = "http://10.7.51.11:5800";
-        public static String dashboardIp = "http://10.7.51.11:5801";
-    }
-
-    public static class Shooter{
-        // 2 krakens for shooting, one neo for the transfer belts. 
-        public static int leftShooterMotorID = 51;
-        public static int rightShooterMotorID = 52;
-
-        public static double spinUpTime = 2.0;
-        public static double transferSpeed = 20.0; // units in centimeters per second
-        public static double feedTime = 0.2;
-
-        public static double kSFlyWheelFeedforward = 0.25;
-        public static double kVFlyWheelFeedforward = 0.12;
-        public static double kAFlyWheelFeedforward = 0.01;
-
-        public static double kPFlyWheelController = 0.11;
-        public static double kIFlyWheelController = 0.0;
-        public static double kDFlyWheelController = 0.0;
-
-        public static double kProcessNoise = 3.0;
-        public static double kMeasurementNoise = 0.01;
-    }
-
     public static class Intake{
         // 1 falcon for intake, 2 NEOs for moving intake TBD gear ratio
         public static int intakeMotorID = 57;
@@ -120,6 +71,27 @@ public class Constants {
         public static double maxTransferTime = 3.0; // unit in seconds
     }
 
+    public static class Shooter{
+        // 2 krakens for shooting, one neo for the transfer belts. 
+        public static int leftShooterMotorID = 51;
+        public static int rightShooterMotorID = 52;
+
+        public static double spinUpTime = 2.0;
+        public static double transferSpeed = 20.0; // units in centimeters per second
+        public static double feedTime = 0.2;
+
+        public static double kSFlyWheelFeedforward = 0.25;
+        public static double kVFlyWheelFeedforward = 0.12;
+        public static double kAFlyWheelFeedforward = 0.01;
+
+        public static double kPFlyWheelController = 0.11;
+        public static double kIFlyWheelController = 0.0;
+        public static double kDFlyWheelController = 0.0;
+
+        public static double kProcessNoise = 3.0;
+        public static double kMeasurementNoise = 0.01;
+    }
+
     public static class Climber{
         public static int leftClimberMotorID = 61;
         public static int rightClimberMotorID = 62;
@@ -137,7 +109,8 @@ public class Constants {
     }
 
     public static class Swerve {
-        public static int pigeonID = 1;
+        public static int pdhId = 1;
+        public static int pigeonID = 2;
         public static boolean enableFOC = true;
 
         public static COTSTalonFXSwerveConstants chosenModule = COTSTalonFXSwerveConstants.SDS.MK4i.KrakenX60(COTSTalonFXSwerveConstants.SDS.MK4i.driveRatios.L3);
@@ -239,6 +212,39 @@ public class Constants {
         public static SwerveModule backRightModule = new SwerveModule(41, 42, 43, 97.910);
     }
 
+    public static class Limelight{
+        public static double version = 3.0;
+        public static String streamIp = "http://10.7.51.11:5800";
+        public static String dashboardIp = "http://10.7.51.11:5801";
+    }
+
+    public static class CANdle {
+        public static int CANdleID = 3;
+        public static int LEDCount = 21; // TODO: CHANGE TO CORRECT AMOUNT (x = strip + 8)
+    }
+
+    public static class CurrentManager{
+        public static double maxCurrent = 180.0;
+        public static double maxPercent = 0.8;
+        public static double nominalPercent = 0.5;
+    }
+
+    public static class Odometry{
+        public static double maxLimeTimeout = 0.5; // seconds
+        public static double maxLimeSwerveDeviation = 0.1; // meters
+        public static double kalmanGain = 0.5; // bro guess too lazy
+        public static double limeSwerveMixRatio = 0.8; // 80% limelight, 20% swerve
+
+
+        public static double kPositionNoiseVar = 0.075;
+        public static double kVelocityNoiseVar = 0.025;
+        public static double kAccelerationNoiseVar = 0.25; 
+
+        public static double kPositionProcessNoise = 0.015;
+        public static double kVelocityProcessNoise = 0.075;
+        public static double kAccelerationProcessNoise = 0.15;
+    }
+
     public static class AutoConstants { 
         //TODO: tune everything here
         public static double kMaxSpeedMetersPerSecond = 0.5; // 3 
@@ -299,10 +305,5 @@ public class Constants {
             new FieldElements("Stage", 10.74, 4.02, 0.0, -1.0, 1.0, -1.0, 1.0),
             new FieldElements("Chute", 13.74, 0.80, 0.0, -1.0, 1.0, -1.0, 1.0),
         };
-    }
-    /* Other stuff that I probably need to organize better */
-    public static class CANdle {
-        public static int CANdleID = 2;
-        public static int LEDCount = 21; // TODO: CHANGE TO CORRECT AMOUNT (x = strip + 8)
     }
 }
