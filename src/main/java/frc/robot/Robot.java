@@ -22,9 +22,7 @@ import frc.robot.utility.UISubsystem;
  * project.
  */
 public class Robot extends TimedRobot {
-  public static final CTREConfigs ctreConfigs = new CTREConfigs();
-
-  private static enum RobotModes {
+  private enum RobotModes {
     Disabled,
     Autonomous,
     Teleop,
@@ -53,7 +51,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     SignalLogger.setPath("/media/sda1/");
-    UISubsystem.initializeUI(currentMode);
+    UISubsystem.initializeUI(currentMode.toString());
   }
 
   /**

@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import frc.robot.CTREConfigs;
 import frc.robot.Constants;
 import frc.robot.utility.KalmanFilter;
 import frc.robot.utility.Odometry;
@@ -34,6 +35,7 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 
 public class SwerveSubsystem extends SubsystemBase implements Component{
+    public static final CTREConfigs ctreConfigs = new CTREConfigs();
     public final StructArrayPublisher<SwerveModuleState> actualPublisher;
     public final StructArrayPublisher<SwerveModuleState> desirePublisher;
     private final Field2d m_field = new Field2d();
