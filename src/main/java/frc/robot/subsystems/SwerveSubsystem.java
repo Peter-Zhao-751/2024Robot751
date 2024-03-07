@@ -37,12 +37,12 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
     public final StructArrayPublisher<SwerveModuleState> actualPublisher;
     public final StructArrayPublisher<SwerveModuleState> desirePublisher;
     private final Field2d m_field = new Field2d();
-    public final SwerveDriveOdometry swerveOdometry;
-    public final Odometry odometry;
-    public final SwerveModule[] mSwerveMods;
-    public final Pigeon2 gyro;
-    public final Limelight limelight;
-    public final SysIdRoutine routine;
+    private final SwerveDriveOdometry swerveOdometry;
+    private final Odometry odometry;
+    private final SwerveModule[] mSwerveMods;
+    private final Pigeon2 gyro;
+    private final Limelight limelight;
+    private final SysIdRoutine routine;
 
     private final KalmanFilter kalmanFilter;
     private double allocatedCurrent;
@@ -222,7 +222,6 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
 
     /**
      * <p> Updates the SmartDashboard with the current state of the swerve drive </p>
-     * @return void
      */
     private void swerveUi() {
         double accelerationX = gyro.getAccelerationX().getValue();
