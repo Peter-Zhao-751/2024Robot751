@@ -87,20 +87,7 @@ public class UISubsystem {
             field.setAccessible(true);
             // Check if a Preference exists for this field
             if (!Preferences.containsKey(field.getName())) {
-                switch (field.getType().getName()) {
-                    case "int":
-                        Preferences.setInt(field.getName(), field.getInt(null));
-                        break;
-                    case "double":
-                        Preferences.setDouble(field.getName(), field.getDouble(null));
-                        break;
-                    case "boolean":
-                        Preferences.setBoolean(field.getName(), field.getBoolean(null));
-                        break;
-                    case "java.lang.String":
-                        Preferences.setString(field.getName(), (String) field.get(null));
-                        break;
-                }
+                setPreferences(field);
             } else {
                 // Preference exists, update field's value from Preference
                 switch (field.getType().getName()) {
@@ -123,6 +110,23 @@ public class UISubsystem {
         }
     }
 
+    private static void setPreferences(Field field) throws IllegalAccessException {
+        switch (field.getType().getName()) {
+            case "int":
+                Preferences.setInt(field.getName(), field.getInt(null));
+                break;
+            case "double":
+                Preferences.setDouble(field.getName(), field.getDouble(null));
+                break;
+            case "boolean":
+                Preferences.setBoolean(field.getName(), field.getBoolean(null));
+                break;
+            case "java.lang.String":
+                Preferences.setString(field.getName(), (String) field.get(null));
+                break;
+        }
+    }
+
     /**
      * This function will reset the preference based on the value of the field, or
      * retrieve the
@@ -135,20 +139,7 @@ public class UISubsystem {
             // Check if a Preference exists for this field
             if (Preferences.containsKey(field.getName())) {
                 // Preference exists, update preferences's value from field
-                switch (field.getType().getName()) {
-                    case "int":
-                        Preferences.setInt(field.getName(), field.getInt(null));
-                        break;
-                    case "double":
-                        Preferences.setDouble(field.getName(), field.getDouble(null));
-                        break;
-                    case "boolean":
-                        Preferences.setBoolean(field.getName(), field.getBoolean(null));
-                        break;
-                    case "java.lang.String":
-                        Preferences.setString(field.getName(), (String) field.get(null));
-                        break;
-                }
+                setPreferences(field);
             }
         } catch (IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
@@ -182,7 +173,7 @@ public class UISubsystem {
         }
     }
 
-    public static <CurrentMode> void initializeUI(CurrentMode currentMode) {
+    public static void initializeUI(String currentMode) {
         // initializing webcam
         //UsbCamera webcam = new UsbCamera("WebcameStream", 0);
         //webcam.setResolution(640, 480);
@@ -220,7 +211,7 @@ public class UISubsystem {
                 .add("Select a Path:", autonSelector)
                 .withWidget("Combo Box Chooser");
 
-                TelemetryUpdater.setTelemetryValue("Current Mode", currentMode.toString());
+                TelemetryUpdater.setTelemetryValue("Current Mode", currentMode);
 
         updatePreferencesButton = Shuffleboard.getTab("Preferences")
                 .add("Update Preferences", false)
