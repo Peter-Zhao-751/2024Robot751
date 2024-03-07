@@ -26,7 +26,7 @@ public class TransferSubsystem extends SubsystemBase implements Component {
     public TransferSubsystem() {
         shooterTransfer = new CANSparkMax(Constants.Transfer.shooterTransferID, MotorType.kBrushless);
         intakeTransfer = new CANSparkMax(Constants.Transfer.intakeTransferID, MotorType.kBrushless);
-        beamBreak = new DigitalInput(Constants.Transfer.beamBreakID);
+        beamBreak = new DigitalInput(Constants.Transfer.beamBreakDIOPort);
 
         shooterTransferPIDController = new PIDController(Constants.Transfer.kPIntakeController, 0, 0);
         intakeTransferPIDController = new PIDController(Constants.Transfer.kPShooterController, 0, 0);

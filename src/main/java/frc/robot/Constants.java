@@ -45,6 +45,7 @@ public class Constants {
     public static class Limelight{
         public static double version = 3.0;
         public static String streamIp = "http://10.7.51.11:5800";
+        public static String dashboardIp = "http://10.7.51.11:5801";
     }
 
     public static class Shooter{
@@ -70,10 +71,9 @@ public class Constants {
 
     public static class Intake{
         // 1 falcon for intake, 2 NEOs for moving intake TBD gear ratio
-        public static int intakeMotorID = 56;
-        public static int leftSwivelMotorID = 55;
-        public static int rightSwivelMotorID = 58;
-        public static int encoderID = 0;
+        public static int intakeMotorID = 57;
+        public static int leftSwivelMotorID = 58;
+        public static int rightSwivelMotorID = 59;
 
         public static double swivelGearRatio = 15.0; 
         public static double maxSwivelSpeed = 0.15;
@@ -104,13 +104,13 @@ public class Constants {
     }
 
     public static class Transfer{
-        public static int shooterTransferID = 53;
-        public static double shooterTransferRadius = 2.8575; // units in centimeters
-
-        public static int intakeTransferID = 57;
+        public static int intakeTransferID = 54;
         public static double intakeTransferRadius = 5.08; // units in centimeters
 
-        public static int beamBreakID = 0;
+        public static int shooterTransferID = 55;
+        public static double shooterTransferRadius = 2.8575; // units in centimeters
+
+        public static int beamBreakDIOPort = 0;
 
         public static double kPIntakeController = 1.0;
         public static double kPShooterController = 1.0;
