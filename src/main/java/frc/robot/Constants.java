@@ -100,8 +100,7 @@ public class Constants {
         public static double kSwivelRetractedAngle = 60.0;
         public static double kSwivelMaintenanceAngle = 45.0;
 
-        public static double kSwivelEncoderZeroOffset = 290;
-        public static double kSwivelAnglePrecisionOffset = 30;
+        public static double kSwivelEncoderZeroOffset = 0; // TODO: shit
     }
 
     public static class Transfer{

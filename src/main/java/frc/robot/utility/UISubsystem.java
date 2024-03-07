@@ -202,7 +202,7 @@ public class UISubsystem {
 
         // initializing path stream
 
-        imageSource = CameraServer.putVideo("Path Preview", 827, 401);
+        //imageSource = CameraServer.putVideo("Path Preview", 827, 401);
         //CameraServer.startAutomaticCapture(imageSource);
 
         // sets a bunch of UI stuff

@@ -51,6 +51,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         angleEncoder = rightSwivelMotor.getAbsoluteEncoder(Type.kDutyCycle);
         angleEncoder.setInverted(true);
         angleEncoder.setPositionConversionFactor(360);
+        angleEncoder.setZeroOffset(Constants.Intake.kSwivelEncoderZeroOffset);
 
         intakeMotor = new TalonFX(Constants.Intake.intakeMotorID);
 
@@ -105,7 +106,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
      * @return double, the position of the swivel in degrees
      */
     public double getSwivelPosition() { 
-        return angleEncoder.getPosition() % 360 - Constants.Intake.kSwivelAnglePrecisionOffset;
+        return angleEncoder.getPosition() % 360;
     }
 
     /**

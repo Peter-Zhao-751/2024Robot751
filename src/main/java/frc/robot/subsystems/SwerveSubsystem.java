@@ -279,7 +279,6 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
 
         // Experimental odometry fusion using limelight and swerve
         Pose2d newLimePosition = limelight.getPose();
-        limelight.debugDisplayValues();
 
         // Chassis speeds
 
