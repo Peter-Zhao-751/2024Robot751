@@ -24,6 +24,7 @@ import frc.robot.commands.lowLevelCommands.Shoot;
 import frc.robot.commands.lowLevelCommands.Transfer;
 import frc.robot.subsystems.*;
 import frc.robot.utility.JsonParser;
+import frc.robot.utility.TelemetryUpdater;
 
 import java.io.File;
 
@@ -129,7 +130,7 @@ public class RobotContainer {
 
         // SHOOTER STUFF
         // 42-44 seems to work well
-        // rightTrigger.onTrue(new InstantCommand(() -> s_Shooter.setSpeed(SmartDashboard.getNumber("Shooter Speed", 0))));
+        // rightTrigger.onTrue(new InstantCommand(() -> s_Shooter.setSpeed((double) TelemetryUpdater.getTelemetryValue("Shooter Speed"))));
         // rightTrigger.onFalse(new InstantCommand(() -> s_Shooter.stop()));
 
         // rightBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(60.0)));
