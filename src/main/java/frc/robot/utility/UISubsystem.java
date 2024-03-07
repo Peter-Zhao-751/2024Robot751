@@ -6,14 +6,11 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.Base64;
 
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.*;
-import edu.wpi.first.cscore.HttpCamera.HttpCameraKind;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Preferences;
@@ -138,7 +135,7 @@ public class UISubsystem {
             field.setAccessible(true);
             // Check if a Preference exists for this field
             if (Preferences.containsKey(field.getName())) {
-                // Preference exists, update preferences's value from field
+                // Preference exists, update preferences' value from field
                 setPreferences(field);
             }
         } catch (IllegalArgumentException | IllegalAccessException e) {
