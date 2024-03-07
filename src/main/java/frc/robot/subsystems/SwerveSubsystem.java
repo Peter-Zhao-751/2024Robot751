@@ -107,11 +107,11 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
 
     public boolean drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean isPrecise) {
         // precision mode
-        Double xSpeed = !isPrecise ? translation.getX(): translation.getX() * Constants.Swerve.preciseControlFactor;
-        Double ySpeed = !isPrecise ? translation.getY(): translation.getY() * Constants.Swerve.preciseControlFactor;
+        double xSpeed = !isPrecise ? translation.getX(): translation.getX() * Constants.Swerve.preciseControlFactor;
+        double ySpeed = !isPrecise ? translation.getY(): translation.getY() * Constants.Swerve.preciseControlFactor;
         xSpeed = xSpeed * Constants.Swerve.speedMultiplier;
         ySpeed = ySpeed * Constants.Swerve.speedMultiplier;
-        Double rot = !isPrecise ? rotation: rotation * Constants.Swerve.preciseControlFactor;
+        double rot = !isPrecise ? rotation: rotation * Constants.Swerve.preciseControlFactor;
         rot = rot * Math.max(Constants.Swerve.maxAngularVelocity / 10, 1);
 
         SwerveModuleState[] swerveModuleStates =
@@ -196,7 +196,6 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
     /**
      * <p> Resets the swerve modules to their absolute positions </p>
      * <p> Align all wheels forwards </p>
-     * @return void
      */
     public void resetModulesToAbsolute(){
         for(SwerveModule mod : mSwerveMods){
@@ -208,7 +207,6 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
      * <p> Crosses the swerve modules </p>
      * <p> Sets the desired state of each module to a 0 speed and a offset rotation of 45 degrees </p>
      * <p> used to prevent defense </p>
-     * @return void
      */
     public void crossModules(){
         // for(SwerveModule mod : mSwerveMods){
