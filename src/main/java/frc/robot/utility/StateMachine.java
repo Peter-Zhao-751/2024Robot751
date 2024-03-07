@@ -1,6 +1,5 @@
 package frc.robot.utility;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.AimBot;
 import frc.robot.commands.lowLevelCommands.CANdleController;
 import frc.robot.subsystems.CANdleSubsystem;
@@ -44,7 +43,7 @@ public class StateMachine {
 
     public static void update() {
 
-        SmartDashboard.putString("Robot State", state.stateName);
+        TelemetryUpdater.setTelemetryValue("Robot State", state.stateName);
         CANdleController.changeAnimation(state.animation);
     }
 

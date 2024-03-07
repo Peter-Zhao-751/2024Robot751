@@ -2,16 +2,13 @@ package frc.robot.utility;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TelemetrySubsystem implements Runnable {
-    private final TelemetryUpdater telemetryData;
 
-    public TelemetrySubsystem(TelemetryUpdater telemetryData) {
-        this.telemetryData = telemetryData;
-    }
+    private TelemetrySubsystem() {}
 
     @Override
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
-            telemetryData.forEachTelemetryValue((key, value) -> {
+            TelemetryUpdater.forEachTelemetryValue((key, value) -> {
                 // Example for Double; extend as needed for other types
                 if (value instanceof Double) {
                     SmartDashboard.putNumber(key, (Double) value);

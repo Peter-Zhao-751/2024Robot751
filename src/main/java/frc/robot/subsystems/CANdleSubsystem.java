@@ -5,11 +5,11 @@ import com.ctre.phoenix.led.*;
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
-import com.ctre.phoenix.led.TwinkleAnimation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utility.CurrentManager;
+import frc.robot.utility.TelemetryUpdater;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
@@ -119,7 +119,7 @@ public class CANdleSubsystem extends SubsystemBase implements Component{
 
             currentAnimation = desiredAnimation;
 
-            SmartDashboard.putString("Current Robot LED Animation", CurrentManager.isOverNominal() ? "Disabled due to over-current" : currentAnimation.name());
+            TelemetryUpdater.setTelemetryValue("Current Robot LED Animation", CurrentManager.isOverNominal() ? "Disabled due to over-current" : currentAnimation.name());
         }else if (currentAnimation.isDone()){
             changeAnimation(lastAnimation);
             currentAnimation = lastAnimation;

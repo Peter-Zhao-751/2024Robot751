@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import frc.robot.Constants;
 import frc.robot.utility.KalmanFilter;
 import frc.robot.utility.Odometry;
+import frc.robot.utility.TelemetryUpdater;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -19,7 +20,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -67,7 +67,7 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
 
         actualPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveActualStates", SwerveModuleState.struct).publish();
         desirePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveDesiredStates", SwerveModuleState.struct).publish();
-        SmartDashboard.putData("Field", m_field);
+        TelemetryUpdater.setTelemetryValue("Field", m_field);
 
         routine = new SysIdRoutine(
             new SysIdRoutine.Config(
@@ -261,9 +261,9 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
         fieldAcceleration[1] = rotationMatrix[1][0] * accelerationX + rotationMatrix[1][1] * accelerationY + rotationMatrix[1][2] * accelerationZ;
         fieldAcceleration[2] = rotationMatrix[2][0] * accelerationX + rotationMatrix[2][1] * accelerationY + rotationMatrix[2][2] * accelerationZ;
 
-        SmartDashboard.putNumber("fieldAccelerationX", fieldAcceleration[0]);
-        SmartDashboard.putNumber("fieldAccelerationY", fieldAcceleration[1]);
-        SmartDashboard.putNumber("fieldAccelerationZ", fieldAcceleration[2]);
+        TelemetryUpdater.setTelemetryValue("fieldAccelerationX", fieldAcceleration[0]);
+        TelemetryUpdater.setTelemetryValue("fieldAccelerationY", fieldAcceleration[1]);
+        TelemetryUpdater.setTelemetryValue("fieldAccelerationZ", fieldAcceleration[2]);
         
 
         // update current
@@ -271,7 +271,7 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
         for (SwerveModule mod : mSwerveMods){
             totalCurrent += mod.getTotalCurrent();
         }
-        SmartDashboard.putNumber("total swerve current draw", totalCurrent);
+        TelemetryUpdater.setTelemetryValue("total swerve current draw", totalCurrent);
         
         //CurrentManager.updateCurrent(totalCurrent, CurrentManager.Subsystem.DriveTrain);
 
@@ -287,8 +287,8 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
         double fieldChassisSpeedX = rotationMatrix[0][0] * speeds.vxMetersPerSecond + rotationMatrix[0][1] * speeds.vyMetersPerSecond;
         double fieldChassisSpeedY = rotationMatrix[1][0] * speeds.vxMetersPerSecond + rotationMatrix[1][1] * speeds.vyMetersPerSecond;
 
-        SmartDashboard.putNumber("Field Space Chassis Speeds Y", fieldChassisSpeedX);
-        SmartDashboard.putNumber("Field Space Chassis Speeds Y", fieldChassisSpeedY);
+        TelemetryUpdater.setTelemetryValue("Field Space Chassis Speeds Y", fieldChassisSpeedX);
+        TelemetryUpdater.setTelemetryValue("Field Space Chassis Speeds Y", fieldChassisSpeedY);
 
         if (limelight.hasTarget() && newLimePosition != null){
             kalmanFilter.update(newLimePosition.getX(), newLimePosition.getY(), fieldChassisSpeedX, fieldChassisSpeedY, fieldAcceleration[0], fieldAcceleration[1]);
@@ -301,23 +301,23 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
         kalmanFilter.debugDisplayValues();
         
         // for(SwerveModule mod : mSwerveMods){
-        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Drive Current", mod.getDriveMotorCurrent());
-        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle Current", mod.getAngleMotorCurrent());
-        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
-        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
-        //     SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
+        //     TelemetryUpdater.setTelemetryValue("Mod " + mod.moduleNumber + " Drive Current", mod.getDriveMotorCurrent());
+        //     TelemetryUpdater.setTelemetryValue("Mod " + mod.moduleNumber + " Angle Current", mod.getAngleMotorCurrent());
+        //     TelemetryUpdater.setTelemetryValue("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
+        //     TelemetryUpdater.setTelemetryValue("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
+        //     TelemetryUpdater.setTelemetryValue("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
         // }
 
-        SmartDashboard.putNumber("swerve x", swerveOdometry.getPoseMeters().getX());
-        SmartDashboard.putNumber("swerve y", swerveOdometry.getPoseMeters().getY());
+        TelemetryUpdater.setTelemetryValue("swerve x", swerveOdometry.getPoseMeters().getX());
+        TelemetryUpdater.setTelemetryValue("swerve y", swerveOdometry.getPoseMeters().getY());
 
-        SmartDashboard.putNumber("Robot Yaw", gyro.getYaw().getValue());
-        SmartDashboard.putNumber("Robot Pitch", gyro.getPitch().getValue());
-        SmartDashboard.putNumber("Robot Roll", gyro.getRoll().getValue());
+        TelemetryUpdater.setTelemetryValue("Robot Yaw", gyro.getYaw().getValue());
+        TelemetryUpdater.setTelemetryValue("Robot Pitch", gyro.getPitch().getValue());
+        TelemetryUpdater.setTelemetryValue("Robot Roll", gyro.getRoll().getValue());
 
         //m_field.setRobotPose(odometry.getPoseMeters());
 
-        // SmartDashboard.putData("Swerve Drive", new Sendable() {
+        // TelemetryUpdater.setTelemetryValueata("Swerve Drive", new Sendable() {
         //     @Override
         //     public void initSendable(SendableBuilder builder) {
         //         builder.setSmartDashboardType("SwerveDrive");

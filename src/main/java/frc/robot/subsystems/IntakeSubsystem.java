@@ -5,9 +5,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.utility.TelemetryUpdater;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
@@ -137,7 +137,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         combinedOutput = Math.min(combinedOutput, 3);
         combinedOutput = Math.max(combinedOutput, -3);
 
-        SmartDashboard.putNumber("Swivel Output Voltage", combinedOutput);
+        TelemetryUpdater.setTelemetryValue("Swivel Output Voltage", combinedOutput);
             
         leftSwivelMotor.setVoltage(combinedOutput);
         rightSwivelMotor.setVoltage(combinedOutput);
@@ -146,9 +146,9 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         // the values should be in the range of -1 to 1 and it will be clamped in the motor's api
         intakeMotor.set(intakePidOutput);
 
-        // SmartDashboard.putNumber("Total Intake Current Draw", getCurrentDraw());
-        SmartDashboard.putNumber("Intake Swivel Position", angleEncoder.getPosition());
-        // SmartDashboard.putNumber("Intake Speed", getIntakeSpeed());
+        // TelemetryUpdater.setTelemetryValueumber("Total Intake Current Draw", getCurrentDraw());
+        TelemetryUpdater.setTelemetryValue("Intake Swivel Position", angleEncoder.getPosition());
+        // TelemetryUpdater.setTelemetryValueumber("Intake Speed", getIntakeSpeed());
     }
 
     @Override

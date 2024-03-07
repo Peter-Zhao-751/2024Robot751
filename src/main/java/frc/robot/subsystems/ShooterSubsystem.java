@@ -6,11 +6,10 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-
+import frc.robot.utility.TelemetryUpdater;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
@@ -195,8 +194,8 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
 
         kalmanFilter.correct(VecBuilder.fill(targetSpeed), VecBuilder.fill(getShooterMotor1Speed()));
 
-        SmartDashboard.putNumber("Kalman Filter X-hat 0", kalmanFilter.getXhat(0));
-        SmartDashboard.putNumber("Shooter Current Draw", getCurrentDraw());
+        TelemetryUpdater.setTelemetryValue("Kalman Filter X-hat 0", kalmanFilter.getXhat(0));
+        TelemetryUpdater.setTelemetryValue("Shooter Current Draw", getCurrentDraw());
     }
 
     @Override

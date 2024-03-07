@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 public class UISubsystem {
@@ -170,8 +169,8 @@ public class UISubsystem {
         // Send the processed frame to the Dashboard
         //webcamOutputStream.putFrame(webcamOutput);
 
-        SmartDashboard.putBoolean("Current Manager Over Nominal", CurrentManager.isOverNominal());
-        SmartDashboard.putBoolean("Current Manager Over Peak", CurrentManager.isOverMax());
+        TelemetryUpdater.setTelemetryValue("Current Manager Over Nominal", CurrentManager.isOverNominal());
+        TelemetryUpdater.setTelemetryValue("Current Manager Over Peak", CurrentManager.isOverMax());
 
         if (updatePreferencesButton.getBoolean(false)) {
             updatePreferencesBasedOnConstants(Constants.class, false);
@@ -221,7 +220,7 @@ public class UISubsystem {
                 .add("Select a Path:", autonSelector)
                 .withWidget("Combo Box Chooser");
 
-        SmartDashboard.putString("Current Mode", currentMode.toString());
+                TelemetryUpdater.setTelemetryValue("Current Mode", currentMode.toString());
 
         updatePreferencesButton = Shuffleboard.getTab("Preferences")
                 .add("Update Preferences", false)
@@ -236,7 +235,7 @@ public class UISubsystem {
 
     public static File selectedAuton() {
         File selectedAuton = autonSelector.getSelected();
-        SmartDashboard.putString("Current Action", "Autonomous: " + selectedAuton.getName());
+        TelemetryUpdater.setTelemetryValue("Current Action", "Autonomous: " + selectedAuton.getName());
         return selectedAuton;
     }
 }

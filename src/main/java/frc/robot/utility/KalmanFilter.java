@@ -1,6 +1,5 @@
 package frc.robot.utility;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 public class KalmanFilter {
@@ -180,11 +179,11 @@ public class KalmanFilter {
     }
 
     public void debugDisplayValues(){
-        SmartDashboard.putNumber("Kalman X Position", xState.position);
-        SmartDashboard.putNumber("Kalman Y Position", yState.position);
+        TelemetryUpdater.setTelemetryValue("Kalman X Position", xState.position);
+        TelemetryUpdater.setTelemetryValue("Kalman Y Position", yState.position);
 
-        SmartDashboard.putNumber("Kalman Measurement Noise R Position", noise.R_position);
-        SmartDashboard.putNumber("Kalman Measurement Noise R Velocity", noise.R_velocity);
-        SmartDashboard.putNumber("Kalman Measurement Noise R Acceleration", noise.R_acceleration);
+        TelemetryUpdater.setTelemetryValue("Kalman Measurement Noise R Position", noise.R_position);
+        TelemetryUpdater.setTelemetryValue("Kalman Measurement Noise R Velocity", noise.R_velocity);
+        TelemetryUpdater.setTelemetryValue("Kalman Measurement Noise R Acceleration", noise.R_acceleration);
     }
 }

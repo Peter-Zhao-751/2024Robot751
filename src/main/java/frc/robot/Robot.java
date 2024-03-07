@@ -5,7 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -13,6 +12,7 @@ import java.io.File;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 
+import frc.robot.utility.TelemetryUpdater;
 import frc.robot.utility.UISubsystem;
 
 /**
@@ -109,7 +109,7 @@ public class Robot extends TimedRobot {
     SignalLogger.start();
 
     currentMode = RobotModes.Teleop;
-    SmartDashboard.putString("Current Action", "Standard teleop");
+    TelemetryUpdater.setTelemetryValue("Current Action", "Standard teleop");
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -122,7 +122,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putString("CAN Bus Utilization", CANBus.getStatus(Constants.CANivoreID).BusUtilization * 100 + "%");
+    TelemetryUpdater.setTelemetryValue("CAN Bus Utilization", CANBus.getStatus(Constants.CANivoreID).BusUtilization * 100 + "%");
   }
 
   @Override

@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.utility.TelemetryUpdater;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -86,9 +86,9 @@ public class ClimberSubsystem extends SubsystemBase implements Component{
         leftClimberMotor.set(leftOutput);
         rightClimberMotor.set(rightOutput);
 
-        SmartDashboard.putNumber("Climber Current Draw", getCurrentDraw());
-        SmartDashboard.putNumber("Left Climber Position", getLeftPosition());
-        SmartDashboard.putNumber("Right Climber Position", getRightPosition());
+        TelemetryUpdater.setTelemetryValue("Climber Current Draw", getCurrentDraw());
+        TelemetryUpdater.setTelemetryValue("Left Climber Position", getLeftPosition());
+        TelemetryUpdater.setTelemetryValue("Right Climber Position", getRightPosition());
     }
 
     @Override
