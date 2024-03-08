@@ -23,14 +23,6 @@ import frc.robot.utility.UISubsystem;
  * project.
  */
 public class Robot extends TimedRobot {
-  private enum RobotModes {
-    Disabled,
-    Autonomous,
-    Teleop,
-    Test
-  }
-
-  private static RobotModes currentMode = RobotModes.Disabled;
 
   private Command m_autonomousCommand;
 
@@ -56,7 +48,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     SignalLogger.setPath("/media/sda1/");
-    UISubsystem.initializeUI(currentMode.toString());
+    UISubsystem.initializeUI();
   }
 
   /**
@@ -83,7 +75,6 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    currentMode = RobotModes.Disabled;
     SignalLogger.stop();
   }
 
@@ -93,7 +84,6 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    currentMode = RobotModes.Autonomous;
     File selectedAuton = UISubsystem.selectedAuton();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand(selectedAuton);
     SignalLogger.start();
@@ -111,7 +101,6 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     SignalLogger.start();
 
-    currentMode = RobotModes.Teleop;
     TelemetryUpdater.setTelemetryValue("Current Action", "Standard teleop");
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to

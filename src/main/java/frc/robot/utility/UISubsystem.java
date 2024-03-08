@@ -171,7 +171,7 @@ public class UISubsystem {
         }
     }
 
-    public static void initializeUI(String currentMode) {
+    public static void initializeUI() {
         // initializing webcam
         UsbCamera webcam = new UsbCamera("WebcameStream", 0);
         //webcam.setResolution(640, 480);
@@ -208,8 +208,6 @@ public class UISubsystem {
         Shuffleboard.getTab("Auton Selector")
                 .add("Select a Path:", autonSelector)
                 .withWidget("Combo Box Chooser");
-
-                TelemetryUpdater.setTelemetryValue("Current Mode", currentMode);
 
         updatePreferencesButton = Shuffleboard.getTab("Preferences")
                 .add("Update Preferences", false)
