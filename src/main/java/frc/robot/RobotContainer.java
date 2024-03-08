@@ -121,10 +121,8 @@ public class RobotContainer {
     
     private void configureButtonBindings() {
         /* Util Commands */
-        circleButton.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        triangleButton.whileTrue(new InstantCommand(() -> {
-            s_Swerve.resetModulesToAbsolute();
-        }));
+        circleButton.onTrue(new InstantCommand(s_Swerve::zeroHeading));
+        triangleButton.whileTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
 
         //leftBumper.whileTrue(new InstantCommand(() -> precise = true));
         //leftBumper.onFalse(new InstantCommand(() -> precise = false));
@@ -144,7 +142,10 @@ public class RobotContainer {
         rightBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(40)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         leftBumper.onFalse(new InstantCommand(() -> s_Intake.setSwivelPosition(60)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         
-        rightBumper.onTrue(new InstantCommand(() -> s_Intake.setIntakeSpeed(20)));
+        leftTrigger.onTrue(new InstantCommand(() -> s_Intake.setIntakeSpeed(20)));
+
+        rightTrigger.whileTrue(new InstantCommand(() -> s_Transfer.setShooterTransfer(60)));
+
         //rightTrigger.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         //rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         
