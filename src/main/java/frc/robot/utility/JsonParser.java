@@ -16,7 +16,6 @@ import frc.robot.subsystems.TransferSubsystem;
 import frc.robot.commands.Move;
 
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -60,7 +59,7 @@ public class JsonParser {
 
         ArrayList<Command> autonCommands = new ArrayList<>();
 
-        Iterator<JSONObject> iterator = jsonArray.iterator(); 
+        Iterator<JSONObject> iterator = jsonArray.iterator();
 
         JSONObject point = null;
 
@@ -68,14 +67,14 @@ public class JsonParser {
             if (point == null){
                 point = iterator.next();
             }
-            
-            if (getEvent(point).equals("") || getEvent(point).equals("start")){
+
+            if (getEvent(point).isEmpty() || getEvent(point).equals("start")){
                 Pose2d newLocation = null;
-                
+
                 ArrayList<Translation2d> interiorPoints = new ArrayList<Translation2d>();
                 while (iterator.hasNext()){
                     JSONObject interiorPoint = iterator.next();
-                    if (getEvent(interiorPoint).equals("")){
+                    if (getEvent(interiorPoint).isEmpty()){
                         interiorPoints.add(getInteriorPoint(interiorPoint));
                     }else{
                         newLocation = getMainPoint(interiorPoint);
@@ -89,7 +88,7 @@ public class JsonParser {
                 double delay = newMovementCommand.getETA();
 
                 switch (getEvent(point)){
-                    case "Shoot": 
+                    case "Shoot":
                         //double primeDelay = (delay-Constants.Shooter.spinUpTime) > 0 ? (delay-Constants.Shooter.spinUpTime) : 0;
                         //ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new InstantCommand()));
                         autonCommands.add(new SequentialCommandGroup(newMovementCommand, new Shoot(shooterSubsystem, transferSubsystem, 200, true)));
