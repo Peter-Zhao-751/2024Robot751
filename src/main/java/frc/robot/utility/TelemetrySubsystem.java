@@ -17,18 +17,16 @@ public class TelemetrySubsystem implements Runnable {
                 } else if (value instanceof Sendable){
                     SmartDashboard.putData(key, (Sendable) value);
                 }
-                // Add handling for other types as needed
             });
 
             try {
-                Thread.sleep(100); // Sleep to limit update frequency
+                Thread.sleep(100);
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // Properly handle interruption
+                Thread.currentThread().interrupt();
             }
         }
     }
 
-    // Start the thread from within the class if desired
     public void start() {
         Thread thread = new Thread(this);
         thread.start();

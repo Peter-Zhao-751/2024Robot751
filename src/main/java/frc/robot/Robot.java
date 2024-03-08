@@ -36,14 +36,14 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Robot Preferences
 
-    // Go through every constant in Constants.java check if the Preference exists.
-    // add it if it doesn't. if it does, overwrite it.
 
     TelemetrySubsystem telemetrySubsystem = new TelemetrySubsystem();
     telemetrySubsystem.start();
 
-    UISubsystem.updatePreferencesBasedOnConstants(Constants.class, false);
-
+    // Go through every constant in Constants.java check if the Preference exists.
+    // add it if it doesn't. if it does, overwrite it.
+    //UISubsystem.updatePreferencesBasedOnConstants(Constants.class, false);
+    UISubsystem.updatePreferencesBasedOnConstants(Constants.class, true);
     // robot container
     m_robotContainer = new RobotContainer();
 
