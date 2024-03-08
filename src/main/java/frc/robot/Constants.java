@@ -220,7 +220,7 @@ public class Constants {
 
     public static class CANdle {
         public static int CANdleID = 3;
-        public static int LEDCount = 21; // TODO: CHANGE TO CORRECT AMOUNT (x = strip + 8)
+        public static int LEDCount = 13 + 8; // TODO: CHANGE TO CORRECT AMOUNT (x = strip + 8)
     }
 
     public static class CurrentManager{

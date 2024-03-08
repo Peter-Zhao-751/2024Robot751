@@ -10,7 +10,6 @@ public class TelemetrySubsystem implements Runnable {
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
             TelemetryUpdater.forEachTelemetryValue((key, value) -> {
-
                 if (value instanceof Double) {
                     SmartDashboard.putNumber(key, (Double) value);
                 } else if (value instanceof String) {
