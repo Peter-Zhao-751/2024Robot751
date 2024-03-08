@@ -37,7 +37,6 @@ public class TransferSubsystem extends SubsystemBase implements Component {
     /**
      * Set the speed of the intake transfer motor
      * @param speed in rotations per minute
-     * @return null
      */
     public void setIntakeTransfer(double speed) { // in rpm
         double currentSpeed = intakeTransfer.getEncoder().getVelocity() / 60;
@@ -48,7 +47,6 @@ public class TransferSubsystem extends SubsystemBase implements Component {
     /**
      * Set the speed of the shooter transfer motor
      * @param speed in rotations per minute
-     * @return null
      */
     public void setShooterTransfer(double speed) { // in rpm
         double currentSpeed = shooterTransfer.getEncoder().getVelocity() / 60;
@@ -59,7 +57,6 @@ public class TransferSubsystem extends SubsystemBase implements Component {
     /**
      * Set the speed of both transfer motors
      * @param speed in centimeters per second
-     * @return null
      */
     public void transfer(double speed) { // in centimeters per second
         setIntakeTransfer(speed / (2 * Math.PI * intakeTransferRadius));
@@ -68,7 +65,6 @@ public class TransferSubsystem extends SubsystemBase implements Component {
 
     /**
      * Stop both transfer motors
-     * @return null
      */
     public void stop() {
         intakeTransfer.set(0);

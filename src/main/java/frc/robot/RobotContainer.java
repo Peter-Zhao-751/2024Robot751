@@ -5,6 +5,7 @@ import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 
 import com.ctre.phoenix6.SignalLogger;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import edu.wpi.first.wpilibj.GenericHID;
@@ -92,6 +93,7 @@ public class RobotContainer {
     //private final ClimberSubsystem s_Climber = new ClimberSubsystem();
     private final SwerveSubsystem s_Swerve = new SwerveSubsystem();
     private final TransferSubsystem s_Transfer = new TransferSubsystem();
+    private final PowerSubsystem s_PDH = new PowerSubsystem();
 
     /* values */
     private boolean precise = false;
@@ -119,10 +121,8 @@ public class RobotContainer {
     
     private void configureButtonBindings() {
         /* Util Commands */
-        circleButton.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        triangleButton.whileTrue(new InstantCommand(() -> {
-            s_Swerve.resetModulesToAbsolute();
-        }));
+        circleButton.onTrue(new InstantCommand(s_Swerve::zeroHeading));
+        triangleButton.whileTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
 
         //leftBumper.whileTrue(new InstantCommand(() -> precise = true));
         //leftBumper.onFalse(new InstantCommand(() -> precise = false));
@@ -142,12 +142,15 @@ public class RobotContainer {
         rightBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(40)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         leftBumper.onFalse(new InstantCommand(() -> s_Intake.setSwivelPosition(60)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         
-        rightBumper.onTrue(new InstantCommand(() -> s_Intake.setIntakeSpeed(20)));
+        leftTrigger.onTrue(new InstantCommand(() -> s_Intake.setIntakeSpeed(20)));
+
+        rightTrigger.whileTrue(new InstantCommand(() -> s_Transfer.setShooterTransfer(60)));
+
         //rightTrigger.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         //rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         
         /* Drivetrain Commands */
-        crossButton.toggleOnTrue(new InstantCommand(() -> s_Swerve.crossModules()));
+        crossButton.toggleOnTrue(new InstantCommand(s_Swerve::crossModules));
     }
 
     public Command getAutonomousCommand() {
