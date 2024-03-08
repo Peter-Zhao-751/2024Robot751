@@ -139,11 +139,12 @@ public class RobotContainer {
 
         // LOGGING STUFF FOR DRIVETRAIN
         // TODO: #8 Run logging for the swerve drive
-        leftTrigger.whileTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(40)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        leftBumper.whileTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(60)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        rightBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(40)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        leftBumper.onFalse(new InstantCommand(() -> s_Intake.setSwivelPosition(60)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         
-        rightTrigger.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-        rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        rightBumper.onTrue(new InstantCommand(() -> s_Intake.setIntakeSpeed(20)));
+        //rightTrigger.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        //rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         
         /* Drivetrain Commands */
         crossButton.toggleOnTrue(new InstantCommand(() -> s_Swerve.crossModules()));

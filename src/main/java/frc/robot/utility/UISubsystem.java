@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.cameraserver.CameraServer;
 import frc.robot.Constants;
 
 public class UISubsystem {
@@ -172,12 +173,12 @@ public class UISubsystem {
 
     public static void initializeUI(String currentMode) {
         // initializing webcam
-        //UsbCamera webcam = new UsbCamera("WebcameStream", 0);
+        UsbCamera webcam = new UsbCamera("WebcameStream", 0);
         //webcam.setResolution(640, 480);
 
         //webcamCVSink = CameraServer.getVideo(webcam);
-        //CameraServer.addCamera(webcam);
-        //CameraServer.startAutomaticCapture(webcam);
+        CameraServer.addCamera(webcam);
+        CameraServer.startAutomaticCapture(webcam);
         // webcamOutputStream = CameraServer.putVideo("RotateCamera", 640, 480);
         // webcamSource = new Mat();
         // webcamOutput = new Mat();
