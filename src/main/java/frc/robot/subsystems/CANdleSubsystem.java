@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class CANdleSubsystem extends SubsystemBase implements Component{
     
-    private final CANdle m_candle = new CANdle(Constants.CANdle.CANdleID, Constants.CANivoreID);
+    private final CANdle m_candle = new CANdle(Constants.CANdle.CANdleID);
 
     public enum AnimationTypes {
         Shoot(new ColorFlowAnimation(128, 20, 70, 0, 0.7, Constants.CANdle.LEDCount, Direction.Forward, 8)),
