@@ -5,6 +5,7 @@ import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 
 import com.ctre.phoenix6.SignalLogger;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import edu.wpi.first.wpilibj.GenericHID;
@@ -92,6 +93,7 @@ public class RobotContainer {
     //private final ClimberSubsystem s_Climber = new ClimberSubsystem();
     private final SwerveSubsystem s_Swerve = new SwerveSubsystem();
     private final TransferSubsystem s_Transfer = new TransferSubsystem();
+    private final PowerSubsystem s_PDH = new PowerSubsystem();
 
     /* values */
     private boolean precise = false;
@@ -147,7 +149,7 @@ public class RobotContainer {
         //rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         
         /* Drivetrain Commands */
-        crossButton.toggleOnTrue(new InstantCommand(() -> s_Swerve.crossModules()));
+        crossButton.toggleOnTrue(new InstantCommand(s_Swerve::crossModules));
     }
 
     public Command getAutonomousCommand() {
