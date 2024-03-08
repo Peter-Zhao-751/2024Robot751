@@ -12,7 +12,8 @@ public class Intake extends Command {
     public enum IntakeSwivelMode {
         Extend(Constants.Intake.kSwivelExtendedAngle),
         Retract(Constants.Intake.kSwivelRetractedAngle),
-        Maintenance(Constants.Intake.kSwivelMaintenanceAngle);
+        Maintenance(Constants.Intake.kSwivelMaintenanceAngle),
+        Amp(Constants.Intake.kSwivelAmpAngle);
 
         public double desiredAngle;
 
@@ -25,10 +26,15 @@ public class Intake extends Command {
 
     private IntakeSwivelMode desiredSwivelState;
 
-    public Intake(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, IntakeSwivelMode extend, boolean smartMode) {
-        this.desiredSwivelState = extend;
+    public Intake(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, IntakeSwivelMode desiredSwivelState, boolean smartMode) {
+        this.desiredSwivelState = desiredSwivelState;
         this.intakeSubsystem = intakeSubsystem;
-        this.transferCommand = new Transfer(20, transferSubsystem, TransferMode.Intake, smartMode); // TODO: Tune this speed, it is in centimeters per second
+        switch (desiredSwivelState){
+            case Extend: this.transferCommand = new Transfer(20, transferSubsystem, TransferMode.Intake, smartMode);
+            break;
+            case Amp: this.transferCommand = new Transfer(20, transferSubsystem, TransferMode.Outtake, smartMode);
+            default: this.transferCommand = null;
+        }
         addRequirements(intakeSubsystem);
     }
 
@@ -36,7 +42,7 @@ public class Intake extends Command {
     public void initialize() {
         StateMachine.setState(StateMachine.State.Intake);
         intakeSubsystem.setSwivelPosition(desiredSwivelState.desiredAngle);
-        if (desiredSwivelState == IntakeSwivelMode.Extend) {
+        if (desiredSwivelState == IntakeSwivelMode.Extend && transferCommand != null) {
             transferCommand.schedule();
         }
     }

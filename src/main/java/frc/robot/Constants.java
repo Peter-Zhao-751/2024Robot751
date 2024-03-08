@@ -50,6 +50,7 @@ public class Constants {
         public static double kSwivelExtendedAngle = 10.0;  
         public static double kSwivelRetractedAngle = 60.0;
         public static double kSwivelMaintenanceAngle = 45.0;
+        public static double kSwivelAmpAngle = 60.0;
 
         public static double kSwivelEncoderZeroOffset = 0; // TODO: shit
     }
@@ -69,6 +70,7 @@ public class Constants {
         public static double feedSpeed = 30; // units in centimeters per second
 
         public static double maxTransferTime = 3.0; // unit in seconds
+        public static double minTransferTime = 2.0; 
     }
 
     public static class Shooter{

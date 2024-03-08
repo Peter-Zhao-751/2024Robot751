@@ -50,15 +50,17 @@ public class Transfer extends Command {
 
     @Override
     public boolean isFinished() {
+        double timeDelta = System.currentTimeMillis() - startTime;
+        boolean smartBeamBreak = isBeamBroken && timeDelta > Constants.Transfer.minTransferTime;
         if (transferMode == TransferMode.Intake) {
             if (smartMode) {
-                return isBeamBroken || (System.currentTimeMillis() - startTime) > Constants.Transfer.maxTransferTime;
+                return smartBeamBreak || timeDelta > Constants.Transfer.maxTransferTime;
             } else {
-                return isBeamBroken;
+                return smartBeamBreak;
             }
         } else {
             if (smartMode) {
-                return !isBeamBroken || (System.currentTimeMillis() - startTime) > Constants.Transfer.maxTransferTime;
+                return (!isBeamBroken && timeDelta > Constants.Transfer.minTransferTime) || timeDelta > Constants.Transfer.maxTransferTime;
             } else {
                 return false;
             }

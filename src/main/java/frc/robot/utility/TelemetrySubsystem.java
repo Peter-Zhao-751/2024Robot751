@@ -4,8 +4,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TelemetrySubsystem implements Runnable {
 
-    private TelemetrySubsystem() {}
-
     @Override
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {

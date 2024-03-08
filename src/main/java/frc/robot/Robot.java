@@ -12,6 +12,7 @@ import java.io.File;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 
+import frc.robot.utility.TelemetrySubsystem;
 import frc.robot.utility.TelemetryUpdater;
 import frc.robot.utility.UISubsystem;
 
@@ -45,6 +46,10 @@ public class Robot extends TimedRobot {
 
     // Go through every constant in Constants.java check if the Preference exists.
     // add it if it doesn't. if it does, overwrite it.
+
+    TelemetrySubsystem telemetrySubsystem = new TelemetrySubsystem();
+    telemetrySubsystem.start();
+
     UISubsystem.updatePreferencesBasedOnConstants(Constants.class, false);
 
     // robot container
