@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 public interface Component {
+
     /**
      * Get the current draw of the component
      * used to allocate current
@@ -11,7 +12,6 @@ public interface Component {
     /**
      * Allocate current to the component
      * @param current the current to allocate
-     * @return void
      */
     void allocateCurrent(double current);
     
