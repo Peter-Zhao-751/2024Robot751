@@ -60,7 +60,7 @@ public class Transfer extends Command {
             }
         } else {
             if (smartMode) {
-                return (!isBeamBroken && timeDelta > Constants.Transfer.minTransferTime) || timeDelta > Constants.Transfer.maxTransferTime;
+                return (!isBeamBroken && timeDelta >= Constants.Transfer.minTransferTime) || timeDelta >= Constants.Transfer.maxTransferTime;
             } else {
                 return false;
             }

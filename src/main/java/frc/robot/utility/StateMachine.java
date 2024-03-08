@@ -42,7 +42,6 @@ public class StateMachine {
     }
 
     public static void update() {
-
         TelemetryUpdater.setTelemetryValue("Robot State", state.stateName);
         CANdleController.changeAnimation(state.animation);
     }

@@ -10,39 +10,37 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class Intake extends Command {
 
     public enum IntakeSwivelMode {
-        Extend(Constants.Intake.kSwivelExtendedAngle),
-        Retract(Constants.Intake.kSwivelRetractedAngle),
-        Maintenance(Constants.Intake.kSwivelMaintenanceAngle),
-        Amp(Constants.Intake.kSwivelAmpAngle);
+        Extend(Constants.Intake.kSwivelExtendedAngle, 20.0, TransferMode.Intake),
+        Retract(Constants.Intake.kSwivelRetractedAngle, 0.0, TransferMode.Outtake),
+        Maintenance(Constants.Intake.kSwivelMaintenanceAngle, 0.0, TransferMode.Outtake),
+        Amp(Constants.Intake.kSwivelAmpAngle, 20.0, TransferMode.Outtake);
 
         public double desiredAngle;
-
-        private IntakeSwivelMode(double desiredAngle) {
+        public double speed;
+        public TransferMode transferMode;
+        
+        private IntakeSwivelMode(double desiredAngle, double intakeSpeed, TransferMode transferMode) {
             this.desiredAngle = desiredAngle;
+            this.speed = intakeSpeed;
+            this.transferMode = transferMode;
         }
     }
     private IntakeSubsystem intakeSubsystem;
     private Transfer transferCommand;
 
-    private IntakeSwivelMode desiredSwivelState;
+    private IntakeSwivelMode desiredState;
 
     public Intake(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, IntakeSwivelMode desiredSwivelState, boolean smartMode) {
-        this.desiredSwivelState = desiredSwivelState;
+        this.desiredState = desiredSwivelState;
         this.intakeSubsystem = intakeSubsystem;
-        switch (desiredSwivelState){
-            case Extend: this.transferCommand = new Transfer(20, transferSubsystem, TransferMode.Intake, smartMode);
-            break;
-            case Amp: this.transferCommand = new Transfer(20, transferSubsystem, TransferMode.Outtake, smartMode);
-            default: this.transferCommand = null;
-        }
-        addRequirements(intakeSubsystem);
+        this.transferCommand = new Transfer(desiredSwivelState.speed, transferSubsystem, desiredSwivelState.transferMode, smartMode);
     }
 
     @Override
     public void initialize() {
         StateMachine.setState(StateMachine.State.Intake);
-        intakeSubsystem.setSwivelPosition(desiredSwivelState.desiredAngle);
-        if (desiredSwivelState == IntakeSwivelMode.Extend && transferCommand != null) {
+        intakeSubsystem.setSwivelPosition(desiredState.desiredAngle);
+        if (desiredState == IntakeSwivelMode.Extend && transferCommand != null) {
             transferCommand.schedule();
         }
     }
@@ -61,6 +59,6 @@ public class Intake extends Command {
     
     @Override
     public boolean isFinished() {
-        return desiredSwivelState == IntakeSwivelMode.Retract || desiredSwivelState == IntakeSwivelMode.Maintenance || transferCommand.isFinished();
+        return desiredState == IntakeSwivelMode.Retract || desiredState == IntakeSwivelMode.Maintenance || transferCommand.isFinished();
     }
 }
