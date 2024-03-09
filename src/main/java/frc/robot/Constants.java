@@ -32,7 +32,7 @@ public class Constants {
 
         public static double intakeRollerRadius = 2.54; // units in centimeters
 
-        public static double kPSwivelController = 0.5; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
+        public static double kPSwivelController = 0.01; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
         public static double kISwivelController = 0.0;
         public static double kDSwivelController = 0.0;
 
@@ -42,7 +42,7 @@ public class Constants {
         public static double kVSwivelFeedforward = 1.17;
         public static double kASwivelFeedforward = 0.0;
 
-        public static double kPIntakeController = 0.01; // TODO: this is a low value as the motor is using duty cycle, voltage
+        public static double kPIntakeController = 0.015; // TODO: this is a low value as the motor is using duty cycle, voltage
         public static double kIIntakeController = 0.0;
         public static double kDIntakeController = 0.0;
 

@@ -62,7 +62,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         intakePIDController = new PIDController(Constants.Intake.kPIntakeController, Constants.Intake.kIIntakeController, Constants.Intake.kDIntakeController);
 
-        swivelSetpoint = 50;
+        swivelSetpoint = 0;
         targetIntakeSpeed = 0;
 
         allocatedCurrent = 0;
@@ -80,7 +80,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
      * @return void
      */
     public void setIntakeSpeed(double speed){
-        targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius);
+        //targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius);
+        intakeMotor.set(0.5);
     }
 
     /**
@@ -97,9 +98,10 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
      * @return void
      */
     public void stopAll(){
-        leftSwivelMotor.setVoltage(0);
-        rightSwivelMotor.setVoltage(0);
-        intakeMotor.set(0);
+        leftSwivelMotor.stopMotor();
+        rightSwivelMotor.stopMotor();
+        targetIntakeSpeed = 0;
+        intakeMotor.stopMotor();
     }
 
     /**
@@ -135,17 +137,17 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         double combinedOutput = swivelPidOutput + feedforwardOutput;
 
-        combinedOutput = Math.min(combinedOutput, 3);
-        combinedOutput = Math.max(combinedOutput, -3);
+        combinedOutput = Math.min(combinedOutput, 5);
+        combinedOutput = Math.max(combinedOutput, -5);
 
         TelemetryUpdater.setTelemetryValue("Swivel Output Voltage", combinedOutput);
             
         //leftSwivelMotor.setVoltage(combinedOutput);
-        rightSwivelMotor.setVoltage(combinedOutput);
+        //rightSwivelMotor.setVoltage(combinedOutput);
 
-        double intakePidOutput = intakePIDController.calculate(getIntakeSpeed(), targetIntakeSpeed);
+        //double intakePidOutput = intakePIDController.calculate(getIntakeSpeed(), targetIntakeSpeed);
         // the values should be in the range of -1 to 1 and it will be clamped in the motor's api
-        intakeMotor.set(intakePidOutput);
+        //intakeMotor.set(targetIntakeSpeed);
 
         // TelemetryUpdater.setTelemetryValueumber("Total Intake Current Draw", getCurrentDraw());
         TelemetryUpdater.setTelemetryValue("Intake Swivel Position", angleEncoder.getPosition());
