@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -29,6 +30,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     private final TalonFX intakeMotor;
 
     private final SparkAbsoluteEncoder angleEncoder;
+    TrapezoidProfile trapezoidProfile;
+
 
     private final ArmFeedforward swivelFeedforwardController;
     private final PIDController swivelPIDController;
@@ -39,6 +42,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     private GenericEntry slider;
 
     private double allocatedCurrent;
+    private double startTime;
+    private double startAngle;
     
     public IntakeSubsystem(){
         leftSwivelMotor = new CANSparkMax(Constants.Intake.leftSwivelMotorID, MotorType.kBrushless);
@@ -62,10 +67,15 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         intakePIDController = new PIDController(Constants.Intake.kPIntakeController, Constants.Intake.kIIntakeController, Constants.Intake.kDIntakeController);
 
+        trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(5, 2.5));
+
         swivelSetpoint = 50;
         targetIntakeSpeed = 0;
 
         allocatedCurrent = 0;
+
+        startTime = System.currentTimeMillis();
+        startAngle = getSwivelPosition();
 
         slider = Shuffleboard.getTab("intake")
         .add("Slider", 0)
@@ -122,28 +132,31 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
     @Override
     public void periodic() {
+        double deltaTime = (System.currentTimeMillis() - startTime) / 1000;
         double currentAngle = getSwivelPosition();
 
         // debug shit
         //rightSwivelMotor.setVoltage(slider.getDouble(0));
         //leftSwivelMotor.setVoltage(slider.getDouble(0));
 
+        TrapezoidProfile.State setPoint = trapezoidProfile.calculate(deltaTime, new TrapezoidProfile.State(startAngle, 0), new TrapezoidProfile.State(swivelSetpoint, 0));
+
         double maxVoltage = RobotController.getBatteryVoltage() * 0.95;
         double swivelPidOutput = swivelPIDController.calculate(currentAngle, swivelSetpoint);
         
-        double targetAngleRadians = Math.toRadians(swivelSetpoint);
+        double targetAngleRadians = Math.toRadians(setPoint.position);
 
-        double feedforwardOutput = swivelFeedforwardController.calculate(targetAngleRadians, 0, 0);
+        double feedforwardOutput = swivelFeedforwardController.calculate(Math.toRadians(setPoint.position), Math.toRadians(setPoint.velocity), 0);
 
-        double combinedOutput = swivelPidOutput + feedforwardOutput;
+        double combinedOutput = feedforwardOutput;
 
-        combinedOutput = Math.min(combinedOutput, 6);
-        combinedOutput = Math.max(combinedOutput, -6);
+        // combinedOutput = Math.min(combinedOutput, 6);
+        // combinedOutput = Math.max(combinedOutput, -6);
 
         TelemetryUpdater.setTelemetryValue("Swivel Output Voltage", combinedOutput);
             
-        leftSwivelMotor.setVoltage(combinedOutput);
-        rightSwivelMotor.setVoltage(combinedOutput);
+        // leftSwivelMotor.setVoltage(combinedOutput);
+        // rightSwivelMotor.setVoltage(combinedOutput);
 
         //double intakePidOutput = intakePIDController.calculate(getIntakeSpeed(), targetIntakeSpeed);
         // the values should be in the range of -1 to 1 and it will be clamped in the motor's api
