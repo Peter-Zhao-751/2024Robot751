@@ -62,7 +62,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         intakePIDController = new PIDController(Constants.Intake.kPIntakeController, Constants.Intake.kIIntakeController, Constants.Intake.kDIntakeController);
 
-        swivelSetpoint = 0;
+        swivelSetpoint = 50;
         targetIntakeSpeed = 0;
 
         allocatedCurrent = 0;
@@ -81,7 +81,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
      */
     public void setIntakeSpeed(double speed){
         //targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius);
-        intakeMotor.set(0.5);
+        intakeMotor.set(0.25);
     }
 
     /**
@@ -137,20 +137,21 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         double combinedOutput = swivelPidOutput + feedforwardOutput;
 
-        combinedOutput = Math.min(combinedOutput, 5);
-        combinedOutput = Math.max(combinedOutput, -5);
+        combinedOutput = Math.min(combinedOutput, 6);
+        combinedOutput = Math.max(combinedOutput, -6);
 
         TelemetryUpdater.setTelemetryValue("Swivel Output Voltage", combinedOutput);
             
-        //leftSwivelMotor.setVoltage(combinedOutput);
-        //rightSwivelMotor.setVoltage(combinedOutput);
+        leftSwivelMotor.setVoltage(combinedOutput);
+        rightSwivelMotor.setVoltage(combinedOutput);
 
         //double intakePidOutput = intakePIDController.calculate(getIntakeSpeed(), targetIntakeSpeed);
         // the values should be in the range of -1 to 1 and it will be clamped in the motor's api
         //intakeMotor.set(targetIntakeSpeed);
 
         // TelemetryUpdater.setTelemetryValueumber("Total Intake Current Draw", getCurrentDraw());
-        TelemetryUpdater.setTelemetryValue("Intake Swivel Position", angleEncoder.getPosition());
+        TelemetryUpdater.setTelemetryValue("Intake Swivel Position", currentAngle);
+        TelemetryUpdater.setTelemetryValue("setpoint swivel", swivelSetpoint);
         // TelemetryUpdater.setTelemetryValueumber("Intake Speed", getIntakeSpeed());
     }
 
