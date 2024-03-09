@@ -117,8 +117,7 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
      * <li> Additionally, reduces the acceleration to target a certain jerk </li> 
      * </ul>
      *
-     * @param speed                Set the speed of the shooter motors in rotations per second
-     * @return void
+     * @param speed Set the speed of the shooter motors in rotations per second
      */
     public void setSpeed(double speed){
         targetSpeed = speed;
