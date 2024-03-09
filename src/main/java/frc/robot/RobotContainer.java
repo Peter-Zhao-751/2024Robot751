@@ -148,18 +148,17 @@ public class RobotContainer {
         // }));
         // leftTrigger.whileFalse(new InstantCommand(() -> s_Transfer.setIntakeTransfer(0)));
 
-        rightBumper.whileTrue(new InstantCommand(() -> {
-            s_Shooter.setSpeed(40);
-            s_Intake.setIntakeSpeed(20);
+        rightBumper.onTrue(new InstantCommand(() -> {
+            //s_Shooter.setSpeed(40);
+            //s_Intake.setIntakeSpeed(20);
             s_Transfer.setIntakeTransfer(20);
-            s_Transfer.setShooterTransfer(20);
+            //s_Transfer.setShooterTransfer(20);
         }));
-        
-        rightBumper.whileFalse(new InstantCommand(() ->  {
-            s_Shooter.setSpeed(0);
-            s_Intake.setIntakeSpeed(0);
-            s_Transfer.setIntakeTransfer(0);
-            s_Transfer.setShooterTransfer(0);
+
+        rightBumper.onFalse(new InstantCommand(() ->  {
+            //s_Shooter.setSpeed(0);
+            //s_Intake.stopAll();
+            s_Transfer.stop();
         }));
     
         //rightTrigger.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
