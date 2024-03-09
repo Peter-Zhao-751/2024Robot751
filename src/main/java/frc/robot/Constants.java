@@ -38,9 +38,9 @@ public class Constants {
 
         public static double kSwivelTime = 0.17;
 
-        public static double kSSwivelFeedforward = 0.25; // TODO: find this
+        public static double kSSwivelFeedforward = 0.025; // TODO: find this
+        public static double kGSwivelFeedforward = 0.19;
         public static double kVSwivelFeedforward = 1.17;
-        public static double kASwivelFeedforward = 0.0;
 
         public static double kPIntakeController = 0.015; // TODO: this is a low value as the motor is using duty cycle, voltage
         public static double kIIntakeController = 0.0;

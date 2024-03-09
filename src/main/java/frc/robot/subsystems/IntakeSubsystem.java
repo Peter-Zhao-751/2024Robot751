@@ -63,13 +63,13 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         swivelPIDController = new PIDController(Constants.Intake.kPSwivelController, Constants.Intake.kISwivelController, Constants.Intake.kDSwivelController);
         swivelPIDController.enableContinuousInput(0, 360);
-        swivelFeedforwardController = new ArmFeedforward(Constants.Intake.kSSwivelFeedforward, Constants.Intake.kVSwivelFeedforward, Constants.Intake.kASwivelFeedforward);
+        swivelFeedforwardController = new ArmFeedforward(Constants.Intake.kSSwivelFeedforward, Constants.Intake.kGSwivelFeedforward, Constants.Intake.kVSwivelFeedforward);
 
         intakePIDController = new PIDController(Constants.Intake.kPIntakeController, Constants.Intake.kIIntakeController, Constants.Intake.kDIntakeController);
 
-        trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(5, 2.5));
+        trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(10, 5));
 
-        swivelSetpoint = 50;
+        swivelSetpoint = getSwivelPosition();
         targetIntakeSpeed = 0;
 
         allocatedCurrent = 0;
@@ -101,6 +101,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
      */
     public void setSwivelPosition(double position){
         swivelSetpoint = position;
+        startAngle = getSwivelPosition();
+        startTime = System.currentTimeMillis();
     }
 
     /**
@@ -119,7 +121,9 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
      * @return double, the position of the swivel in degrees
      */
     public double getSwivelPosition() { 
-        return angleEncoder.getPosition() % 360;
+        double currentAngle = angleEncoder.getPosition() % 360;
+        if (currentAngle >= 180) return currentAngle - 360;
+        return currentAngle;
     }
 
     /**
@@ -154,9 +158,11 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         // combinedOutput = Math.max(combinedOutput, -6);
 
         TelemetryUpdater.setTelemetryValue("Swivel Output Voltage", combinedOutput);
+        TelemetryUpdater.setTelemetryValue("setpoint trapezoidal pos", setPoint.position);
+        TelemetryUpdater.setTelemetryValue("setpoint trapezoidal vel", setPoint.velocity);
             
-        // leftSwivelMotor.setVoltage(combinedOutput);
-        // rightSwivelMotor.setVoltage(combinedOutput);
+        leftSwivelMotor.setVoltage(combinedOutput);
+        rightSwivelMotor.setVoltage(combinedOutput);
 
         //double intakePidOutput = intakePIDController.calculate(getIntakeSpeed(), targetIntakeSpeed);
         // the values should be in the range of -1 to 1 and it will be clamped in the motor's api
