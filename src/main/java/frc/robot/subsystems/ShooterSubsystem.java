@@ -51,7 +51,7 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
     // private final SysIdRoutine routine;
 
     public ShooterSubsystem(){
-        leftShooterMotor = new TalonFX(Constants.Shooter.leftShooterMotorID);
+        leftShooterMotor = new TalonFX(Constants.Shooter.leftShooterMotorID, Constants.CANivoreID);
         leftShooterMotor.setNeutralMode(NeutralModeValue.Coast);
 
         rightShooterMotor = new TalonFX(Constants.Shooter.rightShooterMotorID, Constants.CANivoreID);

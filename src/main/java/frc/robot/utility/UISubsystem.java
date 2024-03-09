@@ -11,6 +11,7 @@ import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import edu.wpi.first.cscore.*;
+import edu.wpi.first.cscore.HttpCamera.HttpCameraKind;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Preferences;
@@ -173,25 +174,25 @@ public class UISubsystem {
 
     public static void initializeUI() {
         // initializing webcam
-        UsbCamera webcam = new UsbCamera("WebcameStream", 0);
-        //webcam.setResolution(640, 480);
+        UsbCamera webcam = CameraServer.startAutomaticCapture(0);
+        webcam.setResolution(640, 480);
 
         //webcamCVSink = CameraServer.getVideo(webcam);
-        CameraServer.addCamera(webcam);
-        CameraServer.startAutomaticCapture(webcam);
+        // CameraServer.addCamera(webcam);
+        // CameraServer.startAutomaticCapture(webcam);
         // webcamOutputStream = CameraServer.putVideo("RotateCamera", 640, 480);
         // webcamSource = new Mat();
         // webcamOutput = new Mat();
         
         // initializing limelight
-        //HttpCamera limelightStream = new HttpCamera("LimelightStream", Constants.Limelight.streamIp, HttpCameraKind.kMJPGStreamer);
-        //CameraServer.addCamera(limelightStream);
-        //CameraServer.startAutomaticCapture(limelightStream);
+        // HttpCamera limelightStream = new HttpCamera("LimelightStream", Constants.Limelight.streamIp, HttpCameraKind.kMJPGStreamer);
+        // CameraServer.addCamera(limelightStream);
+        // CameraServer.startAutomaticCapture(limelightStream);
 
         // initializing path stream
 
-        //imageSource = CameraServer.putVideo("Path Preview", 827, 401);
-        //CameraServer.startAutomaticCapture(imageSource);
+        imageSource = CameraServer.putVideo("Path Preview", 827, 401);
+        CameraServer.startAutomaticCapture(imageSource);
 
         // sets a bunch of UI stuff
         Path deployDirectory = Filesystem.getDeployDirectory().toPath();

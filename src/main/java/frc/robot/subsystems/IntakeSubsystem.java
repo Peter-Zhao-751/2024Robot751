@@ -46,6 +46,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         leftSwivelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         rightSwivelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+
         leftSwivelMotor.setInverted(true);
 
         angleEncoder = rightSwivelMotor.getAbsoluteEncoder(Type.kDutyCycle);
@@ -139,7 +140,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         TelemetryUpdater.setTelemetryValue("Swivel Output Voltage", combinedOutput);
             
-        leftSwivelMotor.setVoltage(combinedOutput);
+        //leftSwivelMotor.setVoltage(combinedOutput);
         rightSwivelMotor.setVoltage(combinedOutput);
 
         double intakePidOutput = intakePIDController.calculate(getIntakeSpeed(), targetIntakeSpeed);

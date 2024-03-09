@@ -83,7 +83,7 @@ public class RobotContainer {
 
     /* Commands */
     
-    private final Command Shooter;
+    //private final Command Shooter;
     //private final Command Intake;
 
     /* Subsystems */
@@ -100,7 +100,7 @@ public class RobotContainer {
 
     /* The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        Shooter = new Shoot(s_Shooter, s_Transfer, 200, false);
+        //Shooter = new Shoot(s_Shooter, s_Transfer, 20, false);
         //Intake = new Intake(s_Intake, s_Transfer);
 
         JsonParser.JsonParser(null, s_Transfer, s_Shooter, s_Swerve);
@@ -139,13 +139,29 @@ public class RobotContainer {
 
         // LOGGING STUFF FOR DRIVETRAIN
         // TODO: #8 Run logging for the swerve drive
-        rightBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(40)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        //rightBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(40)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         leftBumper.onFalse(new InstantCommand(() -> s_Intake.setSwivelPosition(60)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         
-        leftTrigger.onTrue(new InstantCommand(() -> s_Intake.setIntakeSpeed(20)));
+        // leftTrigger.whileTrue(new InstantCommand(() -> {
+        //     s_Transfer.setIntakeTransfer(60);
+        //     System.out.println("Transfering");
+        // }));
+        // leftTrigger.whileFalse(new InstantCommand(() -> s_Transfer.setIntakeTransfer(0)));
 
-        rightTrigger.whileTrue(new InstantCommand(() -> s_Transfer.setShooterTransfer(60)));
-
+        rightBumper.whileTrue(new InstantCommand(() -> {
+            s_Shooter.setSpeed(40);
+            s_Intake.setIntakeSpeed(20);
+            s_Transfer.setIntakeTransfer(20);
+            s_Transfer.setShooterTransfer(20);
+        }));
+        
+        rightBumper.whileFalse(new InstantCommand(() ->  {
+            s_Shooter.setSpeed(0);
+            s_Intake.setIntakeSpeed(0);
+            s_Transfer.setIntakeTransfer(0);
+            s_Transfer.setShooterTransfer(0);
+        }));
+    
         //rightTrigger.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         //rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         
