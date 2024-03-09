@@ -194,8 +194,8 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
 
         kalmanFilter.correct(VecBuilder.fill(targetSpeed), VecBuilder.fill(getShooterMotor1Speed()));
 
-        TelemetryUpdater.setTelemetryValue("Kalman Filter X-hat 0", kalmanFilter.getXhat(0));
-        TelemetryUpdater.setTelemetryValue("Shooter Current Draw", getCurrentDraw());
+        //TelemetryUpdater.setTelemetryValue("Kalman Filter X-hat 0", kalmanFilter.getXhat(0));
+        //TelemetryUpdater.setTelemetryValue("Shooter Current Draw", getCurrentDraw());
     }
 
     @Override

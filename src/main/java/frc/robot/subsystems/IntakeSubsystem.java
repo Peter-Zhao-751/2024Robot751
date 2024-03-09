@@ -67,7 +67,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         intakePIDController = new PIDController(Constants.Intake.kPIntakeController, Constants.Intake.kIIntakeController, Constants.Intake.kDIntakeController);
 
-        trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(10, 5));
+        trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(50, 200));
 
         swivelSetpoint = getSwivelPosition();
         targetIntakeSpeed = 0;
@@ -146,21 +146,21 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         TrapezoidProfile.State setPoint = trapezoidProfile.calculate(deltaTime, new TrapezoidProfile.State(startAngle, 0), new TrapezoidProfile.State(swivelSetpoint, 0));
 
         double maxVoltage = RobotController.getBatteryVoltage() * 0.95;
-        double swivelPidOutput = swivelPIDController.calculate(currentAngle, swivelSetpoint);
-        
-        double targetAngleRadians = Math.toRadians(setPoint.position);
 
         double feedforwardOutput = swivelFeedforwardController.calculate(Math.toRadians(setPoint.position), Math.toRadians(setPoint.velocity), 0);
+        double swivelPidOutput = swivelPIDController.calculate(currentAngle, setPoint.position);
+        
+        double combinedOutput = feedforwardOutput + swivelPidOutput;
 
-        double combinedOutput = feedforwardOutput;
-
-        // combinedOutput = Math.min(combinedOutput, 6);
-        // combinedOutput = Math.max(combinedOutput, -6);
+        combinedOutput = Math.min(combinedOutput, 6);
+        combinedOutput = Math.max(combinedOutput, -6);
 
         TelemetryUpdater.setTelemetryValue("Swivel Output Voltage", combinedOutput);
+        TelemetryUpdater.setTelemetryValue("PID output voltage", swivelPidOutput);
         TelemetryUpdater.setTelemetryValue("setpoint trapezoidal pos", setPoint.position);
         TelemetryUpdater.setTelemetryValue("setpoint trapezoidal vel", setPoint.velocity);
-            
+        TelemetryUpdater.setTelemetryValue("Trapezoidal ETA", trapezoidProfile.totalTime());
+        
         leftSwivelMotor.setVoltage(combinedOutput);
         rightSwivelMotor.setVoltage(combinedOutput);
 
@@ -170,7 +170,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         // TelemetryUpdater.setTelemetryValueumber("Total Intake Current Draw", getCurrentDraw());
         TelemetryUpdater.setTelemetryValue("Intake Swivel Position", currentAngle);
-        TelemetryUpdater.setTelemetryValue("setpoint swivel", swivelSetpoint);
+        //TelemetryUpdater.setTelemetryValue("setpoint swivel", swivelSetpoint);
         // TelemetryUpdater.setTelemetryValueumber("Intake Speed", getIntakeSpeed());
     }
 

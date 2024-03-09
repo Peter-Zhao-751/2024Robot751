@@ -32,7 +32,7 @@ public class Constants {
 
         public static double intakeRollerRadius = 2.54; // units in centimeters
 
-        public static double kPSwivelController = 0.02; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
+        public static double kPSwivelController = 0.025; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
         public static double kISwivelController = 0.0;
         public static double kDSwivelController = 0.0;
 

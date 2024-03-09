@@ -260,9 +260,9 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
         fieldAcceleration[1] = rotationMatrix[1][0] * accelerationX + rotationMatrix[1][1] * accelerationY + rotationMatrix[1][2] * accelerationZ;
         fieldAcceleration[2] = rotationMatrix[2][0] * accelerationX + rotationMatrix[2][1] * accelerationY + rotationMatrix[2][2] * accelerationZ;
 
-        TelemetryUpdater.setTelemetryValue("fieldAccelerationX", fieldAcceleration[0]);
-        TelemetryUpdater.setTelemetryValue("fieldAccelerationY", fieldAcceleration[1]);
-        TelemetryUpdater.setTelemetryValue("fieldAccelerationZ", fieldAcceleration[2]);
+        //TelemetryUpdater.setTelemetryValue("fieldAccelerationX", fieldAcceleration[0]);
+        //TelemetryUpdater.setTelemetryValue("fieldAccelerationY", fieldAcceleration[1]);
+        //TelemetryUpdater.setTelemetryValue("fieldAccelerationZ", fieldAcceleration[2]);
         
 
         // update current
@@ -270,7 +270,7 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
         for (SwerveModule mod : mSwerveMods){
             totalCurrent += mod.getTotalCurrent();
         }
-        TelemetryUpdater.setTelemetryValue("total swerve current draw", totalCurrent);
+        //TelemetryUpdater.setTelemetryValue("total swerve current draw", totalCurrent);
         
         //CurrentManager.updateCurrent(totalCurrent, CurrentManager.Subsystem.DriveTrain);
 
@@ -286,8 +286,8 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
         double fieldChassisSpeedX = rotationMatrix[0][0] * speeds.vxMetersPerSecond + rotationMatrix[0][1] * speeds.vyMetersPerSecond;
         double fieldChassisSpeedY = rotationMatrix[1][0] * speeds.vxMetersPerSecond + rotationMatrix[1][1] * speeds.vyMetersPerSecond;
 
-        TelemetryUpdater.setTelemetryValue("Field Space Chassis Speeds Y", fieldChassisSpeedX);
-        TelemetryUpdater.setTelemetryValue("Field Space Chassis Speeds Y", fieldChassisSpeedY);
+        //TelemetryUpdater.setTelemetryValue("Field Space Chassis Speeds X", fieldChassisSpeedX);
+        //TelemetryUpdater.setTelemetryValue("Field Space Chassis Speeds Y", fieldChassisSpeedY);
 
         if (limelight.hasTarget() && newLimePosition != null){
             kalmanFilter.update(newLimePosition.getX(), newLimePosition.getY(), fieldChassisSpeedX, fieldChassisSpeedY, fieldAcceleration[0], fieldAcceleration[1]);
@@ -307,8 +307,8 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
         //     TelemetryUpdater.setTelemetryValue("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
         // }
 
-        TelemetryUpdater.setTelemetryValue("swerve x", swerveOdometry.getPoseMeters().getX());
-        TelemetryUpdater.setTelemetryValue("swerve y", swerveOdometry.getPoseMeters().getY());
+        //TelemetryUpdater.setTelemetryValue("swerve x", swerveOdometry.getPoseMeters().getX());
+        //TelemetryUpdater.setTelemetryValue("swerve y", swerveOdometry.getPoseMeters().getY());
 
         TelemetryUpdater.setTelemetryValue("Robot Yaw", gyro.getYaw().getValue());
         TelemetryUpdater.setTelemetryValue("Robot Pitch", gyro.getPitch().getValue());
