@@ -173,15 +173,17 @@ public class UISubsystem {
         new Thread(() -> {
             UsbCamera camera = CameraServer.startAutomaticCapture(0);
             camera.setResolution(640, 480);
-            CvSink cvSink = CameraServer.getVideo();
+    
+            CvSink cvSink = CameraServer.getVideo(camera);
+
             CvSource outputStream = CameraServer.putVideo("Front Fisheye", 640, 480);
+        
             Mat mat = new Mat();
 
             while (!Thread.interrupted()) {
                 if (cvSink.grabFrame(mat) == 0) continue;
-
                 Core.flip(mat, mat, 1);
-
+        
                 outputStream.putFrame(mat);
             }
         }).start();
