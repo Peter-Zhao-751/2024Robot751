@@ -67,7 +67,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         intakePIDController = new PIDController(Constants.Intake.kPIntakeController, Constants.Intake.kIIntakeController, Constants.Intake.kDIntakeController);
 
-        trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(50, 200));
+        trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(100, 300));
 
         swivelSetpoint = getSwivelPosition();
         targetIntakeSpeed = 0;

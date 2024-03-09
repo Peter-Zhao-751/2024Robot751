@@ -140,8 +140,8 @@ public class RobotContainer {
         // LOGGING STUFF FOR DRIVETRAIN
         // TODO: #8 Run logging for the swerve drive
         //rightBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(40)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        squareButton.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(20)));
-        leftBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(60)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        squareButton.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(5)));
+        leftBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(130)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         
         // leftTrigger.whileTrue(new InstantCommand(() -> {
         //     s_Transfer.setIntakeTransfer(60);
