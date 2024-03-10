@@ -1,4 +1,4 @@
-package frc.robot.commands.lowLevelCommands;
+package frc.robot.commands;
 
 import frc.robot.subsystems.CANdleSubsystem;
 

@@ -7,9 +7,9 @@ import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator; 
 
-import frc.robot.commands.lowLevelCommands.IntakeCommand;
-import frc.robot.commands.lowLevelCommands.ShootCommand;
-import frc.robot.commands.lowLevelCommands.IntakeCommand.IntakeSwivelMode;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ShootCommand;
+import frc.robot.commands.IntakeCommand.IntakeSwivelMode;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;

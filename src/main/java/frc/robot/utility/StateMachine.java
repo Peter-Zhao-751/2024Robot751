@@ -1,6 +1,6 @@
 package frc.robot.utility;
 
-import frc.robot.commands.lowLevelCommands.CANdleControllerCommand;
+import frc.robot.commands.CANdleControllerCommand;
 import frc.robot.subsystems.CANdleSubsystem;
 
 public class StateMachine {

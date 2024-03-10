@@ -1,6 +1,6 @@
-package frc.robot.commands.lowLevelCommands;
+package frc.robot.commands;
 import frc.robot.Constants;
-import frc.robot.commands.lowLevelCommands.TransferCommand.TransferMode;
+import frc.robot.commands.TransferCommand.TransferMode;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransferSubsystem;
 import frc.robot.utility.StateMachine;

@@ -14,7 +14,7 @@ public class PowerSubsystem extends SubsystemBase {
      * @see PowerDistribution.ModuleType
      */
     public PowerSubsystem() {
-        powerDistribution = new PowerDistribution();
+        powerDistribution = new PowerDistribution(Constants.Swerve.pdhId, PowerDistribution.ModuleType.kRev);
     }
 
     @Override
