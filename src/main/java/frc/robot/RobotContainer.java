@@ -151,8 +151,8 @@ public class RobotContainer {
 
         rightBumper.onTrue(new InstantCommand(() -> {
             s_Shooter.setSpeed(20);
-            s_Intake.setIntakeSpeed(10);
-            s_Transfer.setIntakeTransfer(20);
+            s_Intake.setIntakeSpeed(20);
+            s_Transfer.setIntakeTransfer(30);
             s_Transfer.setShooterTransfer(20);
         }));
 

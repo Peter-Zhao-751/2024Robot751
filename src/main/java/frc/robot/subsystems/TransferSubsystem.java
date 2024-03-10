@@ -42,8 +42,7 @@ public class TransferSubsystem extends SubsystemBase implements Component {
     public void setIntakeTransfer(double speed) { // in rpm
         // double currentSpeed = intakeTransfer.getEncoder().getVelocity() / 60;
         // double output = intakeTransferPIDController.calculate(currentSpeed, speed);
-        System.out.println("jbadsadsad");
-        intakeTransfer.set(0.6);
+        intakeTransfer.set(speed/40);
     }
 
     /**
@@ -53,7 +52,7 @@ public class TransferSubsystem extends SubsystemBase implements Component {
     public void setShooterTransfer(double speed) { // in rpm
         // double currentSpeed = shooterTransfer.getEncoder().getVelocity() / 60;
         // double output = shooterTransferPIDController.calculate(currentSpeed, speed);
-        shooterTransfer.set(0.5);
+        shooterTransfer.set(speed/-40);
     }
 
     /**
