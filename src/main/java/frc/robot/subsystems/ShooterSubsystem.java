@@ -51,7 +51,7 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
     // private final SysIdRoutine routine;
 
     public ShooterSubsystem(){
-        leftShooterMotor = new TalonFX(Constants.Shooter.leftShooterMotorID);
+        leftShooterMotor = new TalonFX(Constants.Shooter.leftShooterMotorID, Constants.CANivoreID);
         leftShooterMotor.setNeutralMode(NeutralModeValue.Coast);
 
         rightShooterMotor = new TalonFX(Constants.Shooter.rightShooterMotorID, Constants.CANivoreID);
@@ -193,8 +193,8 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
 
         kalmanFilter.correct(VecBuilder.fill(targetSpeed), VecBuilder.fill(getShooterMotor1Speed()));
 
-        TelemetryUpdater.setTelemetryValue("Kalman Filter X-hat 0", kalmanFilter.getXhat(0));
-        TelemetryUpdater.setTelemetryValue("Shooter Current Draw", getCurrentDraw());
+        //TelemetryUpdater.setTelemetryValue("Kalman Filter X-hat 0", kalmanFilter.getXhat(0));
+        //TelemetryUpdater.setTelemetryValue("Shooter Current Draw", getCurrentDraw());
     }
 
     @Override

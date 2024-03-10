@@ -26,6 +26,7 @@ public class TransferSubsystem extends SubsystemBase implements Component {
     public TransferSubsystem() {
         shooterTransfer = new CANSparkMax(Constants.Transfer.shooterTransferID, MotorType.kBrushless);
         intakeTransfer = new CANSparkMax(Constants.Transfer.intakeTransferID, MotorType.kBrushless);
+        intakeTransfer.setInverted(true);
         beamBreak = new DigitalInput(Constants.Transfer.beamBreakDIOPort);
 
         shooterTransferPIDController = new PIDController(Constants.Transfer.kPIntakeController, 0, 0);
@@ -39,9 +40,9 @@ public class TransferSubsystem extends SubsystemBase implements Component {
      * @param speed in rotations per minute
      */
     public void setIntakeTransfer(double speed) { // in rpm
-        double currentSpeed = intakeTransfer.getEncoder().getVelocity() / 60;
-        double output = intakeTransferPIDController.calculate(currentSpeed, speed);
-        intakeTransfer.set(output);
+        // double currentSpeed = intakeTransfer.getEncoder().getVelocity() / 60;
+        // double output = intakeTransferPIDController.calculate(currentSpeed, speed);
+        intakeTransfer.set(speed/40);
     }
 
     /**
@@ -49,9 +50,9 @@ public class TransferSubsystem extends SubsystemBase implements Component {
      * @param speed in rotations per minute
      */
     public void setShooterTransfer(double speed) { // in rpm
-        double currentSpeed = shooterTransfer.getEncoder().getVelocity() / 60;
-        double output = shooterTransferPIDController.calculate(currentSpeed, speed);
-        shooterTransfer.set(output);
+        // double currentSpeed = shooterTransfer.getEncoder().getVelocity() / 60;
+        // double output = shooterTransferPIDController.calculate(currentSpeed, speed);
+        shooterTransfer.set(speed/-40);
     }
 
     /**
@@ -67,8 +68,10 @@ public class TransferSubsystem extends SubsystemBase implements Component {
      * Stop both transfer motors
      */
     public void stop() {
-        intakeTransfer.set(0);
-        shooterTransfer.set(0);
+        //intakeTransfer.set(0);
+        intakeTransfer.stopMotor();
+        shooterTransfer.stopMotor();
+        //shooterTransfer.set(0);
     }
 
     /**
@@ -82,7 +85,7 @@ public class TransferSubsystem extends SubsystemBase implements Component {
     @Override
     public void periodic() {
         TelemetryUpdater.setTelemetryValue("Beam Break", beamBroken());
-        TelemetryUpdater.setTelemetryValue("Transfer Current Draw", getCurrentDraw());
+        //TelemetryUpdater.setTelemetryValue("Transfer Current Draw", getCurrentDraw());
         TelemetryUpdater.setTelemetryValue("Intake Transfer Speed", intakeTransfer.getEncoder().getVelocity());
         TelemetryUpdater.setTelemetryValue("Shooter Transfer Speed", shooterTransfer.getEncoder().getVelocity());
     }

@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -29,6 +30,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     private final TalonFX intakeMotor;
 
     private final SparkAbsoluteEncoder angleEncoder;
+    TrapezoidProfile trapezoidProfile;
+
 
     private final ArmFeedforward swivelFeedforwardController;
     private final PIDController swivelPIDController;
@@ -39,6 +42,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     private GenericEntry slider;
 
     private double allocatedCurrent;
+    private double startTime;
+    private double startAngle;
     
     public IntakeSubsystem(){
         leftSwivelMotor = new CANSparkMax(Constants.Intake.leftSwivelMotorID, MotorType.kBrushless);
@@ -46,6 +51,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         leftSwivelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
         rightSwivelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+
         leftSwivelMotor.setInverted(true);
 
         angleEncoder = rightSwivelMotor.getAbsoluteEncoder(Type.kDutyCycle);
@@ -57,20 +63,25 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         swivelPIDController = new PIDController(Constants.Intake.kPSwivelController, Constants.Intake.kISwivelController, Constants.Intake.kDSwivelController);
         swivelPIDController.enableContinuousInput(0, 360);
-        swivelFeedforwardController = new ArmFeedforward(Constants.Intake.kSSwivelFeedforward, Constants.Intake.kVSwivelFeedforward, Constants.Intake.kASwivelFeedforward);
+        swivelFeedforwardController = new ArmFeedforward(Constants.Intake.kSSwivelFeedforward, Constants.Intake.kGSwivelFeedforward, Constants.Intake.kVSwivelFeedforward);
 
         intakePIDController = new PIDController(Constants.Intake.kPIntakeController, Constants.Intake.kIIntakeController, Constants.Intake.kDIntakeController);
 
-        swivelSetpoint = 50;
+        trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(200, 400));
+
+        swivelSetpoint = getSwivelPosition();
         targetIntakeSpeed = 0;
 
         allocatedCurrent = 0;
 
-        slider = Shuffleboard.getTab("intake")
+        startTime = System.currentTimeMillis();
+        startAngle = getSwivelPosition();
+
+        /*slider = Shuffleboard.getTab("intake")
         .add("Slider", 0)
         .withWidget(BuiltInWidgets.kNumberSlider)
         .withProperties(Map.of("min", 0, "max", 12))
-        .getEntry();
+        .getEntry();*/
     }
     
     /**
@@ -79,7 +90,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
      * @return void
      */
     public void setIntakeSpeed(double speed){
-        targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius);
+        //targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius);
+        intakeMotor.set(0.25);
     }
 
     /**
@@ -89,6 +101,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
      */
     public void setSwivelPosition(double position){
         swivelSetpoint = position;
+        startAngle = getSwivelPosition();
+        startTime = System.currentTimeMillis();
     }
 
     /**
@@ -96,9 +110,10 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
      * @return void
      */
     public void stopAll(){
-        leftSwivelMotor.setVoltage(0);
-        rightSwivelMotor.setVoltage(0);
-        intakeMotor.set(0);
+        leftSwivelMotor.stopMotor();
+        rightSwivelMotor.stopMotor();
+        targetIntakeSpeed = 0;
+        intakeMotor.stopMotor();
     }
 
     /**
@@ -106,7 +121,9 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
      * @return double, the position of the swivel in degrees
      */
     public double getSwivelPosition() { 
-        return angleEncoder.getPosition() % 360;
+        double currentAngle = angleEncoder.getPosition() % 360;
+        if (currentAngle >= 180) return currentAngle - 360;
+        return currentAngle;
     }
 
     /**
@@ -119,35 +136,41 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
     @Override
     public void periodic() {
+        double deltaTime = (System.currentTimeMillis() - startTime) / 1000;
         double currentAngle = getSwivelPosition();
 
         // debug shit
         //rightSwivelMotor.setVoltage(slider.getDouble(0));
         //leftSwivelMotor.setVoltage(slider.getDouble(0));
 
+        TrapezoidProfile.State setPoint = trapezoidProfile.calculate(deltaTime, new TrapezoidProfile.State(startAngle, 0), new TrapezoidProfile.State(swivelSetpoint, 0));
+
         double maxVoltage = RobotController.getBatteryVoltage() * 0.95;
-        double swivelPidOutput = swivelPIDController.calculate(currentAngle, swivelSetpoint);
+
+        double feedforwardOutput = swivelFeedforwardController.calculate(Math.toRadians(setPoint.position), Math.toRadians(setPoint.velocity), 0);
+        double swivelPidOutput = swivelPIDController.calculate(currentAngle, setPoint.position);
         
-        double targetAngleRadians = Math.toRadians(swivelSetpoint);
+        double combinedOutput = feedforwardOutput + swivelPidOutput;
 
-        double feedforwardOutput = swivelFeedforwardController.calculate(targetAngleRadians, 0, 0);
+        // combinedOutput = Math.min(combinedOutput, 6);
+        // combinedOutput = Math.max(combinedOutput, -6);
 
-        double combinedOutput = swivelPidOutput + feedforwardOutput;
-
-        combinedOutput = Math.min(combinedOutput, 3);
-        combinedOutput = Math.max(combinedOutput, -3);
-
-        TelemetryUpdater.setTelemetryValue("Swivel Output Voltage", combinedOutput);
-            
+        // TelemetryUpdater.setTelemetryValue("Swivel Output Voltage", combinedOutput);
+        // TelemetryUpdater.setTelemetryValue("PID output voltage", swivelPidOutput);
+        // TelemetryUpdater.setTelemetryValue("setpoint trapezoidal pos", setPoint.position);
+        // TelemetryUpdater.setTelemetryValue("setpoint trapezoidal vel", setPoint.velocity);
+        // TelemetryUpdater.setTelemetryValue("Trapezoidal ETA", trapezoidProfile.totalTime());
+        
         leftSwivelMotor.setVoltage(combinedOutput);
         rightSwivelMotor.setVoltage(combinedOutput);
 
-        double intakePidOutput = intakePIDController.calculate(getIntakeSpeed(), targetIntakeSpeed);
+        //double intakePidOutput = intakePIDController.calculate(getIntakeSpeed(), targetIntakeSpeed);
         // the values should be in the range of -1 to 1 and it will be clamped in the motor's api
-        intakeMotor.set(intakePidOutput);
+        //intakeMotor.set(targetIntakeSpeed);
 
         // TelemetryUpdater.setTelemetryValueumber("Total Intake Current Draw", getCurrentDraw());
-        TelemetryUpdater.setTelemetryValue("Intake Swivel Position", angleEncoder.getPosition());
+        TelemetryUpdater.setTelemetryValue("Intake Swivel Position", currentAngle);
+        //TelemetryUpdater.setTelemetryValue("setpoint swivel", swivelSetpoint);
         // TelemetryUpdater.setTelemetryValueumber("Intake Speed", getIntakeSpeed());
     }
 

@@ -86,9 +86,9 @@ public class ClimberSubsystem extends SubsystemBase implements Component{
         leftClimberMotor.set(leftOutput);
         rightClimberMotor.set(rightOutput);
 
-        TelemetryUpdater.setTelemetryValue("Climber Current Draw", getCurrentDraw());
+        /*TelemetryUpdater.setTelemetryValue("Climber Current Draw", getCurrentDraw());
         TelemetryUpdater.setTelemetryValue("Left Climber Position", getLeftPosition());
-        TelemetryUpdater.setTelemetryValue("Right Climber Position", getRightPosition());
+        TelemetryUpdater.setTelemetryValue("Right Climber Position", getRightPosition());*/
     }
 
     @Override

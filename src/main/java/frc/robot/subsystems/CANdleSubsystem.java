@@ -119,7 +119,7 @@ public class CANdleSubsystem extends SubsystemBase implements Component{
 
             currentAnimation = desiredAnimation;
 
-            TelemetryUpdater.setTelemetryValue("Current Robot LED Animation", CurrentManager.isOverNominal() ? "Disabled due to over-current" : currentAnimation.name());
+            //TelemetryUpdater.setTelemetryValue("Current Robot LED Animation", CurrentManager.isOverNominal() ? "Disabled due to over-current" : currentAnimation.name());
         }else if (currentAnimation.isDone()){
             changeAnimation(lastAnimation);
             currentAnimation = lastAnimation;

@@ -32,17 +32,17 @@ public class Constants {
 
         public static double intakeRollerRadius = 2.54; // units in centimeters
 
-        public static double kPSwivelController = 0.5; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
+        public static double kPSwivelController = 0.025; // TODO: #5 Using SYSID find the correct PID values for the intake arm pivot
         public static double kISwivelController = 0.0;
         public static double kDSwivelController = 0.0;
 
         public static double kSwivelTime = 0.17;
 
-        public static double kSSwivelFeedforward = 0.25; // TODO: find this
+        public static double kSSwivelFeedforward = 0.025; // TODO: find this
+        public static double kGSwivelFeedforward = 0.19;
         public static double kVSwivelFeedforward = 1.17;
-        public static double kASwivelFeedforward = 0.0;
 
-        public static double kPIntakeController = 0.01; // TODO: this is a low value as the motor is using duty cycle, voltage
+        public static double kPIntakeController = 0.015; // TODO: this is a low value as the motor is using duty cycle, voltage
         public static double kIIntakeController = 0.0;
         public static double kDIntakeController = 0.0;
 
@@ -52,7 +52,7 @@ public class Constants {
         public static double kSwivelMaintenanceAngle = 45.0;
         public static double kSwivelAmpAngle = 60.0;
 
-        public static double kSwivelEncoderZeroOffset = 0; // TODO: shit
+        public static double kSwivelEncoderZeroOffset = 319.62; // TODO: shit
     }
 
     public static class Transfer{
@@ -222,7 +222,7 @@ public class Constants {
 
     public static class CANdle {
         public static int CANdleID = 3;
-        public static int LEDCount = 13 + 8; // TODO: CHANGE TO CORRECT AMOUNT (x = strip + 8)
+        public static int LEDCount = 13 + 8; // the 8 is the number of LEDs on the CANdle
     }
 
     public static class CurrentManager{

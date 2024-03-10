@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.Base64;
 
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -27,11 +28,6 @@ public class UISubsystem {
     private static File selectedAuton = null;
     private static String base64Image = null;
     private static CvSource imageSource;
-
-    private static CvSink webcamCVSink;
-    private static CvSource webcamOutputStream;
-    private static Mat webcamSource;
-    private static Mat webcamOutput;
 
     // updating ui methods
     public static void updatePathPreview() {
@@ -158,8 +154,8 @@ public class UISubsystem {
         // Send the processed frame to the Dashboard
         //webcamOutputStream.putFrame(webcamOutput);
 
-        TelemetryUpdater.setTelemetryValue("Current Manager Over Nominal", CurrentManager.isOverNominal());
-        TelemetryUpdater.setTelemetryValue("Current Manager Over Peak", CurrentManager.isOverMax());
+        // TelemetryUpdater.setTelemetryValue("Current Manager Over Nominal", CurrentManager.isOverNominal());
+        // TelemetryUpdater.setTelemetryValue("Current Manager Over Peak", CurrentManager.isOverMax());
 
         if (updatePreferencesButton.getBoolean(false)) {
             updatePreferencesBasedOnConstants(Constants.class, false);
@@ -173,25 +169,28 @@ public class UISubsystem {
 
     public static void initializeUI() {
         // initializing webcam
-        UsbCamera webcam = new UsbCamera("WebcameStream", 0);
-        //webcam.setResolution(640, 480);
 
-        //webcamCVSink = CameraServer.getVideo(webcam);
-        CameraServer.addCamera(webcam);
-        CameraServer.startAutomaticCapture(webcam);
-        // webcamOutputStream = CameraServer.putVideo("RotateCamera", 640, 480);
-        // webcamSource = new Mat();
-        // webcamOutput = new Mat();
+        new Thread(() -> {
+            UsbCamera camera = CameraServer.startAutomaticCapture(0);
+            camera.setResolution(640, 480);
+    
+            CvSink cvSink = CameraServer.getVideo(camera);
+
+            CvSource outputStream = CameraServer.putVideo("Front Fisheye", 640, 480);
         
-        // initializing limelight
-        //HttpCamera limelightStream = new HttpCamera("LimelightStream", Constants.Limelight.streamIp, HttpCameraKind.kMJPGStreamer);
-        //CameraServer.addCamera(limelightStream);
-        //CameraServer.startAutomaticCapture(limelightStream);
+            Mat mat = new Mat();
+
+            while (!Thread.interrupted()) {
+                if (cvSink.grabFrame(mat) == 0) continue;
+                Core.flip(mat, mat, 1);
+        
+                outputStream.putFrame(mat);
+            }
+        }).start();
 
         // initializing path stream
-
-        //imageSource = CameraServer.putVideo("Path Preview", 827, 401);
-        //CameraServer.startAutomaticCapture(imageSource);
+        imageSource = CameraServer.putVideo("Path Preview", 827, 401);
+        CameraServer.startAutomaticCapture(imageSource);
 
         // sets a bunch of UI stuff
         Path deployDirectory = Filesystem.getDeployDirectory().toPath();
@@ -222,7 +221,7 @@ public class UISubsystem {
 
     public static File selectedAuton() {
         File selectedAuton = autonSelector.getSelected();
-        TelemetryUpdater.setTelemetryValue("Current Action", "Autonomous: " + selectedAuton.getName());
+        // TelemetryUpdater.setTelemetryValue("Current Action", "Autonomous: " + selectedAuton.getName());
         return selectedAuton;
     }
 }
