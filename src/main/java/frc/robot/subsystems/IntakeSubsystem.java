@@ -38,20 +38,19 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     private final VelocityVoltage velocityVoltage;
 
     private final SparkAbsoluteEncoder angleEncoder;
-    TrapezoidProfile trapezoidProfile;
+    private final TrapezoidProfile swivelTrapezoidProfile;
 
 
     private final ArmFeedforward swivelFeedforwardController;
     private final PIDController swivelPIDController;
-    private final PIDController intakePIDController;
+    //private final PIDController intakePIDController;
  
     private double swivelSetpoint;
     private double targetIntakeSpeed;
-    private GenericEntry slider;
 
     private double allocatedCurrent;
-    private double startTime;
-    private double startAngle;
+    private double swivelMovementStartTime;
+    private double swivelMovementStartAngle;
 
 //    private SysIdRoutine routine;
     
@@ -87,17 +86,17 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         swivelPIDController.enableContinuousInput(0, 360);
         swivelFeedforwardController = new ArmFeedforward(Constants.Intake.kSSwivelFeedforward, Constants.Intake.kGSwivelFeedforward, Constants.Intake.kVSwivelFeedforward);
 
-        intakePIDController = new PIDController(Constants.Intake.kPIntakeController, Constants.Intake.kIIntakeController, Constants.Intake.kDIntakeController);
+        //intakePIDController = new PIDController(Constants.Intake.kPIntakeController, Constants.Intake.kIIntakeController, Constants.Intake.kDIntakeController);
 
-        trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(200, 400));
+        swivelTrapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(200, 400));
 
         swivelSetpoint = getSwivelPosition();
         targetIntakeSpeed = 0;
 
         allocatedCurrent = 0;
 
-        startTime = System.currentTimeMillis();
-        startAngle = getSwivelPosition();
+        swivelMovementStartTime = System.currentTimeMillis();
+        swivelMovementStartAngle = getSwivelPosition();
         setSwivelPosition(Constants.Intake.IntakePositions.RETRACTED);
 
 //        slider = Shuffleboard.getTab("intake")
@@ -144,8 +143,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
      */
     public void setSwivelPosition(Constants.Intake.IntakePositions position){
         swivelSetpoint = position.getAngle();
-        startAngle = getSwivelPosition();
-        startTime = System.currentTimeMillis();
+        swivelMovementStartAngle = getSwivelPosition();
+        swivelMovementStartTime = System.currentTimeMillis();
     }
 
     /**
@@ -178,14 +177,14 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
     @Override
     public void periodic() {
-        double deltaTime = (System.currentTimeMillis() - startTime) / 1000;
+        double deltaTime = (System.currentTimeMillis() - swivelMovementStartTime) / 1000;
         double currentAngle = getSwivelPosition();
 
         // debug shit
         //rightSwivelMotor.setVoltage(slider.getDouble(0));
         //leftSwivelMotor.setVoltage(slider.getDouble(0));
 
-        TrapezoidProfile.State setPoint = trapezoidProfile.calculate(deltaTime, new TrapezoidProfile.State(startAngle, 0), new TrapezoidProfile.State(swivelSetpoint, 0));
+        TrapezoidProfile.State setPoint = swivelTrapezoidProfile.calculate(deltaTime, new TrapezoidProfile.State(swivelMovementStartAngle, 0), new TrapezoidProfile.State(swivelSetpoint, 0));
 
         double maxVoltage = RobotController.getBatteryVoltage() * 0.95; // TODO: maybe replace with the PDH voltage?
 

@@ -11,8 +11,8 @@ public class IntakeCommand extends Command {
 
     public enum IntakeSwivelMode {
         Extend(IntakePositions.INTAKE, 20.0, TransferMode.Intake),
-        Retract(IntakePositions.RETRACTED, 0.0, TransferMode.Outtake),
-        Maintenance(IntakePositions.MAINTENANCE, 0.0, TransferMode.None),
+        Retract(IntakePositions.RETRACTED, 0.0, null),
+        Maintenance(IntakePositions.MAINTENANCE, 0.0, null),
         Amp(IntakePositions.AMP, 20.0, TransferMode.Outtake);
 
         public final IntakePositions intakePosition;
@@ -25,6 +25,7 @@ public class IntakeCommand extends Command {
             this.transferMode = transferMode;
         }
     }
+
     private final IntakeSubsystem intakeSubsystem;
     private final TransferCommand transferCommand;
     private final IntakeSwivelMode desiredState;
@@ -32,16 +33,15 @@ public class IntakeCommand extends Command {
     public IntakeCommand(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, IntakeSwivelMode desiredSwivelState, boolean smartMode) {
         this.desiredState = desiredSwivelState;
         this.intakeSubsystem = intakeSubsystem;
-        this.transferCommand = new TransferCommand(desiredSwivelState.speed, transferSubsystem, desiredSwivelState.transferMode, smartMode);
+        if (desiredSwivelState.transferMode != null) this.transferCommand = new TransferCommand(desiredSwivelState.speed, transferSubsystem, desiredSwivelState.transferMode, smartMode);
+        else this.transferCommand = null;
     }
 
     @Override
     public void initialize() {
         StateMachine.setState(StateMachine.State.Intake);
         intakeSubsystem.setSwivelPosition(desiredState.intakePosition);
-        if (desiredState == IntakeSwivelMode.Extend) {
-            transferCommand.schedule();
-        }
+        if (transferCommand != null) transferCommand.schedule();
     }
 
     @Override
@@ -58,6 +58,6 @@ public class IntakeCommand extends Command {
     
     @Override
     public boolean isFinished() {
-        return desiredState == IntakeSwivelMode.Retract || desiredState == IntakeSwivelMode.Maintenance || transferCommand.isFinished();
+        return transferCommand == null || transferCommand.isFinished();
     }
 }

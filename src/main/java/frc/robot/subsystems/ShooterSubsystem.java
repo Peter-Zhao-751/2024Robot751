@@ -6,9 +6,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.Command;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utility.TelemetryUpdater;
@@ -21,15 +19,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.estimator.KalmanFilter;
 
-// // Logging stuff for Characterization
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-// import com.ctre.phoenix6.SignalLogger;
-// import edu.wpi.first.units.Measure;
-// import edu.wpi.first.units.Voltage;
-// import static edu.wpi.first.units.Units.Volts;
-
-// https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-flywheel-walkthrough.html#modeling-with-system-identification
-// https://docs.wpilib.org/en/stable/docs/software/advanced-controls/state-space/state-space-observers.html
 
 public class ShooterSubsystem extends SubsystemBase implements Component {
     
@@ -38,10 +27,6 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
 
     private double targetSpeed;
 
-    // private final double acceleration;
-    // private final double maxSpeed;
-    // private final boolean isPriming;
-    // private final double targetSpeed;
     private final MotionMagicVelocityVoltage motionMagicVelocityVoltage;
 
     private final LinearSystem<N1, N1, N1> flyWheelPlant;
@@ -50,7 +35,6 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
 
     private final double allocatedCurrent;
 
-    // private final SysIdRoutine routine;
 
     public ShooterSubsystem(){
         leftShooterMotor = new TalonFX(Constants.Shooter.leftShooterMotorID, Constants.CANivoreID);
@@ -86,31 +70,9 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
         targetSpeed = 0;
 
         motionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0);
-        
-        // routine = new SysIdRoutine(
-        //     new SysIdRoutine.Config(
-        //         null,
-        //         null,
-        //         null,
-        //         (state) -> SignalLogger.writeString("state", state.toString())
-        //     ), 
-        //     new SysIdRoutine.Mechanism(
-        //         (Measure<Voltage> volts) -> {
-        //         shooterMotor1.setVoltage(volts.in(Volts));
-        //         System.out.println("Volts: " + volts.in(Volts));
-        //     }, null, this)
-        // );
 
         allocatedCurrent = 0;
     }
-
-    // public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    //     return routine.quasistatic(direction);
-    // }
-    
-    // public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    //     return routine.dynamic(direction);
-    // }
 
     /**
      * <p> Sets the speed of the shooter motors in rotations per second using the motion magic control mode </p> 
@@ -174,23 +136,6 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
 
     @Override
     public void periodic() {
-
-
-        //CurrentManager.updateCurrent(1, CurrentManager.Subsystem.Shooter);
-
-        //ShuffleboardTab tab = Shuffleboard.getTab("Robot Shooter132");
-
-        // tab.add("Shooter Velocity", Math.abs(shooterMotor1.getRotorVelocity().getValue() + shooterMotor2.getRotorVelocity().getValue()) / 2);
-        // tab.add("Shooter Voltage", Math.abs(shooterMotor1.getMotorVoltage().getValue() + shooterMotor2.getMotorVoltage().getValue()) / 2);
-        // tab.add("Shooter Current", Math.abs(shooterMotor1.getSupplyCurrent().getValue() + shooterMotor2.getSupplyCurrent().getValue()) / 2);
-
-        // tab.add("Shooter Left Velocity", Math.abs(shooterMotor1.getRotorVelocity().getValue()));
-        // tab.add("Shooter Left Voltage", Math.abs(shooterMotor1.getMotorVoltage().getValue()));
-        // tab.add("Shooter Left Current", Math.abs(shooterMotor1.getSupplyCurrent().getValue()));
-
-        // tab.add("Shooter Right Velocity", Math.abs(shooterMotor2.getRotorVelocity().getValue()));
-        // tab.add("Shooter Right Voltage", Math.abs(shooterMotor2.getMotorVoltage().getValue()));
-        // tab.add("Shooter Right Current", Math.abs(shooterMotor2.getSupplyCurrent().getValue()));
 
         kalmanFilter.correct(VecBuilder.fill(targetSpeed), VecBuilder.fill(getShooterMotor1Speed()));
 

@@ -1,17 +1,18 @@
 package frc.robot.commands;
 
+import edu.wpi.first.cscore.CameraServerJNI.TelemetryKind;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.TransferSubsystem;
+import frc.robot.utility.TelemetryUpdater;
 
 public class TransferCommand extends Command {
 
     public enum TransferMode {
         Intake,
         Outtake,
-        Shoot,
-        None
+        Shoot;
     }
 
     private final TransferSubsystem transferSubsystem;
@@ -25,10 +26,8 @@ public class TransferCommand extends Command {
     public TransferCommand(double speed, TransferSubsystem transferSubsystem, TransferMode transferMode, boolean smartMode) {
         this.beamDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
         this.speed = switch (transferMode) {
-            case Intake -> speed;
-            case Outtake -> -speed;
-            case Shoot -> Constants.Transfer.feedSpeed;
-            default -> 0;
+            case Outtake -> speed;
+            default -> speed;
         };
 
         this.transferSubsystem = transferSubsystem;
@@ -48,6 +47,7 @@ public class TransferCommand extends Command {
     @Override
     public void execute() {
         isBeamBroken = beamDebouncer.calculate(transferSubsystem.beamBroken());
+        TelemetryUpdater.setTelemetryValue("Transfer Beam Broken", isBeamBroken);
     }
 
     @Override
@@ -58,16 +58,18 @@ public class TransferCommand extends Command {
     @Override
     public boolean isFinished() {
         double timeDelta = System.currentTimeMillis() - startTime;
-        boolean smartBeamBreak = isBeamBroken && timeDelta > Constants.Transfer.minTransferTime;
+        boolean overMinTime = timeDelta > Constants.Transfer.minTransferTime;
+        boolean overMaxTime = timeDelta > Constants.Transfer.maxTransferTime;
+        boolean smartBeamBreak = isBeamBroken && overMinTime;
         if (transferMode == TransferMode.Intake) {
             if (smartMode) {
-                return smartBeamBreak || timeDelta > Constants.Transfer.maxTransferTime;
+                return smartBeamBreak || overMaxTime;
             } else {
                 return smartBeamBreak;
             }
         } else {
             if (smartMode) {
-                return (!isBeamBroken && timeDelta >= Constants.Transfer.minTransferTime) || timeDelta >= Constants.Transfer.maxTransferTime;
+                return (!isBeamBroken && overMinTime) || overMaxTime;
             } else {
                 return false;
             }
