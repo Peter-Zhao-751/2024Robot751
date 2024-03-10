@@ -25,11 +25,6 @@ public class TransferCommand extends Command {
 
     public TransferCommand(double speed, TransferSubsystem transferSubsystem, TransferMode transferMode, boolean smartMode) {
         this.beamDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
-        this.speed = switch (transferMode) {
-            case Outtake -> speed;
-            default -> speed;
-        };
-
         this.transferSubsystem = transferSubsystem;
         this.transferMode = transferMode;
         this.smartMode = smartMode;
@@ -41,7 +36,11 @@ public class TransferCommand extends Command {
     @Override
     public void initialize() {
         startTime = System.currentTimeMillis();
-        transferSubsystem.setIntakeTransfer(speed);
+        switch (transferMode) {
+            case Intake -> transferSubsystem.setIntakeTransfer(speed);
+            case Outtake -> transferSubsystem.setIntakeTransfer(-speed);
+            case Shoot -> transferSubsystem.setShooterTransfer(speed);
+        }
     }
 
     @Override
