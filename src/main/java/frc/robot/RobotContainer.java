@@ -3,6 +3,9 @@ package frc.robot;
 // POV import
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.commands.AlexCommands.IntakeCommand;
+import frc.robot.commands.AlexCommands.ShootCommand;
+import frc.robot.commands.AlexCommands.TransferCommand;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.utility.JsonParser;
@@ -75,8 +78,9 @@ public class RobotContainer {
         // LOGGING STUFF FOR DRIVETRAIN
         // TODO: #8 Run logging for the swerve drive
         //rightBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(40)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        driver.squareButton.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(5)));
-        driver.leftBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(140)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        driver.squareButton.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.IntakePositions.INTAKE)));
+        driver.leftBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.IntakePositions.RETRACTED)));
+        //s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
 
         driver.rightBumper.onTrue(new InstantCommand(() -> {
             s_Shooter.setSpeed(20);
@@ -90,7 +94,11 @@ public class RobotContainer {
             s_Intake.stopAll();
             s_Transfer.stop();
         }));
-    
+
+//        driver.rightTrigger.whileTrue(new ShootCommand(s_Shooter, s_Transfer, s_Swerve));
+//        driver.leftTrigger.whileTrue(new IntakeCommand(s_Intake, s_Transfer));
+//        driver.leftBumper.whileTrue(new TransferCommand(s_Transfer));
+
         //rightTrigger.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         //rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         

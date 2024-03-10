@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
 import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
@@ -29,6 +28,7 @@ public class Constants {
         public static double swivelGearRatio = 15.0; 
         public static double maxSwivelSpeed = 0.15;
         public static double intakeTime = 3.0;
+        public static double intakeSpeed = 20.0; // units in centimeters per second
 
         public static double intakeRollerRadius = 2.54; // units in centimeters
 
@@ -42,15 +42,28 @@ public class Constants {
         public static double kGSwivelFeedforward = 0.19;
         public static double kVSwivelFeedforward = 1.17;
 
+        public static double kSIntakeController = 0;
+        public static double kVIntakeController = 0;
         public static double kPIntakeController = 0.015;
         public static double kIIntakeController = 0.0;
         public static double kDIntakeController = 0.0;
 
-        
-        public static double kSwivelExtendedAngle = 5.0;  
-        public static double kSwivelRetractedAngle = 145.0;
-        public static double kSwivelMaintenanceAngle = 45.0;
-        public static double kSwivelAmpAngle = 60.0;
+        public enum IntakePositions {
+            INTAKE(5.0),
+            MAINTENANCE(45.0),
+            AMP(60.0),
+            RETRACTED(145.0);
+
+            private final double angle;
+
+            IntakePositions(double angle) {
+                this.angle = angle;
+            }
+
+            public double getAngle() {
+                return angle;
+            }
+        }
 
         public static double kSwivelEncoderZeroOffset = 319.62; 
     }
@@ -70,7 +83,9 @@ public class Constants {
         public static double feedSpeed = 30; // units in centimeters per second
 
         public static double maxTransferTime = 3.0; // unit in seconds
-        public static double minTransferTime = 0.5; 
+        public static double minTransferTime = 0.5;
+
+        public static double intakeSpeed = 20.0; // units in centimeters per second
     }
 
     public static class Shooter{
@@ -81,6 +96,9 @@ public class Constants {
         public static double spinUpTime = 2.0;
         public static double transferSpeed = 20.0; // units in centimeters per second
         public static double feedTime = 0.2;
+        public static double shooterSpeed = 42; // units in rotations per second
+        public static int motionMagicAcceleration = 400; // units in rotations per second squared
+        public static int motionMagicJerk = 4000; // units in rotations per second cubed
 
         public static double kSFlyWheelFeedforward = 0.25;
         public static double kVFlyWheelFeedforward = 0.12;

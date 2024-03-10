@@ -1,4 +1,6 @@
 package frc.robot.subsystems;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N1;
@@ -65,7 +67,7 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
         TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
 
         // set slot 0 gains
-        var slot0Configs = talonFXConfigs.Slot0;
+        Slot0Configs slot0Configs = talonFXConfigs.Slot0;
         slot0Configs.kS = Constants.Shooter.kSFlyWheelFeedforward;
         slot0Configs.kV = Constants.Shooter.kVFlyWheelFeedforward;
         slot0Configs.kA = Constants.Shooter.kAFlyWheelFeedforward;
@@ -74,9 +76,9 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
         slot0Configs.kD = Constants.Shooter.kDFlyWheelController;
 
         // set Motion Magic Velocity settings
-        var motionMagicConfigs = talonFXConfigs.MotionMagic;
-        motionMagicConfigs.MotionMagicAcceleration = 40; // Target acceleration of 400 rps/s (0.25 seconds to max)
-        motionMagicConfigs.MotionMagicJerk = 400; // Target jerk of 4000 rps/s/s (0.1 seconds)
+        MotionMagicConfigs motionMagicConfigs = talonFXConfigs.MotionMagic;
+        motionMagicConfigs.MotionMagicAcceleration = Constants.Shooter.motionMagicAcceleration; // Target acceleration of 400 rps/s (0.25 seconds to max)
+        motionMagicConfigs.MotionMagicJerk = Constants.Shooter.motionMagicJerk; // Target jerk of 4000 rps/s/s (0.1 seconds)
 
         leftShooterMotor.getConfigurator().apply(talonFXConfigs);
         rightShooterMotor.getConfigurator().apply(talonFXConfigs);

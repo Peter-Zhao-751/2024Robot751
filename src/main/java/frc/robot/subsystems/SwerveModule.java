@@ -31,10 +31,10 @@ public class SwerveModule {
     /* angle motor control requests */
     private final PositionVoltage anglePosition = new PositionVoltage(0);
 
-    public SwerveModule(int moduleNumber, Constants.Swerve.SwerveModule moduleConstants){
+    public SwerveModule(int moduleNumber, Constants.Swerve.SwerveModule moduleConstants) {
         this.moduleNumber = moduleNumber;
         this.angleOffset = moduleConstants.angleOffset;
-        
+
         /* Angle Encoder Config */
         angleEncoder = new CANcoder(moduleConstants.CANCoderID, Constants.CANivoreID);
         angleEncoder.getConfigurator().apply(SwerveSubsystem.ctreConfigs.swerveCANcoderConfig);
@@ -50,27 +50,35 @@ public class SwerveModule {
         mDriveMotor.getConfigurator().setPosition(0.0);
     }
 
-    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop){
-        desiredState = SwerveModuleState.optimize(desiredState, getState().angle); 
+//    public double getDriveMotorVoltage() {
+//        return mDriveMotor.getSupplyVoltage().getValue();
+//    }
+//
+//    public double getAngleMotorVoltage() {
+//        return mAngleMotor.getSupplyVoltage().getValue();
+//    }
+
+    public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
+        desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
         mAngleMotor.setControl(anglePosition.withPosition(desiredState.angle.getRotations()));
         setSpeed(desiredState, isOpenLoop);
         this.desiredState = desiredState;
     }
 
-    private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop){
+    private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
 
-        if(CurrentManager.isOverMax()){
-            desiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond/2;
+        if (CurrentManager.isOverMax()) {
+            desiredState.speedMetersPerSecond = desiredState.speedMetersPerSecond / 2;
         }
-        
-        /* Figuring out if we are in open loop or closed loop 
+
+        /* Figuring out if we are in open loop or closed loop
          * drive() in SwerveDrive.java is called with isOpenLoop = false most of the time
          * but Teleop.java calls it with isOpenLoop = true
          * So I think in teleop, we are in open loop, and in auto, we are in closed loop
-        */
-        
+         */
 
-        if(isOpenLoop){
+
+        if (isOpenLoop) {
             driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
             driveDutyCycle.EnableFOC = Constants.Swerve.enableFOC;
             mDriveMotor.setControl(driveDutyCycle);
@@ -84,61 +92,65 @@ public class SwerveModule {
 
     /**
      * Gets the angle of the module in radians from the CANCoder
+     *
      * @return the angle of the module in radians
      */
-    public Rotation2d getCANcoder(){
+    public Rotation2d getCANcoder() {
         return Rotation2d.fromRotations(angleEncoder.getAbsolutePosition().getValue());
     }
 
     /**
      * Zeros the angle of the module
      */
-    public void resetToAbsolute(){
-        double absolutePosition = getCANcoder().getRotations() - angleOffset.getRotations();
+    public void resetToAbsolute() {
+        setModuleAngle(0);
+    }
+
+    /**
+     * Sets the angle of the module
+     *
+     * @param angle the angle to set the module to in rotations
+     */
+    public void setModuleAngle(double angle) {
+        double absolutePosition = getCANcoder().getRotations() - angleOffset.getRotations() + angle;
         mAngleMotor.setPosition(absolutePosition);
     }
 
     /**
      * Get the current state of the module
+     *
      * @return the current state of the module in a SwerveModuleState object
      */
-    public SwerveModuleState getState(){
+    public SwerveModuleState getState() {
         return new SwerveModuleState(
-            Conversions.RPSToMPS(mDriveMotor.getVelocity().getValue(), Constants.Swerve.wheelCircumference), 
-            Rotation2d.fromRotations(mAngleMotor.getPosition().getValue())
+                Conversions.RPSToMPS(mDriveMotor.getVelocity().getValue(), Constants.Swerve.wheelCircumference),
+                Rotation2d.fromRotations(mAngleMotor.getPosition().getValue())
         );
     }
 
-    public double getDriveMotorCurrent(){
+    public double getDriveMotorCurrent() {
         return mDriveMotor.getSupplyCurrent().getValue();
     }
 
-    public double getAngleMotorCurrent(){
+    public double getAngleMotorCurrent() {
         return mAngleMotor.getSupplyCurrent().getValue();
     }
 
-    public double getDriveMotorVoltage(){
-        return mDriveMotor.getSupplyVoltage().getValue();
-    }
-
-    public double getAngleMotorVoltage(){
-        return mAngleMotor.getSupplyVoltage().getValue();
-    }
-
-    public double getTotalCurrent(){
+    public double getTotalCurrent() {
         return getDriveMotorCurrent() + getAngleMotorCurrent();
     }
 
-    public SwerveModulePosition getPosition(){
+    public SwerveModulePosition getPosition() {
         return new SwerveModulePosition(
-            Conversions.rotationsToMeters(mDriveMotor.getPosition().getValue(), Constants.Swerve.wheelCircumference), 
-            Rotation2d.fromRotations(mAngleMotor.getPosition().getValue())
+                Conversions.rotationsToMeters(mDriveMotor.getPosition().getValue(), Constants.Swerve.wheelCircumference),
+                Rotation2d.fromRotations(mAngleMotor.getPosition().getValue())
         );
     }
 
     /**
      * Sets the voltage of the drive motor
      * Used for SysId characterization commands
+     *
      * @param voltage the voltage to set the drive motor to
      */
     public void setDriveVoltage(double voltage) {
@@ -148,6 +160,7 @@ public class SwerveModule {
     /**
      * Sets the voltage of the angle motor
      * Used for SysId characterization commands
+     *
      * @param voltage the voltage to set the angle motor to
      */
     public void setAngleVoltage(double voltage) {

@@ -59,7 +59,7 @@ public class TransferSubsystem extends SubsystemBase implements Component {
      * Set the speed of both transfer motors
      * @param speed in centimeters per second
      */
-    public void transfer(double speed) { // in centimeters per second
+    public void setTransferSpeed(double speed) { // in centimeters per second
         setIntakeTransfer(speed / (2 * Math.PI * intakeTransferRadius));
         setShooterTransfer(speed / (2 * Math.PI * shooterTransferRadius));
     }

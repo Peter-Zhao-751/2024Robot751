@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -11,7 +14,6 @@ import frc.robot.Constants;
 import frc.robot.utility.TelemetryUpdater;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
@@ -20,7 +22,11 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import edu.wpi.first.wpilibj.RobotController;
 
-import java.util.Map;
+import com.ctre.phoenix6.SignalLogger;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import static edu.wpi.first.units.Units.Volts;
 
 public class IntakeSubsystem extends SubsystemBase implements Component {
 
@@ -28,6 +34,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     private final CANSparkMax rightSwivelMotor;
 
     private final TalonFX intakeMotor;
+    private final DutyCycleOut dutyCycleOut;
+    private final VelocityVoltage velocityVoltage;
 
     private final SparkAbsoluteEncoder angleEncoder;
     TrapezoidProfile trapezoidProfile;
@@ -44,6 +52,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     private double allocatedCurrent;
     private double startTime;
     private double startAngle;
+
+//    private SysIdRoutine routine;
     
     public IntakeSubsystem(){
         leftSwivelMotor = new CANSparkMax(Constants.Intake.leftSwivelMotorID, MotorType.kBrushless);
@@ -60,6 +70,18 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         angleEncoder.setZeroOffset(Constants.Intake.kSwivelEncoderZeroOffset);
 
         intakeMotor = new TalonFX(Constants.Intake.intakeMotorID);
+        dutyCycleOut = new DutyCycleOut(0);
+        TalonFXConfiguration intakeMotorConfig = new TalonFXConfiguration();
+        Slot0Configs slot0 = intakeMotorConfig.Slot0;
+        slot0.kS = Constants.Intake.kSIntakeController;
+        slot0.kV = Constants.Intake.kVIntakeController;
+        slot0.kP = Constants.Intake.kPIntakeController;
+        slot0.kI = Constants.Intake.kIIntakeController;
+        slot0.kD = Constants.Intake.kDIntakeController;
+        intakeMotor.getConfigurator().apply(slot0);
+
+
+        velocityVoltage = new VelocityVoltage(0);
 
         swivelPIDController = new PIDController(Constants.Intake.kPSwivelController, Constants.Intake.kISwivelController, Constants.Intake.kDSwivelController);
         swivelPIDController.enableContinuousInput(0, 360);
@@ -76,13 +98,36 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         startTime = System.currentTimeMillis();
         startAngle = getSwivelPosition();
+        setSwivelPosition(Constants.Intake.IntakePositions.RETRACTED);
 
-        /*slider = Shuffleboard.getTab("intake")
-        .add("Slider", 0)
-        .withWidget(BuiltInWidgets.kNumberSlider)
-        .withProperties(Map.of("min", 0, "max", 12))
-        .getEntry();*/
+//        slider = Shuffleboard.getTab("intake")
+//        .add("Slider", 0)
+//        .withWidget(BuiltInWidgets.kNumberSlider)
+//        .withProperties(Map.of("min", 0, "max", 12))
+//        .getEntry();
+
+//         routine = new SysIdRoutine(
+//             new SysIdRoutine.Config(
+//                 null,
+//                 null,
+//                 null,
+//                 (state) -> SignalLogger.writeString("state", state.toString())
+//             ),
+//             new SysIdRoutine.Mechanism(
+//                 (Measure<Voltage> volts) -> {
+//                 intakeMotor.setVoltage(volts.in(Volts));
+//                 System.out.println("Volts: " + volts.in(Volts));
+//             }, null, this)
+//         );
     }
+
+    // public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    //     return routine.quasistatic(direction);
+    // }
+
+    // public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    //     return routine.dynamic(direction);
+    // }
     
     /**
      * Sets the speed of the intake motor
@@ -97,8 +142,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
      * Sets the position of the swivel
      * @param position the position of the swivel in degrees
      */
-    public void setSwivelPosition(double position){
-        swivelSetpoint = position;
+    public void setSwivelPosition(Constants.Intake.IntakePositions position){
+        swivelSetpoint = position.getAngle();
         startAngle = getSwivelPosition();
         startTime = System.currentTimeMillis();
     }
@@ -142,7 +187,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         TrapezoidProfile.State setPoint = trapezoidProfile.calculate(deltaTime, new TrapezoidProfile.State(startAngle, 0), new TrapezoidProfile.State(swivelSetpoint, 0));
 
-        double maxVoltage = RobotController.getBatteryVoltage() * 0.95;
+        double maxVoltage = RobotController.getBatteryVoltage() * 0.95; // TODO: maybe replace with the PDH voltage?
 
         double feedforwardOutput = swivelFeedforwardController.calculate(Math.toRadians(setPoint.position), Math.toRadians(setPoint.velocity), 0);
         double swivelPidOutput = swivelPIDController.calculate(currentAngle, setPoint.position);
