@@ -101,7 +101,7 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     SignalLogger.start();
 
-    TelemetryUpdater.setTelemetryValue("Current Action", "Standard teleop");
+    //TelemetryUpdater.setTelemetryValue("Current Action", "Standard teleop");
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -114,7 +114,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    TelemetryUpdater.setTelemetryValue("CAN Bus Utilization", CANBus.getStatus(Constants.CANivoreID).BusUtilization * 100 + "%");
+    // TelemetryUpdater.setTelemetryValue("CAN Bus Utilization", CANBus.getStatus(Constants.CANivoreID).BusUtilization * 100 + "%");
   }
 
   @Override

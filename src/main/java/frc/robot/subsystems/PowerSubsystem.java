@@ -23,8 +23,8 @@ public class PowerSubsystem extends SubsystemBase {
         TelemetryUpdater.setTelemetryValue("PDH Voltage", powerDistribution.getVoltage());
         TelemetryUpdater.setTelemetryValue("PDH Temperature", powerDistribution.getTemperature());
         TelemetryUpdater.setTelemetryValue("PDH Total Current", powerDistribution.getTotalCurrent());
-        TelemetryUpdater.setTelemetryValue("PDH Total Power", powerDistribution.getTotalPower());
-        TelemetryUpdater.setTelemetryValue("PDH Total Energy", powerDistribution.getTotalEnergy());
-        TelemetryUpdater.setTelemetryValue("PDH Total Channel", powerDistribution.getNumChannels());
+        //TelemetryUpdater.setTelemetryValue("PDH Total Power", powerDistribution.getTotalPower());
+        //TelemetryUpdater.setTelemetryValue("PDH Total Energy", powerDistribution.getTotalEnergy());
+        //TelemetryUpdater.setTelemetryValue("PDH Total Channel", powerDistribution.getNumChannels());
     }
 }
