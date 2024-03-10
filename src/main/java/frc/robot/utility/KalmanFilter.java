@@ -148,9 +148,11 @@ public class KalmanFilter {
         return deltaTime;
     }
 
-    private void updateVelocityAndAcceleration(double sensorVelX, double sensorVelY, double sensorAccX, double sensorAccY){
+    private void updateVelocity(double sensorVelX, double sensorVelY){
         xState.updateVelocity(sensorVelX, noise.R_velocity);
         yState.updateVelocity(sensorVelY, noise.R_velocity);
+    }
+    private void updateAcceleration(double sensorAccX, double sensorAccY){
         xState.updateAcceleration(sensorAccX, noise.R_acceleration);
         yState.updateAcceleration(sensorAccY, noise.R_acceleration);
     }
@@ -162,12 +164,24 @@ public class KalmanFilter {
         }
         xState.updatePosition(sensorPosX, noise.R_position);
         yState.updatePosition(sensorPosY, noise.R_position);
-        updateVelocityAndAcceleration(sensorVelX, sensorVelY, sensorAccX, sensorAccY);
+        updateVelocity(sensorVelX, sensorVelY);
+        updateAcceleration(sensorAccX, sensorAccY);
     }
 
     public void update(double sensorVelX, double sensorVelY, double sensorAccX, double sensorAccY) {
         predictAndUpdateTime();
-        updateVelocityAndAcceleration(sensorVelX, sensorVelY, sensorAccX, sensorAccY);
+        updateVelocity(sensorVelX, sensorVelY);
+        updateAcceleration(sensorAccX, sensorAccY);
+    }
+
+    public void update(double sensorVelX, double sensorVelY) {
+        predictAndUpdateTime();
+        updateVelocity(sensorVelX, sensorVelY);
+    }
+    
+    public void updateNewAcceleration(double sensorAccX, double sensorAccY) {
+        predictAndUpdateTime();
+        updateAcceleration(sensorAccX, sensorAccY);
     }
 
     public double getPosX() {
