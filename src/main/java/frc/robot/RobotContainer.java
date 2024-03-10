@@ -176,8 +176,9 @@ public class RobotContainer {
     public Command getAutonomousCommand(File path){
         if (path != null){
             try { return new Auton(s_Swerve, JsonParser.getAutonCommands(path));}     
-            catch (Exception e) { System.out.println("Error: " + e);}
+            catch (Exception e) { System.out.println("Error: " + e); System.out.println("something stupid happened, probably spluke's fault");}
         }
+        System.out.println("No path file found");
         return new Auton(s_Swerve);
     }
 }

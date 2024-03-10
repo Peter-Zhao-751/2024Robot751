@@ -52,6 +52,7 @@ public class JsonParser {
         String encryptedData = new String(java.nio.file.Files.readAllBytes(pathFile.toPath()));
 
         String decryptedData = fullDecrypt(encryptedData);
+        System.out.println(decryptedData);
 
         jsonObject = (JSONObject) new JSONParser().parse(decryptedData); 
 
