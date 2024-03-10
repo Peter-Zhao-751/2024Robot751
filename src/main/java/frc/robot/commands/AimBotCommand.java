@@ -12,11 +12,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class AimBot extends Command {
+public class AimBotCommand extends Command {
     private final SwerveSubsystem s_Swerve;
-    private Move move;
+    private MoveCommand moveCommand;
 
-    public AimBot(SwerveSubsystem s_Swerve) {
+    public AimBotCommand(SwerveSubsystem s_Swerve) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
     }
@@ -47,26 +47,26 @@ public class AimBot extends Command {
 
         StateMachine.setState(StateMachine.State.Aimbot);
 
-        move = new Move(s_Swerve, new Pose2d(closestElement.x, closestElement.y, new Rotation2d(0)));
-        move.initialize();
+        moveCommand = new MoveCommand(s_Swerve, new Pose2d(closestElement.x, closestElement.y, new Rotation2d(0)));
+        moveCommand.initialize();
     }
 
     @Override
     public void execute() {
-        if (move != null) {
-            move.execute();
+        if (moveCommand != null) {
+            moveCommand.execute();
         }
     }
 
     @Override
     public void end(boolean interrupted) {
-        if (move != null) move.end(interrupted);
+        if (moveCommand != null) moveCommand.end(interrupted);
         
         StateMachine.setState(StateMachine.State.Idle);
     }
 
     @Override
     public boolean isFinished() {
-        return move != null && move.isFinished();
+        return moveCommand != null && moveCommand.isFinished();
     }
 }

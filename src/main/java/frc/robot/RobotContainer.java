@@ -20,9 +20,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.*;
-import frc.robot.commands.lowLevelCommands.Intake;
-import frc.robot.commands.lowLevelCommands.Shoot;
-import frc.robot.commands.lowLevelCommands.Transfer;
 import frc.robot.subsystems.*;
 import frc.robot.utility.JsonParser;
 import frc.robot.utility.TelemetryUpdater;
@@ -106,7 +103,7 @@ public class RobotContainer {
         JsonParser.JsonParser(null, s_Transfer, s_Shooter, s_Swerve);
 
         s_Swerve.setDefaultCommand(
-            new Teleop(
+            new TeleopCommand(
                 s_Swerve, 
                 () -> -driver.getRawAxis(translationAxis), 
                 () -> -driver.getRawAxis(strafeAxis), 
@@ -170,15 +167,15 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return new Auton(s_Swerve);
+        return new AutonCommand(s_Swerve);
     }
 
     public Command getAutonomousCommand(File path){
         if (path != null){
-            try { return new Auton(s_Swerve, JsonParser.getAutonCommands(path));}     
+            try { return new AutonCommand(s_Swerve, JsonParser.getAutonCommands(path));}
             catch (Exception e) { System.out.println("Error: " + e); System.out.println("something stupid happened, probably spluke's fault");}
         }
         System.out.println("No path file found");
-        return new Auton(s_Swerve);
+        return new AutonCommand(s_Swerve);
     }
 }

@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.TransferSubsystem;
 
-public class Transfer extends Command {
+public class TransferCommand extends Command {
 
     public enum TransferMode {
         Intake,
@@ -21,7 +21,7 @@ public class Transfer extends Command {
     private boolean smartMode;
     private boolean isBeamBroken;
 
-    public Transfer(double speed, TransferSubsystem transferSubsystem, TransferMode transferMode, boolean smartMode) {
+    public TransferCommand(double speed, TransferSubsystem transferSubsystem, TransferMode transferMode, boolean smartMode) {
         this.beamDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
         this.speed = (transferMode == TransferMode.Outtake) ? - speed : speed;
         this.transferSubsystem = transferSubsystem;

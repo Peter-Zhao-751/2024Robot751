@@ -1,22 +1,22 @@
 package frc.robot.commands.lowLevelCommands;
 import frc.robot.Constants;
-import frc.robot.commands.lowLevelCommands.Transfer.TransferMode;
+import frc.robot.commands.lowLevelCommands.TransferCommand.TransferMode;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransferSubsystem;
 import frc.robot.utility.StateMachine;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class Shoot extends Command{
+public class ShootCommand extends Command{
     private ShooterSubsystem shooterSubsystem;
     private TransferSubsystem transferSubsystem;
-    private Transfer transfer;
+    private TransferCommand transferCommand;
     private double speed;
     private boolean smartMode;
  
-    public Shoot(ShooterSubsystem shooterSubsystem, TransferSubsystem transferSubsystem, double speed, boolean smartMode) {
+    public ShootCommand(ShooterSubsystem shooterSubsystem, TransferSubsystem transferSubsystem, double speed, boolean smartMode) {
         this.shooterSubsystem = shooterSubsystem;
         this.transferSubsystem = transferSubsystem;
-        this.transfer = new Transfer(Constants.Transfer.feedSpeed, transferSubsystem, TransferMode.Shoot, smartMode);
+        this.transferCommand = new TransferCommand(Constants.Transfer.feedSpeed, transferSubsystem, TransferMode.Shoot, smartMode);
         addRequirements(shooterSubsystem, transferSubsystem);
     }
 
@@ -24,7 +24,7 @@ public class Shoot extends Command{
     public void initialize() {
         StateMachine.setState(StateMachine.State.Shoot);
         shooterSubsystem.setSpeed(speed);
-        transfer.initialize();
+        transferCommand.initialize();
     }
     @Override
     public void execute() {
@@ -39,6 +39,6 @@ public class Shoot extends Command{
 
     @Override
     public boolean isFinished() {
-        return transfer.isFinished();
+        return transferCommand.isFinished();
     }
 }

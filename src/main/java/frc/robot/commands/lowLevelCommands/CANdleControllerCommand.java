@@ -2,8 +2,8 @@ package frc.robot.commands.lowLevelCommands;
 
 import frc.robot.subsystems.CANdleSubsystem;
 
-public class CANdleController {
-    private CANdleController() {
+public class CANdleControllerCommand {
+    private CANdleControllerCommand() {
         throw new UnsupportedOperationException("CANdleController class cannot be instantiated");
     }
     public static final CANdleSubsystem m_candle = new CANdleSubsystem();

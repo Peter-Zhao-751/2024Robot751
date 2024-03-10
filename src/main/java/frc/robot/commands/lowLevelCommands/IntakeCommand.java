@@ -1,13 +1,13 @@
 package frc.robot.commands.lowLevelCommands;
 
-import frc.robot.commands.lowLevelCommands.Transfer.TransferMode;
+import frc.robot.commands.lowLevelCommands.TransferCommand.TransferMode;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransferSubsystem;
 import frc.robot.utility.StateMachine;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class Intake extends Command {
+public class IntakeCommand extends Command {
 
     public enum IntakeSwivelMode {
         Extend(Constants.Intake.kSwivelExtendedAngle, 20.0, TransferMode.Intake),
@@ -26,14 +26,14 @@ public class Intake extends Command {
         }
     }
     private IntakeSubsystem intakeSubsystem;
-    private Transfer transferCommand;
+    private TransferCommand transferCommand;
 
     private IntakeSwivelMode desiredState;
 
-    public Intake(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, IntakeSwivelMode desiredSwivelState, boolean smartMode) {
+    public IntakeCommand(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, IntakeSwivelMode desiredSwivelState, boolean smartMode) {
         this.desiredState = desiredSwivelState;
         this.intakeSubsystem = intakeSubsystem;
-        this.transferCommand = new Transfer(desiredSwivelState.speed, transferSubsystem, desiredSwivelState.transferMode, smartMode);
+        this.transferCommand = new TransferCommand(desiredSwivelState.speed, transferSubsystem, desiredSwivelState.transferMode, smartMode);
     }
 
     @Override

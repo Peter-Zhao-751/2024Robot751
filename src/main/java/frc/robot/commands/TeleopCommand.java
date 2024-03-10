@@ -12,7 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 
 
-public class Teleop extends Command {    
+public class TeleopCommand extends Command {
     private SwerveSubsystem s_Swerve;    
     private DoubleSupplier translationSup;
     private DoubleSupplier strafeSup;
@@ -20,7 +20,7 @@ public class Teleop extends Command {
     private BooleanSupplier robotCentricSup;
     private BooleanSupplier preciseControl;
 
-    public Teleop(SwerveSubsystem s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier preciseControl) {
+    public TeleopCommand(SwerveSubsystem s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier preciseControl) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
 

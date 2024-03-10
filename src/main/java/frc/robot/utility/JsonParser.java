@@ -7,24 +7,22 @@ import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator; 
 
-import frc.robot.commands.lowLevelCommands.Intake;
-import frc.robot.commands.lowLevelCommands.Shoot;
-import frc.robot.commands.lowLevelCommands.Intake.IntakeSwivelMode;
+import frc.robot.commands.lowLevelCommands.IntakeCommand;
+import frc.robot.commands.lowLevelCommands.ShootCommand;
+import frc.robot.commands.lowLevelCommands.IntakeCommand.IntakeSwivelMode;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.TransferSubsystem;
-import frc.robot.commands.Move;
+import frc.robot.commands.MoveCommand;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import org.json.simple.JSONArray; 
 import org.json.simple.JSONObject;
@@ -85,7 +83,7 @@ public class JsonParser {
                     }
                 }
 
-                Move newMovementCommand = new Move(swerveSubsystem, newLocation, interiorPoints);
+                MoveCommand newMovementCommand = new MoveCommand(swerveSubsystem, newLocation, interiorPoints);
 
                 double delay = newMovementCommand.getETA();
 
@@ -93,11 +91,11 @@ public class JsonParser {
                     case "Shoot":
                         //double primeDelay = (delay-Constants.Shooter.spinUpTime) > 0 ? (delay-Constants.Shooter.spinUpTime) : 0;
                         //ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new InstantCommand()));
-                        autonCommands.add(new SequentialCommandGroup(newMovementCommand, new Shoot(shooterSubsystem, transferSubsystem, 200, true)));
+                        autonCommands.add(new SequentialCommandGroup(newMovementCommand, new ShootCommand(shooterSubsystem, transferSubsystem, 200, true)));
                         break;
                     case "Pickup":
                         double intakeDelay = (delay-5) > 0 ? (delay-5) : 0;
-                        ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new Intake(intakeSubsystem, transferSubsystem, IntakeSwivelMode.Extend, true)));
+                        ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new IntakeCommand(intakeSubsystem, transferSubsystem, IntakeSwivelMode.Extend, true)));
                         autonCommands.add(moveAndIntake);
                         break;
                     default:
