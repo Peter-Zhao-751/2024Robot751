@@ -1,87 +1,25 @@
 package frc.robot;
 
-import javax.swing.JList.DropLocation;
-import com.ctre.phoenix.led.CANdle;
-import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
-
-import com.ctre.phoenix6.SignalLogger;
-import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
-// import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.PS5Controller;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 // POV import
-import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.utility.JsonParser;
-import frc.robot.utility.TelemetryUpdater;
+import frc.robot.utility.PS5Controller;
 
 import java.io.File;
 
 public class RobotContainer {
-    /*  
-     * precise control: left bumper
-     * aimbot: right bumper
-     * shoot: right trigger
-     * intake: left trigger
-     * 
-     * zero pigeon (for field based control and stuff): triangle
-     * zero modules (should be automatic, but incase somehting goes wrong in the game): circle
-     * cross wheels (maybe auto do this when shooting?): square
-     * 
-     * https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/PS5Controller.Button.html
-     */
-
-    private boolean climberMode = false;
-
-    /* Controllers */
-    private final Joystick driver = new Joystick(0);
-
-    /* Joysticks */
-
-    private final int translationAxis = PS5Controller.Axis.kLeftY.value;
-    private final int strafeAxis = PS5Controller.Axis.kLeftX.value;
-    private final int rotationAxis = PS5Controller.Axis.kRightX.value;
-
-    /* Triggers */
-    
-    private final JoystickButton leftTrigger = new JoystickButton(driver, PS5Controller.Button.kL2.value); // INTAKE
-    private final JoystickButton rightTrigger = new JoystickButton(driver, PS5Controller.Button.kR2.value); // SHOOT
-
-    /* Trigger Buttons */
-
-    private final JoystickButton leftTriggerButton = new JoystickButton(driver, PS5Controller.Button.kL3.value); // unassigned
-    private final JoystickButton rightTriggerButton = new JoystickButton(driver, PS5Controller.Button.kR3.value); // unassigned
-    
-    /* Bumpers */
-    
-    private final JoystickButton leftBumper = new JoystickButton(driver, PS5Controller.Button.kL1.value); // AIM BOT
-    private final JoystickButton rightBumper = new JoystickButton(driver, PS5Controller.Button.kR1.value); // PRECISE CONTROL
-    
-    /* Buttons */
-
-    private final JoystickButton triangleButton = new JoystickButton(driver, PS5Controller.Button.kTriangle.value); 
-    private final JoystickButton circleButton = new JoystickButton(driver, PS5Controller.Button.kCircle.value);
-    private final JoystickButton squareButton = new JoystickButton(driver, PS5Controller.Button.kSquare.value);
-    private final JoystickButton crossButton = new JoystickButton(driver, PS5Controller.Button.kCross.value);
-
-    /* Other Buttons */
-
-    private final JoystickButton optionsButton = new JoystickButton(driver, PS5Controller.Button.kOptions.value); // ZERO PIGEON
-    private final JoystickButton playstationButton = new JoystickButton(driver, PS5Controller.Button.kPS.value); // ZERO MODULES
 
     /* Commands */
     
     //private final Command Shooter;
     //private final Command Intake;
+
+    /* Controllers */
+    private final PS5Controller driver = new PS5Controller(0);
+    private final PS5Controller operator = new PS5Controller(1);
 
     /* Subsystems */
     //private final CANdle s_CANdle = new CANdle();
@@ -105,9 +43,9 @@ public class RobotContainer {
         s_Swerve.setDefaultCommand(
             new TeleopCommand(
                 s_Swerve, 
-                () -> -driver.getRawAxis(translationAxis), 
-                () -> -driver.getRawAxis(strafeAxis), 
-                () -> -driver.getRawAxis(rotationAxis), 
+                () -> -driver.joystick.getRawAxis(PS5Controller.translationAxis),
+                () -> -driver.joystick.getRawAxis(PS5Controller.strafeAxis),
+                () -> -driver.joystick.getRawAxis(PS5Controller.rotationAxis),
                 () -> false,
                 () -> precise
             )
@@ -118,8 +56,8 @@ public class RobotContainer {
     
     private void configureButtonBindings() {
         /* Util Commands */
-        circleButton.onTrue(new InstantCommand(s_Swerve::zeroHeading));
-        triangleButton.whileTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
+        driver.circleButton.onTrue(new InstantCommand(s_Swerve::zeroHeading));
+        driver.triangleButton.whileTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
 
         //leftBumper.whileTrue(new InstantCommand(() -> precise = true));
         //leftBumper.onFalse(new InstantCommand(() -> precise = false));
@@ -137,23 +75,17 @@ public class RobotContainer {
         // LOGGING STUFF FOR DRIVETRAIN
         // TODO: #8 Run logging for the swerve drive
         //rightBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(40)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        squareButton.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(5)));
-        leftBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(140)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        
-        // leftTrigger.whileTrue(new InstantCommand(() -> {
-        //     s_Transfer.setIntakeTransfer(60);
-        //     System.out.println("Transfering");
-        // }));
-        // leftTrigger.whileFalse(new InstantCommand(() -> s_Transfer.setIntakeTransfer(0)));
+        driver.squareButton.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(5)));
+        driver.leftBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(140)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
 
-        rightBumper.onTrue(new InstantCommand(() -> {
+        driver.rightBumper.onTrue(new InstantCommand(() -> {
             s_Shooter.setSpeed(20);
             s_Intake.setIntakeSpeed(20);
             s_Transfer.setIntakeTransfer(30);
             s_Transfer.setShooterTransfer(20);
         }));
 
-        rightBumper.onFalse(new InstantCommand(() ->  {
+        driver.rightBumper.onFalse(new InstantCommand(() ->  {
             s_Shooter.setSpeed(0);
             s_Intake.stopAll();
             s_Transfer.stop();
@@ -163,7 +95,7 @@ public class RobotContainer {
         //rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         
         /* Drivetrain Commands */
-        crossButton.toggleOnTrue(new InstantCommand(s_Swerve::crossModules));
+        driver.crossButton.toggleOnTrue(new InstantCommand(s_Swerve::crossModules));
     }
 
     public Command getAutonomousCommand() {
@@ -173,7 +105,7 @@ public class RobotContainer {
     public Command getAutonomousCommand(File path){
         if (path != null){
             try { return new AutonCommand(s_Swerve, JsonParser.getAutonCommands(path));}
-            catch (Exception e) { System.out.println("Error: " + e); System.out.println("something stupid happened, probably spluke's fault");}
+            catch (Exception e) { System.out.println("Error: " + e); System.out.println("something stupid happened, probably owen's fault");}
         }
         System.out.println("No path file found");
         return new AutonCommand(s_Swerve);
