@@ -3,10 +3,10 @@ package frc.robot;
 // POV import
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.commands.AlexCommands.IntakeCommand;
-import frc.robot.commands.AlexCommands.ShootCommand;
-import frc.robot.commands.AlexCommands.TransferCommand;
 import frc.robot.commands.*;
+import frc.robot.commands.DumbBadCommands.IntakeCommand;
+import frc.robot.commands.DumbBadCommands.ShootCommand;
+import frc.robot.commands.DumbBadCommands.TransferCommand;
 import frc.robot.subsystems.*;
 import frc.robot.utility.JsonParser;
 import frc.robot.utility.PS5Controller;

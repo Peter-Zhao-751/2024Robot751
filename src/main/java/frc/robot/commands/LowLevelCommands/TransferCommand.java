@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.LowLevelCommands;
 
 import edu.wpi.first.cscore.CameraServerJNI.TelemetryKind;
 import edu.wpi.first.math.filter.Debouncer;

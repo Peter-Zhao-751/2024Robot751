@@ -1,34 +1,30 @@
-package frc.robot.commands;
-import com.ctre.phoenix6.hardware.Pigeon2;
+package frc.robot.commands.LowLevelCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ClimberSubsystem;
+import com.ctre.phoenix6.hardware.Pigeon2;
 
-public class AutoClimbCommand extends Command{
-    private final Pigeon2 pigeon;
+public class ClimbCommand extends Command{
     private final ClimberSubsystem climberSubsystem;
-
-    public AutoClimbCommand(ClimberSubsystem climberSubsystem, Pigeon2 pigeon){
+    private final Pigeon2 gyro;
+    
+    public ClimbCommand(ClimberSubsystem climberSubsystem, Pigeon2 gyro){
         this.climberSubsystem = climberSubsystem;
-        this.pigeon = pigeon;
+        this.gyro = gyro;
         addRequirements(climberSubsystem);
     }
-
     @Override
     public void initialize() {
         // Climber code goes here
     }
-
     @Override
     public void execute() {
         // Climber code goes here
     }
-
     @Override
     public void end(boolean interrupted) {
         // Climber code goes here
     }
-
     @Override
     public boolean isFinished() {
         return false; // Ends the command after 3 seconds

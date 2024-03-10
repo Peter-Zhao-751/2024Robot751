@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.io.File;
 import java.io.FileReader;
-import java.util.Iterator; 
+import java.util.Iterator;
 
-import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.ShootCommand;
-import frc.robot.commands.IntakeCommand.IntakeSwivelMode;
+import frc.robot.commands.LowLevelCommands.IntakeCommand;
+import frc.robot.commands.LowLevelCommands.ShootCommand;
+import frc.robot.commands.LowLevelCommands.IntakeCommand.IntakeSwivelMode;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
