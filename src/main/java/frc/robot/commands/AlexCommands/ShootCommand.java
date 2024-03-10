@@ -12,8 +12,7 @@ public class ShootCommand extends Command {
     private final TransferSubsystem transferSubsystem;
     private final SwerveSubsystem swerveSubsystem;
 
-    private int shootTime = 1000;
-    private boolean shooting = false;
+    private long shootTime = 0;
 
     public ShootCommand(ShooterSubsystem shooterSubsystem, TransferSubsystem transferSubsystem, SwerveSubsystem swerveSubsystem) {
         this.shooterSubsystem = shooterSubsystem;
@@ -41,11 +40,7 @@ public class ShootCommand extends Command {
         if (shooterSubsystem.getShooterSpeed() > Constants.Shooter.shooterSpeed * 0.98) {
             transferSubsystem.setTransferSpeed(Constants.Transfer.feedSpeed);
             swerveSubsystem.crossModules();
-            shooting = true;
-        }
-
-        if (shooting) {
-            shootTime -= 20;
+            shootTime = System.currentTimeMillis();
         }
     }
 
@@ -65,7 +60,7 @@ public class ShootCommand extends Command {
      */
     @Override
     public boolean isFinished() {
-        return shootTime <= 0;
+        return System.currentTimeMillis() - shootTime >= 1000;
     }
 
     /**
