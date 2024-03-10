@@ -85,7 +85,7 @@ public class TransferSubsystem extends SubsystemBase implements Component {
     @Override
     public void periodic() {
         TelemetryUpdater.setTelemetryValue("Beam Break", beamBroken());
-        TelemetryUpdater.setTelemetryValue("Transfer Current Draw", getCurrentDraw());
+        //TelemetryUpdater.setTelemetryValue("Transfer Current Draw", getCurrentDraw());
         TelemetryUpdater.setTelemetryValue("Intake Transfer Speed", intakeTransfer.getEncoder().getVelocity());
         TelemetryUpdater.setTelemetryValue("Shooter Transfer Speed", shooterTransfer.getEncoder().getVelocity());
     }

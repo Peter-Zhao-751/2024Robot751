@@ -154,8 +154,8 @@ public class UISubsystem {
         // Send the processed frame to the Dashboard
         //webcamOutputStream.putFrame(webcamOutput);
 
-        TelemetryUpdater.setTelemetryValue("Current Manager Over Nominal", CurrentManager.isOverNominal());
-        TelemetryUpdater.setTelemetryValue("Current Manager Over Peak", CurrentManager.isOverMax());
+        // TelemetryUpdater.setTelemetryValue("Current Manager Over Nominal", CurrentManager.isOverNominal());
+        // TelemetryUpdater.setTelemetryValue("Current Manager Over Peak", CurrentManager.isOverMax());
 
         if (updatePreferencesButton.getBoolean(false)) {
             updatePreferencesBasedOnConstants(Constants.class, false);
@@ -221,7 +221,7 @@ public class UISubsystem {
 
     public static File selectedAuton() {
         File selectedAuton = autonSelector.getSelected();
-        TelemetryUpdater.setTelemetryValue("Current Action", "Autonomous: " + selectedAuton.getName());
+        // TelemetryUpdater.setTelemetryValue("Current Action", "Autonomous: " + selectedAuton.getName());
         return selectedAuton;
     }
 }

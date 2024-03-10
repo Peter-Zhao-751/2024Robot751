@@ -71,7 +71,7 @@ public class Move extends Command {
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         ETA = movementTrajectory.getTotalTimeSeconds();
-        TelemetryUpdater.setTelemetryValue("Auton Current Trajectory Estimated ETA", ETA);
+        //TelemetryUpdater.setTelemetryValue("Auton Current Trajectory Estimated ETA", ETA);
 
         swerveControllerCommand = new SwerveControllerCommand(
                 movementTrajectory,

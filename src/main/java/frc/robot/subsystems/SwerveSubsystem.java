@@ -311,8 +311,8 @@ public class SwerveSubsystem extends SubsystemBase implements Component{
         TelemetryUpdater.setTelemetryValue("swerve y", swerveOdometry.getPoseMeters().getY());
 
         TelemetryUpdater.setTelemetryValue("Robot Yaw", gyro.getYaw().getValue());
-        TelemetryUpdater.setTelemetryValue("Robot Pitch", gyro.getPitch().getValue());
-        TelemetryUpdater.setTelemetryValue("Robot Roll", gyro.getRoll().getValue());
+        //TelemetryUpdater.setTelemetryValue("Robot Pitch", gyro.getPitch().getValue());
+        //TelemetryUpdater.setTelemetryValue("Robot Roll", gyro.getRoll().getValue());
 
         //m_field.setRobotPose(odometry.getPoseMeters());
 

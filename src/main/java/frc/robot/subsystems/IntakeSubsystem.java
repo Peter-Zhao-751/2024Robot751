@@ -77,11 +77,11 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         startTime = System.currentTimeMillis();
         startAngle = getSwivelPosition();
 
-        slider = Shuffleboard.getTab("intake")
+        /*slider = Shuffleboard.getTab("intake")
         .add("Slider", 0)
         .withWidget(BuiltInWidgets.kNumberSlider)
         .withProperties(Map.of("min", 0, "max", 12))
-        .getEntry();
+        .getEntry();*/
     }
     
     /**
@@ -155,11 +155,11 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         // combinedOutput = Math.min(combinedOutput, 6);
         // combinedOutput = Math.max(combinedOutput, -6);
 
-        TelemetryUpdater.setTelemetryValue("Swivel Output Voltage", combinedOutput);
-        TelemetryUpdater.setTelemetryValue("PID output voltage", swivelPidOutput);
-        TelemetryUpdater.setTelemetryValue("setpoint trapezoidal pos", setPoint.position);
-        TelemetryUpdater.setTelemetryValue("setpoint trapezoidal vel", setPoint.velocity);
-        TelemetryUpdater.setTelemetryValue("Trapezoidal ETA", trapezoidProfile.totalTime());
+        // TelemetryUpdater.setTelemetryValue("Swivel Output Voltage", combinedOutput);
+        // TelemetryUpdater.setTelemetryValue("PID output voltage", swivelPidOutput);
+        // TelemetryUpdater.setTelemetryValue("setpoint trapezoidal pos", setPoint.position);
+        // TelemetryUpdater.setTelemetryValue("setpoint trapezoidal vel", setPoint.velocity);
+        // TelemetryUpdater.setTelemetryValue("Trapezoidal ETA", trapezoidProfile.totalTime());
         
         leftSwivelMotor.setVoltage(combinedOutput);
         rightSwivelMotor.setVoltage(combinedOutput);

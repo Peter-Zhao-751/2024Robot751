@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.io.File;
 import java.io.FileReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator; 
 
 import frc.robot.commands.lowLevelCommands.Intake;
@@ -110,28 +111,48 @@ public class JsonParser {
         return autonCommands;
     }
 
-    private static String shift(String inStr, int x, boolean de) {
-        if (inStr.isEmpty() || x == 0) return inStr;
+    public static String shfff(String inStr, int x, boolean de) {
+        if (inStr.isEmpty() || x == 0) {
+            return inStr;
+        }
 
         x = x % inStr.length();
-        if (x < 0) x += inStr.length();
+        if (x < 0) {
+            x += inStr.length();
+        }
 
-        if (de) return inStr.substring(x) + inStr.substring(0, x);
-        else return inStr.substring(inStr.length() - x) + inStr.substring(0, inStr.length() - x);
+        if (de) {
+            return inStr.substring(x) + inStr.substring(0, x);
+        } else {
+            return inStr.substring(inStr.length() - x) + inStr.substring(0, inStr.length() - x);
+        }
     }
 
-    private static String base64Decode(String str) {
-        byte[] decodedBytes = Base64.getDecoder().decode(str);
-        return new String(decodedBytes);
+    public static String base64Decode(String base64String) {
+        byte[] decodedBytes = Base64.getDecoder().decode(base64String);
+        return new String(decodedBytes, StandardCharsets.UTF_8);
     }
 
-    private static String fullDecrypt(String data) {
+    public static String base64Encode(String str) {
+        return Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static String fullEncrypt(String data) {
         String temp = data;
-        temp = temp.replace("<barn2path> ", "").replace(" <barn2path>", "")
-                   .replace("$", "A").replace("!", "M").replace("@", "C").replace("#", "D")
+        temp = base64Encode(temp);
+        temp = shfff(temp, 751, false);
+        temp = temp.replace("A", "$").replace("M", "!").replace("C", "@").replace("D", "#").replace("w", "&").replace("j", "*").replace("I", "^").replace("i", "%").replace("g", "<").replace("k", ">").replace("S", "?");
+        temp = "<barn2path> " + temp + " </barn2path>";
+        return temp;
+    }
+
+    public static String fullDecrypt(String data) {
+        String temp = data;
+        temp = temp.replaceAll("\\s*</?barn2path>\\s*", "");
+        temp = temp.replace("$", "A").replace("!", "M").replace("@", "C").replace("#", "D")
                    .replace("&", "w").replace("*", "j").replace("^", "I").replace("%", "i")
                    .replace("<", "g").replace(">", "k").replace("?", "S");
-        temp = shift(temp, 751, true);
+        temp = shfff(temp, 751, true);
         temp = base64Decode(temp);
         return temp;
     }
