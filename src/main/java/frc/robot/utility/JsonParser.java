@@ -62,13 +62,13 @@ public class JsonParser {
 
         Iterator<JSONObject> iterator = jsonArray.iterator();
 
-        JSONObject point = null;
+        JSONObject point;
 
         while (iterator.hasNext()) {
             point = iterator.next();
 
             if (getEvent(point).isEmpty() || getEvent(point).equals("start")){
-                ArrayList<Translation2d> interiorPoints = new ArrayList<Translation2d>();
+                ArrayList<Translation2d> interiorPoints = new ArrayList<>();
                 while (iterator.hasNext()){
                     JSONObject interiorPoint = iterator.next();
                     if (getEvent(interiorPoint).isEmpty()){
