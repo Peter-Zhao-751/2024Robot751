@@ -67,7 +67,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         intakePIDController = new PIDController(Constants.Intake.kPIntakeController, Constants.Intake.kIIntakeController, Constants.Intake.kDIntakeController);
 
-        trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(100, 300));
+        trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(200, 400));
 
         swivelSetpoint = getSwivelPosition();
         targetIntakeSpeed = 0;
@@ -152,8 +152,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         
         double combinedOutput = feedforwardOutput + swivelPidOutput;
 
-        combinedOutput = Math.min(combinedOutput, 6);
-        combinedOutput = Math.max(combinedOutput, -6);
+        // combinedOutput = Math.min(combinedOutput, 6);
+        // combinedOutput = Math.max(combinedOutput, -6);
 
         TelemetryUpdater.setTelemetryValue("Swivel Output Voltage", combinedOutput);
         TelemetryUpdater.setTelemetryValue("PID output voltage", swivelPidOutput);
