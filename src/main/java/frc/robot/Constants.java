@@ -42,6 +42,7 @@ public class Constants {
         public static double kGSwivelFeedforward = 0.19;
         public static double kVSwivelFeedforward = 1.17;
 
+        // TODO: Tune these values via SYSID
         public static double kSIntakeController = 0;
         public static double kVIntakeController = 0;
         public static double kPIntakeController = 0.015;
