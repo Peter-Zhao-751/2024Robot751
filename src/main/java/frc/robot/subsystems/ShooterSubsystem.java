@@ -132,7 +132,6 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
      * <li> Sets the voltage of the shooter motors to 0 </li> 
      * </ul>
      *
-     * @return void
      */
     public void stop(){
         targetSpeed = 0;

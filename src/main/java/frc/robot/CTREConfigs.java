@@ -9,10 +9,10 @@ public final class CTREConfigs {
     public final CANcoderConfiguration swerveCANcoderConfig = new CANcoderConfiguration();
 
     public CTREConfigs(){
-        /** Swerve CANCoder Configuration */
+        /* Swerve CANCoder Configuration */
         swerveCANcoderConfig.MagnetSensor.SensorDirection = Constants.Swerve.CANCoderInvert;
 
-        /** Swerve Angle Motor Configurations */
+        /* Swerve Angle Motor Configurations */
         /* Motor Inverts and Neutral Mode */
         swerveAngleFXConfig.MotorOutput.Inverted = Constants.Swerve.angleMotorInvert;
         swerveAngleFXConfig.MotorOutput.NeutralMode = Constants.Swerve.angleNeutralMode;
@@ -32,7 +32,7 @@ public final class CTREConfigs {
         swerveAngleFXConfig.Slot0.kI = Constants.Swerve.angleKI;
         swerveAngleFXConfig.Slot0.kD = Constants.Swerve.angleKD;
 
-        /** Swerve Drive Motor Configuration */
+        /* Swerve Drive Motor Configuration */
         /* Motor Inverts and Neutral Mode */
         swerveDriveFXConfig.MotorOutput.Inverted = Constants.Swerve.driveMotorInvert;
         swerveDriveFXConfig.MotorOutput.NeutralMode = Constants.Swerve.driveNeutralMode;

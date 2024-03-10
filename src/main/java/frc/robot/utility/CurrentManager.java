@@ -11,7 +11,7 @@ public class CurrentManager {
     public static final double nominalPercent = Constants.CurrentManager.nominalPercent;
     public static double totalCurrent = 0;
 
-    private static ArrayList<Component> components = new ArrayList<Component>();
+    private static final ArrayList<Component> components = new ArrayList<>();
 
     private CurrentManager() {
         throw new UnsupportedOperationException("CurrentManager class cannot be instantiated");
@@ -48,7 +48,7 @@ public class CurrentManager {
             
         for (Component component : components) {
             double additionalNeeded = component.getCurrentDraw() - (component.getCurrentDraw() * allocationRatio * 0.8);
-            double additionalFairShare = (maxPriority-component.getPriority()) / totalPriority * noneFinalRemainingCurrent;
+            double additionalFairShare = (double) (maxPriority - component.getPriority()) / totalPriority * noneFinalRemainingCurrent;
             double finalAdditionalAllocated = Math.min(additionalNeeded, additionalFairShare);
             component.allocateCurrent(component.getCurrentDraw() * allocationRatio + finalAdditionalAllocated);
             remainingCurrent -= finalAdditionalAllocated;

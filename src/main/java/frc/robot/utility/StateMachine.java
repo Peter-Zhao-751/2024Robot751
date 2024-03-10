@@ -15,10 +15,10 @@ public class StateMachine {
         Disabled("Disabled", CANdleSubsystem.AnimationTypes.Disabled),
         Climb("Climb", CANdleSubsystem.AnimationTypes.Climb);
 
-        public String stateName;
-        public CANdleSubsystem.AnimationTypes animation;
+        public final String stateName;
+        public final CANdleSubsystem.AnimationTypes animation;
 
-        private State(String stateName, CANdleSubsystem.AnimationTypes animation) {
+        State(String stateName, CANdleSubsystem.AnimationTypes animation) {
             this.stateName = stateName;
             this.animation = animation;
         }

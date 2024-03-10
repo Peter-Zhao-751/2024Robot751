@@ -10,20 +10,27 @@ public class TransferCommand extends Command {
     public enum TransferMode {
         Intake,
         Outtake,
-        Shoot;
+        Shoot,
+        None
     }
 
-    private TransferSubsystem transferSubsystem;
+    private final TransferSubsystem transferSubsystem;
     Debouncer beamDebouncer;
     private double speed;
     private long startTime;
-    private TransferMode transferMode;
+    private final TransferMode transferMode;
     private boolean smartMode;
     private boolean isBeamBroken;
 
     public TransferCommand(double speed, TransferSubsystem transferSubsystem, TransferMode transferMode, boolean smartMode) {
         this.beamDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
-        this.speed = (transferMode == TransferMode.Outtake) ? - speed : speed;
+        this.speed = switch (transferMode) {
+            case Intake -> speed;
+            case Outtake -> -speed;
+            case Shoot -> Constants.Transfer.feedSpeed;
+            default -> 0;
+        };
+
         this.transferSubsystem = transferSubsystem;
         this.transferMode = transferMode;
         this.smartMode = smartMode;

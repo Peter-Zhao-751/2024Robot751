@@ -184,7 +184,7 @@ public class Constants {
         public static double maxAngularVelocity = maxSpeed / 1.5; // THIS IS THE MAX SPIN SPEED ROBOT, tested 2.1, feels sluggish
 
         /* Modifier for rotating to desired angle pose speed */
-        public static double angleKP = (10.46 * Math.exp(1.05 * speedMultiplier)); // I dont think this is right, take from SYSID instead
+        public static double angleKP = (10.46 * Math.exp(1.05 * speedMultiplier)); // I don't think this is right, take from SYSID instead
 
         /* Neutral Modes */
         public static NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
@@ -260,7 +260,7 @@ public class Constants {
         public static double kPYController = 0.8;
         public static double kPThetaController = 1;
     
-        /* Constraint for the motion profilied robot angle controller */
+        /* Constraint for the motion profiled robot angle controller */
         public static TrapezoidProfile.Constraints kThetaControllerConstraints =
             new TrapezoidProfile.Constraints(
                 kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);

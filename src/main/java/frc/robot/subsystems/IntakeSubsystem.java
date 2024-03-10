@@ -87,7 +87,6 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     /**
      * Sets the speed of the intake motor
      * @param speed the speed of the intake motor in cm/s
-     * @return void
      */
     public void setIntakeSpeed(double speed){
         //targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius);
@@ -97,7 +96,6 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     /**
      * Sets the position of the swivel
      * @param position the position of the swivel in degrees
-     * @return void
      */
     public void setSwivelPosition(double position){
         swivelSetpoint = position;
@@ -107,7 +105,6 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
     /**
      * Stops the intake and swivel motors
-     * @return void
      */
     public void stopAll(){
         leftSwivelMotor.stopMotor();
@@ -165,13 +162,13 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         rightSwivelMotor.setVoltage(combinedOutput);
 
         //double intakePidOutput = intakePIDController.calculate(getIntakeSpeed(), targetIntakeSpeed);
-        // the values should be in the range of -1 to 1 and it will be clamped in the motor's api
+        // the values should be in the range of -1 to 1, and it will be clamped in the motor's api
         //intakeMotor.set(targetIntakeSpeed);
 
-        // TelemetryUpdater.setTelemetryValueumber("Total Intake Current Draw", getCurrentDraw());
+        // TelemetryUpdater.setTelemetryValue("Total Intake Current Draw", getCurrentDraw());
         TelemetryUpdater.setTelemetryValue("Intake Swivel Position", currentAngle);
         //TelemetryUpdater.setTelemetryValue("setpoint swivel", swivelSetpoint);
-        // TelemetryUpdater.setTelemetryValueumber("Intake Speed", getIntakeSpeed());
+        // TelemetryUpdater.setTelemetryValue("Intake Speed", getIntakeSpeed());
     }
 
     @Override

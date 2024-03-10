@@ -13,12 +13,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 
 public class TeleopCommand extends Command {
-    private SwerveSubsystem s_Swerve;    
-    private DoubleSupplier translationSup;
-    private DoubleSupplier strafeSup;
-    private DoubleSupplier rotationSup;
-    private BooleanSupplier robotCentricSup;
-    private BooleanSupplier preciseControl;
+    private final SwerveSubsystem s_Swerve;
+    private final DoubleSupplier translationSup;
+    private final DoubleSupplier strafeSup;
+    private final DoubleSupplier rotationSup;
+    private final BooleanSupplier robotCentricSup;
+    private final BooleanSupplier preciseControl;
 
     public TeleopCommand(SwerveSubsystem s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier preciseControl) {
         this.s_Swerve = s_Swerve;

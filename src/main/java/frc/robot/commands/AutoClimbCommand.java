@@ -5,8 +5,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ClimberSubsystem;
 
 public class AutoClimbCommand extends Command{
-    private Pigeon2 pigeon;
-    private ClimberSubsystem climberSubsystem;
+    private final Pigeon2 pigeon;
+    private final ClimberSubsystem climberSubsystem;
 
     public AutoClimbCommand(ClimberSubsystem climberSubsystem, Pigeon2 pigeon){
         this.climberSubsystem = climberSubsystem;

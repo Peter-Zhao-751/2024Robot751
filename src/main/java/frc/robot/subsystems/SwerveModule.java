@@ -16,7 +16,7 @@ import frc.robot.utility.CurrentManager;
 public class SwerveModule {
     public final int moduleNumber;
     public SwerveModuleState desiredState;
-    private Rotation2d angleOffset;
+    private final Rotation2d angleOffset;
 
     private final TalonFX mAngleMotor;
     private final TalonFX mDriveMotor;
@@ -92,7 +92,6 @@ public class SwerveModule {
 
     /**
      * Zeros the angle of the module
-     * @return void
      */
     public void resetToAbsolute(){
         double absolutePosition = getCANcoder().getRotations() - angleOffset.getRotations();
@@ -141,7 +140,6 @@ public class SwerveModule {
      * Sets the voltage of the drive motor
      * Used for SysId characterization commands
      * @param voltage the voltage to set the drive motor to
-     * @return void
      */
     public void setDriveVoltage(double voltage) {
         mDriveMotor.setVoltage(voltage);
@@ -151,7 +149,6 @@ public class SwerveModule {
      * Sets the voltage of the angle motor
      * Used for SysId characterization commands
      * @param voltage the voltage to set the angle motor to
-     * @return void
      */
     public void setAngleVoltage(double voltage) {
         mAngleMotor.setVoltage(voltage);

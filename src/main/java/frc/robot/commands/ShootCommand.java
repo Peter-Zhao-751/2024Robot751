@@ -7,9 +7,9 @@ import frc.robot.utility.StateMachine;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class ShootCommand extends Command{
-    private ShooterSubsystem shooterSubsystem;
-    private TransferSubsystem transferSubsystem;
-    private TransferCommand transferCommand;
+    private final ShooterSubsystem shooterSubsystem;
+    private final TransferSubsystem transferSubsystem;
+    private final TransferCommand transferCommand;
     private double speed;
     private boolean smartMode;
  

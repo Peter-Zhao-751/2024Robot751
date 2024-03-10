@@ -51,8 +51,7 @@ public class ClimberSubsystem extends SubsystemBase implements Component{
 
     /**
      * Set the speed of the left climber motor
-     * @param speed in rotations per minute
-     * @return null
+     * @param location in degrees
      */
     public void setLeftDesiredLocation(double location){
         leftDesiredLocation = location;
@@ -60,8 +59,7 @@ public class ClimberSubsystem extends SubsystemBase implements Component{
 
     /**
      * Set the speed of the right climber motor
-     * @param speed in rotations per minute
-     * @return null
+     * @param location in degrees
      */
 
     public void setRightDesiredLocation(double location){
@@ -70,7 +68,6 @@ public class ClimberSubsystem extends SubsystemBase implements Component{
 
     /**
      * Stop both climber motors
-     * @return null
      */
     public void stop(){
         leftClimberMotor.set(0);

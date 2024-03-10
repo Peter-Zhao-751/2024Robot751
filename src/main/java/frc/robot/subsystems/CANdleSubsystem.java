@@ -30,8 +30,8 @@ public class CANdleSubsystem extends SubsystemBase implements Component{
         Idle(null),
         Disabled(null);
 
-        private Animation animation;
-        private double decay; // in milliseconds
+        private final Animation animation;
+        private final double decay; // in milliseconds
         private double startAnimationTime;
 
         private AnimationTypes(Animation animation){

@@ -3,10 +3,10 @@ package frc.robot.utility;
 import frc.robot.Constants;
 
 public class KalmanFilter {
-    private State xState;
-    private State yState;
-    private MeasurementNoise noise;
-    private ProcessNoise processNoise;
+    private final State xState;
+    private final State yState;
+    private final MeasurementNoise noise;
+    private final ProcessNoise processNoise;
     private double lastUpdateTime;
     
 
@@ -82,7 +82,7 @@ public class KalmanFilter {
         }
     }
 
-    private class MeasurementNoise {
+    private static class MeasurementNoise {
         public double R_position;
         public double R_velocity;
         public double R_acceleration;
@@ -94,7 +94,7 @@ public class KalmanFilter {
         }
     }
 
-    private class ProcessNoise{
+    private static class ProcessNoise{
         public double positionProcessNoise;
         public double velocityProcessNoise;
         public double accelerationProcessNoise;

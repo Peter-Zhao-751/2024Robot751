@@ -29,24 +29,24 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 public class JsonParser {
-    private static IntakeSubsystem intakeSubsystem;
-    private static TransferSubsystem transferSubsystem;
-    private static ShooterSubsystem shooterSubsystem;
-    private static SwerveSubsystem swerveSubsystem;
-    private static JSONObject jsonObject;
-    private static JSONArray jsonArray;
+    private final IntakeSubsystem intakeSubsystem;
+    private final TransferSubsystem transferSubsystem;
+    private final ShooterSubsystem shooterSubsystem;
+    private final SwerveSubsystem swerveSubsystem;
+    private JSONObject jsonObject;
+    private JSONArray jsonArray;
 
-    public static void JsonParser(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, ShooterSubsystem shooterSubsystem, SwerveSubsystem swerveSubsystem){
-        JsonParser.intakeSubsystem = intakeSubsystem;
-        JsonParser.transferSubsystem = transferSubsystem;
-        JsonParser.shooterSubsystem = shooterSubsystem;
-        JsonParser.swerveSubsystem = swerveSubsystem;
+    public JsonParser(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, ShooterSubsystem shooterSubsystem, SwerveSubsystem swerveSubsystem){
+        this.intakeSubsystem = intakeSubsystem;
+        this.transferSubsystem = transferSubsystem;
+        this.shooterSubsystem = shooterSubsystem;
+        this.swerveSubsystem = swerveSubsystem;
 
         jsonObject = null;
         jsonArray = null; 
     }
 
-    public static ArrayList<Command> getAutonCommands(File pathFile) throws Exception{
+    public ArrayList<Command> getAutonCommands(File pathFile) throws Exception{
 
         String encryptedData = new String(java.nio.file.Files.readAllBytes(pathFile.toPath()));
 
@@ -109,7 +109,7 @@ public class JsonParser {
         return autonCommands;
     }
 
-    public static String shfff(String inStr, int x, boolean de) {
+    public String shfff(String inStr, int x, boolean de) {
         if (inStr.isEmpty() || x == 0) {
             return inStr;
         }
@@ -126,16 +126,16 @@ public class JsonParser {
         }
     }
 
-    public static String base64Decode(String base64String) {
+    public String base64Decode(String base64String) {
         byte[] decodedBytes = Base64.getDecoder().decode(base64String);
         return new String(decodedBytes, StandardCharsets.UTF_8);
     }
 
-    public static String base64Encode(String str) {
+    public String base64Encode(String str) {
         return Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
     }
 
-    public static String fullEncrypt(String data) {
+    public String fullEncrypt(String data) {
         String temp = data;
         temp = base64Encode(temp);
         temp = shfff(temp, 751, false);
@@ -144,7 +144,7 @@ public class JsonParser {
         return temp;
     }
 
-    public static String fullDecrypt(String data) {
+    public String fullDecrypt(String data) {
         String temp = data;
         temp = temp.replaceAll("\\s*</?barn2path>\\s*", "");
         temp = temp.replace("$", "A").replace("!", "M").replace("@", "C").replace("#", "D")
@@ -155,7 +155,7 @@ public class JsonParser {
         return temp;
     }
 
-    public static String getAutonPreview(File pathFile){
+    public String getAutonPreview(File pathFile){
         if (pathFile != null){
             try { 
                 jsonObject = (JSONObject) new JSONParser().parse(new FileReader(pathFile)); 
@@ -166,15 +166,15 @@ public class JsonParser {
         return "No Path";
     }
     
-    private static Translation2d getInteriorPoint(JSONObject point){
+    private Translation2d getInteriorPoint(JSONObject point){
         return new Translation2d((double)point.get("x"), (double)point.get("y"));
     }
 
-    private static String getEvent(JSONObject point){
+    private String getEvent(JSONObject point){
         return (String) point.get("e");
     }
 
-    private static Pose2d getMainPoint(JSONObject point){
+    private Pose2d getMainPoint(JSONObject point){
         return new Pose2d((double)point.get("x"), (double)point.get("y"), new Rotation2d((double)point.get("r")));
     }
 }

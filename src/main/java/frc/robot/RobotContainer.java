@@ -30,6 +30,8 @@ public class RobotContainer {
     private final TransferSubsystem s_Transfer = new TransferSubsystem();
     private final PowerSubsystem s_PDH = new PowerSubsystem();
 
+    private final JsonParser s_jsonParser = new JsonParser(s_Intake, s_Transfer, s_Shooter, s_Swerve);
+
     /* values */
     private boolean precise = false;
 
@@ -37,8 +39,6 @@ public class RobotContainer {
     public RobotContainer() {
         //Shooter = new Shoot(s_Shooter, s_Transfer, 20, false);
         //Intake = new Intake(s_Intake, s_Transfer);
-
-        JsonParser.JsonParser(null, s_Transfer, s_Shooter, s_Swerve);
 
         s_Swerve.setDefaultCommand(
             new TeleopCommand(
@@ -104,7 +104,7 @@ public class RobotContainer {
 
     public Command getAutonomousCommand(File path){
         if (path != null){
-            try { return new AutonCommand(s_Swerve, JsonParser.getAutonCommands(path));}
+            try { return new AutonCommand(s_Swerve, s_jsonParser.getAutonCommands(path));}
             catch (Exception e) { System.out.println("Error: " + e); System.out.println("something stupid happened, probably owen's fault");}
         }
         System.out.println("No path file found");
