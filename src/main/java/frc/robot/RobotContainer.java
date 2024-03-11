@@ -61,15 +61,26 @@ public class RobotContainer {
     }
     
     private void configureButtonBindings() {
-        /* Util Commands */
+        // Util Commands (Circle, Triangle, X)
         driver.circleButton.onTrue(new InstantCommand(s_Swerve::zeroHeading));
         driver.triangleButton.whileTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
+        driver.crossButton.toggleOnTrue(new InstantCommand(s_Swerve::crossModules));
 
+        // Precise Control (Left Bumper)
         driver.leftBumper.whileTrue(new InstantCommand(() -> precise = true));
         driver.leftBumper.onFalse(new InstantCommand(() -> precise = false));
 
-        driver.rightTrigger.whileTrue(new ShootCommand(s_Shooter, s_Transfer, 0, false));
+        // Shooter & Intake (Left & Right Triggers)
+        driver.rightTrigger.whileTrue(new ShootCommand(s_Shooter, s_Transfer, 40, false));
         driver.leftTrigger.whileTrue(new IntakeCommand(s_Intake, s_Transfer, IntakeSwivelMode.Extend, false));
+
+        // Aimbot (Right Bumper)
+        //driver.rightBumper.whileTrue(new AimbotCommand());
+
+        // Climber (D-Pad)
+        //driver.dPad.whileUp(); // go up
+        //driver.dPad.whileDown(); // go down
+        //driver.dPad.whileLeft(); // automatic climb
 
         // SHOOTER STUFF
         // 42-44 seems to work well
@@ -89,7 +100,7 @@ public class RobotContainer {
         //s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         //s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
 
-        driver.rightBumper.onTrue(new InstantCommand(() -> {
+        /*driver.rightBumper.onTrue(new InstantCommand(() -> {
             s_Shooter.setSpeed(20);
             s_Intake.setIntakeSpeed(20);
             s_Transfer.setIntakeTransfer(30);
@@ -100,7 +111,7 @@ public class RobotContainer {
             s_Shooter.setSpeed(0);
             s_Intake.stopAll();
             s_Transfer.stop();
-        }));
+        }));*/
 
 //        driver.rightTrigger.whileTrue(new ShootCommand(s_Shooter, s_Transfer, s_Swerve));
 //        driver.leftTrigger.whileTrue(new IntakeCommand(s_Intake, s_Transfer));
@@ -110,7 +121,6 @@ public class RobotContainer {
         //driver.rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         
         /* Drivetrain Commands */
-        driver.crossButton.toggleOnTrue(new InstantCommand(s_Swerve::crossModules));
     }
 
     public Command getAutonomousCommand() {

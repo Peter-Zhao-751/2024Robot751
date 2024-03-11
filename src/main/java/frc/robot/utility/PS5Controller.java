@@ -49,6 +49,11 @@ public class PS5Controller {
     public final JoystickButton squareButton;
     public final JoystickButton crossButton;
 
+    /* D-Pad */
+    public static int dPadValue = 0;
+    // dPad with whileUp, whileDown, whileLeft, whileRight
+    public final directionPad dPad;
+
     /* Other Buttons */
     public final JoystickButton optionsButton; // ZERO PIGEON
     public final JoystickButton playstationButton; // ZERO MODULES
@@ -57,6 +62,36 @@ public class PS5Controller {
         this(0);
     }
 
+    public class directionPad {
+        public static Joystick joystick;
+        public static final int dPadCorrection = 30;
+        public directionPad(Joystick joystick) {
+            directionPad.joystick = joystick;
+        }
+        public static int get() {
+            return joystick.getPOV();
+        }
+        public boolean isUp() {
+            return withinCorrection(directionPad.get(), 0);
+        }
+        public boolean isDown() {
+            return withinCorrection(directionPad.get(), 180);
+        }
+        public boolean isLeft() {
+            return withinCorrection(directionPad.get(), 270);
+        }
+        public boolean isRight() {
+            return withinCorrection(directionPad.get(), 90);
+        }
+
+        //whileUp, whileDown, whileLeft, whileRight (repeating commands like Joystick.whileTrue())
+        
+        public boolean withinCorrection(final int currentDirection, final int desiredDirection) {
+            return (currentDirection >= desiredDirection - dPadCorrection) && (currentDirection <= desiredDirection + dPadCorrection);
+        }
+    }
+
+    
     public PS5Controller(int port) {
         joystick = new Joystick(port);
 
@@ -74,7 +109,11 @@ public class PS5Controller {
         squareButton = new JoystickButton(joystick, Button.kSquare.value);
         crossButton = new JoystickButton(joystick, Button.kCross.value);
 
+        dPad = new directionPad(joystick);
+
         optionsButton = new JoystickButton(joystick, Button.kOptions.value);
         playstationButton = new JoystickButton(joystick, Button.kPS.value);
     }
+
+
 }
