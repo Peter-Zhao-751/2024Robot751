@@ -51,7 +51,7 @@ public class IntakeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        intakeSubsystem.setSwivelPosition(IntakePositions.RETRACTED);
+        if (desiredState.intakePosition != IntakePositions.MAINTENANCE) intakeSubsystem.setSwivelPosition(IntakePositions.RETRACTED);
         // transferCommand.end(interrupted); i don't think this is necessary
         StateMachine.setState(StateMachine.State.Idle);
     }

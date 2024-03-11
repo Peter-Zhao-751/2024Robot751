@@ -4,6 +4,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.*;
+import frc.robot.commands.lowLevelCommands.IntakeCommand;
+import frc.robot.commands.lowLevelCommands.ShootCommand;
+import frc.robot.commands.lowLevelCommands.IntakeCommand.IntakeSwivelMode;
 //import frc.robot.commands.actuallyGoodCommands.IntakeCommand;
 //import frc.robot.commands.actuallyGoodCommands.ShootCommand;
 //import frc.robot.commands.actuallyGoodCommands.TransferCommand;
@@ -65,6 +68,8 @@ public class RobotContainer {
         driver.leftBumper.whileTrue(new InstantCommand(() -> precise = true));
         driver.leftBumper.onFalse(new InstantCommand(() -> precise = false));
 
+        driver.rightTrigger.whileTrue(new ShootCommand(s_Shooter, s_Transfer, 0, false));
+        driver.leftTrigger.whileTrue(new IntakeCommand(s_Intake, s_Transfer, IntakeSwivelMode.Extend, false));
 
         // SHOOTER STUFF
         // 42-44 seems to work well
@@ -76,8 +81,8 @@ public class RobotContainer {
         // driver.leftBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(10.0)));
 
         //driver.rightBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(40)));
-        driver.squareButton.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.IntakePositions.INTAKE)));
-        driver.leftBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.IntakePositions.RETRACTED)));
+        //driver.squareButton.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.IntakePositions.INTAKE)));
+        //driver.leftBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.IntakePositions.RETRACTED)));
 
         // TODO: #8 Run logging for the swerve drive
         // LOGGING STUFF FOR DRIVETRAIN

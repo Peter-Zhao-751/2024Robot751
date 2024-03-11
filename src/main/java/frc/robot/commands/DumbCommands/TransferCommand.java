@@ -1,26 +1,17 @@
-package frc.robot.commands.actuallyGoodCommands;
+package frc.robot.commands.DumbCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
-import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.TransferSubsystem;
 
 
-public class ShootCommand extends Command {
-    private final ShooterSubsystem shooterSubsystem;
+public class TransferCommand extends Command {
     private final TransferSubsystem transferSubsystem;
-    private final SwerveSubsystem swerveSubsystem;
 
-    private long shootTime = 0;
-
-    public ShootCommand(ShooterSubsystem shooterSubsystem, TransferSubsystem transferSubsystem, SwerveSubsystem swerveSubsystem) {
-        this.shooterSubsystem = shooterSubsystem;
+    public TransferCommand(TransferSubsystem transferSubsystem) {
         this.transferSubsystem = transferSubsystem;
-        this.swerveSubsystem = swerveSubsystem;
         // each subsystem used by the command must be passed into the
         // addRequirements() method (which takes a vararg of Subsystem)
-        addRequirements(this.shooterSubsystem, this.transferSubsystem, this.swerveSubsystem);
+        addRequirements(this.transferSubsystem);
     }
 
     /**
@@ -28,7 +19,7 @@ public class ShootCommand extends Command {
      */
     @Override
     public void initialize() {
-        shooterSubsystem.setSpeed(Constants.Shooter.shooterSpeed);
+        transferSubsystem.setIntakeTransfer(20);
     }
 
     /**
@@ -37,11 +28,7 @@ public class ShootCommand extends Command {
      */
     @Override
     public void execute() {
-        if (shooterSubsystem.getShooterSpeed() > Constants.Shooter.shooterSpeed * 0.98) {
-            transferSubsystem.setTransferSpeed(Constants.Transfer.feedSpeed);
-            swerveSubsystem.crossModules();
-            shootTime = System.currentTimeMillis();
-        }
+
     }
 
     /**
@@ -60,7 +47,8 @@ public class ShootCommand extends Command {
      */
     @Override
     public boolean isFinished() {
-        return System.currentTimeMillis() - shootTime >= 1000;
+       return transferSubsystem.beamBroken();
+       // return false;
     }
 
     /**
@@ -73,7 +61,6 @@ public class ShootCommand extends Command {
      */
     @Override
     public void end(boolean interrupted) {
-        shooterSubsystem.stop();
         transferSubsystem.stop();
     }
 }

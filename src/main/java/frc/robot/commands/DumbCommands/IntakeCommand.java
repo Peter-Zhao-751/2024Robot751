@@ -1,4 +1,4 @@
-package frc.robot.commands.actuallyGoodCommands;
+package frc.robot.commands.DumbCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
