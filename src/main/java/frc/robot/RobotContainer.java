@@ -4,6 +4,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.*;
+//import frc.robot.commands.actuallyGoodCommands.IntakeCommand;
+//import frc.robot.commands.actuallyGoodCommands.ShootCommand;
+//import frc.robot.commands.actuallyGoodCommands.TransferCommand;
 import frc.robot.subsystems.*;
 import frc.robot.utility.JsonParser;
 import frc.robot.utility.PS5Controller;
@@ -59,24 +62,26 @@ public class RobotContainer {
         driver.circleButton.onTrue(new InstantCommand(s_Swerve::zeroHeading));
         driver.triangleButton.whileTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
 
-        //leftBumper.whileTrue(new InstantCommand(() -> precise = true));
-        //leftBumper.onFalse(new InstantCommand(() -> precise = false));
+        driver.leftBumper.whileTrue(new InstantCommand(() -> precise = true));
+        driver.leftBumper.onFalse(new InstantCommand(() -> precise = false));
 
 
         // SHOOTER STUFF
         // 42-44 seems to work well
-        // rightTrigger.onTrue(new InstantCommand(() -> s_Shooter.setSpeed((double) TelemetryUpdater.getTelemetryValue("Shooter Speed"))));
-        // rightTrigger.onFalse(new InstantCommand(() -> s_Shooter.stop()));
+        // driver.rightTrigger.onTrue(new InstantCommand(() -> s_Shooter.setSpeed((double) TelemetryUpdater.getTelemetryValue("Shooter Speed"))));
+        // driver.rightTrigger.onFalse(new InstantCommand(() -> s_Shooter.stop()));
 
-        // rightBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(60.0)));
-        // //rightBumper.whileFalse(new InstantCommand(() -> s_Transfer.setShooterTransfer(0)));
-        // leftBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(10.0)));
+        // driver.rightBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(60.0)));
+        // driver.rightBumper.whileFalse(new InstantCommand(() -> s_Transfer.setShooterTransfer(0)));
+        // driver.leftBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(10.0)));
 
-        // LOGGING STUFF FOR DRIVETRAIN
-        // TODO: #8 Run logging for the swerve drive
-        //rightBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(40)));//s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        //driver.rightBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(40)));
         driver.squareButton.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.IntakePositions.INTAKE)));
         driver.leftBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.IntakePositions.RETRACTED)));
+
+        // TODO: #8 Run logging for the swerve drive
+        // LOGGING STUFF FOR DRIVETRAIN
+        //s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         //s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
 
         driver.rightBumper.onTrue(new InstantCommand(() -> {
@@ -96,8 +101,8 @@ public class RobotContainer {
 //        driver.leftTrigger.whileTrue(new IntakeCommand(s_Intake, s_Transfer));
 //        driver.leftBumper.whileTrue(new TransferCommand(s_Transfer));
 
-        //rightTrigger.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-        //rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        //driver.rightTrigger.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        //driver.rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         
         /* Drivetrain Commands */
         driver.crossButton.toggleOnTrue(new InstantCommand(s_Swerve::crossModules));
