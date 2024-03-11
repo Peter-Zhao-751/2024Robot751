@@ -1,4 +1,4 @@
-package frc.robot.commands.LowLevelCommands;
+package frc.robot.commands.lowLevelCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ClimberSubsystem;

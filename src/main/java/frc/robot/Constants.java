@@ -233,7 +233,7 @@ public class Constants {
         public static SwerveModule backRightModule = new SwerveModule(41, 42, 43, 97.910);
     }
 
-    public static class Limelight{
+    public static class Limelight {
         public static double version = 3.0;
         public static String streamIp = "http://10.7.51.11:5800";
         public static String dashboardIp = "http://10.7.51.11:5801";

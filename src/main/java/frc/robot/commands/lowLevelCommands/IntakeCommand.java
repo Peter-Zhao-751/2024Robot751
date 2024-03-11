@@ -1,7 +1,7 @@
-package frc.robot.commands.LowLevelCommands;
+package frc.robot.commands.lowLevelCommands;
 
 import frc.robot.Constants.Intake.IntakePositions;
-import frc.robot.commands.LowLevelCommands.TransferCommand.TransferMode;
+import frc.robot.commands.lowLevelCommands.TransferCommand.TransferMode;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransferSubsystem;
 import frc.robot.utility.StateMachine;

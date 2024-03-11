@@ -32,15 +32,13 @@ public class UISubsystem {
     // updating ui methods
     public static void updatePathPreview() {
         File currentSelection = autonSelector.getSelected();
-        if (!(currentSelection == null) && !currentSelection.equals(selectedAuton)) {
+        if (currentSelection != null && !currentSelection.equals(selectedAuton)) {
             selectedAuton = currentSelection;
-            if (selectedAuton != null) {
-                base64Image = JsonParser.getAutonPreview(selectedAuton);
-                System.out.println("\n\nupdated auton path\n\n");
-                byte[] base64ImageByte = Base64.getDecoder().decode(base64Image);
-                Mat image = Imgcodecs.imdecode(new MatOfByte(base64ImageByte), Imgcodecs.IMREAD_UNCHANGED);
-                imageSource.putFrame(image);
-            }
+            base64Image = JsonParser.getAutonPreview(selectedAuton);
+            System.out.println("\n\nupdated auton path\n\n");
+            byte[] base64ImageByte = Base64.getDecoder().decode(base64Image);
+            Mat image = Imgcodecs.imdecode(new MatOfByte(base64ImageByte), Imgcodecs.IMREAD_UNCHANGED);
+            imageSource.putFrame(image);
         }
     }
 
