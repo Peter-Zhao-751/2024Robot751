@@ -1,6 +1,4 @@
 package frc.robot.commands.LowLevelCommands;
-
-import edu.wpi.first.cscore.CameraServerJNI.TelemetryKind;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -55,6 +53,7 @@ public class TransferCommand extends Command {
 
     @Override
     public boolean isFinished() {
+        // TODO: this part is shit 
         double timeDelta = System.currentTimeMillis() - startTime;
         boolean overMinTime = timeDelta > Constants.Transfer.minTransferTime;
         boolean overMaxTime = timeDelta > Constants.Transfer.maxTransferTime;
