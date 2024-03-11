@@ -27,6 +27,7 @@ public class TransferSubsystem extends SubsystemBase implements Component {
         shooterTransfer = new CANSparkMax(Constants.Transfer.shooterTransferID, MotorType.kBrushless);
         intakeTransfer = new CANSparkMax(Constants.Transfer.intakeTransferID, MotorType.kBrushless);
         intakeTransfer.setInverted(true);
+        shooterTransfer.setInverted(true);
         beamBreak = new DigitalInput(Constants.Transfer.beamBreakDIOPort);
 
         shooterTransferPIDController = new PIDController(Constants.Transfer.kPIntakeController, 0, 0);
@@ -52,7 +53,7 @@ public class TransferSubsystem extends SubsystemBase implements Component {
     public void setShooterTransfer(double speed) { // in rpm
         // double currentSpeed = shooterTransfer.getEncoder().getVelocity() / 60;
         // double output = shooterTransferPIDController.calculate(currentSpeed, speed);
-        shooterTransfer.set(speed/-40);
+        shooterTransfer.set(speed/40);
     }
 
     /**

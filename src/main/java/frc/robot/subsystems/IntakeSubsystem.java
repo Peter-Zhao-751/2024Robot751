@@ -211,8 +211,10 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         // TelemetryUpdater.setTelemetryValue("Total Intake Current Draw", getCurrentDraw());
         TelemetryUpdater.setTelemetryValue("Intake Swivel Position", currentAngle);
-        //TelemetryUpdater.setTelemetryValue("setpoint swivel", swivelSetpoint);
+        TelemetryUpdater.setTelemetryValue("setpoint swivel", swivelSetpoint);
         // TelemetryUpdater.setTelemetryValue("Intake Speed", getIntakeSpeed());
+
+        //TelemetryUpdater.setTelemetryValue("Intake Desired Position", )
     }
 
     @Override

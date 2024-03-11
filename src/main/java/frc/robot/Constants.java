@@ -53,7 +53,7 @@ public class Constants {
             INTAKE(5.0),
             MAINTENANCE(45.0),
             AMP(60.0),
-            RETRACTED(145.0);
+            RETRACTED(135.0);
 
             private final double angle;
 

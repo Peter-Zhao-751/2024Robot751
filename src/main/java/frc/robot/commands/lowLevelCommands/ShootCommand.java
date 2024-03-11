@@ -33,6 +33,7 @@ public class ShootCommand extends Command{
     @Override
     public void end(boolean interrupted) {
         shooterSubsystem.stop();
+        if (transferCommand != null) transferCommand.cancel();
         StateMachine.setState(StateMachine.State.Idle);
         // doesnt need its own end method because transfer.end() will be called in the end method of this command
     }

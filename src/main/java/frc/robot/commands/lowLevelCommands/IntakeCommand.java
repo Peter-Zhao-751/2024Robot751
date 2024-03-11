@@ -41,6 +41,7 @@ public class IntakeCommand extends Command {
     public void initialize() {
         StateMachine.setState(StateMachine.State.Intake);
         intakeSubsystem.setSwivelPosition(desiredState.intakePosition);
+        intakeSubsystem.setIntakeSpeed(40);
         if (transferCommand != null) transferCommand.schedule();
     }
 
@@ -52,7 +53,8 @@ public class IntakeCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         if (desiredState.intakePosition != IntakePositions.MAINTENANCE) intakeSubsystem.setSwivelPosition(IntakePositions.RETRACTED);
-        // transferCommand.end(interrupted); i don't think this is necessary
+        if (transferCommand != null) transferCommand.end(interrupted);
+        intakeSubsystem.stopAll();
         StateMachine.setState(StateMachine.State.Idle);
     }
     

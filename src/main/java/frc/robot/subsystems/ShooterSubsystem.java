@@ -98,9 +98,7 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
      *
      */
     public void stop(){
-        targetSpeed = 0;
-        leftShooterMotor.set(0);
-        rightShooterMotor.set(0);
+        setSpeed(0);
     }
 
     /**

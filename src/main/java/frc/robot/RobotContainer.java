@@ -41,10 +41,12 @@ public class RobotContainer {
     /* values */
     private boolean precise = false;
 
+
     /* The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         //Shooter = new Shoot(s_Shooter, s_Transfer, 20, false);
         //Intake = new Intake(s_Intake, s_Transfer);
+        //new IntakeCommand(s_Intake, s_Transfer, IntakeSwivelMode.Extend, false);
 
         s_Swerve.setDefaultCommand(
             new TeleopCommand(
@@ -100,7 +102,7 @@ public class RobotContainer {
         //s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         //s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
 
-        /*driver.rightBumper.onTrue(new InstantCommand(() -> {
+        driver.rightBumper.onTrue(new InstantCommand(() -> {
             s_Shooter.setSpeed(20);
             s_Intake.setIntakeSpeed(20);
             s_Transfer.setIntakeTransfer(30);
@@ -111,7 +113,7 @@ public class RobotContainer {
             s_Shooter.setSpeed(0);
             s_Intake.stopAll();
             s_Transfer.stop();
-        }));*/
+        }));
 
 //        driver.rightTrigger.whileTrue(new ShootCommand(s_Shooter, s_Transfer, s_Swerve));
 //        driver.leftTrigger.whileTrue(new IntakeCommand(s_Intake, s_Transfer));
