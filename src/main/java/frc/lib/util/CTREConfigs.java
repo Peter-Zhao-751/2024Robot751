@@ -1,7 +1,8 @@
-package frc.robot;
+package frc.lib.util;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import frc.robot.Constants;
 
 public final class CTREConfigs {
     public final TalonFXConfiguration swerveAngleFXConfig = new TalonFXConfiguration();

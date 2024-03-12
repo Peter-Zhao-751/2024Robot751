@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import frc.robot.CTREConfigs;
+import frc.lib.util.CTREConfigs;
 import frc.robot.Constants;
 import frc.robot.utility.KalmanFilter;
 import frc.robot.utility.Odometry;
@@ -20,7 +20,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 //import com.ctre.phoenix6.SignalLogger;
@@ -32,8 +31,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 //import edu.wpi.first.math.estimator.UnscentedKalmanFilter;
 
 // import sendable and sendable buffer
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableBuilder;
+
 
 public class SwerveSubsystem extends SubsystemBase implements Component {
     public static final CTREConfigs ctreConfigs = new CTREConfigs();

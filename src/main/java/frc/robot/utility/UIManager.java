@@ -26,7 +26,6 @@ public class UIManager {
     private static GenericEntry updatePreferencesButton;
     private static GenericEntry resetPreferencesButton;
     private static File selectedAuton = null;
-    private static String base64Image = null;
     private static CvSource imageSource;
 
     // updating ui methods
@@ -34,7 +33,7 @@ public class UIManager {
         File currentSelection = autonSelector.getSelected();
         if (currentSelection != null && !currentSelection.equals(selectedAuton)) {
             selectedAuton = currentSelection;
-            base64Image = Barn2PathInterpreter.getAutonPreview(selectedAuton);
+            String base64Image = Barn2PathInterpreter.getAutonPreview(selectedAuton);
             System.out.println("\n\nupdated auton path\n\n");
             byte[] base64ImageByte = Base64.getDecoder().decode(base64Image);
             Mat image = Imgcodecs.imdecode(new MatOfByte(base64ImageByte), Imgcodecs.IMREAD_UNCHANGED);
@@ -50,22 +49,18 @@ public class UIManager {
      * created. If it does exist, the Constant will be updated to match the
      * preference.
      */
-    public static void updatePreferencesBasedOnConstants(Class<?> clazz, boolean reset) {
-        Field[] fields = clazz.getDeclaredFields();
+    public static void updatePreferencesBasedOnConstants(Class<?> constants, boolean reset) {
+        Field[] fields = constants.getDeclaredFields();
         for (Field field : fields) {
             if (Modifier.isPublic(field.getModifiers()) && Modifier.isStatic(field.getModifiers())) {
-                if (reset)
-                    resetPreferenceToConstant(field);
-                else
-                    updateOrRetrievePreference(field);
+                if (reset) resetPreferenceToConstant(field);
+                else updateOrRetrievePreference(field);
             }
         }
 
         // Recursively handle inner classes
-        Class<?>[] innerClasses = clazz.getDeclaredClasses();
-        for (Class<?> innerClass : innerClasses) {
-            updatePreferencesBasedOnConstants(innerClass, reset);
-        }
+        Class<?>[] innerClasses = constants.getDeclaredClasses();
+        for (Class<?> innerClass : innerClasses) updatePreferencesBasedOnConstants(innerClass, reset);
     }
 
     /**
@@ -83,18 +78,13 @@ public class UIManager {
             } else {
                 // Preference exists, update field's value from Preference
                 switch (field.getType().getName()) {
-                    case "int":
-                        field.setInt(null, Preferences.getInt(field.getName(), field.getInt(null)));
-                        break;
-                    case "double":
-                        field.setDouble(null, Preferences.getDouble(field.getName(), field.getDouble(null)));
-                        break;
-                    case "boolean":
-                        field.setBoolean(null, Preferences.getBoolean(field.getName(), field.getBoolean(null)));
-                        break;
-                    case "java.lang.String":
-                        field.set(null, Preferences.getString(field.getName(), (String) field.get(null)));
-                        break;
+                    case "int" -> field.setInt(null, Preferences.getInt(field.getName(), field.getInt(null)));
+                    case "double" ->
+                            field.setDouble(null, Preferences.getDouble(field.getName(), field.getDouble(null)));
+                    case "boolean" ->
+                            field.setBoolean(null, Preferences.getBoolean(field.getName(), field.getBoolean(null)));
+                    case "java.lang.String" ->
+                            field.set(null, Preferences.getString(field.getName(), (String) field.get(null)));
                 }
             }
         } catch (IllegalArgumentException | IllegalAccessException e) {
@@ -104,18 +94,10 @@ public class UIManager {
 
     private static void setPreferences(Field field) throws IllegalAccessException {
         switch (field.getType().getName()) {
-            case "int":
-                Preferences.setInt(field.getName(), field.getInt(null));
-                break;
-            case "double":
-                Preferences.setDouble(field.getName(), field.getDouble(null));
-                break;
-            case "boolean":
-                Preferences.setBoolean(field.getName(), field.getBoolean(null));
-                break;
-            case "java.lang.String":
-                Preferences.setString(field.getName(), (String) field.get(null));
-                break;
+            case "int" -> Preferences.setInt(field.getName(), field.getInt(null));
+            case "double" -> Preferences.setDouble(field.getName(), field.getDouble(null));
+            case "boolean" -> Preferences.setBoolean(field.getName(), field.getBoolean(null));
+            case "java.lang.String" -> Preferences.setString(field.getName(), (String) field.get(null));
         }
     }
 
