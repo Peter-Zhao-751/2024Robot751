@@ -20,42 +20,6 @@ public class PS5Controller {
      * https://github.wpilib.org/allwpilib/docs/release/java/edu/wpi/first/wpilibj/PS5Controller.Button.html
      */
 
-    public static class DirectionPad {
-        public Joystick joystick;
-        public static final int dPadCorrection = 30;
-        public final Trigger up;
-        public final Trigger down;
-        public final Trigger left;
-        public final Trigger right;
-        private DirectionPad(Joystick joystick) {
-            this.joystick = joystick;
-
-            up = new Trigger(() -> isUp());
-            down = new Trigger(() -> isDown());
-            left = new Trigger(() -> isLeft());
-            right = new Trigger(() -> isRight());
-        }
-        private int get() {
-            return joystick.getPOV();
-        }
-        private boolean isUp() {
-            return withinCorrection(this.get(), 0);
-        }
-        private boolean isDown() {
-            return withinCorrection(this.get(), 180);
-        }
-        private boolean isLeft() {
-            return withinCorrection(this.get(), 270);
-        }
-        private boolean isRight() {
-            return withinCorrection(this.get(), 90);
-        }
-        
-        private boolean withinCorrection(final int currentDirection, final int desiredDirection) {
-            return currentDirection >= desiredDirection - dPadCorrection && currentDirection <= desiredDirection + dPadCorrection;
-        }
-    }
-
     /* Axes */
     public static final int translationAxis = Axis.kLeftY.value;
     public static final int strafeAxis = Axis.kLeftX.value;
@@ -81,10 +45,10 @@ public class PS5Controller {
 
     /* Buttons */
 
-    public final JoystickButton triangleButton; // ZERO PIGEON
-    public final JoystickButton circleButton; // ZERO MODULES
-    public final JoystickButton squareButton; // unassigned 
-    public final JoystickButton crossButton; // CROSS WHEELS
+    public final JoystickButton triangleButton;
+    public final JoystickButton circleButton;
+    public final JoystickButton squareButton;
+    public final JoystickButton crossButton;
 
     /* D-Pad */
     public final DirectionPad dPad;
@@ -95,6 +59,44 @@ public class PS5Controller {
 
     public PS5Controller() {
         this(0);
+    }
+
+    public static class DirectionPad {
+        public Joystick joystick;
+        public static final int dPadCorrection = 30;
+        public final Trigger up;
+        public final Trigger down;
+        public final Trigger left;
+        public final Trigger right;
+        private DirectionPad(Joystick joystick) {
+            this.joystick = joystick;
+
+            up = new Trigger(this::isUp);
+            down = new Trigger(this::isDown);
+            left = new Trigger(this::isLeft);
+            right = new Trigger(this::isRight);
+        }
+        private int get() {
+            return joystick.getPOV();
+        }
+        private boolean isUp() {
+            return withinCorrection(this.get(), 0);
+        }
+        private boolean isDown() {
+            return withinCorrection(this.get(), 180);
+        }
+        private boolean isLeft() {
+            return withinCorrection(this.get(), 270);
+        }
+        private boolean isRight() {
+            return withinCorrection(this.get(), 90);
+        }
+
+        //whileUp, whileDown, whileLeft, whileRight (repeating commands like Joystick.whileTrue())
+        
+        private boolean withinCorrection(final int currentDirection, final int desiredDirection) {
+            return currentDirection >= desiredDirection - dPadCorrection && currentDirection <= desiredDirection + dPadCorrection;
+        }
     }
 
     
