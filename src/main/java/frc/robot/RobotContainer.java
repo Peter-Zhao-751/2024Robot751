@@ -61,9 +61,9 @@ public class RobotContainer {
     
     private void configureButtonBindings() {
         // Util Commands (Circle, Triangle, X)
-        driver.circleButton.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
-        driver.triangleButton.onTrue(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()));
-        driver.crossButton.onTrue(new InstantCommand(() -> s_Swerve.crossModules()));
+        driver.circleButton.onTrue(new InstantCommand(s_Swerve::zeroHeading));
+        driver.triangleButton.onTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
+        driver.crossButton.onTrue(new InstantCommand(s_Swerve::crossModules));
 
         // Precise Control (Left Bumper)
         driver.leftBumper.whileTrue(new InstantCommand(() -> precise = true));

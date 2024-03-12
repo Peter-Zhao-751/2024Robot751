@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS5Controller.Axis;
 import edu.wpi.first.wpilibj.PS5Controller.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class PS5Controller {
     /*
@@ -50,9 +51,7 @@ public class PS5Controller {
     public final JoystickButton crossButton;
 
     /* D-Pad */
-    public static int dPadValue = 0;
-    // dPad with whileUp, whileDown, whileLeft, whileRight
-    public final directionPad dPad;
+    public final DirectionPad dPad;
 
     /* Other Buttons */
     public final JoystickButton optionsButton; // ZERO PIGEON
@@ -62,32 +61,41 @@ public class PS5Controller {
         this(0);
     }
 
-    public class directionPad {
-        public static Joystick joystick;
+    public static class DirectionPad {
+        public Joystick joystick;
         public static final int dPadCorrection = 30;
-        public directionPad(Joystick joystick) {
-            directionPad.joystick = joystick;
+        public final Trigger up;
+        public final Trigger down;
+        public final Trigger left;
+        public final Trigger right;
+        private DirectionPad(Joystick joystick) {
+            this.joystick = joystick;
+
+            up = new Trigger(this::isUp);
+            down = new Trigger(this::isDown);
+            left = new Trigger(this::isLeft);
+            right = new Trigger(this::isRight);
         }
-        public static int get() {
+        private int get() {
             return joystick.getPOV();
         }
-        public boolean isUp() {
-            return withinCorrection(directionPad.get(), 0);
+        private boolean isUp() {
+            return withinCorrection(this.get(), 0);
         }
-        public boolean isDown() {
-            return withinCorrection(directionPad.get(), 180);
+        private boolean isDown() {
+            return withinCorrection(this.get(), 180);
         }
-        public boolean isLeft() {
-            return withinCorrection(directionPad.get(), 270);
+        private boolean isLeft() {
+            return withinCorrection(this.get(), 270);
         }
-        public boolean isRight() {
-            return withinCorrection(directionPad.get(), 90);
+        private boolean isRight() {
+            return withinCorrection(this.get(), 90);
         }
 
         //whileUp, whileDown, whileLeft, whileRight (repeating commands like Joystick.whileTrue())
         
-        public boolean withinCorrection(final int currentDirection, final int desiredDirection) {
-            return (currentDirection >= desiredDirection - dPadCorrection) && (currentDirection <= desiredDirection + dPadCorrection);
+        private boolean withinCorrection(final int currentDirection, final int desiredDirection) {
+            return currentDirection >= desiredDirection - dPadCorrection && currentDirection <= desiredDirection + dPadCorrection;
         }
     }
 
@@ -109,11 +117,9 @@ public class PS5Controller {
         squareButton = new JoystickButton(joystick, Button.kSquare.value);
         crossButton = new JoystickButton(joystick, Button.kCross.value);
 
-        dPad = new directionPad(joystick);
+        dPad = new DirectionPad(joystick);
 
         optionsButton = new JoystickButton(joystick, Button.kOptions.value);
         playstationButton = new JoystickButton(joystick, Button.kPS.value);
     }
-
-
 }
