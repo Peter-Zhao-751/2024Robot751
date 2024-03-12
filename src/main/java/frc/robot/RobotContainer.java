@@ -61,9 +61,9 @@ public class RobotContainer {
     
     private void configureButtonBindings() {
         // Util Commands (Circle, Triangle, X)
-        driver.circleButton.onTrue(new InstantCommand(s_Swerve::zeroHeading));
-        driver.triangleButton.onTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
-        driver.crossButton.onTrue(new InstantCommand(s_Swerve::crossModules));
+        driver.circleButton.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+        driver.triangleButton.onTrue(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()));
+        driver.crossButton.onTrue(new InstantCommand(() -> s_Swerve.crossModules()));
 
         // Precise Control (Left Bumper)
         driver.leftBumper.whileTrue(new InstantCommand(() -> precise = true));
@@ -98,7 +98,8 @@ public class RobotContainer {
         // LOGGING STUFF FOR DRIVETRAIN
         //s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         //s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-
+        
+        
         driver.rightBumper.onTrue(new InstantCommand(() -> {
             s_Shooter.setSpeed(20);
             s_Intake.setIntakeSpeed(20);
@@ -106,7 +107,7 @@ public class RobotContainer {
             s_Transfer.setShooterTransfer(20);
         }));
 
-        driver.rightBumper.onFalse(new InstantCommand(() ->  {
+        driver.rightBumper.onFalse(new InstantCommand(() -> {
             s_Shooter.setSpeed(0);
             s_Intake.stopAll();
             s_Transfer.stop();
