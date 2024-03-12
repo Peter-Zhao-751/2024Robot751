@@ -5,6 +5,7 @@ import frc.robot.commands.lowLevelCommands.TransferCommand.TransferMode;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransferSubsystem;
 import frc.robot.utility.StateMachine;
+import frc.robot.utility.TelemetryUpdater;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class IntakeCommand extends Command {
@@ -41,6 +42,7 @@ public class IntakeCommand extends Command {
     public void initialize() {
         StateMachine.setState(StateMachine.State.Intake);
         intakeSubsystem.setSwivelPosition(desiredState.intakePosition);
+        TelemetryUpdater.setTelemetryValue("Intake State", "going down!!");
         if (transferCommand != null) {
             transferCommand.schedule();
             intakeSubsystem.setIntakeSpeed(desiredState.speed);
@@ -54,6 +56,7 @@ public class IntakeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        TelemetryUpdater.setTelemetryValue("Intake State", "going up/done!!");
         if (!desiredState.equals(IntakeSwivelMode.Maintenance)) intakeSubsystem.setSwivelPosition(IntakeSwivelMode.Retract.intakePosition);
         if (transferCommand != null) transferCommand.end(interrupted);
         intakeSubsystem.stopAll();

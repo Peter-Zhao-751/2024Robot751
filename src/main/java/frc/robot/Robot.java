@@ -14,7 +14,7 @@ import com.ctre.phoenix6.SignalLogger;
 
 import frc.robot.utility.TelemetrySubsystem;
 import frc.robot.utility.TelemetryUpdater;
-import frc.robot.utility.UISubsystem;
+import frc.robot.utility.UIManager;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -43,12 +43,12 @@ public class Robot extends TimedRobot {
     // Go through every constant in Constants.java check if the Preference exists.
     // add it if it doesn't. if it does, overwrite it.
     //UISubsystem.updatePreferencesBasedOnConstants(Constants.class, false);
-    UISubsystem.updatePreferencesBasedOnConstants(Constants.class, true);
+    UIManager.updatePreferencesBasedOnConstants(Constants.class, true);
     // robot container
     m_robotContainer = new RobotContainer();
 
     SignalLogger.setPath("/media/sda1/");
-    UISubsystem.initializeUI();
+    UIManager.initializeUI();
   }
 
   /**
@@ -84,7 +84,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    File selectedAuton = UISubsystem.selectedAuton();
+    File selectedAuton = UIManager.selectedAuton();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand(selectedAuton);
     SignalLogger.start();
 

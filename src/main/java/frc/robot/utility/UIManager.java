@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.cameraserver.CameraServer;
 import frc.robot.Constants;
 
-public class UISubsystem {
+public class UIManager {
     private static final SendableChooser<File> autonSelector = new SendableChooser<>();
     private static GenericEntry updatePreferencesButton;
     private static GenericEntry resetPreferencesButton;
@@ -167,6 +167,8 @@ public class UISubsystem {
 
     public static void initializeUI() {
         // initializing webcam
+
+        TelemetryUpdater.setTelemetryValue("Intake State", "waiting!!");
 
         new Thread(() -> {
             UsbCamera camera = CameraServer.startAutomaticCapture(0);

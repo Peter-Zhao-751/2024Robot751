@@ -70,13 +70,13 @@ public class PS5Controller {
         public final Trigger right;
         private DirectionPad(Joystick joystick) {
             this.joystick = joystick;
-
             up = new Trigger(this::isUp);
             down = new Trigger(this::isDown);
             left = new Trigger(this::isLeft);
             right = new Trigger(this::isRight);
         }
         private int get() {
+            //TelemetryUpdater.setTelemetryValue("D-Pad", joystick.getPOV());
             return joystick.getPOV();
         }
         private boolean isUp() {
