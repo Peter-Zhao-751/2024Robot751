@@ -106,7 +106,7 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
      *
      * @return double, the speed of the left shooter motor in rotations per second
      */
-    public double getShooterMotor1Speed(){
+    public double getLeftShooterMotorSpeed(){
         return leftShooterMotor.getRotorVelocity().getValue();
     }
 
@@ -115,7 +115,7 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
      *
      * @return double, the speed of the right shooter motor in rotations per second
      */
-    public double getShooterMotor2Speed(){
+    public double getRightShooterMotorSpeed(){
         return rightShooterMotor.getRotorVelocity().getValue();
     }
 
@@ -125,17 +125,13 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
      * @return double
      */
     public double getShooterSpeed(){
-        return (getShooterMotor1Speed() + getShooterMotor2Speed()) / 2;
-    }
-
-    public double getEstimatedSpinUpTime(double speed){
-        return 0.2;
+        return (getLeftShooterMotorSpeed() + getRightShooterMotorSpeed()) / 2;
     }
 
     @Override
     public void periodic() {
 
-        kalmanFilter.correct(VecBuilder.fill(targetSpeed), VecBuilder.fill(getShooterMotor1Speed()));
+        kalmanFilter.correct(VecBuilder.fill(targetSpeed), VecBuilder.fill(getShooterSpeed()));
 
         //TelemetryUpdater.setTelemetryValue("Kalman Filter X-hat 0", kalmanFilter.getXhat(0));
         //TelemetryUpdater.setTelemetryValue("Shooter Current Draw", getCurrentDraw());

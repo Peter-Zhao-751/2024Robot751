@@ -57,19 +57,20 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     public IntakeSubsystem(){
         leftSwivelMotor = new CANSparkMax(Constants.Intake.leftSwivelMotorID, MotorType.kBrushless);
         rightSwivelMotor = new CANSparkMax(Constants.Intake.rightSwivelMotorID, MotorType.kBrushless);
+        intakeMotor = new TalonFX(Constants.Intake.intakeMotorID);
 
-        leftSwivelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-        rightSwivelMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-
+        leftSwivelMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         leftSwivelMotor.setInverted(true);
+        rightSwivelMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
         angleEncoder = rightSwivelMotor.getAbsoluteEncoder(Type.kDutyCycle);
         angleEncoder.setInverted(true);
         angleEncoder.setPositionConversionFactor(360);
         angleEncoder.setZeroOffset(Constants.Intake.kSwivelEncoderZeroOffset);
 
-        intakeMotor = new TalonFX(Constants.Intake.intakeMotorID);
+
         dutyCycleOut = new DutyCycleOut(0);
+
         TalonFXConfiguration intakeMotorConfig = new TalonFXConfiguration();
         Slot0Configs slot0 = intakeMotorConfig.Slot0;
         slot0.kS = Constants.Intake.kSIntakeController;
@@ -78,7 +79,6 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         slot0.kI = Constants.Intake.kIIntakeController;
         slot0.kD = Constants.Intake.kDIntakeController;
         intakeMotor.getConfigurator().apply(slot0);
-
 
         velocityVoltage = new VelocityVoltage(0);
 
@@ -90,14 +90,14 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         swivelTrapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(200, 400));
 
-        swivelSetpoint = getSwivelPosition();
         targetIntakeSpeed = 0;
 
-        allocatedCurrent = 0;
-
+        swivelSetpoint = getSwivelPosition();
         swivelMovementStartTime = System.currentTimeMillis();
         swivelMovementStartAngle = getSwivelPosition();
-        setSwivelPosition(Constants.Intake.IntakePositions.RETRACTED);
+
+        allocatedCurrent = 0;
+        
 
 //        slider = Shuffleboard.getTab("intake")
 //        .add("Slider", 0)
@@ -141,8 +141,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
      * Sets the position of the swivel
      * @param position the position of the swivel in degrees
      */
-    public void setSwivelPosition(Constants.Intake.IntakePositions position){
-        swivelSetpoint = position.getAngle();
+    public void setSwivelPosition(double position){
+        swivelSetpoint = position;
         swivelMovementStartAngle = getSwivelPosition();
         swivelMovementStartTime = System.currentTimeMillis();
     }
@@ -180,10 +180,6 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         double deltaTime = (System.currentTimeMillis() - swivelMovementStartTime) / 1000;
         double currentAngle = getSwivelPosition();
 
-        // debug shit
-        //rightSwivelMotor.setVoltage(slider.getDouble(0));
-        //leftSwivelMotor.setVoltage(slider.getDouble(0));
-
         TrapezoidProfile.State setPoint = swivelTrapezoidProfile.calculate(deltaTime, new TrapezoidProfile.State(swivelMovementStartAngle, 0), new TrapezoidProfile.State(swivelSetpoint, 0));
 
         double maxVoltage = RobotController.getBatteryVoltage() * 0.95; // TODO: maybe replace with the PDH voltage?
@@ -193,8 +189,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         
         double combinedOutput = feedforwardOutput + swivelPidOutput;
 
-        // combinedOutput = Math.min(combinedOutput, 6);
-        // combinedOutput = Math.max(combinedOutput, -6);
+        combinedOutput = Math.min(combinedOutput, maxVoltage);
+        combinedOutput = Math.max(combinedOutput, -maxVoltage);
 
         // TelemetryUpdater.setTelemetryValue("Swivel Output Voltage", combinedOutput);
         // TelemetryUpdater.setTelemetryValue("PID output voltage", swivelPidOutput);

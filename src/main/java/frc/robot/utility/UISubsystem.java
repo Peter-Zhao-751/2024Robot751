@@ -34,7 +34,7 @@ public class UISubsystem {
         File currentSelection = autonSelector.getSelected();
         if (currentSelection != null && !currentSelection.equals(selectedAuton)) {
             selectedAuton = currentSelection;
-            base64Image = JsonParser.getAutonPreview(selectedAuton);
+            base64Image = Barn2PathInterpreter.getAutonPreview(selectedAuton);
             System.out.println("\n\nupdated auton path\n\n");
             byte[] base64ImageByte = Base64.getDecoder().decode(base64Image);
             Mat image = Imgcodecs.imdecode(new MatOfByte(base64ImageByte), Imgcodecs.IMREAD_UNCHANGED);

@@ -26,6 +26,7 @@ public class ShootCommand extends Command{
         shooterSubsystem.setSpeed(speed);
         transferCommand.initialize();
     }
+    
     @Override
     public void execute() {
     }

@@ -49,22 +49,10 @@ public class Constants {
         public static double kIIntakeController = 0.0;
         public static double kDIntakeController = 0.0;
 
-        public enum IntakePositions {
-            INTAKE(5.0),
-            MAINTENANCE(45.0),
-            AMP(60.0),
-            RETRACTED(135.0);
-
-            private final double angle;
-
-            IntakePositions(double angle) {
-                this.angle = angle;
-            }
-
-            public double getAngle() {
-                return angle;
-            }
-        }
+        public static double kIntakeAngle = 5.0;
+        public static double kMaintenanceAngle = 45.0;
+        public static double kAmpAngle = 60.0;
+        public static double kRetractedAngle = 135.0;
 
         public static double kSwivelEncoderZeroOffset = 319.62; 
     }

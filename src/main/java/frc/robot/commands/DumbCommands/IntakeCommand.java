@@ -23,7 +23,7 @@ public class IntakeCommand extends Command {
      */
     @Override
     public void initialize() {
-        intakeSubsystem.setSwivelPosition(Constants.Intake.IntakePositions.INTAKE);
+        intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
         intakeSubsystem.setIntakeSpeed(Constants.Intake.intakeSpeed);
         transferSubsystem.setIntakeTransfer(Constants.Transfer.intakeSpeed);
     }
@@ -67,7 +67,7 @@ public class IntakeCommand extends Command {
      */
     @Override
     public void end(boolean interrupted) {
-        intakeSubsystem.setSwivelPosition(Constants.Intake.IntakePositions.RETRACTED);
+        intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
         intakeSubsystem.setIntakeSpeed(0);
         transferSubsystem.setIntakeTransfer(0);
     }

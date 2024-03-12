@@ -1,6 +1,6 @@
 package frc.robot.commands.lowLevelCommands;
 
-import frc.robot.Constants.Intake.IntakePositions;
+import frc.robot.Constants;
 import frc.robot.commands.lowLevelCommands.TransferCommand.TransferMode;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransferSubsystem;
@@ -10,16 +10,16 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class IntakeCommand extends Command {
 
     public enum IntakeSwivelMode {
-        Extend(IntakePositions.INTAKE, 20.0, TransferMode.Intake),
-        Retract(IntakePositions.RETRACTED, 0.0, null),
-        Maintenance(IntakePositions.MAINTENANCE, 0.0, null),
-        Amp(IntakePositions.AMP, 20.0, TransferMode.Outtake);
+        Extend(Constants.Intake.kIntakeAngle, 20.0, TransferMode.Intake),
+        Retract(Constants.Intake.kRetractedAngle, 0.0, null),
+        Maintenance(Constants.Intake.kMaintenanceAngle, 0.0, null),
+        Amp(Constants.Intake.kAmpAngle, 20.0, TransferMode.Outtake);
 
-        public final IntakePositions intakePosition;
+        public final double intakePosition;
         public final double speed;
         public final TransferMode transferMode;
         
-        IntakeSwivelMode(IntakePositions intakePosition, double intakeSpeed, TransferMode transferMode) {
+        IntakeSwivelMode(double intakePosition, double intakeSpeed, TransferMode transferMode) {
             this.intakePosition = intakePosition;
             this.speed = intakeSpeed;
             this.transferMode = transferMode;
@@ -41,8 +41,10 @@ public class IntakeCommand extends Command {
     public void initialize() {
         StateMachine.setState(StateMachine.State.Intake);
         intakeSubsystem.setSwivelPosition(desiredState.intakePosition);
-        intakeSubsystem.setIntakeSpeed(40);
-        if (transferCommand != null) transferCommand.schedule();
+        if (transferCommand != null) {
+            transferCommand.schedule();
+            intakeSubsystem.setIntakeSpeed(desiredState.speed);
+        }
     }
 
     @Override
@@ -52,7 +54,7 @@ public class IntakeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        if (desiredState.intakePosition != IntakePositions.MAINTENANCE) intakeSubsystem.setSwivelPosition(IntakePositions.RETRACTED);
+        if (!desiredState.equals(IntakeSwivelMode.Maintenance)) intakeSubsystem.setSwivelPosition(IntakeSwivelMode.Retract.intakePosition);
         if (transferCommand != null) transferCommand.end(interrupted);
         intakeSubsystem.stopAll();
         StateMachine.setState(StateMachine.State.Idle);

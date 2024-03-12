@@ -12,11 +12,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class AimBotCommand extends Command {
+public class AimbotCommand extends Command {
     private final SwerveSubsystem s_Swerve;
     private MoveCommand moveCommand;
 
-    public AimBotCommand(SwerveSubsystem s_Swerve) {
+    public AimbotCommand(SwerveSubsystem s_Swerve) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
     }

@@ -27,7 +27,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-public class JsonParser {
+public class Barn2PathInterpreter {
     private static IntakeSubsystem intakeSubsystem;
     private static TransferSubsystem transferSubsystem;
     private static ShooterSubsystem shooterSubsystem;
@@ -35,11 +35,11 @@ public class JsonParser {
     private static JSONObject jsonObject;
     private static JSONArray jsonArray;
 
-    public JsonParser(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, ShooterSubsystem shooterSubsystem, SwerveSubsystem swerveSubsystem){
-        JsonParser.intakeSubsystem = intakeSubsystem;
-        JsonParser.transferSubsystem = transferSubsystem;
-        JsonParser.shooterSubsystem = shooterSubsystem;
-        JsonParser.swerveSubsystem = swerveSubsystem;
+    public Barn2PathInterpreter(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, ShooterSubsystem shooterSubsystem, SwerveSubsystem swerveSubsystem){
+        Barn2PathInterpreter.intakeSubsystem = intakeSubsystem;
+        Barn2PathInterpreter.transferSubsystem = transferSubsystem;
+        Barn2PathInterpreter.shooterSubsystem = shooterSubsystem;
+        Barn2PathInterpreter.swerveSubsystem = swerveSubsystem;
 
         jsonObject = null;
         jsonArray = null; 

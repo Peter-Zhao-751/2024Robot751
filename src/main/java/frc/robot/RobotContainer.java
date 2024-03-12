@@ -7,11 +7,8 @@ import frc.robot.commands.*;
 import frc.robot.commands.lowLevelCommands.IntakeCommand;
 import frc.robot.commands.lowLevelCommands.ShootCommand;
 import frc.robot.commands.lowLevelCommands.IntakeCommand.IntakeSwivelMode;
-//import frc.robot.commands.actuallyGoodCommands.IntakeCommand;
-//import frc.robot.commands.actuallyGoodCommands.ShootCommand;
-//import frc.robot.commands.actuallyGoodCommands.TransferCommand;
 import frc.robot.subsystems.*;
-import frc.robot.utility.JsonParser;
+import frc.robot.utility.Barn2PathInterpreter;
 import frc.robot.utility.PS5Controller;
 
 import java.io.File;
@@ -36,7 +33,7 @@ public class RobotContainer {
     private final TransferSubsystem s_Transfer = new TransferSubsystem();
     private final PowerSubsystem s_PDH = new PowerSubsystem();
 
-    private final JsonParser s_jsonParser = new JsonParser(s_Intake, s_Transfer, s_Shooter, s_Swerve);
+    private final Barn2PathInterpreter u_Barn2PathInterpreter = new Barn2PathInterpreter(s_Intake, s_Transfer, s_Shooter, s_Swerve);
 
     /* values */
     private boolean precise = false;
@@ -64,9 +61,9 @@ public class RobotContainer {
     
     private void configureButtonBindings() {
         // Util Commands (Circle, Triangle, X)
-        driver.circleButton.onTrue(new InstantCommand(s_Swerve::zeroHeading));
-        driver.triangleButton.whileTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
-        driver.crossButton.toggleOnTrue(new InstantCommand(s_Swerve::crossModules));
+        driver.circleButton.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
+        driver.triangleButton.onTrue(new InstantCommand(() -> s_Swerve.resetModulesToAbsolute()));
+        driver.crossButton.onTrue(new InstantCommand(() -> s_Swerve.crossModules()));
 
         // Precise Control (Left Bumper)
         driver.leftBumper.whileTrue(new InstantCommand(() -> precise = true));
@@ -77,7 +74,7 @@ public class RobotContainer {
         driver.leftTrigger.whileTrue(new IntakeCommand(s_Intake, s_Transfer, IntakeSwivelMode.Extend, false));
 
         // Aimbot (Right Bumper)
-        //driver.rightBumper.whileTrue(new AimbotCommand());
+        driver.rightBumper.whileTrue(new AimbotCommand(s_Swerve));
 
         // Climber (D-Pad)
         //driver.dPad.whileUp(); // go up
@@ -121,8 +118,6 @@ public class RobotContainer {
 
         //driver.rightTrigger.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         //driver.rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        
-        /* Drivetrain Commands */
     }
 
     public Command getAutonomousCommand() {
@@ -131,8 +126,8 @@ public class RobotContainer {
 
     public Command getAutonomousCommand(File path){
         if (path != null){
-            try { return new AutonCommand(s_Swerve, s_jsonParser.getAutonCommands(path));}
-            catch (Exception e) { System.out.println("Error: " + e); System.out.println("something stupid happened, probably owen's fault");}
+            try { return new AutonCommand(s_Swerve, u_Barn2PathInterpreter.getAutonCommands(path));}
+            catch (Exception e) { System.out.println("Error: " + e); System.out.println("something stupid happened, probably alek's fault");}
         }
         System.out.println("No path file found");
         return new AutonCommand(s_Swerve);
