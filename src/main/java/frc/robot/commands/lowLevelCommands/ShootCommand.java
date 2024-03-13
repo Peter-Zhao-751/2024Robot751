@@ -23,7 +23,7 @@ public class ShootCommand extends Command{
     @Override
     public void initialize() {
         StateMachine.setState(StateMachine.State.Shoot);
-        shooterSubsystem.setSpeed(speed);
+        shooterSubsystem.setSpeed(20);
         transferCommand.initialize();
     }
     
@@ -33,8 +33,10 @@ public class ShootCommand extends Command{
 
     @Override
     public void end(boolean interrupted) {
-        shooterSubsystem.stop();
-        if (transferCommand != null) transferCommand.cancel();
+
+        shooterSubsystem.setSpeed(0);
+        System.out.println("i hate this team");
+        if (transferCommand != null) transferCommand.end(interrupted);
         StateMachine.setState(StateMachine.State.Idle);
         // doesnt need its own end method because transfer.end() will be called in the end method of this command
     }

@@ -137,14 +137,14 @@ public class UIManager {
         // TelemetryUpdater.setTelemetryValue("Current Manager Over Nominal", CurrentManager.isOverNominal());
         // TelemetryUpdater.setTelemetryValue("Current Manager Over Peak", CurrentManager.isOverMax());
 
-        if (updatePreferencesButton.getBoolean(false)) {
-            updatePreferencesBasedOnConstants(Constants.class, false);
-            updatePreferencesButton.setBoolean(false); // Reset the toggle button
-        }
-        if (resetPreferencesButton.getBoolean(false)) {
-            updatePreferencesBasedOnConstants(Constants.class, true);
-            resetPreferencesButton.setBoolean(false); // Reset the toggle button
-        }
+        // if (updatePreferencesButton.getBoolean(false)) {
+        //     updatePreferencesBasedOnConstants(Constants.class, false);
+        //     updatePreferencesButton.setBoolean(false); // Reset the toggle button
+        // }
+        // if (resetPreferencesButton.getBoolean(false)) {
+        //     updatePreferencesBasedOnConstants(Constants.class, true);
+        //     resetPreferencesButton.setBoolean(false); // Reset the toggle button
+        // }
     }
 
     public static void initializeUI() {

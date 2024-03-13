@@ -49,7 +49,7 @@ public class Constants {
         public static double kIIntakeController = 0.0;
         public static double kDIntakeController = 0.0;
 
-        public static double kIntakeAngle = 5.0;
+        public static double kIntakeAngle = 10.0;
         public static double kMaintenanceAngle = 45.0;
         public static double kAmpAngle = 60.0;
         public static double kRetractedAngle = 135.0;

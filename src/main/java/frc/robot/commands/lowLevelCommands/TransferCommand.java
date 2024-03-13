@@ -54,22 +54,23 @@ public class TransferCommand extends Command {
     @Override
     public boolean isFinished() {
         // TODO: this part is shit 
-        double timeDelta = System.currentTimeMillis() - startTime;
-        boolean overMinTime = timeDelta > Constants.Transfer.minTransferTime;
-        boolean overMaxTime = timeDelta > Constants.Transfer.maxTransferTime;
-        boolean smartBeamBreak = isBeamBroken && overMinTime;
-        if (transferMode == TransferMode.Intake) {
-            if (smartMode) {
-                return smartBeamBreak || overMaxTime;
-            } else {
-                return smartBeamBreak;
-            }
-        } else {
-            if (smartMode) {
-                return (!isBeamBroken && overMinTime) || overMaxTime;
-            } else {
-                return false;
-            }
-        }
+        return false;
+        // double timeDelta = System.currentTimeMillis() - startTime;
+        // boolean overMinTime = timeDelta > Constants.Transfer.minTransferTime;
+        // boolean overMaxTime = timeDelta > Constants.Transfer.maxTransferTime;
+        // boolean smartBeamBreak = isBeamBroken && overMinTime;
+        // if (transferMode == TransferMode.Intake) {
+        //     if (smartMode) {
+        //         return smartBeamBreak || overMaxTime;
+        //     } else {
+        //         return smartBeamBreak;
+        //     }
+        // } else {
+        //     if (smartMode) {
+        //         return (!isBeamBroken && overMinTime) || overMaxTime;
+        //     } else {
+        //         return false;
+        //     }
+        // }
     }
 }

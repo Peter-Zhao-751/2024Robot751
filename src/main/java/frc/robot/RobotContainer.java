@@ -74,7 +74,7 @@ public class RobotContainer {
         driver.leftTrigger.whileTrue(new IntakeCommand(s_Intake, s_Transfer, IntakeSwivelMode.Extend, false));
 
         // Aimbot (Right Bumper)
-        driver.rightBumper.whileTrue(new AimbotCommand(s_Swerve));
+        //driver.rightBumper.whileTrue(new AimbotCommand(s_Swerve));
 
         // Climber (D-Pad)
         //driver.dPad.whileUp(); // go up

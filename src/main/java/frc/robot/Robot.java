@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
     // Go through every constant in Constants.java check if the Preference exists.
     // add it if it doesn't. if it does, overwrite it.
     //UISubsystem.updatePreferencesBasedOnConstants(Constants.class, false);
-    UIManager.updatePreferencesBasedOnConstants(Constants.class, true);
+    //UIManager.updatePreferencesBasedOnConstants(Constants.class, true);
     // robot container
     m_robotContainer = new RobotContainer();
 

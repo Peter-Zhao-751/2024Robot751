@@ -292,7 +292,7 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
             odometry.update(newLimePosition, getGyroYaw(), getModulePositions());
         } else {
             odometry.update(getGyroYaw(), getModulePositions());
-            kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY, fieldAcceleration[0], fieldAcceleration[1]);
+            kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY);
         }
 
         kalmanFilter.debugDisplayValues();

@@ -43,7 +43,7 @@ public class TransferSubsystem extends SubsystemBase implements Component {
     public void setIntakeTransfer(double speed) {
         // double currentSpeed = intakeTransfer.getEncoder().getVelocity() / 60;
         // double output = intakeTransferPIDController.calculate(currentSpeed, speed);
-        intakeTransfer.set(speed/40);
+        intakeTransfer.set(1);
     }
 
     /**
