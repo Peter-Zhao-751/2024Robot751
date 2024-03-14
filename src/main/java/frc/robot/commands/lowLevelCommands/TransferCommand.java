@@ -56,8 +56,8 @@ public class TransferCommand extends Command {
         // TODO: this part is shit 
         return false;
         // double timeDelta = System.currentTimeMillis() - startTime;
-        // boolean overMinTime = timeDelta > Constants.Transfer.minTransferTime;
-        // boolean overMaxTime = timeDelta > Constants.Transfer.maxTransferTime;
+        // boolean overMinTime = timeDelta > Constants.Transfer.minTransferTime * 1000;
+        // boolean overMaxTime = timeDelta > Constants.Transfer.maxTransferTime * 1000;
         // boolean smartBeamBreak = isBeamBroken && overMinTime;
         // if (transferMode == TransferMode.Intake) {
         //     if (smartMode) {
