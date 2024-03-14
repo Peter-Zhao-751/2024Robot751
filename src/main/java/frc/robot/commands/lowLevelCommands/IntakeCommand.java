@@ -34,7 +34,7 @@ public class IntakeCommand extends Command {
     public IntakeCommand(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, IntakeSwivelMode desiredSwivelState, boolean smartMode) {
         this.desiredState = desiredSwivelState;
         this.intakeSubsystem = intakeSubsystem;
-        if (desiredSwivelState.transferMode != null) this.transferCommand = new TransferCommand(desiredSwivelState.speed, transferSubsystem, desiredSwivelState.transferMode, smartMode);
+        if (desiredSwivelState.transferMode != null) this.transferCommand = new TransferCommand(desiredSwivelState.speed * 1.5, transferSubsystem, desiredSwivelState.transferMode, smartMode);
         else this.transferCommand = null;
     }
 

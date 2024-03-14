@@ -66,8 +66,8 @@ public class Constants {
 
         public static int beamBreakDIOPort = 0;
 
-        public static double kPIntakeController = 1.0;
-        public static double kPShooterController = 1.0;
+        public static double kPIntakeController = 0.025;
+        public static double kPShooterController = 0.025; // TODO: alek is bad at life
 
         public static double feedSpeed = 30; // units in centimeters per second
 

@@ -70,7 +70,7 @@ public class RobotContainer {
         driver.leftBumper.onFalse(new InstantCommand(() -> precise = false));
 
         // Shooter & Intake (Left & Right Triggers)
-        driver.rightTrigger.whileTrue(new ShootCommand(s_Shooter, s_Transfer, 40, false));
+        driver.rightTrigger.whileTrue(new ShootCommand(s_Shooter, s_Transfer, 42, false));
         driver.leftTrigger.whileTrue(new IntakeCommand(s_Intake, s_Transfer, IntakeSwivelMode.Extend, false));
 
         // Aimbot (Right Bumper)

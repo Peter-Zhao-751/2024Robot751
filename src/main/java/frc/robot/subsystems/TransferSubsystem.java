@@ -15,11 +15,11 @@ public class TransferSubsystem extends SubsystemBase implements Component {
     private final CANSparkMax intakeTransfer;
     private final DigitalInput beamBreak;
 
-    private final double shooterTransferRadius = Constants.Transfer.shooterTransferRadius;
-    private final double intakeTransferRadius = Constants.Transfer.intakeTransferRadius;
-
     private final PIDController shooterTransferPIDController;
     private final PIDController intakeTransferPIDController;
+
+    private double targetIntakeSpeed;
+    private double targetShooterSpeed;
 
     private double allocatedCurrent;
 
@@ -32,28 +32,27 @@ public class TransferSubsystem extends SubsystemBase implements Component {
 
         shooterTransferPIDController = new PIDController(Constants.Transfer.kPIntakeController, 0, 0);
         intakeTransferPIDController = new PIDController(Constants.Transfer.kPShooterController, 0, 0);
+        
+        targetIntakeSpeed = 0;
+        targetShooterSpeed = 0;
 
         allocatedCurrent = 0;
     }
 
     /**
      * Set the speed of the intake transfer motor
-     * @param speed in rotations per minute
+     * @param speed in centimeters per second
      */
-    public void setIntakeTransfer(double speed) {
-        // double currentSpeed = intakeTransfer.getEncoder().getVelocity() / 60;
-        // double output = intakeTransferPIDController.calculate(currentSpeed, speed);
-        intakeTransfer.set(1);
+    public void setIntakeTransfer(double speed) { // cm/s
+        targetIntakeSpeed = speed / (2 * Math.PI * Constants.Transfer.intakeTransferRadius);
     }
 
     /**
      * Set the speed of the shooter transfer motor
-     * @param speed in rotations per minute
+     * @param speed in centimeters per second
      */
     public void setShooterTransfer(double speed) {
-        // double currentSpeed = shooterTransfer.getEncoder().getVelocity() / 60;
-        // double output = shooterTransferPIDController.calculate(currentSpeed, speed);
-        shooterTransfer.set(speed/40);
+        targetShooterSpeed = speed / (2 * Math.PI * Constants.Transfer.shooterTransferRadius);
     }
 
     /**
@@ -61,16 +60,20 @@ public class TransferSubsystem extends SubsystemBase implements Component {
      * @param speed in centimeters per second
      */
     public void setTransferSpeed(double speed) { // in centimeters per second
-        setIntakeTransfer(speed / (2 * Math.PI * intakeTransferRadius));
-        setShooterTransfer(speed / (2 * Math.PI * shooterTransferRadius));
+        setIntakeTransfer(speed);
+        setShooterTransfer(speed);
     }
 
     /**
      * Stop both transfer motors
      */
     public void stop() {
-        intakeTransfer.stopMotor();
-        shooterTransfer.stopMotor();
+        targetIntakeSpeed = 0;
+        targetShooterSpeed = 0;
+
+        // TODO: should not be needed
+        // intakeTransfer.stopMotor(); 
+        // shooterTransfer.stopMotor();
     }
 
     /**
@@ -81,12 +84,32 @@ public class TransferSubsystem extends SubsystemBase implements Component {
         return !beamBreak.get();
     }
 
+    public double getIntakeSpeed() { // rps
+        return intakeTransfer.getEncoder().getVelocity() / 60;
+    }
+
+    public double getShooterSpeed() { // rps
+        return shooterTransfer.getEncoder().getVelocity() / 60;
+    }
+
+
     @Override
     public void periodic() {
-        TelemetryUpdater.setTelemetryValue("Beam Break", beamBroken());
+        //TelemetryUpdater.setTelemetryValue("Beam Break", beamBroken());
         //TelemetryUpdater.setTelemetryValue("Transfer Current Draw", getCurrentDraw());
-        TelemetryUpdater.setTelemetryValue("Intake Transfer Speed", intakeTransfer.getEncoder().getVelocity());
-        TelemetryUpdater.setTelemetryValue("Shooter Transfer Speed", shooterTransfer.getEncoder().getVelocity());
+
+        TelemetryUpdater.setTelemetryValue("Intake Speed", getIntakeSpeed());
+        TelemetryUpdater.setTelemetryValue("Shooter Speed", getShooterSpeed());
+        TelemetryUpdater.setTelemetryValue("Intake Target Speed", targetIntakeSpeed);
+        TelemetryUpdater.setTelemetryValue("Shooter Target Speed", targetShooterSpeed);
+
+        double currentIntakeSpeed = intakeTransfer.getEncoder().getVelocity() / 60;
+        double intakeOutput = intakeTransferPIDController.calculate(currentIntakeSpeed, targetIntakeSpeed);
+        intakeTransfer.set(intakeOutput);
+
+        double currentShooterSpeed = shooterTransfer.getEncoder().getVelocity() / 60;
+        double shooterOutput = shooterTransferPIDController.calculate(currentShooterSpeed, targetShooterSpeed);
+        shooterTransfer.set(shooterOutput);
     }
 
     @Override
