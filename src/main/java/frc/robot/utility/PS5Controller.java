@@ -58,7 +58,7 @@ public class PS5Controller {
     public final JoystickButton playstationButton; // ZERO MODULES
 
     public PS5Controller() {
-        this(0);
+        this(1);
     }
 
     public static class DirectionPad {

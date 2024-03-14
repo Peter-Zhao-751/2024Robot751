@@ -21,8 +21,8 @@ public class RobotContainer {
     //private final Command Intake;
 
     /* Controllers */
-    private final PS5Controller driver = new PS5Controller(0);
-    private final PS5Controller operator = new PS5Controller(1);
+    private final PS5Controller driver = new PS5Controller(1);
+    //private final PS5Controller operator = new PS5Controller(1);
 
     /* Subsystems */
     //private final CANdle s_CANdle = new CANdle();

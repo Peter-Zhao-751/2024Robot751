@@ -10,6 +10,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.first.cscore.*;
 import edu.wpi.first.networktables.GenericEntry;
@@ -20,6 +21,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.cameraserver.CameraServer;
 import frc.robot.Constants;
+
 
 public class UIManager {
     private static final SendableChooser<File> autonSelector = new SendableChooser<>();
@@ -165,7 +167,9 @@ public class UIManager {
             while (!Thread.interrupted()) {
                 if (cvSink.grabFrame(mat) == 0) continue;
                 Core.flip(mat, mat, 1);
-        
+                // black and white the camera feed
+                Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY);
+
                 outputStream.putFrame(mat);
             }
         }).start();
