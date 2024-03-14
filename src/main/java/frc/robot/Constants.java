@@ -82,10 +82,11 @@ public class Constants {
         public static int leftShooterMotorID = 51;
         public static int rightShooterMotorID = 52;
 
-        public static double spinUpTime = 2.0;
+        public static double spinUpTime = 0.5;
         public static double transferSpeed = 20.0; // units in centimeters per second
         public static double feedTime = 0.2;
-        public static double shooterSpeed = 42; // units in rotations per second
+
+        public static double maxShooterSpeed = 42; // units in rotations per second
         public static int motionMagicAcceleration = 400; // units in rotations per second squared
         public static int motionMagicJerk = 4000; // units in rotations per second cubed
 
