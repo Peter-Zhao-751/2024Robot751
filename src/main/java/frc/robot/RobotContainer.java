@@ -66,22 +66,22 @@ public class RobotContainer {
         driver.triangleButton.onTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
         driver.crossButton.onTrue(new InstantCommand(s_Swerve::crossModules));
 
-        // Precise Control (Left Bumper)
+        // // Precise Control (Left Bumper)
         driver.leftBumper.whileTrue(new InstantCommand(() -> precise = true));
         driver.leftBumper.onFalse(new InstantCommand(() -> precise = false));
 
         // Shooter & Intake (Left & Right Triggers)
         driver.rightTrigger.whileTrue(new ShootCommand(s_Shooter, s_Transfer, 42, false));
-        driver.leftTrigger.whileTrue(new IntakeCommand(s_Intake, s_Transfer, IntakeSwivelMode.Extend, false));
+        driver.leftTrigger.whileTrue(new IntakeCommand(s_Intake, s_Transfer, IntakeSwivelMode.Extend, true));
 
         // Aimbot (Right Bumper)
         //driver.rightBumper.whileTrue(new AimbotCommand(s_Swerve));
 
         // FOR SYSID PID TUNING
-        driver.dPad.up.whileTrue(s_Intake.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        driver.dPad.down.whileTrue(s_Intake.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        driver.dPad.left.whileTrue(s_Intake.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        driver.dPad.right.whileTrue(s_Intake.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        // driver.rightBumper.whileTrue(s_Intake.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // driver.rightTrigger.whileTrue(s_Intake.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // driver.leftBumper.whileTrue(s_Intake.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // driver.leftTrigger.whileTrue(s_Intake.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         // Climber (D-Pad)
         //driver.dPad.whileUp(); // go up
@@ -96,18 +96,18 @@ public class RobotContainer {
         //driver.squareButton.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.IntakePositions.INTAKE)));
         //driver.leftBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.IntakePositions.RETRACTED)));
 
-//        driver.rightBumper.onTrue(new InstantCommand(() -> {
-//            s_Shooter.setSpeed(20);
-//            s_Intake.setIntakeSpeed(20);
-//            s_Transfer.setIntakeTransfer(30);
-//            s_Transfer.setShooterTransfer(20);
-//        }));
-//
-//        driver.rightBumper.onFalse(new InstantCommand(() ->  {
-//            s_Shooter.setSpeed(0);
-//            s_Intake.stopAll();
-//            s_Transfer.stop();
-//        }));
+    //    driver.rightBumper.onTrue(new InstantCommand(() -> {
+    //        s_Shooter.setSpeed(20);
+    //        s_Intake.setIntakeSpeed(20);
+    //        s_Transfer.setIntakeTransfer(30);
+    //        s_Transfer.setShooterTransfer(20);
+    //    }));
+
+    //    driver.rightBumper.onFalse(new InstantCommand(() ->  {
+    //        s_Shooter.setSpeed(0);
+    //        s_Intake.stopAll();
+    //        s_Transfer.stop();
+    //    }));
 
 //        driver.rightTrigger.whileTrue(new ShootCommand(s_Shooter, s_Transfer, s_Swerve));
 //        driver.leftTrigger.whileTrue(new IntakeCommand(s_Intake, s_Transfer));
@@ -124,9 +124,9 @@ public class RobotContainer {
     public Command getAutonomousCommand(File path){
         if (path != null){
             try { return new AutonCommand(s_Swerve, u_Barn2PathInterpreter.getAutonCommands(path));}
-            catch (Exception e) { System.out.println("Error: " + e); System.out.println("something stupid happened, probably petek's fault");}
+            catch (Exception e) { System.err.println("Error: " + e); System.err.println("something stupid happened, probably petek's fault");}
         }
-        System.out.println("No path file found");
+        System.err.println("No path file found");
         return new AutonCommand(s_Swerve);
     }
 }

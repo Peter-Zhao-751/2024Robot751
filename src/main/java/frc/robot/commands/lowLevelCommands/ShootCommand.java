@@ -30,13 +30,14 @@ public class ShootCommand extends Command{
         waitTime = Math.max(0, shooterSubsystem.getTargetETA() - Constants.Transfer.minTransferTime);
         startTime = System.currentTimeMillis();
         shooterSubsystem.setSpeed(speed);
+        hasShot = false;
         //transferCommand.initialize();
     }
     
     @Override
     public void execute() { // TODO: calibrate this
         if (!hasShot && System.currentTimeMillis() - startTime > waitTime){
-            transferCommand.schedule();
+            transferCommand.initialize();
             hasShot = true;
         }
     }
@@ -45,7 +46,6 @@ public class ShootCommand extends Command{
     public void end(boolean interrupted) {
 
         shooterSubsystem.setSpeed(0);
-        System.out.println("i hate this team");
         if (transferCommand != null) transferCommand.end(interrupted);
         StateMachine.setState(StateMachine.State.Idle);
         // doesnt need its own end method because transfer.end() will be called in the end method of this command

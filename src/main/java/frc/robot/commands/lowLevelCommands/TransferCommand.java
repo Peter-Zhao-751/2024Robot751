@@ -14,21 +14,17 @@ public class TransferCommand extends Command {
     }
 
     private final TransferSubsystem transferSubsystem;
-    Debouncer beamDebouncer;
     private double speed;
     private long startTime;
     private final TransferMode transferMode;
     private boolean smartMode;
-    private boolean isBeamBroken;
 
     public TransferCommand(double speed, TransferSubsystem transferSubsystem, TransferMode transferMode, boolean smartMode) {
-        this.beamDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
-        this.speed = (TransferMode.Intake == transferMode) ? speed : -speed;
+        this.speed = (TransferMode.Intake.equals(transferMode)) ? speed : -speed;
 
         this.transferSubsystem = transferSubsystem;
         this.transferMode = transferMode;
         this.smartMode = smartMode;
-        this.isBeamBroken = false;
 
         addRequirements(transferSubsystem);
     }
@@ -37,13 +33,12 @@ public class TransferCommand extends Command {
     public void initialize() {
         startTime = System.currentTimeMillis();
         transferSubsystem.setIntakeTransfer(speed);
-        if (transferMode == TransferMode.Shoot) transferSubsystem.setShooterTransfer(speed);
+        transferSubsystem.setShooterTransfer(speed);
     }
 
     @Override
     public void execute() {
-        isBeamBroken = beamDebouncer.calculate(transferSubsystem.beamBroken());
-        TelemetryUpdater.setTelemetryValue("Transfer Beam Broken", isBeamBroken);
+        
     }
 
     @Override
@@ -58,7 +53,7 @@ public class TransferCommand extends Command {
         double timeDelta = System.currentTimeMillis() - startTime;
         boolean overMinTime = timeDelta > Constants.Transfer.minTransferTime * 1000;
         boolean overMaxTime = timeDelta > Constants.Transfer.maxTransferTime * 1000;
-        boolean smartBeamBreak = isBeamBroken && overMinTime;
+        boolean smartBeamBreak = transferSubsystem.beamBroken() && overMinTime;
         if (transferMode == TransferMode.Intake) {
             if (smartMode) {
                 return smartBeamBreak || overMaxTime;
@@ -67,7 +62,7 @@ public class TransferCommand extends Command {
             }
         } else {
             if (smartMode) {
-                return (!isBeamBroken && overMinTime) || overMaxTime;
+                return (!transferSubsystem.beamBroken() && overMinTime) || overMaxTime;
             } else {
                 return false;
             }

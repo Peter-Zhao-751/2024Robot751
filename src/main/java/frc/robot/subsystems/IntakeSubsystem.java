@@ -82,7 +82,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         //intakePIDController = new PIDController(Constants.Intake.kPIntakeController, Constants.Intake.kIIntakeController, Constants.Intake.kDIntakeController);
 
-        swivelTrapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(200, 400));
+        swivelTrapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(300, 600));
 
         targetIntakeSpeed = 0;
 
@@ -131,8 +131,8 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
      * @param speed the speed of the intake motor in cm/s
      */
     public void setIntakeSpeed(double speed){
-        targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius);
-        intakeMotor.setControl(velocityVoltage.withVelocity(targetIntakeSpeed));
+        targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius) / 43;
+        //intakeMotor.setControl(velocityVoltage.withVelocity(targetIntakeSpeed));
     }
 
     /**
@@ -202,7 +202,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         //double intakePidOutput = intakePIDController.calculate(getIntakeSpeed(), targetIntakeSpeed);
 
-        //intakeMotor.set(targetIntakeSpeed);
+        intakeMotor.set(targetIntakeSpeed);
 
 
         // TelemetryUpdater.setTelemetryValue("Total Intake Current Draw", getCurrentDraw());

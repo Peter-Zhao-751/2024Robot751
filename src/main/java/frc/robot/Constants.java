@@ -49,7 +49,7 @@ public class Constants {
         public static double kIIntakeController = 0.0;
         public static double kDIntakeController = 0.0;
 
-        public static double kIntakeAngle = 10.0;
+        public static double kIntakeAngle = 7.0;
         public static double kMaintenanceAngle = 45.0;
         public static double kAmpAngle = 60.0;
         public static double kRetractedAngle = 135.0;
@@ -66,13 +66,13 @@ public class Constants {
 
         public static int beamBreakDIOPort = 0;
 
-        public static double kPIntakeController = 0.025;
-        public static double kPShooterController = 0.025; // TODO: alek is bad at life
+        public static double kPIntakeController = 0.450;
+        public static double kPShooterController = 0.50; // TODO: alek is bad at life
 
         public static double feedSpeed = 30; // units in centimeters per second
 
         public static double maxTransferTime = 3.0; // unit in seconds
-        public static double minTransferTime = 0.5;
+        public static double minTransferTime = 1.5;
 
         public static double intakeSpeed = 20.0; // units in centimeters per second
     }
