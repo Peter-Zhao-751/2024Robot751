@@ -150,8 +150,6 @@ public class UIManager {
     public static void initializeUI() {
         // initializing webcam
 
-        TelemetryUpdater.setTelemetryValue("Intake State", "waiting!!");
-
         new Thread(() -> {
             UsbCamera camera = CameraServer.startAutomaticCapture(0);
             camera.setResolution(640, 480);
