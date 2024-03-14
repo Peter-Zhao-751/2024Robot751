@@ -153,24 +153,25 @@ public class UIManager {
         // initializing webcam
 
         new Thread(() -> {
-            UsbCamera camera = CameraServer.startAutomaticCapture(0);
+            UsbCamera camera = new UsbCamera("Grayscale Camera", 0);
+            CameraServer.addCamera(camera);
             camera.setResolution(640, 480);
-    
-            CvSink cvSink = CameraServer.getVideo(camera);
-
-            CvSource outputStream = CameraServer.putVideo("Front Fisheye", 640, 480);
         
+            CvSink cvSink = CameraServer.getVideo(camera);
+            CvSource outputStream = CameraServer.putVideo("Grayscale Stream", 640, 480);
+            
             Mat mat = new Mat();
-
+        
             while (!Thread.interrupted()) {
-                if (cvSink.grabFrame(mat) == 0) continue;
-                Core.flip(mat, mat, 1);
-                // black and white the camera feed
+                if (cvSink.grabFrame(mat) == 0) {
+                    continue;
+                }
+        
                 Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY);
-
                 outputStream.putFrame(mat);
             }
         }).start();
+        
 
         // initializing path stream
         imageSource = CameraServer.putVideo("Path Preview", 827, 401);
