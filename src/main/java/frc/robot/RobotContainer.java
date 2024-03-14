@@ -65,6 +65,7 @@ public class RobotContainer {
         driver.circleButton.onTrue(new InstantCommand(s_Swerve::zeroHeading));
         driver.triangleButton.onTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
         driver.crossButton.onTrue(new InstantCommand(s_Swerve::crossModules));
+        driver.squareButton.whileTrue(new IntakeCommand(s_Intake, s_Transfer, IntakeSwivelMode.Amp, precise));
 
         // // Precise Control (Left Bumper)
         driver.leftBumper.whileTrue(new InstantCommand(() -> precise = true));
