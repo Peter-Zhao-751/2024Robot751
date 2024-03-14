@@ -3,6 +3,7 @@ package frc.robot;
 // POV import
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.*;
 import frc.robot.commands.lowLevelCommands.IntakeCommand;
 import frc.robot.commands.lowLevelCommands.ShootCommand;
@@ -76,15 +77,16 @@ public class RobotContainer {
         // Aimbot (Right Bumper)
         //driver.rightBumper.whileTrue(new AimbotCommand(s_Swerve));
 
+        // FOR SYSID PID TUNING
+        driver.dPad.up.whileTrue(s_Intake.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        driver.dPad.down.whileTrue(s_Intake.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        driver.dPad.left.whileTrue(s_Intake.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        driver.dPad.right.whileTrue(s_Intake.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
         // Climber (D-Pad)
         //driver.dPad.whileUp(); // go up
         //driver.dPad.whileDown(); // go down
         //driver.dPad.whileLeft(); // automatic climb
-
-        // SHOOTER STUFF
-        // 42-44 seems to work well
-        // driver.rightTrigger.onTrue(new InstantCommand(() -> s_Shooter.setSpeed((double) TelemetryUpdater.getTelemetryValue("Shooter Speed"))));
-        // driver.rightTrigger.onFalse(new InstantCommand(() -> s_Shooter.stop()));
 
         // driver.rightBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(60.0)));
         // driver.rightBumper.whileFalse(new InstantCommand(() -> s_Transfer.setShooterTransfer(0)));
@@ -94,23 +96,18 @@ public class RobotContainer {
         //driver.squareButton.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.IntakePositions.INTAKE)));
         //driver.leftBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.IntakePositions.RETRACTED)));
 
-        // TODO: #8 Run logging for the swerve drive
-        // LOGGING STUFF FOR DRIVETRAIN
-        //s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        //s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-
-        driver.rightBumper.onTrue(new InstantCommand(() -> {
-            s_Shooter.setSpeed(20);
-            s_Intake.setIntakeSpeed(20);
-            s_Transfer.setIntakeTransfer(30);
-            s_Transfer.setShooterTransfer(20);
-        }));
-
-        driver.rightBumper.onFalse(new InstantCommand(() ->  {
-            s_Shooter.setSpeed(0);
-            s_Intake.stopAll();
-            s_Transfer.stop();
-        }));
+//        driver.rightBumper.onTrue(new InstantCommand(() -> {
+//            s_Shooter.setSpeed(20);
+//            s_Intake.setIntakeSpeed(20);
+//            s_Transfer.setIntakeTransfer(30);
+//            s_Transfer.setShooterTransfer(20);
+//        }));
+//
+//        driver.rightBumper.onFalse(new InstantCommand(() ->  {
+//            s_Shooter.setSpeed(0);
+//            s_Intake.stopAll();
+//            s_Transfer.stop();
+//        }));
 
 //        driver.rightTrigger.whileTrue(new ShootCommand(s_Shooter, s_Transfer, s_Swerve));
 //        driver.leftTrigger.whileTrue(new IntakeCommand(s_Intake, s_Transfer));
