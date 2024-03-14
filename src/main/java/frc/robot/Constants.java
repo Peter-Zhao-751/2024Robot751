@@ -186,7 +186,7 @@ public class Constants {
         /** Meters per Second */
         public static double maxSpeed = 4.5; //TODO: testing speed, normal: 4.5
         /** Multiplier */
-        public static double speedMultiplier = 0.5; //TODO: testing speed, normal 1.0
+        public static double speedMultiplier = 0.9; //TODO: testing speed, normal 1.0
         /** Radians per Second */
         public static double maxAngularVelocity = maxSpeed / 1.5; // THIS IS THE MAX SPIN SPEED ROBOT, tested 2.1, feels sluggish
 
