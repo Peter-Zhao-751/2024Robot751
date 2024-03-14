@@ -49,7 +49,7 @@ public class Barn2PathInterpreter {
 
         String encryptedData = new String(java.nio.file.Files.readAllBytes(pathFile.toPath()));
 
-        String decryptedData = fullDecrypt(encryptedData);
+        String decryptedData = encryptedData;//fullDecrypt(encryptedData);
         System.out.println(decryptedData);
 
         jsonObject = (JSONObject) new JSONParser().parse(decryptedData); 
@@ -61,6 +61,8 @@ public class Barn2PathInterpreter {
         Iterator<JSONObject> iterator = jsonArray.iterator();
 
         JSONObject point;
+
+        System.out.println(jsonArray.toString());
 
         while (iterator.hasNext()) {
             point = iterator.next();
@@ -113,6 +115,7 @@ public class Barn2PathInterpreter {
     }
 
     private static String base64Decode(String str) {
+        System.err.println(str);
         byte[] decodedBytes = Base64.getDecoder().decode(str);
         return new String(decodedBytes);
     }

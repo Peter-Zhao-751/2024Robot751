@@ -11,10 +11,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class IntakeCommand extends Command {
 
     public enum IntakeSwivelMode {
-        Extend(Constants.Intake.kIntakeAngle, 40.0, TransferMode.Intake),
+        Extend(Constants.Intake.kIntakeAngle, 180.0, TransferMode.Intake),
         Retract(Constants.Intake.kRetractedAngle, 0.0, null),
         Maintenance(Constants.Intake.kMaintenanceAngle, 0.0, null),
-        Amp(Constants.Intake.kAmpAngle, 40.0, TransferMode.Outtake);
+        Amp(Constants.Intake.kAmpAngle, 180.0, TransferMode.Outtake);
 
         public final double intakePosition;
         public final double speed;
@@ -34,7 +34,7 @@ public class IntakeCommand extends Command {
     public IntakeCommand(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, IntakeSwivelMode desiredSwivelState, boolean smartMode) {
         this.desiredState = desiredSwivelState;
         this.intakeSubsystem = intakeSubsystem;
-        if (desiredSwivelState.transferMode != null) this.transferCommand = new TransferCommand(desiredSwivelState.speed, transferSubsystem, desiredSwivelState.transferMode, smartMode);
+        if (desiredSwivelState.transferMode != null) this.transferCommand = new TransferCommand(desiredSwivelState.speed * 1.5, transferSubsystem, desiredSwivelState.transferMode, smartMode);
         else this.transferCommand = null;
     }
 
@@ -42,9 +42,8 @@ public class IntakeCommand extends Command {
     public void initialize() {
         StateMachine.setState(StateMachine.State.Intake);
         intakeSubsystem.setSwivelPosition(desiredState.intakePosition);
-        TelemetryUpdater.setTelemetryValue("Intake State", "going down!!");
         if (transferCommand != null) {
-            transferCommand.schedule();
+            transferCommand.initialize();
             intakeSubsystem.setIntakeSpeed(desiredState.speed);
         }
     }
@@ -56,7 +55,6 @@ public class IntakeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        TelemetryUpdater.setTelemetryValue("Intake State", "going up/done!!");
         if (!desiredState.equals(IntakeSwivelMode.Maintenance)) intakeSubsystem.setSwivelPosition(IntakeSwivelMode.Retract.intakePosition);
         if (transferCommand != null) transferCommand.end(interrupted);
         intakeSubsystem.stopAll();

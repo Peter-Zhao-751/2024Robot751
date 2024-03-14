@@ -49,7 +49,7 @@ public class Constants {
         public static double kIIntakeController = 0.0;
         public static double kDIntakeController = 0.0;
 
-        public static double kIntakeAngle = 10.0;
+        public static double kIntakeAngle = 7.0;
         public static double kMaintenanceAngle = 45.0;
         public static double kAmpAngle = 60.0;
         public static double kRetractedAngle = 135.0;
@@ -66,13 +66,13 @@ public class Constants {
 
         public static int beamBreakDIOPort = 0;
 
-        public static double kPIntakeController = 1.0;
-        public static double kPShooterController = 1.0;
+        public static double kPIntakeController = 0.450;
+        public static double kPShooterController = 0.50; // TODO: alek is bad at life
 
         public static double feedSpeed = 30; // units in centimeters per second
 
         public static double maxTransferTime = 3.0; // unit in seconds
-        public static double minTransferTime = 0.5;
+        public static double minTransferTime = 1.5;
 
         public static double intakeSpeed = 20.0; // units in centimeters per second
     }
@@ -82,10 +82,11 @@ public class Constants {
         public static int leftShooterMotorID = 51;
         public static int rightShooterMotorID = 52;
 
-        public static double spinUpTime = 2.0;
+        public static double spinUpTime = 0.5;
         public static double transferSpeed = 20.0; // units in centimeters per second
         public static double feedTime = 0.2;
-        public static double shooterSpeed = 42; // units in rotations per second
+
+        public static double maxShooterSpeed = 42; // units in rotations per second
         public static int motionMagicAcceleration = 400; // units in rotations per second squared
         public static int motionMagicJerk = 4000; // units in rotations per second cubed
 
@@ -186,7 +187,7 @@ public class Constants {
         /** Meters per Second */
         public static double maxSpeed = 4.5; //TODO: testing speed, normal: 4.5
         /** Multiplier */
-        public static double speedMultiplier = 0.5; //TODO: testing speed, normal 1.0
+        public static double speedMultiplier = 0.9; //TODO: testing speed, normal 1.0
         /** Radians per Second */
         public static double maxAngularVelocity = maxSpeed / 1.5; // THIS IS THE MAX SPIN SPEED ROBOT, tested 2.1, feels sluggish
 

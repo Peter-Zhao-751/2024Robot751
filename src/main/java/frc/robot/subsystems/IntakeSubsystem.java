@@ -1,14 +1,12 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utility.TelemetryUpdater;
@@ -16,7 +14,6 @@ import frc.robot.utility.TelemetryUpdater;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.REVLibError;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
@@ -34,7 +31,6 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     private final CANSparkMax rightSwivelMotor;
 
     private final TalonFX intakeMotor;
-    private final DutyCycleOut dutyCycleOut;
     private final VelocityVoltage velocityVoltage;
 
     private final SparkAbsoluteEncoder angleEncoder;
@@ -52,7 +48,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     private double swivelMovementStartTime;
     private double swivelMovementStartAngle;
 
-//    private SysIdRoutine routine;
+    private final SysIdRoutine routine;
     
     public IntakeSubsystem(){
         leftSwivelMotor = new CANSparkMax(Constants.Intake.leftSwivelMotorID, MotorType.kBrushless);
@@ -68,8 +64,6 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         angleEncoder.setPositionConversionFactor(360);
         angleEncoder.setZeroOffset(Constants.Intake.kSwivelEncoderZeroOffset);
 
-
-        dutyCycleOut = new DutyCycleOut(0);
 
         TalonFXConfiguration intakeMotorConfig = new TalonFXConfiguration();
         Slot0Configs slot0 = intakeMotorConfig.Slot0;
@@ -88,7 +82,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         //intakePIDController = new PIDController(Constants.Intake.kPIntakeController, Constants.Intake.kIIntakeController, Constants.Intake.kDIntakeController);
 
-        swivelTrapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(200, 400));
+        swivelTrapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(300, 600));
 
         targetIntakeSpeed = 0;
 
@@ -105,36 +99,40 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 //        .withProperties(Map.of("min", 0, "max", 12))
 //        .getEntry();
 
-//         routine = new SysIdRoutine(
-//             new SysIdRoutine.Config(
-//                 null,
-//                 null,
-//                 null,
-//                 (state) -> SignalLogger.writeString("state", state.toString())
-//             ),
-//             new SysIdRoutine.Mechanism(
-//                 (Measure<Voltage> volts) -> {
-//                 intakeMotor.setVoltage(volts.in(Volts));
-//                 System.out.println("Volts: " + volts.in(Volts));
-//             }, null, this)
-//         );
+         routine = new SysIdRoutine(
+             new SysIdRoutine.Config(
+                 null,
+                 null,
+                 null,
+                 (state) -> SignalLogger.writeString("state", state.toString())
+             ),
+             new SysIdRoutine.Mechanism(
+                 (Measure<Voltage> volts) -> {
+                 intakeMotor.setVoltage(volts.in(Volts));
+                 System.out.println("Volts: " + volts.in(Volts));
+             }, null, this)
+         );
     }
 
-    // public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    //     return routine.quasistatic(direction);
-    // }
+    /** Changing voltage
+     * */
+     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+         return routine.quasistatic(direction);
+     }
 
-    // public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    //     return routine.dynamic(direction);
-    // }
+     /** Static voltage
+      * */
+     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+         return routine.dynamic(direction);
+     }
     
     /**
      * Sets the speed of the intake motor
      * @param speed the speed of the intake motor in cm/s
      */
     public void setIntakeSpeed(double speed){
-        //targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius);
-        intakeMotor.set(0.25);
+        targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius) / 43;
+        //intakeMotor.setControl(velocityVoltage.withVelocity(targetIntakeSpeed));
     }
 
     /**
@@ -153,8 +151,9 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     public void stopAll(){
         leftSwivelMotor.stopMotor();
         rightSwivelMotor.stopMotor();
-        targetIntakeSpeed = 0;
-        intakeMotor.stopMotor();
+        setIntakeSpeed(0);
+        // TODO: should not be needed
+        // intakeMotor.stopMotor();
     }
 
     /**
@@ -186,7 +185,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
         double feedforwardOutput = swivelFeedforwardController.calculate(Math.toRadians(setPoint.position), Math.toRadians(setPoint.velocity), 0);
         double swivelPidOutput = swivelPIDController.calculate(currentAngle, setPoint.position);
-        
+
         double combinedOutput = feedforwardOutput + swivelPidOutput;
 
         combinedOutput = Math.min(combinedOutput, maxVoltage);
@@ -202,12 +201,16 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         rightSwivelMotor.setVoltage(combinedOutput);
 
         //double intakePidOutput = intakePIDController.calculate(getIntakeSpeed(), targetIntakeSpeed);
-        // the values should be in the range of -1 to 1, and it will be clamped in the motor's api
-        //intakeMotor.set(targetIntakeSpeed);
+
+        intakeMotor.set(targetIntakeSpeed);
+
 
         // TelemetryUpdater.setTelemetryValue("Total Intake Current Draw", getCurrentDraw());
         TelemetryUpdater.setTelemetryValue("Intake Swivel Position", currentAngle);
         TelemetryUpdater.setTelemetryValue("setpoint swivel", swivelSetpoint);
+
+        TelemetryUpdater.setTelemetryValue("Intake Speed", getIntakeSpeed());
+        TelemetryUpdater.setTelemetryValue("Intake Desired Speed", targetIntakeSpeed);
         // TelemetryUpdater.setTelemetryValue("Intake Speed", getIntakeSpeed());
 
         //TelemetryUpdater.setTelemetryValue("Intake Desired Position", )

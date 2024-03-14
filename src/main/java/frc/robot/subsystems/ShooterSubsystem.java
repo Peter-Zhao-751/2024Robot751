@@ -88,6 +88,10 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
         leftShooterMotor.setControl(motionMagicVelocityVoltage.withVelocity(-speed));
         rightShooterMotor.setControl(new Follower(leftShooterMotor.getDeviceID(), true));
     }
+
+    public double getTargetETA(){
+        return (targetSpeed - getShooterSpeed()) / Constants.Shooter.maxShooterSpeed * Constants.Shooter.spinUpTime;
+    }
     
     /**
      * <p> Stops the shooter motors </p> 

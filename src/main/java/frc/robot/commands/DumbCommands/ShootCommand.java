@@ -28,7 +28,7 @@ public class ShootCommand extends Command {
      */
     @Override
     public void initialize() {
-        shooterSubsystem.setSpeed(Constants.Shooter.shooterSpeed);
+        shooterSubsystem.setSpeed(Constants.Shooter.maxShooterSpeed);
     }
 
     /**
@@ -37,7 +37,7 @@ public class ShootCommand extends Command {
      */
     @Override
     public void execute() {
-        if (shooterSubsystem.getShooterSpeed() > Constants.Shooter.shooterSpeed * 0.98) {
+        if (shooterSubsystem.getShooterSpeed() > Constants.Shooter.maxShooterSpeed * 0.98) {
             transferSubsystem.setTransferSpeed(Constants.Transfer.feedSpeed);
             swerveSubsystem.crossModules();
             shootTime = System.currentTimeMillis();
