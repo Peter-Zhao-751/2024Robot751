@@ -18,6 +18,7 @@ import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.units.Measure;
@@ -93,6 +94,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         swivelMovementStartAngle = getSwivelPosition();
 
         isSwivelEnabled = true;
+        TelemetryUpdater.setTelemetryValue("Swivel Enabled", isSwivelEnabled);
 
         allocatedCurrent = 0;
         
@@ -180,6 +182,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
     @Override
     public void periodic() {
+        isSwivelEnabled = SmartDashboard.getBoolean("Toggle Button", true);
         if (isSwivelEnabled){
             double deltaTime = (System.currentTimeMillis() - swivelMovementStartTime) / 1000;
             double currentAngle = getSwivelPosition();
