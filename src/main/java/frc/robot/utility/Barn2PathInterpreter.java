@@ -83,13 +83,13 @@ public class Barn2PathInterpreter {
 
                 double delay = newMovementCommand.getETA();
 
-                switch (getEvent(point)){
-                    case "Shoot":
+                switch (getEvent(point).toLowerCase()){
+                    case "shoot":
                         //double primeDelay = (delay-Constants.Shooter.spinUpTime) > 0 ? (delay-Constants.Shooter.spinUpTime) : 0;
                         //ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new InstantCommand()));
                         autonCommands.add(new SequentialCommandGroup(newMovementCommand, new ShootCommand(shooterSubsystem, transferSubsystem, 200, true)));
                         break;
-                    case "Pickup":
+                    case "intake":
                         double intakeDelay = (delay-5) > 0 ? (delay-5) : 0;
                         ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new IntakeCommand(intakeSubsystem, transferSubsystem, IntakeSwivelMode.Extend, true)));
                         autonCommands.add(moveAndIntake);
