@@ -13,6 +13,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.first.cscore.*;
+import edu.wpi.first.util.PixelFormat;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Preferences;
@@ -152,27 +153,34 @@ public class UIManager {
     public static void initializeUI() {
         // initializing webcam
 
+        /* Experimental new Camera Code */
         new Thread(() -> {
-            UsbCamera camera = new UsbCamera("Grayscale Camera", 0);
-            CameraServer.addCamera(camera);
+            // Initialize the camera
+            UsbCamera camera = new UsbCamera("Front Fisheye", 0);
             camera.setResolution(640, 480);
+            camera.setFPS(25);
+
+            CvSink cvSink = new CvSink("cvSink");
+            cvSink.setSource(camera);
         
-            CvSink cvSink = CameraServer.getVideo(camera);
-            CvSource outputStream = CameraServer.putVideo("Grayscale Stream", 640, 480);
-            
+            CvSource outputStream = new CvSource("Processed Frames", PixelFormat.kGray, 640, 480, 25);
+            CameraServer.addCamera(outputStream);
+            CameraServer.startAutomaticCapture(outputStream);
+        
             Mat mat = new Mat();
         
             while (!Thread.interrupted()) {
-                if (cvSink.grabFrame(mat) == 0) {
-                    continue;
-                }
+                if (cvSink.grabFrame(mat) == 0) continue;
+
+                // Flip 180 degrees
+                Core.flip(mat, mat, -1); //TODO: 0 is left is right
         
+                // Convert to black and white
                 Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY);
-                Core.flip(mat, mat, 0);
+        
                 outputStream.putFrame(mat);
             }
         }).start();
-        
 
         // initializing path stream
         imageSource = CameraServer.putVideo("Path Preview", 827, 401);

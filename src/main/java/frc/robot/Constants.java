@@ -189,7 +189,7 @@ public class Constants {
         /** Multiplier */
         public static double speedMultiplier = 0.9; //TODO: testing speed, normal 1.0
         /** Radians per Second */
-        public static double maxAngularVelocity = maxSpeed / 1.5; // THIS IS THE MAX SPIN SPEED ROBOT, tested 2.1, feels sluggish
+        public static double maxAngularVelocity = maxSpeed / 1.1; // THIS IS THE MAX SPIN SPEED ROBOT, tested 2.1, feels sluggish
 
         /* Modifier for rotating to desired angle pose speed */
         public static double angleKP = (10.46 * Math.exp(1.05 * speedMultiplier)); // I don't think this is right, take from SYSID instead
