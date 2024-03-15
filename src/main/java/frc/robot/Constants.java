@@ -54,7 +54,7 @@ public class Constants {
         public static double kAmpAngle = 60.0;
         public static double kRetractedAngle = 135.0;
 
-        public static double kSwivelEncoderZeroOffset = 319.62; 
+        public static double kSwivelEncoderZeroOffset = 85.4; 
     }
 
     public static class Transfer{

@@ -182,7 +182,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
     @Override
     public void periodic() {
-        isSwivelEnabled = SmartDashboard.getBoolean("Toggle Button", true);
+        isSwivelEnabled = SmartDashboard.getBoolean("Intake Swivel ON", true);
         if (isSwivelEnabled){
             double deltaTime = (System.currentTimeMillis() - swivelMovementStartTime) / 1000;
             double currentAngle = getSwivelPosition();
@@ -208,6 +208,9 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
             leftSwivelMotor.setVoltage(combinedOutput);
             rightSwivelMotor.setVoltage(combinedOutput);
             TelemetryUpdater.setTelemetryValue("Intake Swivel Position", currentAngle);
+            TelemetryUpdater.setTelemetryValue("raw intake swivel value", angleEncoder.getPosition());
+        }else {
+            stopAll();
         }
 
         //double intakePidOutput = intakePIDController.calculate(getIntakeSpeed(), targetIntakeSpeed);

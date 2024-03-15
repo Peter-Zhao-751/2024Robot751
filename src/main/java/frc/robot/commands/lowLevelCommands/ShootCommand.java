@@ -18,7 +18,7 @@ public class ShootCommand extends Command{
     public ShootCommand(ShooterSubsystem shooterSubsystem, TransferSubsystem transferSubsystem, double speed, boolean smartMode) {
         this.shooterSubsystem = shooterSubsystem;
         this.transferSubsystem = transferSubsystem;
-        this.transferCommand = new TransferCommand(180, transferSubsystem, TransferMode.Shoot, smartMode);
+        this.transferCommand = new TransferCommand(-1000, transferSubsystem, TransferMode.Shoot, smartMode);
         this.speed = speed;
         this.hasShot = false;
         addRequirements(shooterSubsystem, transferSubsystem);
