@@ -173,7 +173,7 @@ public class UIManager {
                 if (cvSink.grabFrame(mat) == 0) continue;
 
                 // Flip 180 degrees
-                Core.flip(mat, mat, -1); //TODO: 0 is left is right
+                Core.flip(mat, mat, -1); //TODO: 0 if left is right
         
                 // Convert to black and white
                 Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY);

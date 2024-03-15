@@ -18,7 +18,7 @@ public class ShootCommand extends Command{
     public ShootCommand(ShooterSubsystem shooterSubsystem, TransferSubsystem transferSubsystem, double speed, boolean smartMode) {
         this.shooterSubsystem = shooterSubsystem;
         this.transferSubsystem = transferSubsystem;
-        this.transferCommand = new TransferCommand(Constants.Transfer.feedSpeed, transferSubsystem, TransferMode.Shoot, smartMode);
+        this.transferCommand = new TransferCommand(180, transferSubsystem, TransferMode.Shoot, smartMode);
         this.speed = speed;
         this.hasShot = false;
         addRequirements(shooterSubsystem, transferSubsystem);
@@ -27,7 +27,7 @@ public class ShootCommand extends Command{
     @Override
     public void initialize() {
         StateMachine.setState(StateMachine.State.Shoot);
-        waitTime = Math.max(0, shooterSubsystem.getTargetETA() - Constants.Transfer.minTransferTime);
+        waitTime = Math.max(0, shooterSubsystem.getTargetETA() - Constants.Transfer.minTransferTime) * 1000;
         startTime = System.currentTimeMillis();
         shooterSubsystem.setSpeed(speed);
         hasShot = false;
@@ -44,11 +44,9 @@ public class ShootCommand extends Command{
 
     @Override
     public void end(boolean interrupted) {
-
         shooterSubsystem.setSpeed(0);
         if (transferCommand != null) transferCommand.end(interrupted);
         StateMachine.setState(StateMachine.State.Idle);
-        // doesnt need its own end method because transfer.end() will be called in the end method of this command
     }
 
     @Override

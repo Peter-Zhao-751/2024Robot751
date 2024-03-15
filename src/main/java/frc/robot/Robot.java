@@ -114,7 +114,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    // TelemetryUpdater.setTelemetryValue("CAN Bus Utilization", CANBus.getStatus(Constants.CANivoreID).BusUtilization * 100 + "%");
   }
 
   @Override

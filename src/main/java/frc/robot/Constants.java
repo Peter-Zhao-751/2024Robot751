@@ -69,7 +69,7 @@ public class Constants {
         public static double kPIntakeController = 0.450;
         public static double kPShooterController = 0.50; // TODO: alek is bad at life
 
-        public static double feedSpeed = 30; // units in centimeters per second
+        public static double feedSpeed = 30; // units in centimeters per second // TODO: all the fucking values are retarded
 
         public static double maxTransferTime = 3.0; // unit in seconds
         public static double minTransferTime = 1.5;
@@ -187,7 +187,7 @@ public class Constants {
         /** Meters per Second */
         public static double maxSpeed = 4.5; //TODO: testing speed, normal: 4.5
         /** Multiplier */
-        public static double speedMultiplier = 0.9; //TODO: testing speed, normal 1.0
+        public static double speedMultiplier = 1.0; //TODO: testing speed, normal 1.0
         /** Radians per Second */
         public static double maxAngularVelocity = maxSpeed / 1.1; // THIS IS THE MAX SPIN SPEED ROBOT, tested 2.1, feels sluggish
 
@@ -257,10 +257,10 @@ public class Constants {
 
     public static class AutoConstants { 
         //TODO: tune everything here
-        public static double kMaxSpeedMetersPerSecond = 0.5; // 3 
-        public static double kMaxAccelerationMetersPerSecondSquared = 0.5; // 3
-        public static double kMaxAngularSpeedRadiansPerSecond = 1; //Math.PI;
-        public static double kMaxAngularSpeedRadiansPerSecondSquared = 1; //Math.PI;
+        public static double kMaxSpeedMetersPerSecond = 2; // 3 
+        public static double kMaxAccelerationMetersPerSecondSquared = 2; // 3
+        public static double kMaxAngularSpeedRadiansPerSecond = 2; //Math.PI;
+        public static double kMaxAngularSpeedRadiansPerSecondSquared = 2; //Math.PI;
         
 
         //especially these values

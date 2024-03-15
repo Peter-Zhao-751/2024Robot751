@@ -20,7 +20,7 @@ public class TransferCommand extends Command {
     private boolean smartMode;
 
     public TransferCommand(double speed, TransferSubsystem transferSubsystem, TransferMode transferMode, boolean smartMode) {
-        this.speed = (TransferMode.Intake.equals(transferMode)) ? speed : -speed;
+        this.speed = (TransferMode.Intake == transferMode) ? speed : -speed;
 
         this.transferSubsystem = transferSubsystem;
         this.transferMode = transferMode;
@@ -33,7 +33,7 @@ public class TransferCommand extends Command {
     public void initialize() {
         startTime = System.currentTimeMillis();
         transferSubsystem.setIntakeTransfer(speed);
-        transferSubsystem.setShooterTransfer(speed);
+        if (transferMode != TransferMode.Intake) transferSubsystem.setShooterTransfer(speed);
     }
 
     @Override

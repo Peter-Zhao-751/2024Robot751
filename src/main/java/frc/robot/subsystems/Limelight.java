@@ -42,4 +42,12 @@ public class Limelight {
         }
         return null;
     }
+
+    public void debugDisplayValues() {
+        double[] values = getValues();
+        if (values != null) {
+            TelemetryUpdater.setTelemetryValue("Limelight X Position", values[0]);
+            TelemetryUpdater.setTelemetryValue("Limelight Y Position", values[1]);
+        }
+    }
 }
