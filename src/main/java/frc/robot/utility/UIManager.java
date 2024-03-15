@@ -35,12 +35,14 @@ public class UIManager {
     public static void updatePathPreview() {
         File currentSelection = autonSelector.getSelected();
         if (currentSelection != null && !currentSelection.equals(selectedAuton)) {
-            selectedAuton = currentSelection;
             String base64Image = Barn2PathInterpreter.getAutonPreview(selectedAuton);
             System.out.println("\n\nupdated auton path\n\n");
             byte[] base64ImageByte = Base64.getDecoder().decode(base64Image);
             Mat image = Imgcodecs.imdecode(new MatOfByte(base64ImageByte), Imgcodecs.IMREAD_UNCHANGED);
-            imageSource.putFrame(image);
+            if (imageSource != null) {
+                imageSource.putFrame(image);
+                selectedAuton = currentSelection;
+            }
         }
     }
 
@@ -188,7 +190,7 @@ public class UIManager {
 
 
         // TODO: something 
-        CvSource imageSource = new CvSource("Path Preview", PixelFormat.kGray, 640, 480, 25);
+        CvSource imageSource = new CvSource("Path Preview", PixelFormat.kMJPEG, 827, 401, 1);
         CameraServer.addCamera(imageSource);
         CameraServer.startAutomaticCapture(imageSource);
 
