@@ -168,6 +168,7 @@ public class UIManager {
                 }
         
                 Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY);
+                Core.flip(mat, mat, 0);
                 outputStream.putFrame(mat);
             }
         }).start();
