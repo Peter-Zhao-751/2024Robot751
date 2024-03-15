@@ -257,10 +257,10 @@ public class Constants {
 
     public static class AutoConstants { 
         //TODO: tune everything here
-        public static double kMaxSpeedMetersPerSecond = 2; // 3 
-        public static double kMaxAccelerationMetersPerSecondSquared = 2; // 3
-        public static double kMaxAngularSpeedRadiansPerSecond = 2; //Math.PI;
-        public static double kMaxAngularSpeedRadiansPerSecondSquared = 2; //Math.PI;
+        public static double kMaxSpeedMetersPerSecond = 1; // 3 
+        public static double kMaxAccelerationMetersPerSecondSquared = 1; // 3
+        public static double kMaxAngularSpeedRadiansPerSecond = 1; //Math.PI;
+        public static double kMaxAngularSpeedRadiansPerSecondSquared = 1; //Math.PI;
         
 
         //especially these values
