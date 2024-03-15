@@ -183,7 +183,13 @@ public class UIManager {
         }).start();
 
         // initializing path stream
-        imageSource = CameraServer.putVideo("Path Preview", 827, 401);
+        // imageSource = CameraServer.putVideo("Path Preview", 827, 401);
+        // CameraServer.startAutomaticCapture(imageSource);
+
+
+        // TODO: something 
+        CvSource imageSource = new CvSource("Path Preview", PixelFormat.kGray, 640, 480, 25);
+        CameraServer.addCamera(imageSource);
         CameraServer.startAutomaticCapture(imageSource);
 
         // sets a bunch of UI stuff

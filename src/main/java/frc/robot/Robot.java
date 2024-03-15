@@ -68,7 +68,7 @@ public class Robot extends TimedRobot {
     
     // updating ui
     //UISubsystem.updateTelemetry();
-    //UISubsystem.updatePathPreview();
+    UIManager.updatePathPreview();
     CommandScheduler.getInstance().run();
   }
 
