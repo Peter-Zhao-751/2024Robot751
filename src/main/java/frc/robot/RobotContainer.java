@@ -58,6 +58,7 @@ public class RobotContainer {
         );
 
         configureButtonBindings();
+        CANdleController.setCandle(new CANdleSubsystem());
     }
     
     private void configureButtonBindings() {

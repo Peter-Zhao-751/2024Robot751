@@ -13,6 +13,7 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 
 import frc.robot.commands.DumbCommands.IntakeCommand;
+import frc.robot.utility.StateMachine;
 import frc.robot.utility.TelemetrySubsystem;
 import frc.robot.utility.TelemetryUpdater;
 import frc.robot.utility.UIManager;
@@ -70,6 +71,7 @@ public class Robot extends TimedRobot {
     // updating ui
     //UISubsystem.updateTelemetry();
     UIManager.updatePathPreview();
+    StateMachine.periodic();
     CommandScheduler.getInstance().run();
   }
 
