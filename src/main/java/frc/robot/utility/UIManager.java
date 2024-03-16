@@ -34,9 +34,10 @@ public class UIManager {
     // updating ui methods
     public static void updatePathPreview() {
         File currentSelection = autonSelector.getSelected();
-        if (currentSelection != null && !currentSelection.equals(selectedAuton)) {
-            String base64Image = Barn2PathInterpreter.getAutonPreview(selectedAuton);
+        if (currentSelection != null && !currentSelection.equals(currentSelection)) {
+            String base64Image = Barn2PathInterpreter.getAutonPreview(currentSelection);
             System.out.println("\n\nupdated auton path\n\n");
+            System.out.println(base64Image);
             byte[] base64ImageByte = Base64.getDecoder().decode(base64Image);
             Mat image = Imgcodecs.imdecode(new MatOfByte(base64ImageByte), Imgcodecs.IMREAD_UNCHANGED);
             if (imageSource != null) {

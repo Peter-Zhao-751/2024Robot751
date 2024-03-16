@@ -22,7 +22,7 @@ public class RobotContainer {
     //private final Command Intake;
 
     /* Controllers */
-    private final PS5Controller driver = new PS5Controller(1);
+    private final PS5Controller driver = new PS5Controller(0);
     //private final PS5Controller operator = new PS5Controller(1);
 
     /* Subsystems */
@@ -65,15 +65,15 @@ public class RobotContainer {
         driver.circleButton.onTrue(new InstantCommand(s_Swerve::zeroHeading));
         driver.triangleButton.onTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
         driver.crossButton.onTrue(new InstantCommand(s_Swerve::crossModules));
-        driver.squareButton.whileTrue(new IntakeCommand(s_Intake, s_Transfer, IntakeSwivelMode.Amp, precise));
+        driver.squareButton.whileTrue(new IntakeCommand(s_Intake, s_Transfer, IntakeSwivelMode.Amp, false));
 
         // // Precise Control (Left Bumper)
         driver.leftBumper.whileTrue(new InstantCommand(() -> precise = true));
         driver.leftBumper.onFalse(new InstantCommand(() -> precise = false));
 
         // Shooter & Intake (Left & Right Triggers)
-        driver.rightTrigger.whileTrue(new ShootCommand(s_Shooter, s_Transfer, 110, false));
-        driver.leftTrigger.whileTrue(new IntakeCommand(s_Intake, s_Transfer, IntakeSwivelMode.Extend, true));
+        driver.rightTrigger.whileTrue(new ShootCommand(s_Shooter, s_Transfer, 200, false));
+        driver.leftTrigger.whileTrue(new IntakeCommand(s_Intake, s_Transfer, IntakeSwivelMode.Extend, false));
 
         // Aimbot (Right Bumper)
         //driver.rightBumper.whileTrue(new AimbotCommand(s_Swerve));
