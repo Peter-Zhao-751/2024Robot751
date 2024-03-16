@@ -33,7 +33,7 @@ public class TransferCommand extends Command {
     public void initialize() {
         startTime = System.currentTimeMillis();
         transferSubsystem.setIntakeTransfer(speed);
-        if (transferMode != TransferMode.Intake) transferSubsystem.setShooterTransfer(speed);
+        transferSubsystem.setShooterTransfer(speed);
     }
 
     @Override

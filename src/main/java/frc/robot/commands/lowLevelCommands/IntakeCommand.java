@@ -11,10 +11,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class IntakeCommand extends Command {
 
     public enum IntakeSwivelMode {
-        Extend(Constants.Intake.kIntakeAngle, 180.0, TransferMode.Intake),
+        Extend(Constants.Intake.kIntakeAngle, 600.0, TransferMode.Intake),
         Retract(Constants.Intake.kRetractedAngle, 0.0, null),
         Maintenance(Constants.Intake.kMaintenanceAngle, 0.0, null),
-        Amp(Constants.Intake.kAmpAngle, 180.0, TransferMode.Outtake);
+        Amp(Constants.Intake.kAmpAngle, 600.0, TransferMode.Outtake);
 
         public final double intakePosition;
         public final double speed;

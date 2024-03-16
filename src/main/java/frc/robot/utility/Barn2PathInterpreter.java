@@ -133,7 +133,10 @@ public class Barn2PathInterpreter {
 
     public static String getAutonPreview(File pathFile){
         if (pathFile != null){
-            try { 
+            try {
+                System.out.println("I hate my life");
+                String data = new String(java.nio.file.Files.readAllBytes(pathFile.toPath()));
+                System.out.println("I think somehting ");
                 jsonObject = (JSONObject) new JSONParser().parse(new FileReader(pathFile)); 
                 return (String) jsonObject.get("preview");
             }     
