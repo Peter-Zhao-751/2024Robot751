@@ -15,6 +15,7 @@ import org.opencv.imgproc.Imgproc;
 import edu.wpi.first.cscore.*;
 import edu.wpi.first.util.PixelFormat;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;

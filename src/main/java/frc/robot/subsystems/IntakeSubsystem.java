@@ -182,7 +182,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
     @Override
     public void periodic() {
-        isSwivelEnabled = SmartDashboard.getBoolean("Intake Swivel ON", true);
+        isSwivelEnabled = SmartDashboard.getBoolean("Swivel Enabled", true);
         if (isSwivelEnabled){
             double deltaTime = (System.currentTimeMillis() - swivelMovementStartTime) / 1000;
             double currentAngle = getSwivelPosition();

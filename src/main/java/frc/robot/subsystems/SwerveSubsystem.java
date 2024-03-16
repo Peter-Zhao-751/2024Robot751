@@ -17,8 +17,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -39,15 +42,16 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
     public final StructArrayPublisher<SwerveModuleState> desirePublisher;
     private final Field2d m_field = new Field2d();
     private final SwerveDriveOdometry swerveOdometry;
-    private final Odometry odometry;
     private final SwerveModule[] mSwerveMods;
     private final Pigeon2 gyro;
     private final Limelight limelight;
 //    private final SysIdRoutine routine;
 
+    // forgive me father for I have sinned
+    private static GenericEntry resetX, resetY, setButtonEntry;
+
     private final KalmanFilter kalmanFilter;
     private double allocatedCurrent;
-    private double totalCurrent;
 
     public SwerveSubsystem() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.CANivoreID);
@@ -64,8 +68,6 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
 
         //odometry = new Odometry(limelight.getPose(), Constants.Swerve.swerveKinematics, getHeading(), getModulePositions());
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());//, new Pose2d());
-
-        odometry = new Odometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());
 
         actualPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveActualStates", SwerveModuleState.struct).publish();
         desirePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveDesiredStates", SwerveModuleState.struct).publish();
@@ -89,6 +91,10 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
 //        );
 
         kalmanFilter = new KalmanFilter(0, 0, 0, 0, 0, 0, Constants.Odometry.kPositionNoiseVar, Constants.Odometry.kVelocityNoiseVar, Constants.Odometry.kAccelerationNoiseVar, Constants.Odometry.kPositionProcessNoise, Constants.Odometry.kVelocityProcessNoise, Constants.Odometry.kAccelerationProcessNoise);
+        
+        resetX = Shuffleboard.getTab("Initializer").add("Reset X", 0).withWidget(BuiltInWidgets.kToggleButton).getEntry();
+        resetY = Shuffleboard.getTab("Initializer").add("Reset Y", 0).withWidget(BuiltInWidgets.kToggleButton).getEntry();
+        setButtonEntry = Shuffleboard.getTab("Initializer").add("Set", false).withWidget(BuiltInWidgets.kToggleButton).getEntry();
     }
 
 //    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
@@ -172,27 +178,26 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
     }
 
     public Pose2d getPose() {
-        return swerveOdometry.getPoseMeters();
+        return new Pose2d(kalmanFilter.getTranslation2d(), getGyroYaw());
     }
 
     public void setPose(Pose2d pose) {
+        kalmanFilter.reset(pose.getX(), pose.getY(), 0, 0, 0, 0);
         swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
     }
 
     public void setHeading(Rotation2d heading) {
+        gyro.setYaw(heading.getDegrees());
         swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), new Pose2d(getPose().getTranslation(), heading));
     }
 
     public void zeroHeading() {
+        gyro.setYaw(0);
         swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), new Pose2d(getPose().getTranslation(), new Rotation2d()));
     }
 
     public Rotation2d getGyroYaw() {
         return Rotation2d.fromDegrees(gyro.getYaw().getValue());
-    }
-
-    public Pose2d fuseLimelightSwerveData(Pose2d limelightData, Pose2d swerveData) {
-        return new Pose2d(); // TODO
     }
 
     /**
@@ -220,11 +225,6 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
     public void periodic() {
         swerveUi();
 
-        // update current
-        totalCurrent = 0;
-        for (SwerveModule mod : mSwerveMods) {
-            totalCurrent += mod.getTotalCurrent();
-        }
         //TelemetryUpdater.setTelemetryValue("total swerve current draw", totalCurrent);
 
         //CurrentManager.updateCurrent(totalCurrent, CurrentManager.Subsystem.DriveTrain);
@@ -234,6 +234,10 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
      * <p> Updates the SmartDashboard with the current state of the swerve drive </p>
      */
     private void swerveUi() {
+
+        if (setButtonEntry.getBoolean(false)) {
+            setPose(new Pose2d(resetX.getDouble(0), resetY.getDouble(0), getGyroYaw()));
+        }
         double accelerationX = gyro.getAccelerationX().getValue();
         double accelerationY = gyro.getAccelerationY().getValue();
         double accelerationZ = gyro.getAccelerationZ().getValue();
@@ -289,9 +293,7 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
 
         if (limelight.hasTarget() && newLimePosition != null) {
             kalmanFilter.update(newLimePosition.getX(), newLimePosition.getY(), fieldChassisSpeedX, fieldChassisSpeedY, fieldAccelerationX, fieldAccelerationY);
-            odometry.update(newLimePosition, getGyroYaw(), getModulePositions());
         } else {
-            odometry.update(getGyroYaw(), getModulePositions());
             //kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY);
             kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY, fieldAccelerationX, fieldAccelerationY);
         }
@@ -315,7 +317,7 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
         //TelemetryUpdater.setTelemetryValue("Robot Pitch", gyro.getPitch().getValue());
         //TelemetryUpdater.setTelemetryValue("Robot Roll", gyro.getRoll().getValue());
 
-        //m_field.setRobotPose(odometry.getPoseMeters());
+        m_field.setRobotPose(getPose());
 
         // TelemetryUpdater.setTelemetryValueata("Swerve Drive", new Sendable() {
         //     @Override
@@ -346,6 +348,10 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
 
     @Override
     public double getCurrentDraw() {
+        double totalCurrent = 0;
+        for (SwerveModule mod : mSwerveMods) {
+            totalCurrent += mod.getTotalCurrent();
+        }
         return totalCurrent;
     }
 
