@@ -257,10 +257,10 @@ public class Constants {
 
     public static class AutoConstants { 
         //TODO: tune everything here
-        public static double kMaxSpeedMetersPerSecond = 2; // 3 
-        public static double kMaxAccelerationMetersPerSecondSquared = 2; // 3
-        public static double kMaxAngularSpeedRadiansPerSecond = 2; //Math.PI;
-        public static double kMaxAngularSpeedRadiansPerSecondSquared = 2; //Math.PI;
+        public static double kMaxSpeedMetersPerSecond = 3; // 3 
+        public static double kMaxAccelerationMetersPerSecondSquared = 3; // 3
+        public static double kMaxAngularSpeedRadiansPerSecond = 2.4; //Math.PI;
+        public static double kMaxAngularSpeedRadiansPerSecondSquared = 2.4; //Math.PI;
         
 
         //especially these values
@@ -301,7 +301,7 @@ public class Constants {
                 return robotPose.getX() > minX && robotPose.getX() < maxX && robotPose.getY() > minY && robotPose.getY() < maxY;
             }
         }
-        // fix these values
+        // fix these values, only the speakers are (maybe correct)
         public static FieldElements[] blue = {
             new FieldElements("Amp", 3.57, 7.94, 0.0, -1.0, 1.0, -1.0, 1.0),
             new FieldElements("Speaker", 0.8, 5.28, 0.0, -1.0, 1.0, -1.0, 1.0),

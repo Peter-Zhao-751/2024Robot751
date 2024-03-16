@@ -50,7 +50,6 @@ public class Barn2PathInterpreter {
         String encryptedData = new String(java.nio.file.Files.readAllBytes(pathFile.toPath()));
 
         String decryptedData = encryptedData;//fullDecrypt(encryptedData);
-        System.out.println(decryptedData);
 
         jsonObject = (JSONObject) new JSONParser().parse(decryptedData); 
 
@@ -100,7 +99,6 @@ public class Barn2PathInterpreter {
                 }
             }
         }
-        System.out.println(autonCommands);
         return autonCommands;
     }
 
@@ -134,9 +132,8 @@ public class Barn2PathInterpreter {
     public static String getAutonPreview(File pathFile){
         if (pathFile != null){
             try {
-                System.out.println("I hate my life");
+                // pretty sure this doesnt work
                 String data = new String(java.nio.file.Files.readAllBytes(pathFile.toPath()));
-                System.out.println("I think somehting ");
                 jsonObject = (JSONObject) new JSONParser().parse(new FileReader(pathFile)); 
                 return (String) jsonObject.get("preview");
             }     
