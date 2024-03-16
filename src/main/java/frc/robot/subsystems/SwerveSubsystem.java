@@ -181,6 +181,10 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
         return new Pose2d(kalmanFilter.getTranslation2d(), getGyroYaw());
     }
 
+    public Pose2d getSwerveOdometryPose2d() {
+        return swerveOdometry.getPoseMeters();
+    }
+
     public void setPose(Pose2d pose) {
         kalmanFilter.reset(pose.getX(), pose.getY(), 0, 0, 0, 0);
         swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);

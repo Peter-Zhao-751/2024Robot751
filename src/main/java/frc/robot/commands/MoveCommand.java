@@ -47,7 +47,7 @@ public class MoveCommand extends Command {
 
     @Override
     public void initialize() {
-        Pose2d currentRobotPosition = s_Swerve.getPose();
+        Pose2d currentRobotPosition = s_Swerve.getSwerveOdometryPose2d(); // do something
 
         if (Math.abs(desiredLocation.getX() - currentRobotPosition.getX()) < 0.1 && Math.abs(desiredLocation.getY() - currentRobotPosition.getY()) < 0.1) return;
         

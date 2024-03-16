@@ -72,7 +72,7 @@ public class RobotContainer {
         driver.triangleButton.onTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
         Optional<Alliance> alliance = DriverStation.getAlliance();
 
-        Pose2d currentPose = s_Swerve.getPose();
+        Pose2d currentPose = s_Swerve.getSwerveOdometryPose2d();
         
         driver.crossButton.onTrue(new InstantCommand(() -> {
             if (alliance.isPresent() && alliance.get() == Alliance.Blue) new MoveCommand(s_Swerve, new Pose2d(currentPose.getX() + 300, currentPose.getY(), currentPose.getRotation()));
