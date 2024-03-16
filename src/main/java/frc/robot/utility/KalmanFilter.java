@@ -123,6 +123,8 @@ public class KalmanFilter {
         return currentR; // adjustedR
     }
 
+    // TODO: checking values and notify driver when its crazy
+
     public void setMeasurementNoise(double positionNoiseVar, double velocityNoiseVar, double accelerationNoiseVar) {
         noise.R_position = positionNoiseVar;
         noise.R_velocity = velocityNoiseVar;

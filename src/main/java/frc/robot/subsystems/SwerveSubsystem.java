@@ -239,9 +239,9 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
      */
     private void swerveUi() {
 
-        if (setButtonEntry.getBoolean(false)) {
-            setPose(new Pose2d(resetX.getDouble(0), resetY.getDouble(0), getGyroYaw()));
-        }
+        // if (setButtonEntry.getBoolean(false)) {
+        //     setPose(new Pose2d(resetX.getDouble(0), resetY.getDouble(0), getGyroYaw()));
+        // }
         double accelerationX = gyro.getAccelerationX().getValue();
         double accelerationY = gyro.getAccelerationY().getValue();
         double accelerationZ = gyro.getAccelerationZ().getValue();

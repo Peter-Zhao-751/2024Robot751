@@ -74,7 +74,7 @@ public class MoveCommand extends Command {
 
         swerveControllerCommand = new SwerveControllerCommand(
                 movementTrajectory,
-                s_Swerve::getPose,
+                s_Swerve::getSwerveOdometryPose2d,
                 Constants.Swerve.swerveKinematics,
                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),
