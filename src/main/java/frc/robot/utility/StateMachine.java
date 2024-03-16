@@ -1,6 +1,6 @@
 package frc.robot.utility;
 
-import frc.robot.commands.CANdleControllerCommand;
+import frc.robot.commands.CANdleController;
 import frc.robot.subsystems.CANdleSubsystem;
 
 public class StateMachine {
@@ -40,8 +40,11 @@ public class StateMachine {
     }
 
     public static void update() {
+        CANdleController.changeAnimation(state.animation);
+    }
+
+    public static void periodic() {
         TelemetryUpdater.setTelemetryValue("Robot State", state.stateName);
-        CANdleControllerCommand.changeAnimation(state.animation);
     }
 
     public static boolean isPerformingAction(){

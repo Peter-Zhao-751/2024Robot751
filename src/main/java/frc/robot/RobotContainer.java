@@ -1,5 +1,9 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 // POV import
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -11,6 +15,7 @@ import frc.robot.commands.lowLevelCommands.IntakeCommand.IntakeSwivelMode;
 import frc.robot.subsystems.*;
 import frc.robot.utility.Barn2PathInterpreter;
 import frc.robot.utility.PS5Controller;
+import java.util.Optional;
 
 import java.io.File;
 
@@ -58,14 +63,24 @@ public class RobotContainer {
         );
 
         configureButtonBindings();
+        CANdleController.setCandle(new CANdleSubsystem());
     }
     
     private void configureButtonBindings() {
         // Util Commands (Circle, Triangle, X)
         driver.circleButton.onTrue(new InstantCommand(s_Swerve::zeroHeading));
         driver.triangleButton.onTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
-        driver.crossButton.onTrue(new InstantCommand(s_Swerve::crossModules));
-        driver.squareButton.whileTrue(new IntakeCommand(s_Intake, s_Transfer, IntakeSwivelMode.Amp, false));
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+
+        Pose2d currentPose = s_Swerve.getSwerveOdometryPose2d();
+        
+        driver.crossButton.onTrue(new InstantCommand(() -> {
+            if (alliance.isPresent() && alliance.get() == Alliance.Blue) new MoveCommand(s_Swerve, new Pose2d(currentPose.getX() + 300, currentPose.getY(), currentPose.getRotation()));
+            else new MoveCommand(s_Swerve, new Pose2d(currentPose.getX() - 300, currentPose.getY(), currentPose.getRotation()));
+        }));
+
+        //driver.crossButton.onTrue(new InstantCommand(s_Swerve::crossModules));
+        driver.squareButton.whileTrue(new IntakeCommand(s_Intake, s_Transfer, IntakeSwivelMode.Amp, precise));
 
         // // Precise Control (Left Bumper)
         driver.leftBumper.whileTrue(new InstantCommand(() -> precise = true));

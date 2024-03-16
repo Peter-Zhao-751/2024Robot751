@@ -1,6 +1,9 @@
 package frc.robot.utility;
 
 import frc.robot.Constants;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 public class KalmanFilter {
     private final State xState;
@@ -132,7 +135,7 @@ public class KalmanFilter {
         processNoise.accelerationProcessNoise = processNoiseAcceleration;
     }
 
-    private void reset(double posX, double posY, double velX, double velY, double accX, double accY) {
+    public void reset(double posX, double posY, double velX, double velY, double accX, double accY) {
         xState.reset(posX, velX, accX);
         yState.reset(posY, velY, accY);
         lastUpdateTime = System.currentTimeMillis();
@@ -190,6 +193,10 @@ public class KalmanFilter {
 
     public double getPosY() {
         return yState.position;
+    }
+
+    public Translation2d getTranslation2d(){
+        return new Translation2d(xState.position, yState.position);
     }
 
     public void debugDisplayValues(){
