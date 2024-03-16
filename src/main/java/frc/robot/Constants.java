@@ -183,13 +183,13 @@ public class Constants {
         public static double driveKA = 0.27;
 
         /* Swerve Profiling Values */
-        public static double preciseControlFactor = 0.4;
+        public static double preciseControlFactor = 0.25;
         /** Meters per Second */
-        public static double maxSpeed = 4.5; //TODO: testing speed, normal: 4.5
+        public static double maxSpeed = 5; //TODO: testing speed, normal: 4.5
         /** Multiplier */
         public static double speedMultiplier = 1.0; //TODO: testing speed, normal 1.0
         /** Radians per Second */
-        public static double maxAngularVelocity = maxSpeed / 1.5; // THIS IS THE MAX SPIN SPEED ROBOT, tested 2.1, feels sluggish
+        public static double maxAngularVelocity = maxSpeed / 1.6; // THIS IS THE MAX SPIN SPEED ROBOT, tested 2.1, feels sluggish
 
         /* Modifier for rotating to desired angle pose speed */
         public static double angleKP = (10.46 * Math.exp(1.05 * speedMultiplier)); // I don't think this is right, take from SYSID instead
