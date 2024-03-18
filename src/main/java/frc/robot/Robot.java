@@ -13,6 +13,7 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 
 import frc.robot.commands.DumbCommands.IntakeCommand;
+import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.utility.StateMachine;
 import frc.robot.utility.TelemetrySubsystem;
 import frc.robot.utility.TelemetryUpdater;
@@ -37,7 +38,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     // Robot Preferences
-
 
     TelemetrySubsystem telemetrySubsystem = new TelemetrySubsystem();
     telemetrySubsystem.start();
@@ -89,7 +89,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     File selectedAuton = UIManager.selectedAuton();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand(selectedAuton);
-    SignalLogger.start();
+    if(Constants.loggingEnabled) SignalLogger.start();
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -101,8 +101,13 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {}
 
   @Override
+  public void autonomousExit() {
+    SwerveSubsystem.getInstance().crossModules();
+  }
+
+  @Override
   public void teleopInit() {
-    SignalLogger.start();
+    if(Constants.loggingEnabled) SignalLogger.start();
 
     //TelemetryUpdater.setTelemetryValue("Current Action", "Standard teleop");
     // This makes sure that the autonomous stops running when
@@ -121,7 +126,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testInit() {
-    SignalLogger.start();
+    if(Constants.loggingEnabled) SignalLogger.start();
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
   }

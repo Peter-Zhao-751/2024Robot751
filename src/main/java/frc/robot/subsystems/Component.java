@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 public interface Component {
-
     /**
      * Get the current draw of the component
      * used to allocate current

@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import static edu.wpi.first.units.Units.Volts;
 
 public class IntakeSubsystem extends SubsystemBase implements Component {
+    private static IntakeSubsystem instance;
 
     private final CANSparkMax leftSwivelMotor;
     private final CANSparkMax rightSwivelMotor;
@@ -52,8 +53,13 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     private boolean isSwivelEnabled;
 
     private final SysIdRoutine routine;
+
+    public static IntakeSubsystem getInstance(){
+        if (instance == null) instance = new IntakeSubsystem();
+        return instance;
+    }
     
-    public IntakeSubsystem(){
+    private IntakeSubsystem(){
         leftSwivelMotor = new CANSparkMax(Constants.Intake.leftSwivelMotorID, MotorType.kBrushless);
         rightSwivelMotor = new CANSparkMax(Constants.Intake.rightSwivelMotorID, MotorType.kBrushless);
         intakeMotor = new TalonFX(Constants.Intake.intakeMotorID);

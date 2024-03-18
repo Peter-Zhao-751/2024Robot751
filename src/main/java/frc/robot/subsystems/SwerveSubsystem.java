@@ -38,24 +38,24 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SwerveSubsystem extends SubsystemBase implements Component {
     public static final CTREConfigs ctreConfigs = new CTREConfigs();
+    private static SwerveSubsystem instance;
+    // forgive me father for I have sinned
+    private static GenericEntry resetX, resetY, setButtonEntry;
     public final StructArrayPublisher<SwerveModuleState> actualPublisher;
     public final StructArrayPublisher<SwerveModuleState> desirePublisher;
     private final Field2d m_field = new Field2d();
     private final SwerveDriveOdometry swerveOdometry;
     private final SwerveModule[] mSwerveMods;
     private final Pigeon2 gyro;
-    private final Limelight limelight;
+
 //    private final SysIdRoutine routine;
-
-    // forgive me father for I have sinned
-    private static GenericEntry resetX, resetY, setButtonEntry;
-
+    private final Limelight limelight;
     private final KalmanFilter kalmanFilter;
     private double allocatedCurrent;
 
-    public SwerveSubsystem() {
+    private SwerveSubsystem() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.CANivoreID);
-        limelight = new Limelight();
+        limelight = Limelight.getInstance();
         gyro.getConfigurator().apply(new Pigeon2Configuration());
         gyro.setYaw(0);
 
@@ -91,10 +91,15 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
 //        );
 
         kalmanFilter = new KalmanFilter(0, 0, 0, 0, 0, 0, Constants.Odometry.kPositionNoiseVar, Constants.Odometry.kVelocityNoiseVar, Constants.Odometry.kAccelerationNoiseVar, Constants.Odometry.kPositionProcessNoise, Constants.Odometry.kVelocityProcessNoise, Constants.Odometry.kAccelerationProcessNoise);
-        
+
         resetX = Shuffleboard.getTab("Initializer").add("Reset X", 0).withWidget(BuiltInWidgets.kToggleButton).getEntry();
         resetY = Shuffleboard.getTab("Initializer").add("Reset Y", 0).withWidget(BuiltInWidgets.kToggleButton).getEntry();
         setButtonEntry = Shuffleboard.getTab("Initializer").add("Set", false).withWidget(BuiltInWidgets.kToggleButton).getEntry();
+    }
+
+    public static SwerveSubsystem getInstance() {
+        if (instance == null) instance = new SwerveSubsystem();
+        return instance;
     }
 
 //    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
@@ -141,7 +146,15 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber - 1], isOpenLoop);
         }
 
-        return (xSpeed >= 0.05 && ySpeed >= 0.05 && rot >= 0.2); // TODO: tune these values
+        return (xSpeed >= 0.05 && ySpeed >= 0.05 && rot >= 0.2);
+    }
+
+    public SwerveModuleState[] getModuleStates() {
+        SwerveModuleState[] states = new SwerveModuleState[4];
+        for (SwerveModule mod : mSwerveMods) {
+            states[mod.moduleNumber - 1] = mod.getState();
+        }
+        return states;
     }
 
     /* Used by SwerveControllerCommand in Auto */
@@ -151,14 +164,6 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
         for (SwerveModule mod : mSwerveMods) {
             mod.setDesiredState(desiredStates[mod.moduleNumber - 1], false);
         }
-    }
-
-    public SwerveModuleState[] getModuleStates() {
-        SwerveModuleState[] states = new SwerveModuleState[4];
-        for (SwerveModule mod : mSwerveMods) {
-            states[mod.moduleNumber - 1] = mod.getState();
-        }
-        return states;
     }
 
     public SwerveModuleState[] getDesiredModuleStates() {
@@ -181,13 +186,13 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
         return new Pose2d(kalmanFilter.getTranslation2d(), getGyroYaw());
     }
 
-    public Pose2d getSwerveOdometryPose2d() {
-        return swerveOdometry.getPoseMeters();
-    }
-
     public void setPose(Pose2d pose) {
         kalmanFilter.reset(pose.getX(), pose.getY(), 0, 0, 0, 0);
         swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
+    }
+
+    public Pose2d getSwerveOdometryPose2d() {
+        return swerveOdometry.getPoseMeters();
     }
 
     public void setHeading(Rotation2d heading) {
@@ -271,7 +276,7 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
         rotationMatrix[2][1] = 2.0 * (quatY * quatZ + quatX * quatW);
         rotationMatrix[2][2] = 1.0 - 2.0 * (quatX * quatX + quatY * quatY);
 
-        
+
         double fieldAccelerationX = rotationMatrix[0][0] * accelerationX + rotationMatrix[0][1] * accelerationY + rotationMatrix[0][2] * accelerationZ;
         double fieldAccelerationY = rotationMatrix[1][0] * accelerationX + rotationMatrix[1][1] * accelerationY + rotationMatrix[1][2] * accelerationZ;
         double fieldAccelerationZ = rotationMatrix[2][0] * accelerationX + rotationMatrix[2][1] * accelerationY + rotationMatrix[2][2] * accelerationZ;

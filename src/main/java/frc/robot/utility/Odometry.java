@@ -6,7 +6,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
-public class Odometry extends SwerveDriveOdometry{
+public class Odometry extends SwerveDriveOdometry {
     private static class States {
         public double position;
         public double velocity;

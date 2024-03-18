@@ -10,7 +10,9 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 
 // not done yet dont kill me
-public class ClimberSubsystem extends SubsystemBase implements Component{
+public class ClimberSubsystem extends SubsystemBase implements Component {
+    private static ClimberSubsystem instance;
+
     private final CANSparkMax leftClimberMotor;
     private final CANSparkMax rightClimberMotor;
 
@@ -23,8 +25,13 @@ public class ClimberSubsystem extends SubsystemBase implements Component{
     private double rightDesiredLocation;
 
     private double allocatedCurrent;
+
+    public ClimberSubsystem getInstance(){
+        if(instance == null) instance = new ClimberSubsystem();
+        return instance;
+    }
     
-    public ClimberSubsystem(){
+    private ClimberSubsystem(){
         leftClimberMotor = new CANSparkMax(Constants.Climber.leftClimberMotorID, MotorType.kBrushless);
         rightClimberMotor = new CANSparkMax(Constants.Climber.rightClimberMotorID, MotorType.kBrushless);
 

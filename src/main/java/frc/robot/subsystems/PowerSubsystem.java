@@ -6,14 +6,20 @@ import frc.robot.Constants;
 import frc.robot.utility.TelemetryUpdater;
 
 public class PowerSubsystem extends SubsystemBase {
+    private static PowerSubsystem instance;
     private final PowerDistribution powerDistribution;
+
+    public static PowerSubsystem getInstance() {
+        if (instance == null) instance = new PowerSubsystem();
+        return instance;
+    }
 
     /**
      * Creates a new PowerSubsystem which is a wrapper for the PowerDistribution class
      * @see PowerDistribution
      * @see PowerDistribution.ModuleType
      */
-    public PowerSubsystem() {
+    private PowerSubsystem() {
         powerDistribution = new PowerDistribution(Constants.Swerve.pdhId, PowerDistribution.ModuleType.kRev);
     }
 

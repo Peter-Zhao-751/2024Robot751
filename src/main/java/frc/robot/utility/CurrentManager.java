@@ -14,14 +14,13 @@ public class CurrentManager {
     private static final ArrayList<Component> components = new ArrayList<>();
 
     private CurrentManager() {
-        throw new UnsupportedOperationException("CurrentManager class cannot be instantiated");
     }
 
     public static void addComponent(Component component) {
         components.add(component);
     }
 
-    public void allocateCurrent() {
+    public static void allocateCurrent() {
         components.sort(Comparator.comparingInt(Component::getPriority));
         double totalAvailableCurrent = maxCurrent*maxPercent;
 

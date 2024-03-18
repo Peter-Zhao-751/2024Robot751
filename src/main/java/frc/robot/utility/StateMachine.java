@@ -27,8 +27,6 @@ public class StateMachine {
     public static State state = State.Idle;
 
     private StateMachine(){
-        // This is a utility class and should not be instantiated.
-        throw new UnsupportedOperationException("This is a utility class and should not be instantiated.");
     }
 
     public static void setState(State newState) {
