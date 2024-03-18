@@ -21,6 +21,8 @@ import edu.wpi.first.math.estimator.KalmanFilter;
 
 
 public class ShooterSubsystem extends SubsystemBase implements Component {
+    private static ShooterSubsystem instance;
+
     
     private final TalonFX leftShooterMotor;
     private final TalonFX rightShooterMotor;
@@ -35,8 +37,12 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
 
     private final double allocatedCurrent;
 
+    public static ShooterSubsystem getInstance(){
+        if(instance == null) instance = new ShooterSubsystem();
+        return instance;
+    }
 
-    public ShooterSubsystem(){
+    private ShooterSubsystem(){
         leftShooterMotor = new TalonFX(Constants.Shooter.leftShooterMotorID, Constants.CANivoreID);
         leftShooterMotor.setNeutralMode(NeutralModeValue.Coast);
 

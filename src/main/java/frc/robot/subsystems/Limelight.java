@@ -11,13 +11,19 @@ import frc.robot.utility.TelemetryUpdater;
 
 
 public class Limelight {
+    private static Limelight instance;
 
     private final NetworkTableEntry hasTarget;
     private final NetworkTable table;
     private final NetworkTableEntry target;
     private final NetworkTableEntry position; //TODO: implement this https://docs.limelightvision.io/docs/docs-limelight/apis/complete-networktables-api  https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-coordinate-systems
 
-    public Limelight() {
+    public static Limelight getInstance() {
+        if (instance == null) instance = new Limelight();
+        return instance;
+    }
+
+    private Limelight() {
         table = NetworkTableInstance.getDefault().getTable("limelight");
         hasTarget = table.getEntry("tv");
         target = table.getEntry("tid");

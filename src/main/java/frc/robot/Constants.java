@@ -13,10 +13,11 @@ import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
 public class Constants {
+    public static boolean loggingEnabled = false;
 
     // Everything on the drive train is on the CANivore, so we use this ID for all CTRE configs
     public static String CANivoreID = "2003 Nissan Ultima"; // Don't ask Spencer why this is named this
-    public static double stickDeadband = 0.1;
+    public static double stickDeadband = 0.05;
     public static int teamNumber = 751;
 
     public static class Intake{
@@ -172,14 +173,14 @@ public class Constants {
         public static double angleKD = chosenModule.angleKD;
 
         /* Drive Motor PID Values */
-        public static double driveKP = 0.12; //TODO: #4 Tune Drivetrain PID Values
+        public static double driveKP = 0.12;
         public static double driveKI = 0.0;
         public static double driveKD = 0.0;
         public static double driveKF = 0.0;
 
         /* Drive Motor Characterization Values From SYSID */
-        public static double driveKS = 0.32; //TODO: #4 Tune Drivetrain PID Values
-        public static double driveKV = 1.51; //1.51
+        public static double driveKS = 0.32;
+        public static double driveKV = 1.51;
         public static double driveKA = 0.27;
 
         /* Swerve Profiling Values */

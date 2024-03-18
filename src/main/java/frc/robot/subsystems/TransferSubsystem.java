@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class TransferSubsystem extends SubsystemBase implements Component {
+    private static TransferSubsystem instance;
+
     private final CANSparkMax shooterTransfer;
     private final CANSparkMax intakeTransfer;
     private final DigitalInput beamBreak;
@@ -27,7 +29,14 @@ public class TransferSubsystem extends SubsystemBase implements Component {
 
     private double allocatedCurrent;
 
-    public TransferSubsystem() {
+    public static TransferSubsystem getInstance() {
+        if (instance == null) {
+            instance = new TransferSubsystem();
+        }
+        return instance;
+    }
+
+    private TransferSubsystem() {
         shooterTransfer = new CANSparkMax(Constants.Transfer.shooterTransferID, MotorType.kBrushless);
         intakeTransfer = new CANSparkMax(Constants.Transfer.intakeTransferID, MotorType.kBrushless);
         intakeTransfer.setInverted(true);

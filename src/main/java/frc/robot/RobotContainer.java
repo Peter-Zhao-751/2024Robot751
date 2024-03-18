@@ -4,7 +4,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-// POV import
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -15,29 +14,24 @@ import frc.robot.commands.lowLevelCommands.IntakeCommand.IntakeSwivelMode;
 import frc.robot.subsystems.*;
 import frc.robot.utility.Barn2PathInterpreter;
 import frc.robot.utility.PS5Controller;
+
 import java.util.Optional;
 
 import java.io.File;
 
 public class RobotContainer {
-
-    /* Commands */
-    
-    //private final Command Shooter;
-    //private final Command Intake;
-
     /* Controllers */
     private final PS5Controller driver = new PS5Controller(0);
-    //private final PS5Controller operator = new PS5Controller(1);
+    private final PS5Controller operator = new PS5Controller(1);
 
     /* Subsystems */
     //private final CANdle s_CANdle = new CANdle();
-    private final ShooterSubsystem s_Shooter = new ShooterSubsystem();
-    private final IntakeSubsystem s_Intake = new IntakeSubsystem();
-    //private final ClimberSubsystem s_Climber = new ClimberSubsystem();
-    private final SwerveSubsystem s_Swerve = new SwerveSubsystem();
-    private final TransferSubsystem s_Transfer = new TransferSubsystem();
-    private final PowerSubsystem s_PDH = new PowerSubsystem();
+    private final ShooterSubsystem s_Shooter = ShooterSubsystem.getInstance();
+    private final IntakeSubsystem s_Intake = IntakeSubsystem.getInstance();
+    //private final ClimberSubsystem s_Climber = ClimberSubsystem.getInstance();
+    private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
+    private final TransferSubsystem s_Transfer = TransferSubsystem.getInstance();
+    private final PowerSubsystem s_PDH = PowerSubsystem.getInstance();
 
     private final Barn2PathInterpreter u_Barn2PathInterpreter = new Barn2PathInterpreter(s_Intake, s_Transfer, s_Shooter, s_Swerve);
 
@@ -52,20 +46,20 @@ public class RobotContainer {
         //new IntakeCommand(s_Intake, s_Transfer, IntakeSwivelMode.Extend, false);
 
         s_Swerve.setDefaultCommand(
-            new TeleopCommand(
-                s_Swerve, 
-                () -> -driver.joystick.getRawAxis(PS5Controller.translationAxis),
-                () -> -driver.joystick.getRawAxis(PS5Controller.strafeAxis),
-                () -> -driver.joystick.getRawAxis(PS5Controller.rotationAxis),
-                () -> false,
-                () -> precise
-            )
+                new TeleopCommand(
+                        s_Swerve,
+                        () -> -driver.joystick.getRawAxis(PS5Controller.translationAxis),
+                        () -> -driver.joystick.getRawAxis(PS5Controller.strafeAxis),
+                        () -> -driver.joystick.getRawAxis(PS5Controller.rotationAxis),
+                        () -> false,
+                        () -> precise
+                )
         );
 
         configureButtonBindings();
-        CANdleController.setCandle(new CANdleSubsystem());
+        CANdleController.setCandle(CANdleSubsystem.getInstance());
     }
-    
+
     private void configureButtonBindings() {
         // Util Commands (Circle, Triangle, X)
         driver.circleButton.onTrue(new InstantCommand(s_Swerve::zeroHeading));
@@ -73,10 +67,12 @@ public class RobotContainer {
         Optional<Alliance> alliance = DriverStation.getAlliance();
 
         Pose2d currentPose = s_Swerve.getSwerveOdometryPose2d();
-        
+
         driver.crossButton.onTrue(new InstantCommand(() -> {
-            if (alliance.isPresent() && alliance.get() == Alliance.Blue) new MoveCommand(s_Swerve, new Pose2d(currentPose.getX() + 300, currentPose.getY(), currentPose.getRotation()));
-            else new MoveCommand(s_Swerve, new Pose2d(currentPose.getX() - 300, currentPose.getY(), currentPose.getRotation()));
+            if (alliance.isPresent() && alliance.get() == Alliance.Blue)
+                new MoveCommand(s_Swerve, new Pose2d(currentPose.getX() + 300, currentPose.getY(), currentPose.getRotation()));
+            else
+                new MoveCommand(s_Swerve, new Pose2d(currentPose.getX() - 300, currentPose.getY(), currentPose.getRotation()));
         }));
 
         //driver.crossButton.onTrue(new InstantCommand(s_Swerve::crossModules));
@@ -112,18 +108,18 @@ public class RobotContainer {
         //driver.squareButton.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.IntakePositions.INTAKE)));
         //driver.leftBumper.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.IntakePositions.RETRACTED)));
 
-    //    driver.rightBumper.onTrue(new InstantCommand(() -> {
-    //        s_Shooter.setSpeed(20);
-    //        s_Intake.setIntakeSpeed(20);
-    //        s_Transfer.setIntakeTransfer(30);
-    //        s_Transfer.setShooterTransfer(20);
-    //    }));
+        //    driver.rightBumper.onTrue(new InstantCommand(() -> {
+        //        s_Shooter.setSpeed(20);
+        //        s_Intake.setIntakeSpeed(20);
+        //        s_Transfer.setIntakeTransfer(30);
+        //        s_Transfer.setShooterTransfer(20);
+        //    }));
 
-    //    driver.rightBumper.onFalse(new InstantCommand(() ->  {
-    //        s_Shooter.setSpeed(0);
-    //        s_Intake.stopAll();
-    //        s_Transfer.stop();
-    //    }));
+        //    driver.rightBumper.onFalse(new InstantCommand(() ->  {
+        //        s_Shooter.setSpeed(0);
+        //        s_Intake.stopAll();
+        //        s_Transfer.stop();
+        //    }));
 
 //        driver.rightTrigger.whileTrue(new ShootCommand(s_Shooter, s_Transfer, s_Swerve));
 //        driver.leftTrigger.whileTrue(new IntakeCommand(s_Intake, s_Transfer));
@@ -137,10 +133,14 @@ public class RobotContainer {
         return new AutonCommand(s_Swerve);
     }
 
-    public Command getAutonomousCommand(File path){
-        if (path != null){
-            try { return new AutonCommand(s_Swerve, u_Barn2PathInterpreter.getAutonCommands(path));}
-            catch (Exception e) { System.err.println("Error: " + e); System.err.println("something stupid happened, probably petek's fault");}
+    public Command getAutonomousCommand(File path) {
+        if (path != null) {
+            try {
+                return new AutonCommand(s_Swerve, u_Barn2PathInterpreter.getAutonCommands(path));
+            } catch (Exception e) {
+                System.err.println("Error: " + e);
+                System.err.println("something stupid happened, probably petek's fault");
+            }
         }
         System.err.println("No path file found");
         return new AutonCommand(s_Swerve);
