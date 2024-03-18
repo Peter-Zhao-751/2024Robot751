@@ -6,4 +6,4 @@ most epic branch
 
 **For robot name:** *Fruit Loops*
 
-**Contributors:** **Peter Zhao**, Owen Gregson, Alex Petry
+**Contributors:** **Peter Zhao**, Alex Petry and Owen Gregson
