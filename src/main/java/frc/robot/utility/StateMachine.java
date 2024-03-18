@@ -1,10 +1,7 @@
 package frc.robot.utility;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.AimBot;
-import frc.robot.commands.lowLevelCommands.CANdleController;
+import frc.robot.commands.CANdleController;
 import frc.robot.subsystems.CANdleSubsystem;
-import frc.robot.subsystems.CANdleSubsystem.AnimationTypes;
 
 public class StateMachine {
 
@@ -18,10 +15,10 @@ public class StateMachine {
         Disabled("Disabled", CANdleSubsystem.AnimationTypes.Disabled),
         Climb("Climb", CANdleSubsystem.AnimationTypes.Climb);
 
-        public String stateName;
-        public CANdleSubsystem.AnimationTypes animation;
+        public final String stateName;
+        public final CANdleSubsystem.AnimationTypes animation;
 
-        private State(String stateName, CANdleSubsystem.AnimationTypes animation) {
+        State(String stateName, CANdleSubsystem.AnimationTypes animation) {
             this.stateName = stateName;
             this.animation = animation;
         }
@@ -30,8 +27,6 @@ public class StateMachine {
     public static State state = State.Idle;
 
     private StateMachine(){
-        // This is a utility class and should not be instantiated.
-        throw new UnsupportedOperationException("This is a utility class and should not be instantiated.");
     }
 
     public static void setState(State newState) {
@@ -43,9 +38,11 @@ public class StateMachine {
     }
 
     public static void update() {
-
-        SmartDashboard.putString("Robot State", state.stateName);
         CANdleController.changeAnimation(state.animation);
+    }
+
+    public static void periodic() {
+        TelemetryUpdater.setTelemetryValue("Robot State", state.stateName);
     }
 
     public static boolean isPerformingAction(){

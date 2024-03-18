@@ -4,33 +4,30 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.io.File;
 import java.io.FileReader;
-import java.util.Iterator; 
+import java.util.Iterator;
 
-import frc.robot.commands.lowLevelCommands.Intake;
-import frc.robot.commands.lowLevelCommands.Shoot;
-import frc.robot.commands.lowLevelCommands.Intake.IntakeSwivelMode;
+import frc.robot.commands.lowLevelCommands.IntakeCommand;
+import frc.robot.commands.lowLevelCommands.ShootCommand;
+import frc.robot.commands.lowLevelCommands.IntakeCommand.IntakeSwivelMode;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.TransferSubsystem;
-import frc.robot.commands.Move;
+import frc.robot.commands.MoveCommand;
 
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import org.json.simple.JSONArray; 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-public class JsonParser {
+public class Barn2PathInterpreter {
     private static IntakeSubsystem intakeSubsystem;
     private static TransferSubsystem transferSubsystem;
     private static ShooterSubsystem shooterSubsystem;
@@ -38,21 +35,21 @@ public class JsonParser {
     private static JSONObject jsonObject;
     private static JSONArray jsonArray;
 
-    public static void JsonParser(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, ShooterSubsystem shooterSubsystem, SwerveSubsystem swerveSubsystem){
-        JsonParser.intakeSubsystem = intakeSubsystem;
-        JsonParser.transferSubsystem = transferSubsystem;
-        JsonParser.shooterSubsystem = shooterSubsystem;
-        JsonParser.swerveSubsystem = swerveSubsystem;
+    public Barn2PathInterpreter(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, ShooterSubsystem shooterSubsystem, SwerveSubsystem swerveSubsystem){
+        Barn2PathInterpreter.intakeSubsystem = intakeSubsystem;
+        Barn2PathInterpreter.transferSubsystem = transferSubsystem;
+        Barn2PathInterpreter.shooterSubsystem = shooterSubsystem;
+        Barn2PathInterpreter.swerveSubsystem = swerveSubsystem;
 
         jsonObject = null;
         jsonArray = null; 
     }
 
-    public static ArrayList<Command> getAutonCommands(File pathFile) throws Exception{
+    public ArrayList<Command> getAutonCommands(File pathFile) throws Exception{
 
         String encryptedData = new String(java.nio.file.Files.readAllBytes(pathFile.toPath()));
 
-        String decryptedData = fullDecrypt(encryptedData);
+        String decryptedData = encryptedData;//fullDecrypt(encryptedData);
 
         jsonObject = (JSONObject) new JSONParser().parse(decryptedData); 
 
@@ -60,43 +57,40 @@ public class JsonParser {
 
         ArrayList<Command> autonCommands = new ArrayList<>();
 
-        Iterator<JSONObject> iterator = jsonArray.iterator(); 
+        Iterator<JSONObject> iterator = jsonArray.iterator();
 
-        JSONObject point = null;
+        JSONObject point;
+
+        System.out.println(jsonArray.toString());
 
         while (iterator.hasNext()) {
-            if (point == null){
-                point = iterator.next();
-            }
-            
-            if (getEvent(point).equals("") || getEvent(point).equals("start")){
-                Pose2d newLocation = null;
-                
-                ArrayList<Translation2d> interiorPoints = new ArrayList<Translation2d>();
+            point = iterator.next();
+
+            if (getEvent(point).isEmpty() || getEvent(point).equals("start")){
+                ArrayList<Translation2d> interiorPoints = new ArrayList<>();
                 while (iterator.hasNext()){
                     JSONObject interiorPoint = iterator.next();
-                    if (getEvent(interiorPoint).equals("")){
+                    if (getEvent(interiorPoint).isEmpty()){
                         interiorPoints.add(getInteriorPoint(interiorPoint));
                     }else{
-                        newLocation = getMainPoint(interiorPoint);
                         point = interiorPoint;
                         break;
                     }
                 }
 
-                Move newMovementCommand = new Move(swerveSubsystem, newLocation, interiorPoints);
+                MoveCommand newMovementCommand = new MoveCommand(swerveSubsystem, getMainPoint(point), interiorPoints);
 
                 double delay = newMovementCommand.getETA();
 
-                switch (getEvent(point)){
-                    case "Shoot": 
+                switch (getEvent(point).toLowerCase()){
+                    case "shoot":
                         //double primeDelay = (delay-Constants.Shooter.spinUpTime) > 0 ? (delay-Constants.Shooter.spinUpTime) : 0;
                         //ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new InstantCommand()));
-                        autonCommands.add(new SequentialCommandGroup(newMovementCommand, new Shoot(shooterSubsystem, transferSubsystem, 200, true)));
+                        autonCommands.add(new SequentialCommandGroup(newMovementCommand, new ShootCommand(shooterSubsystem, transferSubsystem, 200, true)));
                         break;
-                    case "Pickup":
+                    case "intake":
                         double intakeDelay = (delay-5) > 0 ? (delay-5) : 0;
-                        ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new Intake(intakeSubsystem, transferSubsystem, IntakeSwivelMode.Extend, true)));
+                        ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new IntakeCommand(intakeSubsystem, transferSubsystem, IntakeSwivelMode.Extend, true)));
                         autonCommands.add(moveAndIntake);
                         break;
                     default:
@@ -104,9 +98,7 @@ public class JsonParser {
                         break;
                 }
             }
-            if (iterator.hasNext()) point = iterator.next();
         }
-        System.out.println(autonCommands);
         return autonCommands;
     }
 
@@ -121,6 +113,7 @@ public class JsonParser {
     }
 
     private static String base64Decode(String str) {
+        System.err.println(str);
         byte[] decodedBytes = Base64.getDecoder().decode(str);
         return new String(decodedBytes);
     }
@@ -138,7 +131,9 @@ public class JsonParser {
 
     public static String getAutonPreview(File pathFile){
         if (pathFile != null){
-            try { 
+            try {
+                // pretty sure this doesnt work
+                String data = new String(java.nio.file.Files.readAllBytes(pathFile.toPath()));
                 jsonObject = (JSONObject) new JSONParser().parse(new FileReader(pathFile)); 
                 return (String) jsonObject.get("preview");
             }     

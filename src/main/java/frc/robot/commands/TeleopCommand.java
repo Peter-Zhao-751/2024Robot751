@@ -12,15 +12,15 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 
 
-public class Teleop extends Command {    
-    private SwerveSubsystem s_Swerve;    
-    private DoubleSupplier translationSup;
-    private DoubleSupplier strafeSup;
-    private DoubleSupplier rotationSup;
-    private BooleanSupplier robotCentricSup;
-    private BooleanSupplier preciseControl;
+public class TeleopCommand extends Command {
+    private final SwerveSubsystem s_Swerve;
+    private final DoubleSupplier translationSup;
+    private final DoubleSupplier strafeSup;
+    private final DoubleSupplier rotationSup;
+    private final BooleanSupplier robotCentricSup;
+    private final BooleanSupplier preciseControl;
 
-    public Teleop(SwerveSubsystem s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier preciseControl) {
+    public TeleopCommand(SwerveSubsystem s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier preciseControl) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
 
@@ -34,12 +34,15 @@ public class Teleop extends Command {
     @Override
     public void execute() {
         /* Get Values, Deadband*/
-        double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.stickDeadband);
-        double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband);
+        double translationVal = translationSup.getAsDouble();
+        double strafeVal = strafeSup.getAsDouble();
         double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband);
 
+        if (Math.hypot(translationVal, strafeVal) < Constants.stickDeadband) {
+            translationVal = strafeVal = 0;
+        }
+
         /* Drive */
-        
         boolean isDriving = s_Swerve.drive(
             new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed), 
             rotationVal * Constants.Swerve.maxAngularVelocity, 

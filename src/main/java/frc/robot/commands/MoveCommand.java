@@ -12,11 +12,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
-public class Move extends Command {
+public class MoveCommand extends Command {
     private final SwerveSubsystem s_Swerve;
     private final Pose2d desiredLocation;
     private final List<Translation2d> interiorWaypoints;
@@ -24,7 +23,7 @@ public class Move extends Command {
     private Trajectory movementTrajectory;
     private SwerveControllerCommand swerveControllerCommand;
 
-    public Move(SwerveSubsystem s_Swerve, Pose2d desiredLocation, List<Translation2d> interiorWaypoints) {
+    public MoveCommand(SwerveSubsystem s_Swerve, Pose2d desiredLocation, List<Translation2d> interiorWaypoints) {
         this.s_Swerve = s_Swerve;
         this.desiredLocation = desiredLocation;
         this.interiorWaypoints = interiorWaypoints;
@@ -32,12 +31,12 @@ public class Move extends Command {
         addRequirements(s_Swerve);
     }
 
-    public Move(SwerveSubsystem s_Swerve, Pose2d desiredLocation) {
+    public MoveCommand(SwerveSubsystem s_Swerve, Pose2d desiredLocation) {
         this(s_Swerve, desiredLocation, List.of());
         addRequirements(s_Swerve);
     }
 
-    public Move(SwerveSubsystem s_Swerve, Trajectory trajectory) {
+    public MoveCommand(SwerveSubsystem s_Swerve, Trajectory trajectory) {
         this.s_Swerve = s_Swerve;
         this.desiredLocation = trajectory.getStates().get(trajectory.getStates().size() - 1).poseMeters;
         this.interiorWaypoints = null;
@@ -48,7 +47,7 @@ public class Move extends Command {
 
     @Override
     public void initialize() {
-        Pose2d currentRobotPosition = s_Swerve.getPose();
+        Pose2d currentRobotPosition = s_Swerve.getSwerveOdometryPose2d(); // do something
 
         if (Math.abs(desiredLocation.getX() - currentRobotPosition.getX()) < 0.1 && Math.abs(desiredLocation.getY() - currentRobotPosition.getY()) < 0.1) return;
         
@@ -71,11 +70,11 @@ public class Move extends Command {
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         ETA = movementTrajectory.getTotalTimeSeconds();
-        SmartDashboard.putNumber("Auton Current Trajectory Estimated ETA", ETA);
+        //TelemetryUpdater.setTelemetryValue("Auton Current Trajectory Estimated ETA", ETA);
 
         swerveControllerCommand = new SwerveControllerCommand(
                 movementTrajectory,
-                s_Swerve::getPose,
+                s_Swerve::getSwerveOdometryPose2d,
                 Constants.Swerve.swerveKinematics,
                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),

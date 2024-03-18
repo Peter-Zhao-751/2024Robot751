@@ -1,11 +1,11 @@
 package frc.robot.commands.lowLevelCommands;
-
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.TransferSubsystem;
+import frc.robot.utility.TelemetryUpdater;
 
-public class Transfer extends Command {
+public class TransferCommand extends Command {
 
     public enum TransferMode {
         Intake,
@@ -13,21 +13,18 @@ public class Transfer extends Command {
         Shoot;
     }
 
-    private TransferSubsystem transferSubsystem;
-    Debouncer beamDebouncer;
+    private final TransferSubsystem transferSubsystem;
     private double speed;
     private long startTime;
-    private TransferMode transferMode;
+    private final TransferMode transferMode;
     private boolean smartMode;
-    private boolean isBeamBroken;
 
-    public Transfer(double speed, TransferSubsystem transferSubsystem, TransferMode transferMode, boolean smartMode) {
-        this.beamDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
-        this.speed = (transferMode == TransferMode.Outtake) ? - speed : speed;
+    public TransferCommand(double speed, TransferSubsystem transferSubsystem, TransferMode transferMode, boolean smartMode) {
+        this.speed = (TransferMode.Intake == transferMode) ? speed : -speed;
+
         this.transferSubsystem = transferSubsystem;
         this.transferMode = transferMode;
         this.smartMode = smartMode;
-        this.isBeamBroken = false;
 
         addRequirements(transferSubsystem);
     }
@@ -36,11 +33,12 @@ public class Transfer extends Command {
     public void initialize() {
         startTime = System.currentTimeMillis();
         transferSubsystem.setIntakeTransfer(speed);
+        transferSubsystem.setShooterTransfer(speed);
     }
 
     @Override
     public void execute() {
-        isBeamBroken = beamDebouncer.calculate(transferSubsystem.beamBroken());
+        
     }
 
     @Override
@@ -50,15 +48,21 @@ public class Transfer extends Command {
 
     @Override
     public boolean isFinished() {
+        // TODO: this part is shit 
+        //return false;
+        double timeDelta = System.currentTimeMillis() - startTime;
+        boolean overMinTime = timeDelta > Constants.Transfer.minTransferTime * 1000;
+        boolean overMaxTime = timeDelta > Constants.Transfer.maxTransferTime * 1000;
+        boolean smartBeamBreak = transferSubsystem.beamBroken() && overMinTime;
         if (transferMode == TransferMode.Intake) {
             if (smartMode) {
-                return isBeamBroken || (System.currentTimeMillis() - startTime) > Constants.Transfer.maxTransferTime;
+                return smartBeamBreak || overMaxTime;
             } else {
-                return isBeamBroken;
+                return smartBeamBreak;
             }
         } else {
             if (smartMode) {
-                return !isBeamBroken || (System.currentTimeMillis() - startTime) > Constants.Transfer.maxTransferTime;
+                return (!transferSubsystem.beamBroken() && overMinTime) || overMaxTime;
             } else {
                 return false;
             }

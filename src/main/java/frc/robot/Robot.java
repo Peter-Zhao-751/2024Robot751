@@ -5,7 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -13,7 +12,12 @@ import java.io.File;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 
-import frc.robot.utility.UISubsystem;
+import frc.robot.commands.DumbCommands.IntakeCommand;
+import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.utility.StateMachine;
+import frc.robot.utility.TelemetrySubsystem;
+import frc.robot.utility.TelemetryUpdater;
+import frc.robot.utility.UIManager;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -22,16 +26,6 @@ import frc.robot.utility.UISubsystem;
  * project.
  */
 public class Robot extends TimedRobot {
-  public static final CTREConfigs ctreConfigs = new CTREConfigs();
-
-  private static enum RobotModes {
-    Disabled,
-    Autonomous,
-    Teleop,
-    Test
-  }
-
-  private static RobotModes currentMode = RobotModes.Disabled;
 
   private Command m_autonomousCommand;
 
@@ -45,15 +39,18 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Robot Preferences
 
+    TelemetrySubsystem telemetrySubsystem = new TelemetrySubsystem();
+    telemetrySubsystem.start();
+
     // Go through every constant in Constants.java check if the Preference exists.
     // add it if it doesn't. if it does, overwrite it.
-    UISubsystem.updatePreferencesBasedOnConstants(Constants.class, false);
-
+    //UISubsystem.updatePreferencesBasedOnConstants(Constants.class, false);
+    //UIManager.updatePreferencesBasedOnConstants(Constants.class, true);
     // robot container
     m_robotContainer = new RobotContainer();
 
     SignalLogger.setPath("/media/sda1/");
-    UISubsystem.initializeUI(currentMode);
+    UIManager.initializeUI();
   }
 
   /**
@@ -72,15 +69,15 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     
     // updating ui
-    UISubsystem.updateTelemetry();
-    UISubsystem.updatePathPreview();
+    //UISubsystem.updateTelemetry();
+    UIManager.updatePathPreview();
+    StateMachine.periodic();
     CommandScheduler.getInstance().run();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    currentMode = RobotModes.Disabled;
     SignalLogger.stop();
   }
 
@@ -90,10 +87,9 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    currentMode = RobotModes.Autonomous;
-    File selectedAuton = UISubsystem.selectedAuton();
+    File selectedAuton = UIManager.selectedAuton();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand(selectedAuton);
-    SignalLogger.start();
+    if(Constants.loggingEnabled) SignalLogger.start();
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -105,11 +101,15 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {}
 
   @Override
-  public void teleopInit() {
-    SignalLogger.start();
+  public void autonomousExit() {
+    SwerveSubsystem.getInstance().crossModules();
+  }
 
-    currentMode = RobotModes.Teleop;
-    SmartDashboard.putString("Current Action", "Standard teleop");
+  @Override
+  public void teleopInit() {
+    if(Constants.loggingEnabled) SignalLogger.start();
+
+    //TelemetryUpdater.setTelemetryValue("Current Action", "Standard teleop");
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -122,12 +122,11 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putString("CAN Bus Utilization", CANBus.getStatus(Constants.CANivoreID).BusUtilization * 100 + "%");
   }
 
   @Override
   public void testInit() {
-    SignalLogger.start();
+    if(Constants.loggingEnabled) SignalLogger.start();
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
   }

@@ -6,18 +6,18 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
-public class Odometry extends SwerveDriveOdometry{
-    private class states {
+public class Odometry extends SwerveDriveOdometry {
+    private static class States {
         public double position;
         public double velocity;
         public double acceleration;
     
-        public states(double p, double v, double a) { 
+        public States(double p, double v, double a) {
           this.position = p;
           this.velocity = v;
           this.acceleration = a;
         }
-        public states(double p){
+        public States(double p){
             this(p, 0, 0);
         }
         public double getPosition() {
@@ -36,10 +36,10 @@ public class Odometry extends SwerveDriveOdometry{
     }
 
     private static final double maxLimeTimeout = 0.5;
-    private states robotX;
-    private states robotY;
-    private states limelightX;
-    private states limelightY;
+    private final States robotX;
+    private final States robotY;
+    private final States limelightX;
+    private final States limelightY;
 
     private double previousTime = System.currentTimeMillis();
 
@@ -48,11 +48,11 @@ public class Odometry extends SwerveDriveOdometry{
 
     public Odometry(Pose2d limelightPosition, SwerveDriveKinematics kinematics, Rotation2d angle, SwerveModulePosition[] modulePositions){
         super(kinematics, angle, modulePositions, limelightPosition);
-        robotX = new states(limelightPosition.getX(), 0, 0);
-        robotY = new states(limelightPosition.getY(), 0, 0);
+        robotX = new States(limelightPosition.getX(), 0, 0);
+        robotY = new States(limelightPosition.getY(), 0, 0);
 
-        limelightX = new states(limelightPosition.getX());
-        limelightY = new states(limelightPosition.getY());
+        limelightX = new States(limelightPosition.getX());
+        limelightY = new States(limelightPosition.getY());
     }
 
     public Odometry(SwerveDriveKinematics kinematics, Rotation2d angle, SwerveModulePosition[] modulePositions){
@@ -84,7 +84,7 @@ public class Odometry extends SwerveDriveOdometry{
         return predictedDisplacement * (1-bias) + bias * sensorDisplacement;
     }
 
-    private void updateLerp(states state, double sensorPosition, double deltaTime){
+    private void updateLerp(States state, double sensorPosition, double deltaTime){
         double newPosition = linearInterpolation(state.position, state.velocity, state.acceleration, sensorPosition, 0.5, deltaTime);
         double newVelocity = (newPosition - state.position) / deltaTime;
         state.acceleration = (newVelocity - state.velocity) / deltaTime;

@@ -1,13 +1,15 @@
 package frc.robot.utility;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 public class KalmanFilter {
-    private State xState;
-    private State yState;
-    private MeasurementNoise noise;
-    private ProcessNoise processNoise;
+    private final State xState;
+    private final State yState;
+    private final MeasurementNoise noise;
+    private final ProcessNoise processNoise;
     private double lastUpdateTime;
     
 
@@ -83,7 +85,7 @@ public class KalmanFilter {
         }
     }
 
-    private class MeasurementNoise {
+    private static class MeasurementNoise {
         public double R_position;
         public double R_velocity;
         public double R_acceleration;
@@ -95,7 +97,7 @@ public class KalmanFilter {
         }
     }
 
-    private class ProcessNoise{
+    private static class ProcessNoise{
         public double positionProcessNoise;
         public double velocityProcessNoise;
         public double accelerationProcessNoise;
@@ -121,6 +123,8 @@ public class KalmanFilter {
         return currentR; // adjustedR
     }
 
+    // TODO: checking values and notify driver when its crazy
+
     public void setMeasurementNoise(double positionNoiseVar, double velocityNoiseVar, double accelerationNoiseVar) {
         noise.R_position = positionNoiseVar;
         noise.R_velocity = velocityNoiseVar;
@@ -133,7 +137,7 @@ public class KalmanFilter {
         processNoise.accelerationProcessNoise = processNoiseAcceleration;
     }
 
-    private void reset(double posX, double posY, double velX, double velY, double accX, double accY) {
+    public void reset(double posX, double posY, double velX, double velY, double accX, double accY) {
         xState.reset(posX, velX, accX);
         yState.reset(posY, velY, accY);
         lastUpdateTime = System.currentTimeMillis();
@@ -149,9 +153,11 @@ public class KalmanFilter {
         return deltaTime;
     }
 
-    private void updateVelocityAndAcceleration(double sensorVelX, double sensorVelY, double sensorAccX, double sensorAccY){
+    private void updateVelocity(double sensorVelX, double sensorVelY){
         xState.updateVelocity(sensorVelX, noise.R_velocity);
         yState.updateVelocity(sensorVelY, noise.R_velocity);
+    }
+    private void updateAcceleration(double sensorAccX, double sensorAccY){
         xState.updateAcceleration(sensorAccX, noise.R_acceleration);
         yState.updateAcceleration(sensorAccY, noise.R_acceleration);
     }
@@ -163,12 +169,24 @@ public class KalmanFilter {
         }
         xState.updatePosition(sensorPosX, noise.R_position);
         yState.updatePosition(sensorPosY, noise.R_position);
-        updateVelocityAndAcceleration(sensorVelX, sensorVelY, sensorAccX, sensorAccY);
+        updateVelocity(sensorVelX, sensorVelY);
+        updateAcceleration(sensorAccX, sensorAccY);
     }
 
     public void update(double sensorVelX, double sensorVelY, double sensorAccX, double sensorAccY) {
         predictAndUpdateTime();
-        updateVelocityAndAcceleration(sensorVelX, sensorVelY, sensorAccX, sensorAccY);
+        updateVelocity(sensorVelX, sensorVelY);
+        updateAcceleration(sensorAccX, sensorAccY);
+    }
+
+    public void update(double sensorVelX, double sensorVelY) {
+        predictAndUpdateTime();
+        updateVelocity(sensorVelX, sensorVelY);
+    }
+    
+    public void updateNewAcceleration(double sensorAccX, double sensorAccY) {
+        predictAndUpdateTime();
+        updateAcceleration(sensorAccX, sensorAccY);
     }
 
     public double getPosX() {
@@ -179,12 +197,16 @@ public class KalmanFilter {
         return yState.position;
     }
 
-    public void debugDisplayValues(){
-        SmartDashboard.putNumber("Kalman X Position", xState.position);
-        SmartDashboard.putNumber("Kalman Y Position", yState.position);
+    public Translation2d getTranslation2d(){
+        return new Translation2d(xState.position, yState.position);
+    }
 
-        SmartDashboard.putNumber("Kalman Measurement Noise R Position", noise.R_position);
-        SmartDashboard.putNumber("Kalman Measurement Noise R Velocity", noise.R_velocity);
-        SmartDashboard.putNumber("Kalman Measurement Noise R Acceleration", noise.R_acceleration);
+    public void debugDisplayValues(){
+        TelemetryUpdater.setTelemetryValue("Kalman X Position", xState.position);
+        TelemetryUpdater.setTelemetryValue("Kalman Y Position", yState.position);
+
+        // TelemetryUpdater.setTelemetryValue("Kalman Measurement Noise R Position", noise.R_position);
+        // TelemetryUpdater.setTelemetryValue("Kalman Measurement Noise R Velocity", noise.R_velocity);
+        // TelemetryUpdater.setTelemetryValue("Kalman Measurement Noise R Acceleration", noise.R_acceleration);
     }
 }
