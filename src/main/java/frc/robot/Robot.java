@@ -12,7 +12,6 @@ import java.io.File;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 
-import frc.robot.commands.DumbCommands.IntakeCommand;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.utility.StateMachine;
 import frc.robot.utility.TelemetrySubsystem;
