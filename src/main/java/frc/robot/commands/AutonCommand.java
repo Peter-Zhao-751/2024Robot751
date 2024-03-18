@@ -10,12 +10,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class AutonCommand extends SequentialCommandGroup {
     
     public AutonCommand(SwerveSubsystem s_Swerve){
+        s_Swerve.setPose(new Pose2d(0, 0, new Rotation2d(0)));
         //simple auton
         MoveCommand moveToLocation = new MoveCommand(s_Swerve, new Pose2d(7, 0, new Rotation2d(0)));
         
         //MoveCommand moveToLocation2 = new MoveCommand(s_Swerve, new Pose2d(1, 0, new Rotation2d(0)));
         addCommands(moveToLocation);
     }
+    
     public AutonCommand(SwerveSubsystem s_Swerve, ArrayList<Command> path){
         // actual auton
         for (Command segment : path){

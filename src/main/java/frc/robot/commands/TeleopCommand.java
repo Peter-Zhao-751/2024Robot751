@@ -7,9 +7,13 @@ import frc.robot.utility.StateMachine;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+
 
 
 public class TeleopCommand extends Command {
@@ -29,6 +33,10 @@ public class TeleopCommand extends Command {
         this.rotationSup = rotationSup;
         this.robotCentricSup = robotCentricSup;
         this.preciseControl = preciseControl;
+    }
+    @Override
+    public void initialize() {
+        s_Swerve.setPose(new Pose2d(0, 0, new Rotation2d(0)));
     }
 
     @Override
