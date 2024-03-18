@@ -72,22 +72,10 @@ public class PS5Controller {
         public final Trigger right;
         private DirectionPad(Joystick joystick) {
             this.joystick = joystick;
-            up = new Trigger(this::isUp);
-            down = new Trigger(this::isDown);
-            left = new Trigger(this::isLeft);
-            right = new Trigger(this::isRight);
-        }
-        private boolean isUp() {
-            return withinCorrection(joystick.getPOV(), 0);
-        }
-        private boolean isDown() {
-            return withinCorrection(joystick.getPOV(), 180);
-        }
-        private boolean isLeft() {
-            return withinCorrection(joystick.getPOV(), 270);
-        }
-        private boolean isRight() {
-            return withinCorrection(joystick.getPOV(), 90);
+            up = new Trigger(() -> withinCorrection(joystick.getPOV(), 0));
+            down = new Trigger(() -> withinCorrection(joystick.getPOV(), 180));
+            left = new Trigger(() -> withinCorrection(joystick.getPOV(), 270));
+            right = new Trigger(() -> withinCorrection(joystick.getPOV(), 90));
         }
 
         private static boolean withinCorrection(int currentDirection, int desiredDirection) {

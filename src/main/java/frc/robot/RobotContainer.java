@@ -139,7 +139,6 @@ public class RobotContainer {
                 return new AutonCommand(s_Swerve, u_Barn2PathInterpreter.getAutonCommands(path));
             } catch (Exception e) {
                 System.err.println("Error: " + e);
-                System.err.println("something stupid happened, probably petek's fault");
             }
         }
         System.err.println("No path file found");
