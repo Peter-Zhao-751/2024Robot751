@@ -62,13 +62,13 @@ public class ControlBoard {
 
         driver.dPad.up.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
         driver.dPad.right.onTrue(new InstantCommand(() -> currentMode = Mode.Amp));
-        //driver.dPad.left.onTrue(new InstantCommand(() -> precise = !precise));
+        driver.dPad.left.whileTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.kRetractedAngle)));
         driver.dPad.down.whileTrue(new TransferCommand());
 
         driver.triangleButton.whileTrue(new RunCommand(s_Swerve::resetModulesToAbsolute));
-        //        driver.squareButton.whileTrue(new InstantCommand(/*Reset Odometry*/));
+//        driver.squareButton.whileTrue(new InstantCommand(/*TODO Reset Odometry*/));
         driver.circleButton.whileTrue(new InstantCommand(s_Swerve::zeroHeading));
-//        driver.crossButton.whileTrue(new InstantCommand(/*Disable LEDs*/));
+//        driver.crossButton.whileTrue(new InstantCommand(/*TODO Disable LEDs*/));
 
         driver.leftTriggerButton.onTrue(new InstantCommand(this::togglePrecise));
         driver.rightTriggerButton.whileTrue(new RunCommand(s_Swerve::crossWheels));
@@ -78,7 +78,7 @@ public class ControlBoard {
         operator.leftTrigger.and(this::notClimberMode).whileTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
         operator.leftTrigger.and(this::climberMode).whileTrue(new InstantCommand(() -> s_Climber.setLeftClimberMotor(-Constants.Climber.climberSpeed)));
 
-        operator.leftBumper.and(this::notClimberMode).whileTrue(new InstantCommand(/*FLASH LEDs FOR HUMAN PLAYER*/));
+        operator.leftBumper.and(this::notClimberMode).whileTrue(new InstantCommand(/* TODO FLASH LEDs FOR HUMAN PLAYER*/));
         operator.leftBumper.and(this::climberMode).whileTrue(new InstantCommand(() -> s_Climber.setLeftClimberMotor(Constants.Climber.climberSpeed)));
 
         operator.rightTrigger.and(this::notClimberMode).whileTrue(new InstantCommand(() -> currentMode = Mode.Amp));
@@ -94,7 +94,7 @@ public class ControlBoard {
 
         operator.triangleButton.toggleOnTrue(new StartEndCommand(() -> currentMode = Mode.Climb, () -> currentMode = Mode.Speaker));
 
-        // operator.squareButton // TBD
+        // operator.squareButton // TODO TBD
         operator.circleButton.whileTrue(new InstantCommand(this::togglePrecise));
         operator.crossButton.whileTrue(new InstantCommand(s_Swerve::crossWheels));
     }
