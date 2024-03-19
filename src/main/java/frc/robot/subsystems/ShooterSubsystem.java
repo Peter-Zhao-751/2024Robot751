@@ -74,8 +74,6 @@ public class ShooterSubsystem extends SubsystemBase{
         targetSpeed = 0;
 
         motionMagicVelocityVoltage = new MotionMagicVelocityVoltage(0);
-
-        allocatedCurrent = 0;
     }
 
     /**
