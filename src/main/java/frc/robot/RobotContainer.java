@@ -23,7 +23,7 @@ public class RobotContainer {
 
     /* The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        CANdleController.setCandle(CANdleSubsystem.getInstance());
+        //CANdleController.setCandle(CANdleSubsystem.getInstance());
         ControlBoard.getInstance();
     }
 
