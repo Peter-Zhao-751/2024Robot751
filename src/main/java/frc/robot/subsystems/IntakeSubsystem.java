@@ -4,8 +4,10 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -52,6 +54,10 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
     private boolean isSwivelEnabled;
 
+    private final DigitalInput beamBreak;
+    private final Debouncer beamDebouncer;
+    private boolean isBeamBroken;
+
     private final SysIdRoutine routine;
 
     public static IntakeSubsystem getInstance(){
@@ -72,6 +78,10 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         angleEncoder.setInverted(true);
         angleEncoder.setPositionConversionFactor(360);
         angleEncoder.setZeroOffset(Constants.Intake.kSwivelEncoderZeroOffset);
+
+        beamBreak = new DigitalInput(Constants.Intake.beamBreakDIOPort);
+        beamDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kRising);
+        isBeamBroken = false;
 
 
         TalonFXConfiguration intakeMotorConfig = new TalonFXConfiguration();
@@ -164,7 +174,6 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         leftSwivelMotor.stopMotor();
         rightSwivelMotor.stopMotor();
         setIntakeSpeed(0);
-        // TODO: should not be needed
         // intakeMotor.stopMotor();
     }
 
@@ -188,6 +197,7 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
     @Override
     public void periodic() {
+        isBeamBroken = beamDebouncer.calculate(!beamBreak.get());
         isSwivelEnabled = SmartDashboard.getBoolean("Swivel Enabled", true);
         if (isSwivelEnabled){
             double deltaTime = (System.currentTimeMillis() - swivelMovementStartTime) / 1000;
@@ -232,6 +242,14 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         // TelemetryUpdater.setTelemetryValue("Intake Speed", getIntakeSpeed());
 
         //TelemetryUpdater.setTelemetryValue("Intake Desired Position", )
+    }
+
+    /**
+     * Returns if the beam is broken
+     * @return boolean, true if the beam is broken
+     */
+    public boolean beamBroken() {
+        return isBeamBroken;
     }
 
     @Override

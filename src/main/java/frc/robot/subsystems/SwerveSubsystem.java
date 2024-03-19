@@ -223,7 +223,7 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
      * <p> Sets the desired state of each module to a 0 speed and a offset rotation of 45 degrees </p>
      * <p> used to prevent defense </p>
      */
-    public void crossModules() {
+    public void crossWheels() {
         for (SwerveModule mod : mSwerveMods) {
             mod.setModuleAngle((mod.moduleNumber - 1) * 0.25 + 0.125);
         }

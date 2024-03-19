@@ -8,7 +8,6 @@ import java.util.Iterator;
 
 import frc.robot.commands.lowLevelCommands.IntakeCommand;
 import frc.robot.commands.lowLevelCommands.ShootCommand;
-import frc.robot.commands.lowLevelCommands.IntakeCommand.IntakeSwivelMode;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -78,7 +77,7 @@ public class Barn2PathInterpreter {
                     }
                 }
 
-                MoveCommand newMovementCommand = new MoveCommand(swerveSubsystem, getMainPoint(point), interiorPoints);
+                MoveCommand newMovementCommand = new MoveCommand(getMainPoint(point), interiorPoints);
 
                 double delay = newMovementCommand.getETA();
 
@@ -86,11 +85,11 @@ public class Barn2PathInterpreter {
                     case "shoot":
                         //double primeDelay = (delay-Constants.Shooter.spinUpTime) > 0 ? (delay-Constants.Shooter.spinUpTime) : 0;
                         //ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new InstantCommand()));
-                        autonCommands.add(new SequentialCommandGroup(newMovementCommand, new ShootCommand(shooterSubsystem, transferSubsystem, 200, true)));
+                        autonCommands.add(new SequentialCommandGroup(newMovementCommand, new ShootCommand()));
                         break;
                     case "intake":
                         double intakeDelay = (delay-5) > 0 ? (delay-5) : 0;
-                        ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new IntakeCommand(intakeSubsystem, transferSubsystem, IntakeSwivelMode.Extend, true)));
+                        ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new IntakeCommand()));
                         autonCommands.add(moveAndIntake);
                         break;
                     default:

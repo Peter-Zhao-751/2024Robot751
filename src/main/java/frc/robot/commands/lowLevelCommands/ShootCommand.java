@@ -1,56 +1,81 @@
 package frc.robot.commands.lowLevelCommands;
 import frc.robot.Constants;
-import frc.robot.commands.lowLevelCommands.TransferCommand.TransferMode;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransferSubsystem;
+import frc.robot.utility.ControlBoard;
 import frc.robot.utility.StateMachine;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class ShootCommand extends Command{
     private final ShooterSubsystem shooterSubsystem;
     private final TransferSubsystem transferSubsystem;
-    private final TransferCommand transferCommand;
-    private double speed;
+    private final IntakeSubsystem intakeSubsystem;
+
     private double startTime;
     private double waitTime;
-    private boolean hasShot;
+    private final boolean smartMode;
+    private boolean started;
+
+    private ControlBoard.Mode mode;
  
-    public ShootCommand(ShooterSubsystem shooterSubsystem, TransferSubsystem transferSubsystem, double speed, boolean smartMode) {
-        this.shooterSubsystem = shooterSubsystem;
-        this.transferSubsystem = transferSubsystem;
-        this.transferCommand = new TransferCommand(300, transferSubsystem, TransferMode.Shoot, smartMode);
-        this.speed = speed;
-        this.hasShot = false;
-        addRequirements(shooterSubsystem, transferSubsystem);
+    public ShootCommand(boolean smartMode) {
+        this.shooterSubsystem = ShooterSubsystem.getInstance();
+        this.transferSubsystem = TransferSubsystem.getInstance();
+        this.intakeSubsystem = IntakeSubsystem.getInstance();
+
+        this.smartMode = smartMode;
+
+        addRequirements(shooterSubsystem, transferSubsystem, intakeSubsystem);
+    }
+
+    public ShootCommand() {
+        this(false);
     }
 
     @Override
     public void initialize() {
         StateMachine.setState(StateMachine.State.Shoot);
-        waitTime = 600;
+        mode = ControlBoard.getInstance().getMode();
         startTime = System.currentTimeMillis();
-        shooterSubsystem.setSpeed(speed);
-        hasShot = false;
-        //transferCommand.initialize();
+        started = !smartMode;
+
+        if (mode == ControlBoard.Mode.Speaker) {
+            shooterSubsystem.setSpeed(ControlBoard.getInstance().shooterSpeed());
+            waitTime = 1000;
+            if (!smartMode) transferSubsystem.setTransferSpeed(Constants.Transfer.intakeTransferSpeed);
+        } else {
+            intakeSubsystem.setSwivelPosition(Constants.Intake.kAmpAngle);
+            waitTime = 1000;
+            if (!smartMode) transferSubsystem.setTransferSpeed(-Constants.Transfer.intakeTransferSpeed);
+        }
     }
     
     @Override
-    public void execute() { // TODO: calibrate this
-        if (!hasShot && System.currentTimeMillis() - startTime > waitTime){
-            transferCommand.initialize();
-            hasShot = true;
+    public void execute() {
+        if (smartMode && !started) {
+            if (mode == ControlBoard.Mode.Speaker && shooterSubsystem.getShooterSpeed() > 0.95 * ControlBoard.getInstance().shooterSpeed()) {
+                transferSubsystem.setTransferSpeed(Constants.Transfer.intakeTransferSpeed);
+                startTime = System.currentTimeMillis();
+                started = true;
+            } else if (mode == ControlBoard.Mode.Amp && intakeSubsystem.getSwivelPosition() > 0.95 * Constants.Intake.kAmpAngle) {
+                transferSubsystem.setTransferSpeed(-Constants.Transfer.intakeTransferSpeed);
+                startTime = System.currentTimeMillis();
+                started = true;
+            }
         }
     }
 
     @Override
     public void end(boolean interrupted) {
         shooterSubsystem.setSpeed(0);
-        if (transferCommand != null) transferCommand.end(interrupted);
+        transferSubsystem.setTransferSpeed(0);
+        intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
         StateMachine.setState(StateMachine.State.Idle);
     }
 
     @Override
     public boolean isFinished() {
-        return (transferCommand != null) ? transferCommand.isFinished() : false;
+        return System.currentTimeMillis() - startTime > waitTime;
     }
 }

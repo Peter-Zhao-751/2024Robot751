@@ -25,6 +25,7 @@ public class Constants {
         public static int intakeMotorID = 57;
         public static int leftSwivelMotorID = 58;
         public static int rightSwivelMotorID = 59;
+        public static int beamBreakDIOPort = 1;
 
         public static double swivelGearRatio = 15.0; 
         public static double maxSwivelSpeed = 0.15;
@@ -68,14 +69,12 @@ public class Constants {
         public static int beamBreakDIOPort = 1;
 
         public static double kPIntakeController = 0.450;
-        public static double kPShooterController = 0.50; // TODO: alek is bad at life
-
-        public static double feedSpeed = 30; // units in centimeters per second // TODO: all the fucking values are retarded
+        public static double kPShooterController = 0.50;
 
         public static double maxTransferTime = 3.0; // unit in seconds
         public static double minTransferTime = 1.5;
-
-        public static double intakeSpeed = 20.0; // units in centimeters per second
+        public static double intakeTransferSpeed = 20.0; // units in centimeters per second
+        public static double kTransferSpeed = 20.0; // units in centimeters per second
     }
 
     public static class Shooter{
@@ -106,8 +105,9 @@ public class Constants {
     public static class Climber{
         public static int leftClimberMotorID = 61;
         public static int rightClimberMotorID = 62;
-        
-        public static double intakeTime = 3.0;
+
+        public static double maxClimberHeight = 100.0; // TODO
+        public static double minClimberHeight = 5.0; // TODO
 
         public static double climberSpeed = 5.0;
 

@@ -3,22 +3,23 @@ package frc.robot.commands.lowLevelCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.TransferSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.utility.ControlBoard;
 import frc.robot.utility.StateMachine;
 
 
-public class TransferCommand extends Command {
+public class SpinShooterCommand extends Command {
+    private final ShooterSubsystem shooterSubsystem;
     private final IntakeSubsystem intakeSubsystem;
-    private final TransferSubsystem transferSubsystem;
-    private ControlBoard.Mode currentMode;
 
-    public TransferCommand() {
+    private ControlBoard.Mode mode;
+
+    public SpinShooterCommand() {
+        this.shooterSubsystem = ShooterSubsystem.getInstance();
+        this.intakeSubsystem = IntakeSubsystem.getInstance();
         // each subsystem used by the command must be passed into the
         // addRequirements() method (which takes a vararg of Subsystem)
-        this.transferSubsystem = TransferSubsystem.getInstance();
-        this.intakeSubsystem = IntakeSubsystem.getInstance();
-        addRequirements(this.transferSubsystem, this.intakeSubsystem);
+        addRequirements(shooterSubsystem, intakeSubsystem);
     }
 
     /**
@@ -27,12 +28,14 @@ public class TransferCommand extends Command {
     @Override
     public void initialize() {
         StateMachine.setState(StateMachine.State.Shoot);
-        currentMode = ControlBoard.getInstance().getMode();
+        mode = ControlBoard.getInstance().getMode();
 
-        if (currentMode == ControlBoard.Mode.Speaker) {
-            transferSubsystem.setTransferSpeed(Constants.Transfer.intakeTransferSpeed/10);
+        if (mode == ControlBoard.Mode.Speaker) {
+            shooterSubsystem.setSpeed(ControlBoard.getInstance().shooterSpeed());
+            intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
         } else {
-            intakeSubsystem.setIntakeSpeed(Constants.Intake.intakeSpeed/10);
+            intakeSubsystem.setSwivelPosition(Constants.Intake.kAmpAngle);
+            shooterSubsystem.setSpeed(0);
         }
     }
 
@@ -42,6 +45,7 @@ public class TransferCommand extends Command {
      */
     @Override
     public void execute() {
+
     }
 
     /**
@@ -73,11 +77,8 @@ public class TransferCommand extends Command {
      */
     @Override
     public void end(boolean interrupted) {
-        if (currentMode == ControlBoard.Mode.Speaker) {
-            transferSubsystem.setTransferSpeed(0);
-        } else {
-            intakeSubsystem.setIntakeSpeed(0);
-        }
+        shooterSubsystem.setSpeed(0);
+        intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
         StateMachine.setState(StateMachine.State.Idle);
     }
 }

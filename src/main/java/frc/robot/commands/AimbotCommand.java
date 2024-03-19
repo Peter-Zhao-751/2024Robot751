@@ -16,9 +16,9 @@ public class AimbotCommand extends Command {
     private final SwerveSubsystem swerve;
     private MoveCommand moveCommand;
 
-    public AimbotCommand(SwerveSubsystem s_Swerve) {
-        this.swerve = s_Swerve;
-        addRequirements(s_Swerve);
+    public AimbotCommand() {
+        this.swerve = SwerveSubsystem.getInstance();
+        addRequirements(swerve);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class AimbotCommand extends Command {
 
         StateMachine.setState(StateMachine.State.Aimbot);
 
-        moveCommand = new MoveCommand(swerve, new Pose2d(targetX, targetY, new Rotation2d(angle)));
+        moveCommand = new MoveCommand(new Pose2d(targetX, targetY, new Rotation2d(angle)));
         moveCommand.initialize();
     }
 

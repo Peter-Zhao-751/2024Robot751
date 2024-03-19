@@ -16,16 +16,16 @@ public class TransferSubsystem extends SubsystemBase implements Component {
 
     private final CANSparkMax shooterTransfer;
     private final CANSparkMax intakeTransfer;
-    private final DigitalInput beamBreak;
 
     private final PIDController shooterTransferPIDController;
     private final PIDController intakeTransferPIDController;
 
+    private final DigitalInput beamBreak;
     private final Debouncer beamDebouncer;
+    private boolean isBeamBroken;
 
     private double targetIntakeSpeed;
     private double targetShooterSpeed;
-    private boolean isBeamBroken;
 
     private double allocatedCurrent;
 
@@ -41,17 +41,16 @@ public class TransferSubsystem extends SubsystemBase implements Component {
         intakeTransfer = new CANSparkMax(Constants.Transfer.intakeTransferID, MotorType.kBrushless);
         intakeTransfer.setInverted(true);
         shooterTransfer.setInverted(false);
+
         beamBreak = new DigitalInput(Constants.Transfer.beamBreakDIOPort);
         beamDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kRising);
+        isBeamBroken = false;
 
         shooterTransferPIDController = new PIDController(Constants.Transfer.kPIntakeController, 0, 0);
         intakeTransferPIDController = new PIDController(Constants.Transfer.kPShooterController, 0, 0);
         
         targetIntakeSpeed = 0;
         targetShooterSpeed = 0;
-
-        isBeamBroken = false;
-
         allocatedCurrent = 0;
     }
 
@@ -72,12 +71,6 @@ public class TransferSubsystem extends SubsystemBase implements Component {
         //double targetShooterSpeed = speed / (2 * Math.PI * Constants.Transfer.shooterTransferRadius) / 43;
         //shooterTransfer.set(1);
         double targetShooterSpeed = Math.signum(speed);
-        System.out.println("hfuidh");
-        System.out.println("hfuidh");
-        System.out.println("hfuidh");
-        System.out.println("hfuidh");
-        System.out.println(getShooterSpeed());
-        System.out.println("hfuidh");
         shooterTransfer.set(targetShooterSpeed);
     }
 
@@ -96,8 +89,6 @@ public class TransferSubsystem extends SubsystemBase implements Component {
     public void stop() {
         targetIntakeSpeed = 0;
         targetShooterSpeed = 0;
-        //shooterTransfer.set(0);
-        //intakeTransfer.set(0);
         intakeTransfer.stopMotor(); 
         shooterTransfer.stopMotor();
     }

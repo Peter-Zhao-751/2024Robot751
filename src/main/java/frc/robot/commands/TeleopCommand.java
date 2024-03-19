@@ -24,8 +24,8 @@ public class TeleopCommand extends Command {
     private final BooleanSupplier robotCentricSup;
     private final BooleanSupplier preciseControl;
 
-    public TeleopCommand(SwerveSubsystem s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier preciseControl) {
-        this.s_Swerve = s_Swerve;
+    public TeleopCommand(DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier preciseControl) {
+        this.s_Swerve = SwerveSubsystem.getInstance();
         addRequirements(s_Swerve);
 
         this.translationSup = translationSup;

@@ -9,13 +9,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 import java.io.File;
-import com.ctre.phoenix6.CANBus;
+
 import com.ctre.phoenix6.SignalLogger;
 
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.utility.StateMachine;
 import frc.robot.utility.TelemetrySubsystem;
-import frc.robot.utility.TelemetryUpdater;
 import frc.robot.utility.UIManager;
 
 /**
@@ -72,6 +71,7 @@ public class Robot extends TimedRobot {
     UIManager.updatePathPreview();
     StateMachine.periodic();
     CommandScheduler.getInstance().run();
+    // TODO: Figure out if we need to call subsystem periodic methods here?
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -101,7 +101,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousExit() {
-    SwerveSubsystem.getInstance().crossModules();
+    SwerveSubsystem.getInstance().crossWheels();
   }
 
   @Override

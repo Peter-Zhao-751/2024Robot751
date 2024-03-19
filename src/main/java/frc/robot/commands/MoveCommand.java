@@ -23,21 +23,21 @@ public class MoveCommand extends Command {
     private Trajectory movementTrajectory;
     private SwerveControllerCommand swerveControllerCommand;
 
-    public MoveCommand(SwerveSubsystem s_Swerve, Pose2d desiredLocation, List<Translation2d> interiorWaypoints) {
-        this.s_Swerve = s_Swerve;
+    public MoveCommand(Pose2d desiredLocation, List<Translation2d> interiorWaypoints) {
+        this.s_Swerve = SwerveSubsystem.getInstance();
         this.desiredLocation = desiredLocation;
         this.interiorWaypoints = interiorWaypoints;
         this.movementTrajectory = null;
         addRequirements(s_Swerve);
     }
 
-    public MoveCommand(SwerveSubsystem s_Swerve, Pose2d desiredLocation) {
-        this(s_Swerve, desiredLocation, List.of());
+    public MoveCommand(Pose2d desiredLocation) {
+        this(desiredLocation, List.of());
         addRequirements(s_Swerve);
     }
 
-    public MoveCommand(SwerveSubsystem s_Swerve, Trajectory trajectory) {
-        this.s_Swerve = s_Swerve;
+    public MoveCommand(Trajectory trajectory) {
+        this.s_Swerve = SwerveSubsystem.getInstance();
         this.desiredLocation = trajectory.getStates().get(trajectory.getStates().size() - 1).poseMeters;
         this.interiorWaypoints = null;
         this.movementTrajectory = trajectory;

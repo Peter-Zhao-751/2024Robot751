@@ -26,7 +26,7 @@ public class ClimberSubsystem extends SubsystemBase implements Component {
 
     private double allocatedCurrent;
 
-    public ClimberSubsystem getInstance(){
+    public static ClimberSubsystem getInstance(){
         if(instance == null) instance = new ClimberSubsystem();
         return instance;
     }
@@ -58,19 +58,27 @@ public class ClimberSubsystem extends SubsystemBase implements Component {
 
     /**
      * Set the speed of the left climber motor
-     * @param location in degrees
+     * @param location in distance
      */
     public void setLeftDesiredLocation(double location){
         leftDesiredLocation = location;
     }
 
+    public void setLeftClimberMotor(double speed){
+        leftDesiredLocation += speed;
+    }
+
     /**
      * Set the speed of the right climber motor
-     * @param location in degrees
+     * @param location in distance
      */
 
     public void setRightDesiredLocation(double location){
         rightDesiredLocation = location;
+    }
+
+    public void setRightClimberMotor(double speed){
+        rightDesiredLocation += speed;
     }
 
     /**
@@ -86,6 +94,11 @@ public class ClimberSubsystem extends SubsystemBase implements Component {
 
         double leftOutput = climberPIDController.calculate(getLeftPosition(), leftDesiredLocation);
         double rightOutput = climberPIDController.calculate(getRightPosition(), rightDesiredLocation);
+
+        if (leftOutput > 0 && getLeftPosition() > Constants.Climber.maxClimberHeight) leftOutput = 0;
+        if (rightOutput > 0 && getRightPosition() > Constants.Climber.maxClimberHeight) rightOutput = 0;
+        if (leftOutput < 0 && getLeftPosition() < Constants.Climber.minClimberHeight) leftOutput = 0;
+        if (rightOutput < 0 && getRightPosition() < Constants.Climber.minClimberHeight) rightOutput = 0;
 
         leftClimberMotor.set(leftOutput);
         rightClimberMotor.set(rightOutput);
