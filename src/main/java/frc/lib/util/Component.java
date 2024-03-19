@@ -1,4 +1,4 @@
-package frc.robot.utility;
+package frc.lib.util;
 
 public interface Component {
     /**
