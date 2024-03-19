@@ -47,19 +47,19 @@ public class Barn2PathInterpreter {
 
         ArrayList<Command> autonCommands = new ArrayList<>();
 
-        Iterator<JSONObject> iterator = jsonArray.iterator();
+        Iterator iterator = jsonArray.iterator();
 
         JSONObject point;
 
         System.out.println(jsonArray.toString());
 
         while (iterator.hasNext()) {
-            point = iterator.next();
+            point = (JSONObject) iterator.next();
 
             if (getEvent(point).isEmpty() || getEvent(point).equals("start")){
                 ArrayList<Translation2d> interiorPoints = new ArrayList<>();
                 while (iterator.hasNext()){
-                    JSONObject interiorPoint = iterator.next();
+                    JSONObject interiorPoint = (JSONObject) iterator.next();
                     if (getEvent(interiorPoint).isEmpty()){
                         interiorPoints.add(getInteriorPoint(interiorPoint));
                     }else{
