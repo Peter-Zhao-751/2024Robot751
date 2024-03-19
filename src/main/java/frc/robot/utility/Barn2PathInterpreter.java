@@ -8,10 +8,6 @@ import java.util.Iterator;
 
 import frc.robot.commands.lowLevelCommands.IntakeCommand;
 import frc.robot.commands.lowLevelCommands.ShootCommand;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.TransferSubsystem;
 import frc.robot.commands.MoveCommand;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -122,7 +118,7 @@ public class Barn2PathInterpreter {
     public static String getAutonPreview(File pathFile){
         if (pathFile != null){
             try {
-                // pretty sure this doesnt work
+                // pretty sure this doesn't work
                 String data = new String(java.nio.file.Files.readAllBytes(pathFile.toPath()));
                 jsonObject = (JSONObject) new JSONParser().parse(new FileReader(pathFile)); 
                 return (String) jsonObject.get("preview");
