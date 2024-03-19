@@ -20,10 +20,10 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.estimator.KalmanFilter;
 
 
-public class ShooterSubsystem extends SubsystemBase implements Component {
+public class ShooterSubsystem extends SubsystemBase{
     private static ShooterSubsystem instance;
 
-    
+
     private final TalonFX leftShooterMotor;
     private final TalonFX rightShooterMotor;
 
@@ -34,8 +34,6 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
     private final LinearSystem<N1, N1, N1> flyWheelPlant;
 
     private final KalmanFilter<N1, N1, N1> kalmanFilter;
-
-    private final double allocatedCurrent;
 
     public static ShooterSubsystem getInstance(){
         if(instance == null) instance = new ShooterSubsystem();
@@ -81,10 +79,10 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
     }
 
     /**
-     * <p> Sets the speed of the shooter motors in rotations per second using the motion magic control mode </p> 
+     * <p> Sets the speed of the shooter motors in rotations per second using the motion magic control mode </p>
      * <ul>
-     * <li> Targets the given velocity and uses the feedforward gains to achieve the target speed </li> 
-     * <li> Additionally, reduces the acceleration to target a certain jerk </li> 
+     * <li> Targets the given velocity and uses the feedforward gains to achieve the target speed </li>
+     * <li> Additionally, reduces the acceleration to target a certain jerk </li>
      * </ul>
      *
      * @param speed Set the speed of the shooter motors in rotations per second
@@ -98,12 +96,12 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
     public double getTargetETA(){
         return (targetSpeed - getShooterSpeed()) / Constants.Shooter.maxShooterSpeed * Constants.Shooter.spinUpTime;
     }
-    
+
     /**
-     * <p> Stops the shooter motors </p> 
+     * <p> Stops the shooter motors </p>
      * <ul>
-     * <li> Sets the target speed to 0 </li> 
-     * <li> Sets the voltage of the shooter motors to 0 </li> 
+     * <li> Sets the target speed to 0 </li>
+     * <li> Sets the voltage of the shooter motors to 0 </li>
      * </ul>
      *
      */
@@ -112,7 +110,7 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
     }
 
     /**
-     * <p> Returns the speed of the left shooter motor in rotations per second </p> 
+     * <p> Returns the speed of the left shooter motor in rotations per second </p>
      *
      * @return double, the speed of the left shooter motor in rotations per second
      */
@@ -121,7 +119,7 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
     }
 
     /**
-     * <p> Returns the speed of the right shooter motor in rotations per second </p> 
+     * <p> Returns the speed of the right shooter motor in rotations per second </p>
      *
      * @return double, the speed of the right shooter motor in rotations per second
      */
@@ -130,7 +128,7 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
     }
 
     /**
-     * <p> Returns the average speed of the shooter motors in rotations per second </p> 
+     * <p> Returns the average speed of the shooter motors in rotations per second </p>
      *
      * @return double
      */
@@ -145,20 +143,5 @@ public class ShooterSubsystem extends SubsystemBase implements Component {
 
         //TelemetryUpdater.setTelemetryValue("Kalman Filter X-hat 0", kalmanFilter.getXhat(0));
         //TelemetryUpdater.setTelemetryValue("Shooter Current Draw", getCurrentDraw());
-    }
-
-    @Override
-    public double getCurrentDraw(){
-        return leftShooterMotor.getSupplyCurrent().getValue() + rightShooterMotor.getSupplyCurrent().getValue();
-    }
-
-    @Override
-    public void allocateCurrent(double current){
-        //set motor controller current
-    }
-
-    @Override
-    public int getPriority(){
-        return 1;
     }
 }

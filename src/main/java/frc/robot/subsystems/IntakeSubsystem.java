@@ -26,9 +26,10 @@ import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
 import static edu.wpi.first.units.Units.Volts;
 
-public class IntakeSubsystem extends SubsystemBase implements Component {
+public class IntakeSubsystem extends SubsystemBase{
     private static IntakeSubsystem instance;
 
     private final CANSparkMax leftSwivelMotor;
@@ -44,28 +45,19 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
     private final ArmFeedforward swivelFeedforwardController;
     private final PIDController swivelPIDController;
     //private final PIDController intakePIDController;
- 
-    private double swivelSetpoint;
-    private double targetIntakeSpeed;
-
-    private double allocatedCurrent;
-    private double swivelMovementStartTime;
-    private double swivelMovementStartAngle;
-
-    private boolean isSwivelEnabled;
-
     private final DigitalInput beamBreak;
     private final Debouncer beamDebouncer;
     private boolean isBeamBroken;
 
+    private double swivelSetpoint;
+    private double targetIntakeSpeed;
+    private double swivelMovementStartTime;
+    private double swivelMovementStartAngle;
+    private boolean isSwivelEnabled;
+
     private final SysIdRoutine routine;
 
-    public static IntakeSubsystem getInstance(){
-        if (instance == null) instance = new IntakeSubsystem();
-        return instance;
-    }
-    
-    private IntakeSubsystem(){
+    private IntakeSubsystem() {
         leftSwivelMotor = new CANSparkMax(Constants.Intake.leftSwivelMotorID, MotorType.kBrushless);
         rightSwivelMotor = new CANSparkMax(Constants.Intake.rightSwivelMotorID, MotorType.kBrushless);
         intakeMotor = new TalonFX(Constants.Intake.intakeMotorID);
@@ -110,10 +102,6 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         swivelMovementStartAngle = getSwivelPosition();
 
         isSwivelEnabled = true;
-        TelemetryUpdater.setTelemetryValue("Swivel Enabled", isSwivelEnabled);
-
-        allocatedCurrent = 0;
-        
 
 //        slider = Shuffleboard.getTab("intake")
 //        .add("Slider", 0)
@@ -121,56 +109,44 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 //        .withProperties(Map.of("min", 0, "max", 12))
 //        .getEntry();
 
-         routine = new SysIdRoutine(
-             new SysIdRoutine.Config(
-                 null,
-                 null,
-                 null,
-                 (state) -> SignalLogger.writeString("state", state.toString())
-             ),
-             new SysIdRoutine.Mechanism(
-                 (Measure<Voltage> volts) -> {
-                 intakeMotor.setVoltage(volts.in(Volts));
-                 System.out.println("Volts: " + volts.in(Volts));
-             }, null, this)
-         );
+        routine = new SysIdRoutine(
+                new SysIdRoutine.Config(
+                        null,
+                        null,
+                        null,
+                        (state) -> SignalLogger.writeString("state", state.toString())
+                ),
+                new SysIdRoutine.Mechanism(
+                        (Measure<Voltage> volts) -> {
+                            intakeMotor.setVoltage(volts.in(Volts));
+                            System.out.println("Volts: " + volts.in(Volts));
+                        }, null, this)
+        );
     }
 
-    /** Changing voltage
-     * */
-     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-         return routine.quasistatic(direction);
-     }
-
-     /** Static voltage
-      * */
-     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-         return routine.dynamic(direction);
-     }
-    
-    /**
-     * Sets the speed of the intake motor
-     * @param speed the speed of the intake motor in cm/s
-     */
-    public void setIntakeSpeed(double speed){
-        targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius) / 43;
-        //intakeMotor.setControl(velocityVoltage.withVelocity(targetIntakeSpeed));
+    public static IntakeSubsystem getInstance() {
+        if (instance == null) instance = new IntakeSubsystem();
+        return instance;
     }
 
     /**
-     * Sets the position of the swivel
-     * @param position the position of the swivel in degrees
+     * Changing voltage
      */
-    public void setSwivelPosition(double position){
-        swivelSetpoint = position;
-        swivelMovementStartAngle = getSwivelPosition();
-        swivelMovementStartTime = System.currentTimeMillis();
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return routine.quasistatic(direction);
+    }
+
+    /**
+     * Static voltage
+     */
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return routine.dynamic(direction);
     }
 
     /**
      * Stops the intake and swivel motors
      */
-    public void stopAll(){
+    public void stopAll() {
         leftSwivelMotor.stopMotor();
         rightSwivelMotor.stopMotor();
         setIntakeSpeed(0);
@@ -179,27 +155,50 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
 
     /**
      * Returns the position of the swivel in degrees
+     *
      * @return double, the position of the swivel in degrees
      */
-    public double getSwivelPosition() { 
+    public double getSwivelPosition() {
         double currentAngle = angleEncoder.getPosition() % 360;
         if (currentAngle >= 180) return currentAngle - 360;
         return currentAngle;
     }
 
     /**
+     * Sets the position of the swivel
+     *
+     * @param position the position of the swivel in degrees
+     */
+    public void setSwivelPosition(double position) {
+        swivelSetpoint = position;
+        swivelMovementStartAngle = getSwivelPosition();
+        swivelMovementStartTime = System.currentTimeMillis();
+    }
+
+    /**
      * Returns the speed of the intake motor in rotations per second
+     *
      * @return double, the speed of the intake motor in rotations per second
      */
-    public double getIntakeSpeed(){
+    public double getIntakeSpeed() {
         return intakeMotor.getRotorVelocity().getValue();
+    }
+
+    /**
+     * Sets the speed of the intake motor
+     *
+     * @param speed the speed of the intake motor in cm/s
+     */
+    public void setIntakeSpeed(double speed) {
+        targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius) / 43;
+        //intakeMotor.setControl(velocityVoltage.withVelocity(targetIntakeSpeed));
     }
 
     @Override
     public void periodic() {
         isBeamBroken = beamDebouncer.calculate(!beamBreak.get());
         isSwivelEnabled = SmartDashboard.getBoolean("Swivel Enabled", true);
-        if (isSwivelEnabled){
+        if (isSwivelEnabled) {
             double deltaTime = (System.currentTimeMillis() - swivelMovementStartTime) / 1000;
             double currentAngle = getSwivelPosition();
 
@@ -220,12 +219,12 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
             // TelemetryUpdater.setTelemetryValue("setpoint trapezoidal pos", setPoint.position);
             // TelemetryUpdater.setTelemetryValue("setpoint trapezoidal vel", setPoint.velocity);
             // TelemetryUpdater.setTelemetryValue("Trapezoidal ETA", trapezoidProfile.totalTime());
-            
+
             leftSwivelMotor.setVoltage(combinedOutput);
             rightSwivelMotor.setVoltage(combinedOutput);
             TelemetryUpdater.setTelemetryValue("Intake Swivel Position", currentAngle);
             TelemetryUpdater.setTelemetryValue("raw intake swivel value", angleEncoder.getPosition());
-        }else {
+        } else {
             stopAll();
         }
 
@@ -241,29 +240,15 @@ public class IntakeSubsystem extends SubsystemBase implements Component {
         TelemetryUpdater.setTelemetryValue("Intake Desired Speed", targetIntakeSpeed);
         // TelemetryUpdater.setTelemetryValue("Intake Speed", getIntakeSpeed());
 
-        //TelemetryUpdater.setTelemetryValue("Intake Desired Position", )
+        //TelemetryUpdater.setTelemetryValue("Intake Desired Position", swivelSetpoint);
     }
 
     /**
      * Returns if the beam is broken
+     *
      * @return boolean, true if the beam is broken
      */
     public boolean beamBroken() {
         return isBeamBroken;
-    }
-
-    @Override
-    public double getCurrentDraw(){
-        return leftSwivelMotor.getOutputCurrent() + rightSwivelMotor.getOutputCurrent() + intakeMotor.getSupplyCurrent().getValue();
-    }
-
-    @Override
-    public void allocateCurrent(double current){
-        //set motor controller current
-    }
-
-    @Override
-    public int getPriority(){
-        return 2;
     }
 }

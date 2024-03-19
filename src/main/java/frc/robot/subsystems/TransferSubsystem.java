@@ -11,7 +11,7 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class TransferSubsystem extends SubsystemBase implements Component {
+public class TransferSubsystem extends SubsystemBase {
     private static TransferSubsystem instance;
 
     private final CANSparkMax shooterTransfer;
@@ -26,8 +26,6 @@ public class TransferSubsystem extends SubsystemBase implements Component {
 
     private double targetIntakeSpeed;
     private double targetShooterSpeed;
-
-    private double allocatedCurrent;
 
     public static TransferSubsystem getInstance() {
         if (instance == null) {
@@ -51,7 +49,6 @@ public class TransferSubsystem extends SubsystemBase implements Component {
         
         targetIntakeSpeed = 0;
         targetShooterSpeed = 0;
-        allocatedCurrent = 0;
     }
 
     /**
@@ -132,19 +129,5 @@ public class TransferSubsystem extends SubsystemBase implements Component {
         // TelemetryUpdater.setTelemetryValue("Shooter Output", shooterOutput);
         //shooterTransfer.set(targetShooterSpeed);
 
-    }
-
-    @Override
-    public double getCurrentDraw() {
-        return shooterTransfer.getOutputCurrent() + intakeTransfer.getOutputCurrent();
-    }
-
-    @Override
-    public void allocateCurrent(double current) {
-    }
-
-    @Override
-    public int getPriority() {
-        return 5; // CHANGE
     }
 }

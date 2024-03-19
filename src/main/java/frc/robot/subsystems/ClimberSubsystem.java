@@ -8,8 +8,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 
-// not done yet dont kill me
-public class ClimberSubsystem extends SubsystemBase implements Component {
+public class ClimberSubsystem extends SubsystemBase{
     private static ClimberSubsystem instance;
 
     private final CANSparkMax leftClimberMotor;
@@ -22,8 +21,6 @@ public class ClimberSubsystem extends SubsystemBase implements Component {
 
     private double leftDesiredLocation;
     private double rightDesiredLocation;
-
-    private double allocatedCurrent;
 
     public static ClimberSubsystem getInstance(){
         if(instance == null) instance = new ClimberSubsystem();
@@ -113,20 +110,5 @@ public class ClimberSubsystem extends SubsystemBase implements Component {
         /*TelemetryUpdater.setTelemetryValue("Climber Current Draw", getCurrentDraw());
         TelemetryUpdater.setTelemetryValue("Left Climber Position", getLeftPosition());
         TelemetryUpdater.setTelemetryValue("Right Climber Position", getRightPosition());*/
-    }
-
-    @Override
-    public double getCurrentDraw(){
-        return leftClimberMotor.getOutputCurrent() + rightClimberMotor.getOutputCurrent();
-    }
-
-    @Override
-    public void allocateCurrent(double current){
-        //set motor controller current
-    }
-
-    @Override
-    public int getPriority(){
-        return 5;
     }
 }

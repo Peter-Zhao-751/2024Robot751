@@ -15,14 +15,13 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 
-public class CANdleSubsystem extends SubsystemBase implements Component {
+public class CANdleSubsystem extends SubsystemBase {
     private static CANdleSubsystem instance;
 
     private final CANdle m_candle = new CANdle(Constants.CANdle.CANdleID);
     private AnimationTypes desiredAnimation;
     private AnimationTypes currentAnimation;
     private AnimationTypes lastAnimation;
-    private double allocatedCurrent;
 
     private CANdleSubsystem() {
         currentAnimation = AnimationTypes.Idle;
@@ -86,21 +85,6 @@ public class CANdleSubsystem extends SubsystemBase implements Component {
             currentAnimation = lastAnimation;
             desiredAnimation = lastAnimation;
         }
-    }
-
-    @Override
-    public double getCurrentDraw() {
-        return m_candle.getCurrent();
-    }
-
-    @Override
-    public void allocateCurrent(double current) {
-        //set motor controller current
-    }
-
-    @Override
-    public int getPriority() {
-        return 6;
     }
 
     public enum AnimationTypes {

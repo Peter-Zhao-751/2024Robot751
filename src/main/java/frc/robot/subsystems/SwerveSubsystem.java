@@ -35,7 +35,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // import sendable and sendable buffer
 
 
-public class SwerveSubsystem extends SubsystemBase implements Component {
+public class SwerveSubsystem extends SubsystemBase {
     public static final CTREConfigs ctreConfigs = new CTREConfigs();
     private static SwerveSubsystem instance;
     public final StructArrayPublisher<SwerveModuleState> actualPublisher;
@@ -52,7 +52,6 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
     private static GenericEntry resetX, resetY, setButtonEntry;
 
     private final StateEstimator stateEstimator;
-    private double allocatedCurrent;
 
     private SwerveSubsystem() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.CANivoreID);
@@ -280,24 +279,5 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
         //         builder.addDoubleProperty("Robot Angle", () -> getGyroYaw().getRadians(), null);
         //     }
         // });
-    }
-
-    @Override
-    public void allocateCurrent(double current) {
-        //set motor controller current
-    }
-
-    @Override
-    public double getCurrentDraw() {
-        double totalCurrent = 0;
-        for (SwerveModule mod : mSwerveMods) {
-            totalCurrent += mod.getTotalCurrent();
-        }
-        return totalCurrent;
-    }
-
-    @Override
-    public int getPriority() {
-        return 1;
     }
 }
