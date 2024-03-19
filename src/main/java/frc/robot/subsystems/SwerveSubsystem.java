@@ -120,10 +120,10 @@ public class SwerveSubsystem extends SubsystemBase {
         // precision mode
         double xSpeed = !isPrecise ? translation.getX() : translation.getX() * Constants.Swerve.preciseControlFactor;
         double ySpeed = !isPrecise ? translation.getY() : translation.getY() * Constants.Swerve.preciseControlFactor;
-        xSpeed = xSpeed * Constants.Swerve.speedMultiplier;
-        ySpeed = ySpeed * Constants.Swerve.speedMultiplier;
+        xSpeed *= Constants.Swerve.speedMultiplier;
+        ySpeed *= Constants.Swerve.speedMultiplier;
         double rot = !isPrecise ? rotation : rotation * Constants.Swerve.preciseControlFactor;
-        rot = rot * Math.max(Constants.Swerve.maxAngularVelocity / 10, 1);
+        rot *= Math.max(Constants.Swerve.maxAngularVelocity / 10, 1);
 
         SwerveModuleState[] swerveModuleStates =
                 Constants.Swerve.swerveKinematics.toSwerveModuleStates(
@@ -144,7 +144,7 @@ public class SwerveSubsystem extends SubsystemBase {
             mod.setDesiredState(swerveModuleStates[mod.moduleNumber - 1], isOpenLoop);
         }
 
-        return (xSpeed >= 0.05 && ySpeed >= 0.05 && rot >= 0.2);
+        return xSpeed >= 0.05 || ySpeed >= 0.05 || rot >= 0.2;
     }
 
     public SwerveModuleState[] getModuleStates() {
