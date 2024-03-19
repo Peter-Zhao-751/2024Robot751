@@ -76,21 +76,21 @@ public class ControlBoard {
 
     private void configureOperatorBindings() {
         operator.leftTrigger.and(this::notClimberMode).whileTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
-        operator.leftTrigger.and(this::climberMode).whileTrue(new InstantCommand(() -> s_Climber.setLeftClimberMotor(-Constants.Climber.climberSpeed)));
+        operator.leftTrigger.and(this::climberMode).whileTrue(new InstantCommand(() -> s_Climber.changeLeftClimberLocation(-Constants.Climber.climberSpeed)));
 
         operator.leftBumper.and(this::notClimberMode).whileTrue(new InstantCommand(/* TODO FLASH LEDs FOR HUMAN PLAYER*/));
-        operator.leftBumper.and(this::climberMode).whileTrue(new InstantCommand(() -> s_Climber.setLeftClimberMotor(Constants.Climber.climberSpeed)));
+        operator.leftBumper.and(this::climberMode).whileTrue(new InstantCommand(() -> s_Climber.changeLeftClimberLocation(Constants.Climber.climberSpeed)));
 
         operator.rightTrigger.and(this::notClimberMode).whileTrue(new InstantCommand(() -> currentMode = Mode.Amp));
-        operator.rightTrigger.and(this::climberMode).whileTrue(new InstantCommand(() -> s_Climber.setRightClimberMotor(-Constants.Climber.climberSpeed)));
+        operator.rightTrigger.and(this::climberMode).whileTrue(new InstantCommand(() -> s_Climber.changeRightClimberLocation(-Constants.Climber.climberSpeed)));
 
         operator.rightBumper.and(this::notClimberMode).whileTrue(new TransferCommand());
-        operator.rightBumper.and(this::climberMode).whileTrue(new InstantCommand(() -> s_Climber.setRightClimberMotor(Constants.Climber.climberSpeed)));
+        operator.rightBumper.and(this::climberMode).whileTrue(new InstantCommand(() -> s_Climber.changeRightClimberLocation(Constants.Climber.climberSpeed)));
 
         operator.dPad.up.onTrue(new InstantCommand(this::increaseShooterPower));
         operator.dPad.down.onTrue(new InstantCommand(this::decreaseShooterPower));
-        operator.dPad.left.onTrue(new InstantCommand(this::retractIntake));
-        operator.dPad.right.onTrue(new InstantCommand(this::extendIntake));
+        operator.dPad.left.whileTrue(new RunCommand(this::retractIntake));
+        operator.dPad.right.whileTrue(new RunCommand(this::extendIntake));
 
         operator.triangleButton.toggleOnTrue(new StartEndCommand(() -> currentMode = Mode.Climb, () -> currentMode = Mode.Speaker));
 
