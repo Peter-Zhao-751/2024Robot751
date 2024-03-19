@@ -9,15 +9,11 @@ import frc.robot.commands.lowLevelCommands.*;
 import frc.robot.subsystems.*;
 
 public class ControlBoard {
-    public enum Mode {
-        Speaker,
-        Amp,
-        Climb
-    }
+    private static ControlBoard instance;
 
     private static final double shooterSpeedIncrement = 0.1;
     private static final double intakeAngleIncrement = 1;
-    private static ControlBoard instance;
+
     /* Controllers */
     private final PS5Controller driver;
     private final PS5Controller operator;
@@ -29,6 +25,12 @@ public class ControlBoard {
     private Mode currentMode = Mode.Speaker;
     private boolean precise = false;
     private double shooterSpeed = Constants.Shooter.maxShooterSpeed;
+
+    public enum Mode {
+        Speaker,
+        Amp,
+        Climb
+    }
 
     private ControlBoard() {
         driver = new PS5Controller(0);

@@ -27,19 +27,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 public class Barn2PathInterpreter {
-    private static IntakeSubsystem intakeSubsystem;
-    private static TransferSubsystem transferSubsystem;
-    private static ShooterSubsystem shooterSubsystem;
-    private static SwerveSubsystem swerveSubsystem;
     private static JSONObject jsonObject;
     private static JSONArray jsonArray;
 
-    public Barn2PathInterpreter(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, ShooterSubsystem shooterSubsystem, SwerveSubsystem swerveSubsystem){
-        Barn2PathInterpreter.intakeSubsystem = intakeSubsystem;
-        Barn2PathInterpreter.transferSubsystem = transferSubsystem;
-        Barn2PathInterpreter.shooterSubsystem = shooterSubsystem;
-        Barn2PathInterpreter.swerveSubsystem = swerveSubsystem;
-
+    public Barn2PathInterpreter(){
         jsonObject = null;
         jsonArray = null; 
     }
