@@ -1,4 +1,6 @@
 package frc.robot.utility;
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -12,16 +14,18 @@ public class TelemetrySubsystem implements Runnable {
                     SmartDashboard.putNumber(key, (Double) value);
                 } else if (value instanceof String) {
                     SmartDashboard.putString(key, (String) value);
-                } else if (value instanceof Boolean) {
-                    SmartDashboard.putBoolean(key, (Boolean) value);
-                } else if (value instanceof Sendable){
-                    SmartDashboard.putData(key, (Sendable) value);
-                }
+				} else if (value instanceof Boolean) {
+					SmartDashboard.putBoolean(key, (Boolean) value);
+				} else if (value instanceof BooleanSupplier) {
+					SmartDashboard.putBoolean(key, ((BooleanSupplier) value).getAsBoolean());
+				} else if (value instanceof Sendable) {
+					SmartDashboard.putData(key, (Sendable) value);
+				}
             });
 
-            try {
+        	try {
                 Thread.sleep(100);
-            } catch (InterruptedException e) {
+    		} catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
