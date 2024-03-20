@@ -1,5 +1,7 @@
 package frc.robot.utility;
 
+import java.io.Console;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS5Controller.Axis;
 import edu.wpi.first.wpilibj.PS5Controller.Button;
@@ -71,15 +73,14 @@ public class PS5Controller {
         public final Trigger left;
         private DirectionPad(Joystick joystick) {
             this.joystick = joystick;
-            int pov = joystick.getPOV(0);
-            up = new Trigger(() -> withinCorrection(pov, 0));
-            right = new Trigger(() -> withinCorrection(pov, 90));
-            down = new Trigger(() -> withinCorrection(pov, 180));
-            left = new Trigger(() -> withinCorrection(pov, 270));
-        }
-
-        private static boolean withinCorrection(int currentDirection, int desiredDirection) {
-            return Math.abs(currentDirection - desiredDirection) < dPadCorrection;
+            TelemetryUpdater.setTelemetryValue("Pov", joystick.getPOV());
+            up = new Trigger(() -> {
+                System.out.println(joystick.getPOV());
+                return joystick.getPOV() == 0;
+            });
+            right = new Trigger(() -> joystick.getPOV() == 90);
+            down = new Trigger(() -> joystick.getPOV() == 180);
+            left = new Trigger(() -> joystick.getPOV() == 270);
         }
     }
 }

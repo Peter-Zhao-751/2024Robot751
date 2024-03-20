@@ -1,5 +1,6 @@
 package frc.robot.utility;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -68,10 +69,15 @@ public class ControlBoard {
 //        driver.dPad.down.whileTrue(new TransferCommand());
 
         // TODO: For testing bc idk if these work
-        driver.dPad.up.whileTrue(new RunCommand(() -> System.out.println("Up")));
-        driver.dPad.right.whileTrue(new RunCommand(() -> System.out.println("Right")));
-        driver.dPad.left.whileTrue(new RunCommand(() -> System.out.println("Left")));
-        driver.dPad.down.whileTrue(new RunCommand(() -> System.out.println("Down")));
+        TelemetryUpdater.setTelemetryValue("Up", false);
+        TelemetryUpdater.setTelemetryValue("Right", false);
+        TelemetryUpdater.setTelemetryValue("Left", false);
+        TelemetryUpdater.setTelemetryValue("Down", false);
+        SmartDashboard.putNumber("Pov", 0);
+        driver.dPad.up.whileTrue(new StartEndCommand(() -> TelemetryUpdater.setTelemetryValue("Up", true), () -> TelemetryUpdater.setTelemetryValue("Up", false)));
+        driver.dPad.right.whileTrue(new StartEndCommand(() -> TelemetryUpdater.setTelemetryValue("Right", true), () -> TelemetryUpdater.setTelemetryValue("Right", false)));
+        driver.dPad.left.whileTrue(new StartEndCommand(() -> TelemetryUpdater.setTelemetryValue("Left", true), () -> TelemetryUpdater.setTelemetryValue("Left", false)));
+        driver.dPad.down.whileTrue(new StartEndCommand(() -> TelemetryUpdater.setTelemetryValue("Down", true), () -> TelemetryUpdater.setTelemetryValue("Down", false)));
 
         driver.triangleButton.whileTrue(new RunCommand(s_Swerve::resetModulesToAbsolute));
 //        driver.squareButton.whileTrue(new InstantCommand(/*TODO Reset Odometry*/));
