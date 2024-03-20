@@ -28,8 +28,6 @@ public class Constants {
         public static int beamBreakDIOPort = 1;
 
         public static double swivelGearRatio = 15.0; 
-        public static double maxSwivelSpeed = 0.15;
-        public static double intakeTime = 3.0;
         public static double intakeSpeed = 20.0; // units in centimeters per second
 
         public static double intakeRollerRadius = 2.54; // units in centimeters
@@ -68,7 +66,12 @@ public class Constants {
 
         public static int beamBreakDIOPort = 1;
 
+        public static double kSIntakeController = 0.0;
+        public static double kVIntakeController = 0.0;
         public static double kPIntakeController = 0.450;
+
+        public static double kSShootController = 0.0;
+        public static double kVShootController = 0.0;
         public static double kPShooterController = 0.50;
 
         public static double maxTransferTime = 3.0; // unit in seconds
@@ -241,7 +244,7 @@ public class Constants {
     }
 
     public static class Odometry{
-        public static double maxLimeTimeout = 0.5; // seconds
+        public static double maxLimeTimeout = 0.1; // seconds
         public static double maxLimeSwerveDeviation = 0.1; // meters
         public static double kalmanGain = 0.5; // bro guess too lazy
         public static double limeSwerveMixRatio = 0.8; // 80% limelight, 20% swerve
