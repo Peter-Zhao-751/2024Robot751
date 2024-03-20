@@ -64,7 +64,7 @@ public class Constants {
         public static int shooterTransferID = 55;
         public static double shooterTransferRadius = 2.8575; // units in centimeters
 
-        public static int beamBreakDIOPort = 1;
+        public static int beamBreakDIOPort = 0;
 
         public static double kSIntakeController = 0.0;
         public static double kVIntakeController = 0.0;
