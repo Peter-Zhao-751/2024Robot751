@@ -71,10 +71,11 @@ public class PS5Controller {
         public final Trigger left;
         private DirectionPad(Joystick joystick) {
             this.joystick = joystick;
-            up = new Trigger(() -> withinCorrection(joystick.getPOV(), 0));
-            right = new Trigger(() -> withinCorrection(joystick.getPOV(), 90));
-            down = new Trigger(() -> withinCorrection(joystick.getPOV(), 180));
-            left = new Trigger(() -> withinCorrection(joystick.getPOV(), 270));
+            int pov = joystick.getPOV(0);
+            up = new Trigger(() -> withinCorrection(pov, 0));
+            right = new Trigger(() -> withinCorrection(pov, 90));
+            down = new Trigger(() -> withinCorrection(pov, 180));
+            left = new Trigger(() -> withinCorrection(pov, 270));
         }
 
         private static boolean withinCorrection(int currentDirection, int desiredDirection) {
