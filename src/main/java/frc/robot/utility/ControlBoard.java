@@ -62,10 +62,16 @@ public class ControlBoard {
         driver.rightBumper.toggleOnTrue(new SpinShooterCommand());
         driver.rightTrigger.whileTrue(new ShootCommand(true));
 
-        driver.dPad.up.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
-        driver.dPad.right.onTrue(new InstantCommand(() -> currentMode = Mode.Amp));
-        driver.dPad.left.whileTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.kRetractedAngle)));
-        driver.dPad.down.whileTrue(new TransferCommand());
+//        driver.dPad.up.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
+//        driver.dPad.right.onTrue(new InstantCommand(() -> currentMode = Mode.Amp));
+//        driver.dPad.left.whileTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.kRetractedAngle)));
+//        driver.dPad.down.whileTrue(new TransferCommand());
+
+        // TODO: For testing bc idk if these work
+        driver.dPad.up.whileTrue(new RunCommand(() -> System.out.println("Up")));
+        driver.dPad.right.whileTrue(new RunCommand(() -> System.out.println("Right")));
+        driver.dPad.left.whileTrue(new RunCommand(() -> System.out.println("Left")));
+        driver.dPad.down.whileTrue(new RunCommand(() -> System.out.println("Down")));
 
         driver.triangleButton.whileTrue(new RunCommand(s_Swerve::resetModulesToAbsolute));
 //        driver.squareButton.whileTrue(new InstantCommand(/*TODO Reset Odometry*/));
