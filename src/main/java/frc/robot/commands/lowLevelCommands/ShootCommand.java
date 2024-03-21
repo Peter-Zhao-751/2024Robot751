@@ -13,8 +13,6 @@ public class ShootCommand extends Command{
     private final TransferSubsystem transferSubsystem;
     private final IntakeSubsystem intakeSubsystem;
 
-    private final AimbotCommand aimbotCommand;
-
     private double startTime; // TODO: Maybe use WaitCommands instead?
     private double waitTime;
     private final boolean smartMode;
@@ -26,8 +24,6 @@ public class ShootCommand extends Command{
         this.shooterSubsystem = ShooterSubsystem.getInstance();
         this.transferSubsystem = TransferSubsystem.getInstance();
         this.intakeSubsystem = IntakeSubsystem.getInstance();
-
-        this.aimbotCommand = new AimbotCommand();
 
         this.smartMode = smartMode;
 
@@ -49,7 +45,6 @@ public class ShootCommand extends Command{
             shooterSubsystem.setSpeed(ControlBoard.getInstance().shooterSpeed());
             waitTime = 1000;
             if (!smartMode) transferSubsystem.setTransferSpeed(Constants.Transfer.intakeTransferSpeed);
-            aimbotCommand.initialize();
         } else {
             intakeSubsystem.setSwivelPosition(Constants.Intake.kAmpAngle);
             waitTime = 1000;
@@ -70,14 +65,12 @@ public class ShootCommand extends Command{
                 started = true;
             }
         }
-        aimbotCommand.execute();
     }
 
     @Override
     public void end(boolean interrupted) {
         shooterSubsystem.setSpeed(0);
         transferSubsystem.setTransferSpeed(0);
-        aimbotCommand.end(interrupted);
         intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
         StateMachine.setState(StateMachine.State.Idle);
     }

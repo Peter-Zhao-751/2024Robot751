@@ -2,6 +2,7 @@ package frc.robot.commands.lowLevelCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.commands.AimbotCommand;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.utility.ControlBoard;
@@ -13,10 +14,13 @@ public class SpinShooterCommand extends Command {
     private final IntakeSubsystem intakeSubsystem;
 
     private ControlBoard.Mode mode;
+    private final AimbotCommand aimbotCommand;
 
     public SpinShooterCommand() {
         this.shooterSubsystem = ShooterSubsystem.getInstance();
         this.intakeSubsystem = IntakeSubsystem.getInstance();
+
+        this.aimbotCommand = new AimbotCommand();
         // each subsystem used by the command must be passed into the
         // addRequirements() method (which takes a vararg of Subsystem)
         addRequirements(shooterSubsystem, intakeSubsystem);
@@ -33,6 +37,7 @@ public class SpinShooterCommand extends Command {
         if (mode == ControlBoard.Mode.Speaker) {
             shooterSubsystem.setSpeed(ControlBoard.getInstance().shooterSpeed());
             intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
+            aimbotCommand.initialize();
         } else {
             intakeSubsystem.setSwivelPosition(Constants.Intake.kAmpAngle);
             shooterSubsystem.setSpeed(0);
@@ -41,11 +46,11 @@ public class SpinShooterCommand extends Command {
 
     /**
      * The main body of a command.  Called repeatedly while the command is scheduled.
-     * (That is, it is called repeatedly until {@link #isFinished()}) returns true.)
+     * (That is, it is called repeatedly until {@link #isFinished()}) returns true.
      */
     @Override
     public void execute() {
-
+        aimbotCommand.execute();
     }
 
     /**
@@ -79,6 +84,7 @@ public class SpinShooterCommand extends Command {
     public void end(boolean interrupted) {
         shooterSubsystem.setSpeed(0);
         intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
+        if (mode == ControlBoard.Mode.Speaker) aimbotCommand.end(interrupted);
         StateMachine.setState(StateMachine.State.Idle);
     }
 }

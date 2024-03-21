@@ -5,6 +5,7 @@ import java.util.Comparator;
 import frc.lib.util.Component;
 import frc.robot.Constants;
 
+@Deprecated
 public class CurrentManager {
     private static CurrentManager instance;
 

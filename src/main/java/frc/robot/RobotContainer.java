@@ -27,10 +27,6 @@ public class RobotContainer {
         ControlBoard.getInstance();
     }
 
-    public Command getAutonomousCommand() {
-        return new AutonCommand();
-    }
-
     public Command getAutonomousCommand(File path) {
         if (path != null) {
             try {
