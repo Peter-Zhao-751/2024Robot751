@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.commands.TeleopCommand;
 import frc.robot.commands.lowLevelCommands.*;
@@ -12,7 +13,7 @@ import frc.robot.subsystems.*;
 public class ControlBoard {
     private static ControlBoard instance;
 
-    private static final double shooterSpeedIncrement = 0.1;
+    private static final double shooterSpeedIncrement = 0.02;
     private static final double intakeAngleIncrement = 1;
 
     /* Controllers */
@@ -35,8 +36,8 @@ public class ControlBoard {
     }
 
     private ControlBoard() {
-        driver = new PS5Controller(0);
-        operator = new PS5Controller(1);
+        driver = new PS5Controller(1);
+        operator = new PS5Controller(0);
 
         s_Swerve = SwerveSubsystem.getInstance();
         s_Intake = IntakeSubsystem.getInstance();
@@ -63,21 +64,10 @@ public class ControlBoard {
         driver.rightBumper.toggleOnTrue(new SpinShooterCommand());
         driver.rightTrigger.whileTrue(new ShootCommand(true));
 
-//        driver.dPad.up.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
-//        driver.dPad.right.onTrue(new InstantCommand(() -> currentMode = Mode.Amp));
-//        driver.dPad.left.whileTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.kRetractedAngle)));
-//        driver.dPad.down.whileTrue(new TransferCommand());
-
-        // TODO: For testing bc idk if these work
-        TelemetryUpdater.setTelemetryValue("Up", false);
-        TelemetryUpdater.setTelemetryValue("Right", false);
-        TelemetryUpdater.setTelemetryValue("Left", false);
-        TelemetryUpdater.setTelemetryValue("Down", false);
-        SmartDashboard.putNumber("Pov", 0);
-        driver.dPad.up.whileTrue(new StartEndCommand(() -> TelemetryUpdater.setTelemetryValue("Up", true), () -> TelemetryUpdater.setTelemetryValue("Up", false)));
-        driver.dPad.right.whileTrue(new StartEndCommand(() -> TelemetryUpdater.setTelemetryValue("Right", true), () -> TelemetryUpdater.setTelemetryValue("Right", false)));
-        driver.dPad.left.whileTrue(new StartEndCommand(() -> TelemetryUpdater.setTelemetryValue("Left", true), () -> TelemetryUpdater.setTelemetryValue("Left", false)));
-        driver.dPad.down.whileTrue(new StartEndCommand(() -> TelemetryUpdater.setTelemetryValue("Down", true), () -> TelemetryUpdater.setTelemetryValue("Down", false)));
+        driver.dPad.up.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
+        driver.dPad.right.onTrue(new InstantCommand(() -> currentMode = Mode.Amp));
+        driver.dPad.left.whileTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.kRetractedAngle)));
+        driver.dPad.down.whileTrue(new TransferCommand());
 
         driver.triangleButton.whileTrue(new RunCommand(s_Swerve::resetModulesToAbsolute));
 //        driver.squareButton.whileTrue(new InstantCommand(/*TODO Reset Odometry*/));
@@ -101,8 +91,8 @@ public class ControlBoard {
         operator.rightBumper.and(this::notClimberMode).whileTrue(new TransferCommand());
         operator.rightBumper.and(this::climberMode).whileTrue(new RunCommand(() -> s_Climber.changeRightClimberLocation(Constants.Climber.climberSpeed), s_Climber));
 
-        operator.dPad.up.onTrue(new InstantCommand(this::increaseShooterPower, s_Shooter));
-        operator.dPad.down.onTrue(new InstantCommand(this::decreaseShooterPower, s_Shooter));
+        operator.dPad.up.whileTrue(new RunCommand(this::increaseShooterPower, s_Shooter));
+        operator.dPad.down.whileTrue(new RunCommand(this::decreaseShooterPower, s_Shooter));
         operator.dPad.left.whileTrue(new RunCommand(this::retractIntake, s_Intake));
         operator.dPad.right.whileTrue(new RunCommand(this::extendIntake, s_Intake));
 
@@ -116,6 +106,11 @@ public class ControlBoard {
     public static ControlBoard getInstance() {
         if (instance == null) instance = new ControlBoard();
         return instance;
+    }
+
+    public void updateTelemetry() {
+        SmartDashboard.putNumber("Shooter Speed", shooterSpeed);
+        SmartDashboard.putString("Mode", currentMode.toString());
     }
 
     public double shooterSpeed() {

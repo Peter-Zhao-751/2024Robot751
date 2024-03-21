@@ -4,7 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -12,10 +14,10 @@ import java.io.File;
 
 import com.ctre.phoenix6.SignalLogger;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.utility.StateMachine;
-import frc.robot.utility.TelemetrySubsystem;
-import frc.robot.utility.UIManager;
+import frc.robot.utility.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -26,6 +28,7 @@ import frc.robot.utility.UIManager;
 public class Robot extends TimedRobot {
 
   private Command m_autonomousCommand;
+  private CommandScheduler m_scheduler;
 
   private RobotContainer m_robotContainer;
 
@@ -46,6 +49,7 @@ public class Robot extends TimedRobot {
     //UIManager.updatePreferencesBasedOnConstants(Constants.class, true);
     // robot container
     m_robotContainer = new RobotContainer();
+    m_scheduler = CommandScheduler.getInstance();
 
     SignalLogger.setPath("/media/sda1/");
     UIManager.initializeUI();
@@ -70,8 +74,9 @@ public class Robot extends TimedRobot {
     //UISubsystem.updateTelemetry();
     UIManager.updatePathPreview();
     StateMachine.periodic();
-    CommandScheduler.getInstance().run();
+    m_scheduler.run();
     // TODO: Figure out if we need to call subsystem periodic methods here?
+    ControlBoard.getInstance().updateTelemetry();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

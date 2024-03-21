@@ -64,21 +64,16 @@ public class PS5Controller {
 
     public static class DirectionPad {
         public final Joystick joystick;
-        public static final int dPadCorrection = 10;
         public final Trigger up;
         public final Trigger right;
         public final Trigger down;
         public final Trigger left;
         private DirectionPad(Joystick joystick) {
             this.joystick = joystick;
-            TelemetryUpdater.setTelemetryValue("Pov", joystick.getPOV());
-            up = new Trigger(() -> {
-                System.out.println(joystick.getPOV());
-                return joystick.getPOV() == 0;
-            });
-            right = new Trigger(() -> joystick.getPOV() == 90);
-            down = new Trigger(() -> joystick.getPOV() == 180);
-            left = new Trigger(() -> joystick.getPOV() == 270);
+            up = new Trigger(() -> joystick.getPOV() == 0.0);
+            right = new Trigger(() -> joystick.getPOV() == 90.0);
+            down = new Trigger(() -> joystick.getPOV() == 180.0);
+            left = new Trigger(() -> joystick.getPOV() == 270.0);
         }
     }
 }

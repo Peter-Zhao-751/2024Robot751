@@ -111,7 +111,7 @@ public class TransferSubsystem extends SubsystemBase {
         TelemetryUpdater.setTelemetryValue("Beam Break", beamBroken());
 
         TelemetryUpdater.setTelemetryValue("Intake Speed", getIntakeSpeed());
-        TelemetryUpdater.setTelemetryValue("Shooter Speed", getShooterSpeed());
+//        TelemetryUpdater.setTelemetryValue("Shooter Speed", getShooterSpeed());
         TelemetryUpdater.setTelemetryValue("Intake Target Speed", targetIntakeSpeed);
         TelemetryUpdater.setTelemetryValue("Shooter Target Speed", targetShooterSpeed);
 
