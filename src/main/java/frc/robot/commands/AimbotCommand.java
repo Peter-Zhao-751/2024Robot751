@@ -32,12 +32,11 @@ public class AimbotCommand extends Command {
         FieldConstants.FieldElements element = fieldElements[1];
 
         double angle = Math.atan2(element.y - swerve.getPose().getY(), element.x - swerve.getPose().getX());
-        double targetX = element.x + 3 * Math.cos(angle);
-        double targetY = element.y + 3 * Math.sin(angle);
-        
-        angle = Math.toDegrees(angle);
-        if (alliance.get() == Alliance.Blue) angle += 180;
-        angle = (angle + 360) % 360;
+        double targetX = element.x - 300 * Math.cos(angle);
+        double targetY = element.y - 300 * Math.sin(angle);
+
+		angle = Math.toDegrees(angle);
+		angle = (angle + 360) % 360;
 
         //FieldConstants.FieldElements closestElement = getFieldElements(fieldElements);
 

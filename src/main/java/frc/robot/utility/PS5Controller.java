@@ -1,7 +1,5 @@
 package frc.robot.utility;
 
-import java.io.Console;
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS5Controller.Axis;
 import edu.wpi.first.wpilibj.PS5Controller.Button;
