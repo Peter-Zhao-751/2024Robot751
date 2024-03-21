@@ -64,7 +64,6 @@ public class AimbotCommand extends Command {
 
     @Override
     public void execute() {
-        
     }
 
     @Override

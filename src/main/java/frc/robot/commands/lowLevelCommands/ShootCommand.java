@@ -1,5 +1,6 @@
 package frc.robot.commands.lowLevelCommands;
 import frc.robot.Constants;
+import frc.robot.commands.AimbotCommand;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransferSubsystem;
@@ -12,25 +13,31 @@ public class ShootCommand extends Command{
     private final TransferSubsystem transferSubsystem;
     private final IntakeSubsystem intakeSubsystem;
 
-    private double startTime;
+    private final AimbotCommand aimbotCommand;
+
+    private double startTime; // TODO: Maybe use WaitCommands instead?
     private double waitTime;
     private final boolean smartMode;
+    private final boolean aimbotMode;
     private boolean started;
 
     private ControlBoard.Mode mode;
  
-    public ShootCommand(boolean smartMode) {
+    public ShootCommand(boolean smartMode, boolean aimbotMode) {
         this.shooterSubsystem = ShooterSubsystem.getInstance();
         this.transferSubsystem = TransferSubsystem.getInstance();
         this.intakeSubsystem = IntakeSubsystem.getInstance();
 
+        this.aimbotCommand = new AimbotCommand();
+
         this.smartMode = smartMode;
+        this.aimbotMode = aimbotMode;
 
         addRequirements(shooterSubsystem, transferSubsystem, intakeSubsystem);
     }
 
     public ShootCommand() {
-        this(false);
+        this(true, true);
     }
 
     @Override
@@ -44,6 +51,7 @@ public class ShootCommand extends Command{
             shooterSubsystem.setSpeed(ControlBoard.getInstance().shooterSpeed());
             waitTime = 1000;
             if (!smartMode) transferSubsystem.setTransferSpeed(Constants.Transfer.intakeTransferSpeed);
+            aimbotCommand.initialize();
         } else {
             intakeSubsystem.setSwivelPosition(Constants.Intake.kAmpAngle);
             waitTime = 1000;
@@ -64,12 +72,14 @@ public class ShootCommand extends Command{
                 started = true;
             }
         }
+        aimbotCommand.execute();
     }
 
     @Override
     public void end(boolean interrupted) {
         shooterSubsystem.setSpeed(0);
         transferSubsystem.setTransferSpeed(0);
+        aimbotCommand.end(interrupted);
         intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
         StateMachine.setState(StateMachine.State.Idle);
     }
