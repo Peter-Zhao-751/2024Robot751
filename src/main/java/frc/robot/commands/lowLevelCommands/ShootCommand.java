@@ -18,12 +18,11 @@ public class ShootCommand extends Command{
     private double startTime; // TODO: Maybe use WaitCommands instead?
     private double waitTime;
     private final boolean smartMode;
-    private final boolean aimbotMode;
     private boolean started;
 
     private ControlBoard.Mode mode;
- 
-    public ShootCommand(boolean smartMode, boolean aimbotMode) {
+
+    public ShootCommand(boolean smartMode) {
         this.shooterSubsystem = ShooterSubsystem.getInstance();
         this.transferSubsystem = TransferSubsystem.getInstance();
         this.intakeSubsystem = IntakeSubsystem.getInstance();
@@ -31,13 +30,12 @@ public class ShootCommand extends Command{
         this.aimbotCommand = new AimbotCommand();
 
         this.smartMode = smartMode;
-        this.aimbotMode = aimbotMode;
 
         addRequirements(shooterSubsystem, transferSubsystem, intakeSubsystem);
     }
 
     public ShootCommand() {
-        this(true, true);
+        this(true);
     }
 
     @Override
@@ -58,7 +56,7 @@ public class ShootCommand extends Command{
             if (!smartMode) transferSubsystem.setTransferSpeed(-Constants.Transfer.intakeTransferSpeed);
         }
     }
-    
+
     @Override
     public void execute() {
         if (smartMode && !started) {
