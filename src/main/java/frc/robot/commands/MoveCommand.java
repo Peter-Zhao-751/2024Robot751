@@ -49,13 +49,15 @@ public class MoveCommand extends Command {
     public void initialize() {
         Pose2d currentRobotPosition = s_Swerve.getSwerveOdometryPose2d(); // do something
 
-        if (Math.abs(desiredLocation.getX() - currentRobotPosition.getX()) < 0.1 && Math.abs(desiredLocation.getY() - currentRobotPosition.getY()) < 0.1) return;
+        if (Math.abs(desiredLocation.getX() - currentRobotPosition.getX()) < 0.1 && Math.abs(desiredLocation.getY() - currentRobotPosition.getY()) < 0.1 && Math.abs(desiredLocation.getRotation().getDegrees() - currentRobotPosition.getRotation().getDegrees()) < 5) return;
         
         if (movementTrajectory == null){
             TrajectoryConfig config = new TrajectoryConfig(
                 Constants.AutoConstants.kMaxSpeedMetersPerSecond,
                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
                 .setKinematics(Constants.Swerve.swerveKinematics);
+            
+            config.setStartVelocity(s_Swerve.getCurrentVelocityMagnitude());
 
             movementTrajectory = TrajectoryGenerator.generateTrajectory(
                 currentRobotPosition,

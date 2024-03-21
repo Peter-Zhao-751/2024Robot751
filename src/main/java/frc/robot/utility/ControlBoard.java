@@ -62,7 +62,7 @@ public class ControlBoard {
         driver.leftTrigger.whileTrue(new IntakeCommand());
         driver.leftBumper.whileTrue(new ExportCommand());
         driver.rightBumper.toggleOnTrue(new SpinShooterCommand());
-        driver.rightTrigger.whileTrue(new ShootCommand(true));
+        driver.rightTrigger.whileTrue(new ShootCommand());
 
         driver.dPad.up.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
         driver.dPad.right.onTrue(new InstantCommand(() -> currentMode = Mode.Amp));

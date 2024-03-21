@@ -183,6 +183,9 @@ public class SwerveSubsystem extends SubsystemBase {
     public Pose2d getPose() {
         return stateEstimator.getEstimatedPose();
     }
+    public double getCurrentVelocityMagnitude(){
+        return Math.sqrt( Math.pow(stateEstimator.getVelX(), 2) + Math.pow(stateEstimator.getVelY(), 2));
+    }
 
     public void setPose(Pose2d pose) {
         stateEstimator.setPose(pose);

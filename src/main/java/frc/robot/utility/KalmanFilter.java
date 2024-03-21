@@ -195,6 +195,13 @@ public class KalmanFilter {
         return yState.position;
     }
 
+    public double getVelX() {
+        return xState.velocity;
+    }
+    public double getVelY() {
+        return yState.velocity;
+    }
+
     public Translation2d getTranslation2d(){
         return new Translation2d(xState.position, yState.position);
     }

@@ -95,4 +95,11 @@ public class StateEstimator {
         return new Rotation2d(gyro.getYaw().getValue());
     }
 
+    public double getVelX(){
+        return kalmanFilter.getVelX();
+    }
+    public double getVelY(){
+        return kalmanFilter.getVelY();
+    }
+
 }
