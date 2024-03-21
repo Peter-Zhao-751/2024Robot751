@@ -24,7 +24,7 @@ public class ExportCommand extends Command {
         StateMachine.setState(StateMachine.State.Shoot);
         mode = ControlBoard.getInstance().getMode();
         intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
-        transferSubsystem.setTransferSpeed(-0.5);
+        transferSubsystem.setTransferSpeed(-50);
     }
 
     @Override

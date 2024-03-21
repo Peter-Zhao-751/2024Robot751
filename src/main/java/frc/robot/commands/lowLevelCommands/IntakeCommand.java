@@ -26,7 +26,7 @@ public class IntakeCommand extends Command {
             intakeSubsystem.setIntakeSpeed(Constants.Intake.intakeSpeed);
             intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
             transferSubsystem.setIntakeTransfer(Constants.Transfer.intakeTransferSpeed);
-            transferSubsystem.setShooterTransfer(-10);
+            transferSubsystem.setShooterTransfer(-50);
         } else if (currentMode == ControlBoard.Mode.Amp) {
             intakeSubsystem.setIntakeSpeed(Constants.Intake.intakeSpeed);
             intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
@@ -44,7 +44,7 @@ public class IntakeCommand extends Command {
         transferSubsystem.stop();
         StateMachine.setState(StateMachine.State.Idle);
     }
-    
+
     @Override
     public boolean isFinished() {
         if (currentMode == ControlBoard.Mode.Speaker) {

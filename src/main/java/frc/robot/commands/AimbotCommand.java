@@ -24,11 +24,11 @@ public class AimbotCommand extends Command {
     @Override
     public void initialize() {
         FieldConstants.FieldElements[] fieldElements = FieldConstants.red;
-        
+
         Optional<Alliance> alliance = DriverStation.getAlliance();
 
         if (alliance.isPresent() && alliance.get() == Alliance.Blue) fieldElements = FieldConstants.blue;
-        
+
         FieldConstants.FieldElements element = fieldElements[1];
 
         double angle = Math.atan2(element.y - swerve.getPose().getY(), element.x - swerve.getPose().getX());

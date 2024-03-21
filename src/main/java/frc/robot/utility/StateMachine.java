@@ -2,6 +2,7 @@ package frc.robot.utility;
 
 import frc.robot.commands.CANdleController;
 import frc.robot.subsystems.CANdleSubsystem;
+import frc.robot.subsystems.Limelight;
 
 public class StateMachine {
 
@@ -38,7 +39,12 @@ public class StateMachine {
     }
 
     public static void update() {
-        CANdleController.changeAnimation(state.animation);
+		CANdleController.changeAnimation(state.animation);
+		if (state == State.Auton || state == State.Aimbot)
+			Limelight.getInstance().setLEDMode(Limelight.LEDMode.ON);
+		else
+			Limelight.getInstance().setLEDMode(Limelight.LEDMode.OFF);
+
     }
 
     public static void periodic() {

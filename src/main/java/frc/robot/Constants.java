@@ -27,7 +27,7 @@ public class Constants {
         public static int rightSwivelMotorID = 59;
         public static int beamBreakDIOPort = 1;
 
-        public static double swivelGearRatio = 15.0; 
+        public static double swivelGearRatio = 15.0;
         public static double intakeSpeed = 20.0; // units in centimeters per second
 
         public static double intakeRollerRadius = 2.54; // units in centimeters
@@ -54,7 +54,7 @@ public class Constants {
         public static double kAmpAngle = 60.0;
         public static double kRetractedAngle = 135.0;
 
-        public static double kSwivelEncoderZeroOffset = 85.4; 
+        public static double kSwivelEncoderZeroOffset = 85.4;
     }
 
     public static class Transfer{
@@ -81,7 +81,7 @@ public class Constants {
     }
 
     public static class Shooter{
-        // 2 krakens for shooting, one neo for the transfer belts. 
+        // 2 krakens for shooting, one neo for the transfer belts.
         public static int leftShooterMotorID = 51;
         public static int rightShooterMotorID = 52;
 
@@ -134,7 +134,7 @@ public class Constants {
         public static double wheelBase = 0.55245;
         public static double wheelCircumference = chosenModule.wheelCircumference;
 
-        /* Swerve Kinematics 
+        /* Swerve Kinematics
          * No need to ever change this unless you are not doing a traditional rectangular/square 4 module swerve */
          public static SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
             new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
@@ -147,7 +147,7 @@ public class Constants {
         public static double driveGearRatio = chosenModule.driveGearRatio;
         public static double angleGearRatio = chosenModule.angleGearRatio;
 
-        /* Motor Inverts */         
+        /* Motor Inverts */
         public static InvertedValue angleMotorInvert = chosenModule.angleMotorInvert;
         public static InvertedValue driveMotorInvert = chosenModule.driveMotorInvert;
 
@@ -160,7 +160,7 @@ public class Constants {
         public static double angleCurrentThresholdTime = 0.1;
         public static boolean angleEnableCurrentLimit = true;
 
-        public static int driveCurrentLimit = 40; 
+        public static int driveCurrentLimit = 40;
         public static int driveCurrentThreshold = 50;
         public static double driveCurrentThresholdTime = 0.1;
         public static boolean driveEnableCurrentLimit = true;
@@ -219,7 +219,7 @@ public class Constants {
                 this.constants = new SwerveModuleConstants(driveMotorID, angleMotorID, CANCoderID, angleOffset);
             }
         }
-        
+
         public static SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, -82.177);
         public static SwerveModule frontRightModule = new SwerveModule(21, 22, 23, -60.292);
         public static SwerveModule backLeftModule = new SwerveModule(31, 32, 33, -79.365);
@@ -229,7 +229,7 @@ public class Constants {
     public static class Limelight {
         public static double version = 3.0;
         public static String streamIp = "http://10.7.51.11:5800";
-        public static String dashboardIp = "http://10.7.51.11:5801";
+		public static String dashboardIp = "http://10.7.51.11:5801";
     }
 
     public static class CANdle {
@@ -252,26 +252,26 @@ public class Constants {
 
         public static double kPositionNoiseVar = 0.075;
         public static double kVelocityNoiseVar = 0.025;
-        public static double kAccelerationNoiseVar = 0.25; 
+        public static double kAccelerationNoiseVar = 0.25;
 
         public static double kPositionProcessNoise = 0.015;
         public static double kVelocityProcessNoise = 0.075;
         public static double kAccelerationProcessNoise = 0.15;
     }
 
-    public static class AutoConstants { 
+    public static class AutoConstants {
         //TODO: tune everything here
-        public static double kMaxSpeedMetersPerSecond = 3; // 3 
+        public static double kMaxSpeedMetersPerSecond = 3; // 3
         public static double kMaxAccelerationMetersPerSecondSquared = 3; // 3
         public static double kMaxAngularSpeedRadiansPerSecond = 2.4; //Math.PI;
         public static double kMaxAngularSpeedRadiansPerSecondSquared = 2.4; //Math.PI;
-        
+
 
         //especially these values
         public static double kPXController = 0.8;
         public static double kPYController = 0.8;
         public static double kPThetaController = 1;
-    
+
         /* Constraint for the motion profiled robot angle controller */
         public static TrapezoidProfile.Constraints kThetaControllerConstraints =
             new TrapezoidProfile.Constraints(
@@ -284,7 +284,7 @@ public class Constants {
             public double x;
             public double y;
             public double z;
-            
+
             public double minX;
             public double maxX;
             public double minY;
