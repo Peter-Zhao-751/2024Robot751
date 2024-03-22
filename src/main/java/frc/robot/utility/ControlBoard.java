@@ -78,13 +78,14 @@ public class ControlBoard {
     }
 
     private void configureOperatorBindings() {
-        // operator.leftTrigger.and(this::notClimberMode).whileTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
+         operator.leftTrigger.and(this::notClimberMode).whileTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
         // operator.leftTrigger.and(this::climberMode).whileTrue(new RunCommand(() -> s_Climber.changeLeftClimberLocation(-Constants.Climber.climberSpeed), s_Climber));
 
-        // operator.leftBumper.and(this::notClimberMode).whileTrue(new InstantCommand(/* TODO FLASH LEDs FOR HUMAN PLAYER*/));
+        operator.leftBumper.and(this::notClimberMode).whileTrue(new StartEndCommand(() -> LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.BLINK),
+                () -> LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.OFF)));
         // operator.leftBumper.and(this::climberMode).whileTrue(new RunCommand(() -> s_Climber.changeLeftClimberLocation(Constants.Climber.climberSpeed), s_Climber));
 
-        // operator.rightTrigger.and(this::notClimberMode).whileTrue(new InstantCommand(() -> currentMode = Mode.Amp));
+         operator.rightTrigger.and(this::notClimberMode).whileTrue(new InstantCommand(() -> currentMode = Mode.Amp));
         // operator.rightTrigger.and(this::climberMode).whileTrue(new RunCommand(() -> s_Climber.changeRightClimberLocation(-Constants.Climber.climberSpeed), s_Climber));
 
         // operator.rightBumper.and(this::notClimberMode).whileTrue(new TransferCommand());
@@ -95,9 +96,9 @@ public class ControlBoard {
         // operator.dPad.left.whileTrue(new RunCommand(this::retractIntake, s_Intake));
         // operator.dPad.right.whileTrue(new RunCommand(this::extendIntake, s_Intake));
 
-        // operator.triangleButton.toggleOnTrue(new StartEndCommand(() -> currentMode = Mode.Climb, () -> currentMode = Mode.Speaker));
+         operator.triangleButton.toggleOnTrue(new StartEndCommand(() -> currentMode = Mode.Climb, () -> currentMode = Mode.Speaker));
 
-        // operator.squareButton // TODO TBD
+        // operator.squareButton // TODO: TBD
         operator.circleButton.whileTrue(new InstantCommand(this::togglePrecise));
         operator.crossButton.whileTrue(new InstantCommand(s_Swerve::crossWheels, s_Swerve));
     }

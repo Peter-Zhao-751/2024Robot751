@@ -233,7 +233,7 @@ public class Constants {
         public static String name = "limelight"; // TODO: CHECK IF THIS IS RIGHT
 
         public static double height = 15.61 + 3.75; // inches
-        public static double angle = 55; // TODO check this value
+        public static double angle = 35; // TODO check this value
     }
 
     public static class CANdle {
