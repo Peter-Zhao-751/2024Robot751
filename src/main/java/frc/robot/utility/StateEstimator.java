@@ -7,18 +7,18 @@ import edu.wpi.first.math.geometry.Rotation2d;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import frc.robot.Constants;
-import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.LimelightSubsystem;
 
 
 public class StateEstimator {
     private final Pigeon2 gyro;
-    private final Limelight limelight;
+    private final LimelightSubsystem limelightSubsystem;
     private final KalmanFilter kalmanFilter;
     
 
-    public StateEstimator(Pigeon2 gyro, Limelight limelight){
+    public StateEstimator(Pigeon2 gyro, LimelightSubsystem limelightSubsystem){
         this.gyro = gyro;
-        this.limelight = limelight;
+        this.limelightSubsystem = limelightSubsystem;
         this.kalmanFilter = new KalmanFilter(0, 0, 0, 0, 0, 0, Constants.Odometry.kPositionNoiseVar, Constants.Odometry.kVelocityNoiseVar, Constants.Odometry.kAccelerationNoiseVar, Constants.Odometry.kPositionProcessNoise, Constants.Odometry.kVelocityProcessNoise, Constants.Odometry.kAccelerationProcessNoise);
     }
 
@@ -56,7 +56,7 @@ public class StateEstimator {
         TelemetryUpdater.setTelemetryValue("fieldAccelerationZ", fieldAccelerationZ);
         TelemetryUpdater.setTelemetryValue("Robot Yaw", gyro.getYaw().getValue());
 
-        Pose2d newLimePosition = limelight.getPose();
+        Pose2d newLimePosition = limelightSubsystem.getPose();
 
         // Chassis speeds
         ChassisSpeeds speeds = Constants.Swerve.swerveKinematics.toChassisSpeeds(moduleStates);
@@ -67,7 +67,7 @@ public class StateEstimator {
         //TelemetryUpdater.setTelemetryValue("Field Space Chassis Speeds X", fieldChassisSpeedX);
         //TelemetryUpdater.setTelemetryValue("Field Space Chassis Speeds Y", fieldChassisSpeedY);
 
-        if (limelight.hasTarget() && newLimePosition != null) {
+        if (limelightSubsystem.hasTarget() && newLimePosition != null) {
             kalmanFilter.update(newLimePosition.getX(), newLimePosition.getY(), fieldChassisSpeedX, fieldChassisSpeedY, fieldAccelerationX, fieldAccelerationY);
         } else {
             //kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY);

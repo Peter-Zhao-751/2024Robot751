@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants.FieldConstants;
+import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.utility.StateMachine;
 
@@ -15,9 +16,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class AimbotCommand extends Command {
     private final SwerveSubsystem swerve;
     private MoveCommand moveCommand;
+    private LimelightSubsystem limelightSubsystem;
 
     public AimbotCommand() {
         this.swerve = SwerveSubsystem.getInstance();
+        this.limelightSubsystem = LimelightSubsystem.getInstance();
+
+        limelightSubsystem.setDriverMode();
+        limelightSubsystem.setLEDMode(LimelightSubsystem.LEDMode.OFF);
+
         addRequirements(swerve);
     }
 
@@ -41,6 +48,8 @@ public class AimbotCommand extends Command {
         //FieldConstants.FieldElements closestElement = getFieldElements(fieldElements);
 
         StateMachine.setState(StateMachine.State.Aimbot);
+
+        limelightSubsystem.setVisionMode();
 
         moveCommand = new MoveCommand(new Pose2d(targetX, targetY, new Rotation2d(angle)));
         moveCommand.initialize();
@@ -69,6 +78,7 @@ public class AimbotCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         StateMachine.setState(StateMachine.State.Idle);
+        limelightSubsystem.setDriverMode();
     }
 
     @Override

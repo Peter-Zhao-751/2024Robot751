@@ -44,7 +44,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final SwerveDriveOdometry swerveOdometry;
     private final SwerveModule[] mSwerveMods;
     private final Pigeon2 gyro;
-    private final Limelight limelight;
+    private final LimelightSubsystem limelightSubsystem;
 
 //    private final SysIdRoutine routine;
 
@@ -55,7 +55,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private SwerveSubsystem() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.CANivoreID);
-        limelight = Limelight.getInstance();
+        limelightSubsystem = LimelightSubsystem.getInstance();
         gyro.getConfigurator().apply(new Pigeon2Configuration());
         gyro.setYaw(0);
 
@@ -66,7 +66,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 new SwerveModule(4, Constants.Swerve.backRightModule)
         };
 
-        stateEstimator = new StateEstimator(gyro, limelight);
+        stateEstimator = new StateEstimator(gyro, limelightSubsystem);
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());//, new Pose2d());
 
         actualPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveActualStates", SwerveModuleState.struct).publish();
@@ -255,7 +255,7 @@ public class SwerveSubsystem extends SubsystemBase {
         TelemetryUpdater.setTelemetryValue("swerve x", swerveOdometry.getPoseMeters().getX());
         TelemetryUpdater.setTelemetryValue("swerve y", swerveOdometry.getPoseMeters().getY());
 
-        limelight.debugDisplayValues();
+        limelightSubsystem.debugDisplayValues();
         //TelemetryUpdater.setTelemetryValue("Robot Pitch", gyro.getPitch().getValue());
         //TelemetryUpdater.setTelemetryValue("Robot Roll", gyro.getRoll().getValue());
 

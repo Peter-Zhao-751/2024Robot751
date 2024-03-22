@@ -230,6 +230,10 @@ public class Constants {
         public static double version = 3.0;
         public static String streamIp = "http://10.7.51.11:5800";
 		public static String dashboardIp = "http://10.7.51.11:5801";
+        public static String name = "limelight"; // TODO: CHECK IF THIS IS RIGHT
+
+        public static double height = 15.61 + 3.75; // inches
+        public static double angle = 55; // TODO check this value
     }
 
     public static class CANdle {
