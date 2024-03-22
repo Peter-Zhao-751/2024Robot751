@@ -76,8 +76,8 @@ public class Barn2PathInterpreter {
                         break;
                     case "intake":
                         double intakeDelay = (delay-5) > 0 ? (delay-5) : 0;
-                        ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new IntakeCommand()));
-                        autonCommands.add(moveAndIntake);
+                        //ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new IntakeCommand()));
+                        //autonCommands.add(moveAndIntake);
                         break;
                     default:
                         autonCommands.add(newMovementCommand);

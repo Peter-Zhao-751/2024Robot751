@@ -21,7 +21,7 @@ public class ControlBoard {
 
     private final SwerveSubsystem s_Swerve;
     // private final IntakeSubsystem s_Intake;
-    // private final ShooterSubsystem s_Shooter;
+    private final ShooterSubsystem s_Shooter;
     // private final ClimberSubsystem s_Climber;
 
     private Mode currentMode = Mode.Speaker;
@@ -40,7 +40,7 @@ public class ControlBoard {
 
         s_Swerve = SwerveSubsystem.getInstance();
         // s_Intake = IntakeSubsystem.getInstance();
-        // s_Shooter = ShooterSubsystem.getInstance();
+        s_Shooter = ShooterSubsystem.getInstance();
         // s_Climber = ClimberSubsystem.getInstance();
 
         s_Swerve.setDefaultCommand(
@@ -58,15 +58,15 @@ public class ControlBoard {
     }
 
     private void configureDriverBindings() {
-        driver.leftTrigger.whileTrue(new IntakeCommand());
-        driver.leftBumper.whileTrue(new ExportCommand());
+//        driver.leftTrigger.whileTrue(new IntakeCommand());
+//        driver.leftBumper.whileTrue(new ExportCommand());
         driver.rightBumper.toggleOnTrue(new SpinShooterCommand());
         driver.rightTrigger.whileTrue(new ShootCommand());
 
         driver.dPad.up.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
         driver.dPad.right.onTrue(new InstantCommand(() -> currentMode = Mode.Amp));
         //driver.dPad.left.whileTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.kRetractedAngle)));
-        driver.dPad.down.whileTrue(new TransferCommand());
+//        driver.dPad.down.whileTrue(new TransferCommand());
 
         driver.triangleButton.whileTrue(new RunCommand(s_Swerve::resetModulesToAbsolute));
 //        driver.squareButton.whileTrue(new InstantCommand(/*TODO Reset Odometry*/));
@@ -81,8 +81,10 @@ public class ControlBoard {
          operator.leftTrigger.and(this::notClimberMode).whileTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
         // operator.leftTrigger.and(this::climberMode).whileTrue(new RunCommand(() -> s_Climber.changeLeftClimberLocation(-Constants.Climber.climberSpeed), s_Climber));
 
-        operator.leftBumper.and(this::notClimberMode).whileTrue(new StartEndCommand(() -> LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.BLINK),
-                () -> LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.OFF)));
+        operator.leftBumper.and(this::notClimberMode).whileTrue(new StartEndCommand(
+            () -> LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.BLINK),
+            () -> LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.OFF)
+        ));
         // operator.leftBumper.and(this::climberMode).whileTrue(new RunCommand(() -> s_Climber.changeLeftClimberLocation(Constants.Climber.climberSpeed), s_Climber));
 
          operator.rightTrigger.and(this::notClimberMode).whileTrue(new InstantCommand(() -> currentMode = Mode.Amp));
@@ -97,7 +99,6 @@ public class ControlBoard {
         // operator.dPad.right.whileTrue(new RunCommand(this::extendIntake, s_Intake));
 
          operator.triangleButton.toggleOnTrue(new StartEndCommand(() -> currentMode = Mode.Climb, () -> currentMode = Mode.Speaker));
-
         // operator.squareButton // TODO: TBD
         operator.circleButton.whileTrue(new InstantCommand(this::togglePrecise));
         operator.crossButton.whileTrue(new InstantCommand(s_Swerve::crossWheels, s_Swerve));
