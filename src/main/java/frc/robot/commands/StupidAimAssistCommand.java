@@ -14,6 +14,7 @@ import frc.robot.utility.StateMachine;
 public class StupidAimAssistCommand extends Command {
 	private final LimelightSubsystem limelight;
 	private final SwerveSubsystem s_Swerve;
+
 	private MoveCommand moveCommand;
 
 	public StupidAimAssistCommand() {
@@ -25,11 +26,14 @@ public class StupidAimAssistCommand extends Command {
 	@Override
 	public void initialize() {
 		StateMachine.setState(StateMachine.State.Aimbot);
+		limelight.setVisionMode();
+		limelight.setLEDMode(LimelightSubsystem.LEDMode.ON);
 		Pose2d pose = limelight.getPose();
 
 		// if there is no target, then cancel the command
 		if (pose == null) {
 			cancel();
+			System.err.println("No target found");
 			return;
 		}
 
@@ -37,15 +41,12 @@ public class StupidAimAssistCommand extends Command {
 		FieldConstants.FieldElements redSpeaker = FieldConstants.red[1];
 		FieldConstants.FieldElements blueSpeaker = FieldConstants.blue[1];
 
-		FieldConstants.FieldElements closestSpeaker;
+		FieldConstants.FieldElements closestSpeaker = getDistance(redSpeaker.x, redSpeaker.y, pose.getX(), pose.getY()) <
+				getDistance(blueSpeaker.x, blueSpeaker.y, pose.getX(), pose.getY()) ? redSpeaker : blueSpeaker;
+		// TODO: Maybe change to an id based system using LimelightHelpers.getFiducialID() instead of this
 
-		if (getDistance(redSpeaker.x, redSpeaker.y, pose.getX(), pose.getY()) < getDistance(blueSpeaker.x, blueSpeaker.y, pose.getX(), pose.getY())) {
-			closestSpeaker = redSpeaker;
-		} else {
-			closestSpeaker = blueSpeaker;
-		}
 
-		double angle = Math.atan2(closestSpeaker.y - pose.getY(), closestSpeaker.x - pose.getX());
+        double angle = Math.atan2(closestSpeaker.y - pose.getY(), closestSpeaker.x - pose.getX());
 
 		angle = Math.toDegrees(angle);
 		angle = (angle + 360) % 360;
@@ -60,12 +61,14 @@ public class StupidAimAssistCommand extends Command {
 
 	@Override
     public void execute() {
-
+		if (moveCommand != null) moveCommand.execute();
     }
 
     @Override
     public void end(boolean interrupted) {
         StateMachine.setState(StateMachine.State.Idle);
+		limelight.setDriverMode();
+		limelight.setLEDMode(LimelightSubsystem.LEDMode.OFF);
     }
 
     @Override

@@ -26,13 +26,14 @@ public class TeleopCommand extends Command {
 
     public TeleopCommand(DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier preciseControl) {
         this.s_Swerve = SwerveSubsystem.getInstance();
-        addRequirements(s_Swerve);
 
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
         this.rotationSup = rotationSup;
         this.robotCentricSup = robotCentricSup;
         this.preciseControl = preciseControl;
+
+        addRequirements(s_Swerve);
     }
     @Override
     public void initialize() {

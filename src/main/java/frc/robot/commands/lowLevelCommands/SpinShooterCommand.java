@@ -2,7 +2,7 @@ package frc.robot.commands.lowLevelCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.commands.AimbotCommand;
+import frc.robot.commands.StupidAimAssistCommand;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.utility.ControlBoard;
@@ -11,19 +11,19 @@ import frc.robot.utility.StateMachine;
 
 public class SpinShooterCommand extends Command {
     private final ShooterSubsystem shooterSubsystem;
-    private final IntakeSubsystem intakeSubsystem;
+//    private final IntakeSubsystem intakeSubsystem;
 
     private ControlBoard.Mode mode;
-    private final AimbotCommand aimbotCommand;
+    private final StupidAimAssistCommand aimAssistCommand;
 
     public SpinShooterCommand() {
         this.shooterSubsystem = ShooterSubsystem.getInstance();
-        this.intakeSubsystem = IntakeSubsystem.getInstance();
+//        this.intakeSubsystem = IntakeSubsystem.getInstance();
 
-        this.aimbotCommand = new AimbotCommand();
+        this.aimAssistCommand = new StupidAimAssistCommand();
         // each subsystem used by the command must be passed into the
         // addRequirements() method (which takes a vararg of Subsystem)
-        addRequirements(shooterSubsystem, intakeSubsystem);
+        addRequirements(shooterSubsystem/*, intakeSubsystem*/);
     }
 
     /**
@@ -36,10 +36,10 @@ public class SpinShooterCommand extends Command {
 
         if (mode == ControlBoard.Mode.Speaker) {
             shooterSubsystem.setSpeed(ControlBoard.getInstance().shooterSpeed());
-            intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
-            aimbotCommand.initialize();
+//            intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
+            aimAssistCommand.initialize();
         } else {
-            intakeSubsystem.setSwivelPosition(Constants.Intake.kAmpAngle);
+//            intakeSubsystem.setSwivelPosition(Constants.Intake.kAmpAngle);
             shooterSubsystem.setSpeed(0);
         }
     }
@@ -50,7 +50,7 @@ public class SpinShooterCommand extends Command {
      */
     @Override
     public void execute() {
-        aimbotCommand.execute();
+        aimAssistCommand.execute();
     }
 
     /**
@@ -69,7 +69,7 @@ public class SpinShooterCommand extends Command {
      */
     @Override
     public boolean isFinished() {
-        return false;
+        return aimAssistCommand.isFinished();
     }
 
     /**
@@ -83,8 +83,8 @@ public class SpinShooterCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         shooterSubsystem.setSpeed(0);
-        intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
-        if (mode == ControlBoard.Mode.Speaker) aimbotCommand.end(interrupted);
+//        intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
+        if (mode == ControlBoard.Mode.Speaker) aimAssistCommand.end(interrupted);
         StateMachine.setState(StateMachine.State.Idle);
     }
 }

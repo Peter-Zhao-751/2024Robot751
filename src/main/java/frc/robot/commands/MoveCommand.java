@@ -49,9 +49,11 @@ public class MoveCommand extends Command {
     public void initialize() {
         Pose2d currentRobotPosition = s_Swerve.getSwerveOdometryPose2d(); // do something
 
-        if (Math.abs(desiredLocation.getX() - currentRobotPosition.getX()) < 0.1 && Math.abs(desiredLocation.getY() - currentRobotPosition.getY()) < 0.1 && Math.abs(desiredLocation.getRotation().getDegrees() - currentRobotPosition.getRotation().getDegrees()) < 5) return;
+        if (Math.abs(desiredLocation.getX() - currentRobotPosition.getX()) < 0.1 &&
+            Math.abs(desiredLocation.getY() - currentRobotPosition.getY()) < 0.1 &&
+            Math.abs(desiredLocation.getRotation().getDegrees() - currentRobotPosition.getRotation().getDegrees()) < 5) return;
         
-        if (movementTrajectory == null){
+        if (movementTrajectory == null) {
             TrajectoryConfig config = new TrajectoryConfig(
                 Constants.AutoConstants.kMaxSpeedMetersPerSecond,
                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
@@ -89,16 +91,12 @@ public class MoveCommand extends Command {
 
     @Override
     public void execute() {
-        if (swerveControllerCommand != null) {
-            swerveControllerCommand.execute();
-        }
+        if (swerveControllerCommand != null) swerveControllerCommand.execute();
     }
 
     @Override
     public void end(boolean interrupted) {
-        if (swerveControllerCommand != null) {
-            swerveControllerCommand.end(interrupted);
-        }
+        if (swerveControllerCommand != null) swerveControllerCommand.end(interrupted);
     }
 
     @Override
