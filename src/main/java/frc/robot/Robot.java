@@ -23,124 +23,155 @@ import com.ctre.phoenix6.SignalLogger;
  */
 public class Robot extends TimedRobot {
 
-  private Command m_autonomousCommand;
-  private CommandScheduler m_scheduler;
+    private Command m_autonomousCommand;
+    private CommandScheduler m_scheduler;
 
-  private RobotContainer m_robotContainer;
+    private RobotContainer m_robotContainer;
 
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
-  @Override
-  public void robotInit() {
-    // Robot Preferences
+    /**
+     * This function is run when the robot is first started up and should be used for any
+     * initialization code.
+     */
+    @Override
+    public void robotInit() {
+        // Robot Preferences
 
-    TelemetrySubsystem telemetrySubsystem = new TelemetrySubsystem();
-    telemetrySubsystem.start();
+        TelemetrySubsystem telemetrySubsystem = new TelemetrySubsystem();
+        telemetrySubsystem.start();
 
-    // Go through every constant in Constants.java check if the Preference exists.
-    // add it if it doesn't. if it does, overwrite it.
-    //UISubsystem.updatePreferencesBasedOnConstants(Constants.class, false);
-    //UIManager.updatePreferencesBasedOnConstants(Constants.class, true);
-    // robot container
-    m_robotContainer = new RobotContainer();
-    m_scheduler = CommandScheduler.getInstance();
+        // Go through every constant in Constants.java check if the Preference exists.
+        // add it if it doesn't. if it does, overwrite it.
+        //UISubsystem.updatePreferencesBasedOnConstants(Constants.class, false);
+        //UIManager.updatePreferencesBasedOnConstants(Constants.class, true);
+        // robot container
+        m_robotContainer = new RobotContainer();
+        m_scheduler = CommandScheduler.getInstance();
 
-    SignalLogger.setPath("/media/sda1/");
-    UIManager.initializeUI();
-  }
+        LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.OFF);
 
-  /**
-   * This function is called every robot packet, no matter the mode. Use this for items like
-   * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
-   * SmartDashboard integrated updating.
-   */
-
-  @Override
-  public void robotPeriodic() {
-    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
-    // commands, running already-scheduled commands, removing finished or interrupted commands,
-    // and running subsystem periodic() methods.  This must be called from the robot's periodic
-    // block in order for anything in the Command-based framework to work.
-    
-    // updating ui
-    //UISubsystem.updateTelemetry();
-    UIManager.updatePathPreview();
-    StateMachine.periodic();
-    m_scheduler.run();
-    // TODO: Figure out if we need to call subsystem periodic methods here?
-    ControlBoard.getInstance().updateTelemetry();
-  }
-
-  /** This function is called once each time the robot enters Disabled mode. */
-  @Override
-  public void disabledInit() {
-    SignalLogger.stop();
-  }
-
-  @Override
-  public void disabledPeriodic() {}
-
-  @Override
-  public void disabledExit() {
-  }
-
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
-  @Override
-  public void autonomousInit() {
-    File selectedAuton = UIManager.selectedAuton();
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand(selectedAuton);
-    if(Constants.loggingEnabled) SignalLogger.start();
-
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
+        SignalLogger.setPath("/media/sda1/");
+        UIManager.initializeUI();
     }
-  }
 
-  /** This function is called periodically during autonomous. */
-  @Override
-  public void autonomousPeriodic() {}
+    /**
+     * This function is called every robot packet, no matter the mode. Use this for items like
+     * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
+     *
+     * <p>This runs after the mode specific periodic functions, but before LiveWindow and
+     * SmartDashboard integrated updating.
+     */
 
-  @Override
-  public void autonomousExit() {
-    SwerveSubsystem.getInstance().crossWheels();
-  }
+    @Override
+    public void robotPeriodic() {
+        // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
+        // commands, running already-scheduled commands, removing finished or interrupted commands,
+        // and running subsystem periodic() methods.  This must be called from the robot's periodic
+        // block in order for anything in the Command-based framework to work.
 
-  @Override
-  public void teleopInit() {
-    if(Constants.loggingEnabled) SignalLogger.start();
-
-    //TelemetryUpdater.setTelemetryValue("Current Action", "Standard teleop");
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
+        // updating ui
+        //UISubsystem.updateTelemetry();
+        UIManager.updatePathPreview();
+        StateMachine.periodic();
+        m_scheduler.run();
+        // TODO: Figure out if we need to call subsystem periodic methods here?
+        ControlBoard.getInstance().updateTelemetry();
     }
-  }
 
-  /** This function is called periodically during operator control. */
-  @Override
-  public void teleopPeriodic() {}
+    @Override
+    public void driverStationConnected() {
+        for (int i = 0; i < 10; i++) {
+            System.out.println("Driver station connected " + "!".repeat(i+1));
+        }
+    }
 
-  @Override
-  public void teleopExit() {}
+//    @Override
+//    protected void loopFunc() {
+//        // BRICKS THE ROBOT TEE-HEE
+//    }
 
-  @Override
-  public void testInit() {
-    if(Constants.loggingEnabled) SignalLogger.start();
-    // Cancels all running commands at the start of test mode.
-    CommandScheduler.getInstance().cancelAll();
-  }
+    /**
+     * This function is called once each time the robot enters Disabled mode.
+     */
+    @Override
+    public void disabledInit() {
+        SignalLogger.stop();
+    }
 
-  /** This function is called periodically during test mode. */
-  @Override
-  public void testPeriodic() {}
+    @Override
+    public void disabledPeriodic() {}
+
+    @Override
+    public void disabledExit() {}
+
+    /**
+     * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
+     */
+    @Override
+    public void autonomousInit() {
+        File selectedAuton = UIManager.selectedAuton();
+        m_autonomousCommand = m_robotContainer.getAutonomousCommand(selectedAuton);
+        LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.ON);
+        if (Constants.loggingEnabled) SignalLogger.start();
+
+        if (m_autonomousCommand != null) {
+            m_autonomousCommand.schedule();
+        }
+    }
+
+    /**
+     * This function is called periodically during autonomous.
+     */
+    @Override
+    public void autonomousPeriodic() {}
+
+    @Override
+    public void autonomousExit() {
+        SwerveSubsystem.getInstance().crossWheels();
+        LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.OFF);
+    }
+
+    @Override
+    public void teleopInit() {
+        if (Constants.loggingEnabled) SignalLogger.start();
+
+        //TelemetryUpdater.setTelemetryValue("Current Action", "Standard teleop");
+        // This makes sure that the autonomous stops running when
+        // teleop starts running. If you want the autonomous to
+        // continue until interrupted by another command, remove
+        // this line or comment it out.
+        if (m_autonomousCommand != null) {
+            m_autonomousCommand.cancel();
+        }
+    }
+
+    /**
+     * This function is called periodically during operator control.
+     */
+    @Override
+    public void teleopPeriodic() {}
+
+    @Override
+    public void teleopExit() {}
+
+    @Override
+    public void testInit() {
+        if (Constants.loggingEnabled) SignalLogger.start();
+        // Cancels all running commands at the start of test mode.
+        CommandScheduler.getInstance().cancelAll();
+    }
+
+    /**
+     * This function is called periodically during test mode.
+     */
+    @Override
+    public void testPeriodic() {}
 
     @Override
     public void testExit() {}
+
+    @Override
+    public void simulationInit() {}
+
+    @Override
+    public void simulationPeriodic() {}
 }
