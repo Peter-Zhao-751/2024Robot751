@@ -23,8 +23,13 @@ public class ExportCommand extends Command {
     public void initialize() {
         StateMachine.setState(StateMachine.State.Shoot);
         mode = ControlBoard.getInstance().getMode();
-        intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
-        transferSubsystem.setTransferSpeed(-50);
+        if (mode == ControlBoard.Mode.Speaker) {
+            intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
+            transferSubsystem.setTransferSpeed(-50);
+        } else if (mode == ControlBoard.Mode.Amp) {
+            intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
+            intakeSubsystem.setIntakeSpeed(-10);
+        }
     }
 
     @Override
@@ -35,6 +40,8 @@ public class ExportCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         transferSubsystem.stop();
+        intakeSubsystem.setIntakeSpeed(0);
+        intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
         StateMachine.setState(StateMachine.State.Idle);
     }
 
