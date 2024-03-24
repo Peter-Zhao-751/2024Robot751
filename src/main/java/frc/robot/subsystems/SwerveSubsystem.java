@@ -26,11 +26,12 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-//import com.ctre.phoenix6.SignalLogger;
-//import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-//import edu.wpi.first.units.Measure;
-//import edu.wpi.first.units.Voltage;
-//import static edu.wpi.first.units.Units.Volts;
+import com.ctre.phoenix6.SignalLogger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
+import edu.wpi.first.wpilibj2.command.Command;
+import static edu.wpi.first.units.Units.Volts;
 
 //import edu.wpi.first.math.estimator.UnscentedKalmanFilter;
 
@@ -48,7 +49,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final Pigeon2 gyro;
     private final LimelightSubsystem limelightSubsystem;
 
-//    private final SysIdRoutine routine;
+    private final SysIdRoutine routine;
 
     // forgive me father for I have sinned
     private static GenericEntry resetX, resetY, setButtonEntry;
@@ -75,22 +76,22 @@ public class SwerveSubsystem extends SubsystemBase {
         desirePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveDesiredStates", SwerveModuleState.struct).publish();
         TelemetryUpdater.setTelemetryValue("Field", m_field);
 
-//        routine = new SysIdRoutine(
-//            new SysIdRoutine.Config(
-//                null,
-//                null,
-//                null,
-//                (state) -> SignalLogger.writeString("state", state.toString())
-//            ),
-//            new SysIdRoutine.Mechanism(
-//                (Measure<Voltage> volts) -> {
-//                    for(SwerveModule mod : mSwerveMods){
-//                        mod.setDriveVoltage(volts.in(Volts));
-//                    }
-//                    resetModulesToAbsolute();
-//                System.out.println("Volts: " + volts.in(Volts));
-//            }, null, this)
-//        );
+        routine = new SysIdRoutine(
+            new SysIdRoutine.Config(
+                null,
+                null,
+                null,
+                (state) -> SignalLogger.writeString("state", state.toString())
+            ),
+            new SysIdRoutine.Mechanism(
+                (Measure<Voltage> volts) -> {
+                    for(SwerveModule mod : mSwerveMods){
+                        mod.setDriveVoltage(volts.in(Volts));
+                    }
+                    resetModulesToAbsolute();
+                System.out.println("Volts: " + volts.in(Volts));
+            }, null, this)
+        );
         
         resetX = Shuffleboard.getTab("Initializer").add("Reset X", 0).withWidget(BuiltInWidgets.kToggleButton).getEntry();
         resetY = Shuffleboard.getTab("Initializer").add("Reset Y", 0).withWidget(BuiltInWidgets.kToggleButton).getEntry();
@@ -102,13 +103,13 @@ public class SwerveSubsystem extends SubsystemBase {
         return instance;
     }
 
-//    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-//        return routine.quasistatic(direction);
-//    }
-//
-//    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-//        return routine.dynamic(direction);
-//    }
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return routine.quasistatic(direction);
+    }
+
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return routine.dynamic(direction);
+    }
 
     public void setPosition(Pose2d desiredLocation, Rotation2d desiredHeading) {
         drive(null, 0, false, false);
