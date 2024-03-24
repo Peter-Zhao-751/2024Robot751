@@ -35,8 +35,8 @@ public class ControlBoard {
     }
 
     private ControlBoard() {
-        driver = new PS5Controller(1);
-        operator = new PS5Controller(0);
+        driver = new PS5Controller(0);
+        operator = new PS5Controller(1);
 
         s_Swerve = SwerveSubsystem.getInstance();
         // s_Intake = IntakeSubsystem.getInstance();
@@ -68,7 +68,7 @@ public class ControlBoard {
         //driver.dPad.left.whileTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.kRetractedAngle)));
 //        driver.dPad.down.whileTrue(new TransferCommand());
 
-        driver.triangleButton.whileTrue(new RunCommand(s_Swerve::resetModulesToAbsolute));
+        driver.triangleButton.whileTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
 //        driver.squareButton.whileTrue(new InstantCommand(/*TODO Reset Odometry*/));
         driver.circleButton.whileTrue(new InstantCommand(s_Swerve::zeroHeading));
 //        driver.crossButton.whileTrue(new InstantCommand(/*TODO Disable LEDs*/));

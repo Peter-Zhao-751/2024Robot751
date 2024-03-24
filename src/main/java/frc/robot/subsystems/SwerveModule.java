@@ -12,6 +12,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.lib.math.Conversions;
 import frc.robot.Constants;
 import frc.robot.utility.CurrentManager;
+import frc.robot.utility.TelemetryUpdater;
 
 public class SwerveModule {
     public final int moduleNumber;
@@ -106,7 +107,7 @@ public class SwerveModule {
      * @param angle the angle to set the module to in rotations
      */
     public void setModuleAngle(double angle) {
-        double absolutePosition = getCANcoder().getRotations() - angleOffset.getRotations() + angle;
+        double absolutePosition = getCANcoder().getRotations() + angleOffset.getRotations() + angle;
         mAngleMotor.setControl(anglePosition.withPosition(absolutePosition));
     }
 

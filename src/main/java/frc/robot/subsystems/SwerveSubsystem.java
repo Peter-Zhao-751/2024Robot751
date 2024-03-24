@@ -19,6 +19,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -124,7 +126,6 @@ public class SwerveSubsystem extends SubsystemBase {
         ySpeed *= Constants.Swerve.speedMultiplier;
         double rot = !isPrecise ? rotation : rotation * Constants.Swerve.preciseControlFactor;
         rot *= Math.max(Constants.Swerve.maxAngularVelocity / 10, 1);
-
         SwerveModuleState[] swerveModuleStates =
                 Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                         fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -241,6 +242,10 @@ public class SwerveSubsystem extends SubsystemBase {
         //TelemetryUpdater.setTelemetryValue("total swerve current draw", totalCurrent);
 
         //CurrentManager.updateCurrent(totalCurrent, CurrentManager.Subsystem.DriveTrain);
+
+        // for (SwerveModule mod : mSwerveMods) {
+        //     System.out.println(mod.moduleNumber + ": " + mod.getCANcoder().getDegrees());
+        // }
     }
 
     /**
@@ -261,8 +266,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
         m_field.setRobotPose(getPose());
 
-
-        // TelemetryUpdater.setTelemetryValueata("Swerve Drive", new Sendable() {
+        // TelemetryUpdater.setTelemetryValue("Swerve Drive", new Sendable() {
         //     @Override
         //     public void initSendable(SendableBuilder builder) {
         //         builder.setSmartDashboardType("SwerveDrive");

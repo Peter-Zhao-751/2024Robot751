@@ -45,8 +45,8 @@ public class IntakeSubsystem extends SubsystemBase{
     private final ArmFeedforward swivelFeedforwardController;
     private final PIDController swivelPIDController;
     //private final PIDController intakePIDController;
-    private final DigitalInput beamBreak;
-    private final Debouncer beamDebouncer;
+    // private final DigitalInput beamBreak;
+    // private final Debouncer beamDebouncer;
     private boolean isBeamBroken;
 
     private double swivelSetpoint;
@@ -71,8 +71,8 @@ public class IntakeSubsystem extends SubsystemBase{
         angleEncoder.setPositionConversionFactor(360);
         angleEncoder.setZeroOffset(Constants.Intake.kSwivelEncoderZeroOffset);
 
-        beamBreak = new DigitalInput(Constants.Intake.beamBreakDIOPort);
-        beamDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kRising);
+        // beamBreak = new DigitalInput(Constants.Intake.beamBreakDIOPort);
+        // beamDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kRising);
         isBeamBroken = false;
 
 
@@ -97,7 +97,7 @@ public class IntakeSubsystem extends SubsystemBase{
 
         targetIntakeSpeed = 0;
 
-        swivelSetpoint = getSwivelPosition();
+        swivelSetpoint = Constants.Intake.kRetractedAngle;
         swivelMovementStartTime = System.currentTimeMillis();
         swivelMovementStartAngle = getSwivelPosition();
 
@@ -196,7 +196,7 @@ public class IntakeSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
-        isBeamBroken = beamDebouncer.calculate(!beamBreak.get());
+        // isBeamBroken = beamDebouncer.calculate(!beamBreak.get());
         isSwivelEnabled = SmartDashboard.getBoolean("Swivel Enabled", true);
         if (isSwivelEnabled) {
             double deltaTime = (System.currentTimeMillis() - swivelMovementStartTime) / 1000;

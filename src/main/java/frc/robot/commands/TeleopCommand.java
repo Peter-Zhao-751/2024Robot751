@@ -42,7 +42,7 @@ public class TeleopCommand extends Command {
 
     @Override
     public void execute() {
-        /* Get Values, Deadband*/
+        /* Get Values, Deadband*/        
         double translationVal = translationSup.getAsDouble();
         double strafeVal = strafeSup.getAsDouble();
         double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband);
@@ -63,5 +63,15 @@ public class TeleopCommand extends Command {
             if (isDriving) StateMachine.setState(StateMachine.State.TeleopDrive);
             else StateMachine.setState(StateMachine.State.Idle);
         }
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+
     }
 }
