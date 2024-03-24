@@ -88,7 +88,7 @@ public class ShooterSubsystem extends SubsystemBase{
     public void setSpeed(double speed){
         targetSpeed = speed;
         leftShooterMotor.setControl(motionMagicVelocityVoltage.withVelocity(-speed));
-        rightShooterMotor.setControl(new Follower(leftShooterMotor.getDeviceID(), true));
+        rightShooterMotor.setControl(motionMagicVelocityVoltage.withVelocity(speed * 1.05));
     }
 
     public double getTargetETA(){

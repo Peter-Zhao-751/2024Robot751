@@ -73,8 +73,10 @@ public class TransferSubsystem extends SubsystemBase {
      * @param speed in centimeters per second
      */
     public void setTransferSpeed(double speed) { // in centimeters per second
-        setIntakeTransfer(speed);
-        setShooterTransfer(speed);
+        // setIntakeTransfer(speed);
+        // setShooterTransfer(speed);
+        shooterTransfer.set(speed/-40);
+        intakeTransfer.set(speed/40);
     }
 
     /**
@@ -115,8 +117,8 @@ public class TransferSubsystem extends SubsystemBase {
         TelemetryUpdater.setTelemetryValue("Intake Target Speed", targetIntakeSpeed);
         TelemetryUpdater.setTelemetryValue("Shooter Target Speed", targetShooterSpeed);
 
-        intakeTransfer.setVoltage(intakeTransferController.calculate(getIntakeSpeed(), targetIntakeSpeed));
-        shooterTransfer.setVoltage(shooterTransferController.calculate(getShooterSpeed(), targetShooterSpeed));
+        // intakeTransfer.setVoltage(intakeTransferController.calculate(getIntakeSpeed(), targetIntakeSpeed));
+        // shooterTransfer.setVoltage(shooterTransferController.calculate(getShooterSpeed(), targetShooterSpeed));
 
         intakeTransferController.debugPrintouts("intake transfer");
         shooterTransferController.debugPrintouts("shooter transfer");

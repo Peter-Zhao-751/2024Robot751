@@ -12,12 +12,12 @@ import java.io.File;
 public class RobotContainer {
     /* Subsystems */
     // private final CANdle s_CANdle = new CANdle();
-    // private final ShooterSubsystem s_Shooter = ShooterSubsystem.getInstance();
-    // private final IntakeSubsystem s_Intake = IntakeSubsystem.getInstance();
+    private final ShooterSubsystem s_Shooter = ShooterSubsystem.getInstance();
+    private final IntakeSubsystem s_Intake = IntakeSubsystem.getInstance();
     // private final ClimberSubsystem s_Climber = ClimberSubsystem.getInstance();
-    // private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
-    // private final TransferSubsystem s_Transfer = TransferSubsystem.getInstance();
-    // private final PowerSubsystem s_PDH = PowerSubsystem.getInstance();
+    private final SwerveSubsystem s_Swerve = SwerveSubsystem.getInstance();
+    private final TransferSubsystem s_Transfer = TransferSubsystem.getInstance();
+    private final PowerSubsystem s_PDH = PowerSubsystem.getInstance();
 
     // private final Barn2PathInterpreter u_Barn2PathInterpreter = new Barn2PathInterpreter();
 

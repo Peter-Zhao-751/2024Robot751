@@ -70,13 +70,13 @@ public class Constants {
         public static double kVIntakeController = 0.0;
         public static double kPIntakeController = 0.450;
 
-        public static double kSShootController = 0.0;
-        public static double kVShootController = 0.0;
-        public static double kPShooterController = 0.50;
+        public static double kSShootController = 3.07;
+        public static double kVShootController = 0.02;
+        public static double kPShooterController = 0.01;
 
         public static double maxTransferTime = 3.0; // unit in seconds
         public static double minTransferTime = 1.5;
-        public static double intakeTransferSpeed = 20.0; // units in centimeters per second
+        public static double intakeTransferSpeed = 40.0; // units in centimeters per second
         public static double kTransferSpeed = 20.0; // units in centimeters per second
     }
 

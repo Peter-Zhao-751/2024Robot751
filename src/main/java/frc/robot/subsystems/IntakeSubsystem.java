@@ -190,8 +190,9 @@ public class IntakeSubsystem extends SubsystemBase{
      * @param speed the speed of the intake motor in cm/s
      */
     public void setIntakeSpeed(double speed) {
-        targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius) / 43;
+        // targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius) / 43;
         //intakeMotor.setControl(velocityVoltage.withVelocity(targetIntakeSpeed));
+        intakeMotor.set(1);
     }
 
     @Override

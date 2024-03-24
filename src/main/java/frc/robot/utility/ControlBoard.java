@@ -20,9 +20,9 @@ public class ControlBoard {
     private final PS5Controller operator;
 
     private final SwerveSubsystem s_Swerve;
-    // private final IntakeSubsystem s_Intake;
+    private final IntakeSubsystem s_Intake;
     private final ShooterSubsystem s_Shooter;
-    // private final ClimberSubsystem s_Climber;
+    private final ClimberSubsystem s_Climber;
 
     private Mode currentMode = Mode.Speaker;
     private boolean precise = false;
@@ -39,9 +39,9 @@ public class ControlBoard {
         operator = new PS5Controller(1);
 
         s_Swerve = SwerveSubsystem.getInstance();
-        // s_Intake = IntakeSubsystem.getInstance();
+        s_Intake = IntakeSubsystem.getInstance();
         s_Shooter = ShooterSubsystem.getInstance();
-        // s_Climber = ClimberSubsystem.getInstance();
+        s_Climber = ClimberSubsystem.getInstance();
 
         s_Swerve.setDefaultCommand(
                 new TeleopCommand(
@@ -58,8 +58,8 @@ public class ControlBoard {
     }
 
     private void configureDriverBindings() {
-//        driver.leftTrigger.whileTrue(new IntakeCommand());
-//        driver.leftBumper.whileTrue(new ExportCommand());
+       driver.leftTrigger.whileTrue(new IntakeCommand());
+       driver.leftBumper.whileTrue(new ExportCommand());
         driver.rightBumper.toggleOnTrue(new SpinShooterCommand());
         driver.rightTrigger.whileTrue(new ShootCommand());
 
