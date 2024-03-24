@@ -38,9 +38,9 @@ public class TeleopCommand extends Command {
         double strafeVal = strafeSup.getAsDouble();
         double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband);
 
-        if (Math.hypot(translationVal, strafeVal) < Constants.stickDeadband) {
-            translationVal = strafeVal = 0;
-        }
+        // if (Math.hypot(translationVal, strafeVal) < Constants.stickDeadband) {
+        //     translationVal = strafeVal = 0;
+        // }
 
         /* Drive */
         boolean isDriving = s_Swerve.drive(
