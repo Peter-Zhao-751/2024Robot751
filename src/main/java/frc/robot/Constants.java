@@ -13,7 +13,7 @@ import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
 public class Constants {
-    public static boolean loggingEnabled = false;
+    public static boolean loggingEnabled = true;
 
     // Everything on the drive train is on the CANivore, so we use this ID for all CTRE configs
     public static String CANivoreID = "2003 Nissan Ultima"; // Don't ask Spencer why this is named this
