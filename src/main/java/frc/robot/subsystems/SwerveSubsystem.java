@@ -92,7 +92,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 System.out.println("Volts: " + volts.in(Volts));
             }, null, this)
         );
-        
+
         resetX = Shuffleboard.getTab("Initializer").add("Reset X", 0).withWidget(BuiltInWidgets.kToggleButton).getEntry();
         resetY = Shuffleboard.getTab("Initializer").add("Reset Y", 0).withWidget(BuiltInWidgets.kToggleButton).getEntry();
         setButtonEntry = Shuffleboard.getTab("Initializer").add("Set", false).withWidget(BuiltInWidgets.kToggleButton).getEntry();

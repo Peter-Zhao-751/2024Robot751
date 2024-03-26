@@ -118,7 +118,7 @@ public class StateEstimator {
 			gyro.setYaw(newLimePosition.getRotation().getDegrees());
 		} else {
 			kalmanFilter.reset(startingPoseX.getDouble(0), startingPoseY.getDouble(0), 0, 0, 0, 0);
-
+			gyro.setYaw(startingPoseTheta.getDouble(0));
 		}
 	}
 

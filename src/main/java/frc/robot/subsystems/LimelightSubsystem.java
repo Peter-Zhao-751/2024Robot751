@@ -17,7 +17,7 @@ public class LimelightSubsystem {
 		BLINK(),
 		ON()
     }
-		
+
     private static LimelightSubsystem instance;
 
     //TODO: implement this https://docs.limelightvision.io/docs/docs-limelight/apis/complete-networktables-api
@@ -80,7 +80,8 @@ public class LimelightSubsystem {
         double[] values = getValues();
         if (values != null) {
             TelemetryUpdater.setTelemetryValue("LimelightSubsystem X Position", values[0]);
-            TelemetryUpdater.setTelemetryValue("LimelightSubsystem Y Position", values[1]);
+			TelemetryUpdater.setTelemetryValue("LimelightSubsystem Y Position", values[1]);
+			TelemetryUpdater.setTelemetryValue("LimelightSubsystem Rotation", values[4]);
             TelemetryUpdater.setTelemetryValue("LimelightSubsystem Area", values[2]);
             TelemetryUpdater.setTelemetryValue("Estimated Distance", getDistance());
         }
