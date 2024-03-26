@@ -22,12 +22,12 @@ public class ClimberSubsystem extends SubsystemBase{
     private double leftDesiredLocation;
     private double rightDesiredLocation;
 
-    public static ClimberSubsystem getInstance(){
+    public static ClimberSubsystem getInstance() {
         if(instance == null) instance = new ClimberSubsystem();
         return instance;
     }
     
-    private ClimberSubsystem(){
+    private ClimberSubsystem() {
         leftClimberMotor = new CANSparkMax(Constants.Climber.leftClimberMotorID, MotorType.kBrushless);
         rightClimberMotor = new CANSparkMax(Constants.Climber.rightClimberMotorID, MotorType.kBrushless);
 

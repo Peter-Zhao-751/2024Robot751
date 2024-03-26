@@ -39,7 +39,7 @@ public class TransferSubsystem extends SubsystemBase {
         shooterTransfer = new CANSparkMax(Constants.Transfer.shooterTransferID, MotorType.kBrushless);
         intakeTransfer = new CANSparkMax(Constants.Transfer.intakeTransferID, MotorType.kBrushless);
         intakeTransfer.setInverted(true);
-        shooterTransfer.setInverted(false);
+        shooterTransfer.setInverted(true);
 
         beamBreak = new DigitalInput(Constants.Transfer.beamBreakDIOPort);
         beamDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kRising);
@@ -75,7 +75,7 @@ public class TransferSubsystem extends SubsystemBase {
     public void setTransferSpeed(double speed) { // in centimeters per second
         // setIntakeTransfer(speed);
         // setShooterTransfer(speed);
-        shooterTransfer.set(speed/-40);
+        shooterTransfer.set(speed/40);
         intakeTransfer.set(speed/40);
     }
 

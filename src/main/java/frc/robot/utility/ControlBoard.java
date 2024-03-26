@@ -23,7 +23,7 @@ public class ControlBoard {
     private final SwerveSubsystem s_Swerve;
     private final IntakeSubsystem s_Intake;
     private final ShooterSubsystem s_Shooter;
-    private final ClimberSubsystem s_Climber;
+    // private final ClimberSubsystem s_Climber;
 
     private Mode currentMode = Mode.Speaker;
     private boolean precise = false;
@@ -42,7 +42,7 @@ public class ControlBoard {
         s_Swerve = SwerveSubsystem.getInstance();
         s_Intake = IntakeSubsystem.getInstance();
         s_Shooter = ShooterSubsystem.getInstance();
-        s_Climber = ClimberSubsystem.getInstance();
+        // s_Climber = ClimberSubsystem.getInstance();
 
         s_Swerve.setDefaultCommand(
                 new TeleopCommand(
@@ -54,30 +54,31 @@ public class ControlBoard {
                 )
         );
 
-//        configureDriverBindings();\
-        configureRoutines();
+       configureDriverBindings();
+        // configureRoutines();
 //        configureOperatorBindings();
     }
 
-//    private void configureDriverBindings() {
-//       driver.leftTrigger.whileTrue(new IntakeCommand());
-//       driver.leftBumper.whileTrue(new ExportCommand());
-//        driver.rightBumper.toggleOnTrue(new SpinShooterCommand());
-//        driver.rightTrigger.whileTrue(new ShootCommand());
-//
-//        driver.dPad.up.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
-//        driver.dPad.right.onTrue(new InstantCommand(() -> currentMode = Mode.Amp));
-//        //driver.dPad.left.whileTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.kRetractedAngle)));
-////        driver.dPad.down.whileTrue(new TransferCommand());
-//
-//        driver.triangleButton.whileTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
-////        driver.squareButton.whileTrue(new InstantCommand(/*TODO Reset Odometry*/));
-//        driver.circleButton.whileTrue(new InstantCommand(s_Swerve::zeroHeading));
-////        driver.crossButton.whileTrue(new InstantCommand(/*TODO Disable LEDs*/));
-//
-//        driver.leftTriggerButton.onTrue(new InstantCommand(this::togglePrecise));
-//        driver.rightTriggerButton.whileTrue(new RunCommand(s_Swerve::crossWheels));
-//    }
+   private void configureDriverBindings() {
+      driver.leftTrigger.whileTrue(new IntakeCommand());
+      driver.leftBumper.whileTrue(new ExportCommand());
+       driver.rightBumper.toggleOnTrue(new SpinShooterCommand());
+       driver.rightTrigger.whileTrue(new ShootCommand());
+
+       driver.dPad.up.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
+       driver.dPad.right.onTrue(new InstantCommand(() -> currentMode = Mode.Amp));
+       //driver.dPad.left.whileTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.kRetractedAngle)));
+//        driver.dPad.down.whileTrue(new TransferCommand());
+
+       driver.triangleButton.whileTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
+//        driver.squareButton.whileTrue(new InstantCommand(/*TODO Reset Odometry*/));
+       driver.circleButton.whileTrue(new InstantCommand(s_Swerve::zeroHeading));
+//        driver.crossButton.whileTrue(new InstantCommand(/*TODO Disable LEDs*/));
+
+       driver.leftTriggerButton.onTrue(new InstantCommand(this::togglePrecise));
+       driver.rightTriggerButton.whileTrue(new RunCommand(s_Swerve::crossWheels));
+   }
+
     private void configureRoutines() {
         driver.leftBumper.whileTrue(s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         driver.leftTrigger.whileTrue(s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
