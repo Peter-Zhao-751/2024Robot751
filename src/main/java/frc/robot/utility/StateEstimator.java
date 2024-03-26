@@ -3,6 +3,9 @@ package frc.robot.utility;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -13,13 +16,27 @@ import frc.robot.subsystems.LimelightSubsystem;
 public class StateEstimator {
     private final Pigeon2 gyro;
     private final LimelightSubsystem limelightSubsystem;
-    private final KalmanFilter kalmanFilter;
-    
+	private final KalmanFilter kalmanFilter;
+
+	private double previousLimelightUpdateTime;
+	private Pose2d previousLimelightPose;
+
+	private ShuffleboardTab tab = Shuffleboard.getTab("Robot State Estimator");
+   	private GenericEntry startingPoseX = tab.add("startingPoseX", 0).getEntry();
+	private GenericEntry startingPoseY = tab.add("startingPoseY", 0).getEntry();
+	private GenericEntry startingPoseTheta = tab.add("startingPoseTheta", 0).getEntry();
+
+
 
     public StateEstimator(Pigeon2 gyro, LimelightSubsystem limelightSubsystem){
         this.gyro = gyro;
         this.limelightSubsystem = limelightSubsystem;
-        this.kalmanFilter = new KalmanFilter(0, 0, 0, 0, 0, 0, Constants.Odometry.kPositionNoiseVar, Constants.Odometry.kVelocityNoiseVar, Constants.Odometry.kAccelerationNoiseVar, Constants.Odometry.kPositionProcessNoise, Constants.Odometry.kVelocityProcessNoise, Constants.Odometry.kAccelerationProcessNoise);
+		this.kalmanFilter = new KalmanFilter(0, 0, 0, 0, 0, 0, Constants.Odometry.kPositionNoiseVar,
+				Constants.Odometry.kVelocityNoiseVar, Constants.Odometry.kAccelerationNoiseVar,
+				Constants.Odometry.kPositionProcessNoise, Constants.Odometry.kVelocityProcessNoise,
+				Constants.Odometry.kAccelerationProcessNoise);
+		previousLimelightPose = null;
+		previousLimelightUpdateTime = System.currentTimeMillis();
     }
 
     public void update(SwerveModuleState[] moduleStates){
@@ -46,7 +63,7 @@ public class StateEstimator {
         rotationMatrix[2][1] = 2.0 * (quatY * quatZ + quatX * quatW);
         rotationMatrix[2][2] = 1.0 - 2.0 * (quatX * quatX + quatY * quatY);
 
-        
+
         double fieldAccelerationX = rotationMatrix[0][0] * accelerationX + rotationMatrix[0][1] * accelerationY + rotationMatrix[0][2] * accelerationZ;
         double fieldAccelerationY = rotationMatrix[1][0] * accelerationX + rotationMatrix[1][1] * accelerationY + rotationMatrix[1][2] * accelerationZ;
         double fieldAccelerationZ = rotationMatrix[2][0] * accelerationX + rotationMatrix[2][1] * accelerationY + rotationMatrix[2][2] * accelerationZ;
@@ -68,7 +85,10 @@ public class StateEstimator {
         //TelemetryUpdater.setTelemetryValue("Field Space Chassis Speeds Y", fieldChassisSpeedY);
 
         if (limelightSubsystem.hasTarget() && newLimePosition != null) {
-            kalmanFilter.update(newLimePosition.getX(), newLimePosition.getY(), fieldChassisSpeedX, fieldChassisSpeedY, fieldAccelerationX, fieldAccelerationY);
+			kalmanFilter.update(newLimePosition.getX(), newLimePosition.getY(), fieldChassisSpeedX, fieldChassisSpeedY,
+					fieldAccelerationX, fieldAccelerationY);
+			previousLimelightPose = newLimePosition;
+			previousLimelightUpdateTime = System.currentTimeMillis();
         } else {
             //kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY);
             kalmanFilter.updateNewAcceleration(fieldAccelerationX, fieldAccelerationY);
@@ -87,9 +107,20 @@ public class StateEstimator {
         setRotation(pose.getRotation());
     }
 
-    public void setRotation(Rotation2d rotation){
-        gyro.setYaw(rotation.getDegrees());
-    }
+	public void setRotation(Rotation2d rotation) {
+		gyro.setYaw(rotation.getDegrees());
+	}
+
+	public void setToLatestLimelightPose() {
+		Pose2d newLimePosition = limelightSubsystem.hasTarget() ? limelightSubsystem.getPose() : previousLimelightPose;
+		if (newLimePosition != null || System.currentTimeMillis() - previousLimelightUpdateTime < 400){ // 400 ms of timeout
+			kalmanFilter.reset(newLimePosition.getX(), newLimePosition.getY(), 0, 0, 0, 0);
+			gyro.setYaw(newLimePosition.getRotation().getDegrees());
+		} else {
+			kalmanFilter.reset(startingPoseX.getDouble(0), startingPoseY.getDouble(0), 0, 0, 0, 0);
+
+		}
+	}
 
     public Rotation2d getYaw(){ // degrees
         return new Rotation2d(gyro.getYaw().getValue());
@@ -101,5 +132,4 @@ public class StateEstimator {
     public double getVelY(){
         return kalmanFilter.getVelY();
     }
-
 }

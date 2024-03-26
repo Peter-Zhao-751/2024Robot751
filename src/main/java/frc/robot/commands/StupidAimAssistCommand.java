@@ -43,7 +43,7 @@ public class StupidAimAssistCommand extends Command {
 
 		FieldConstants.FieldElements closestSpeaker = getDistance(redSpeaker.x, redSpeaker.y, pose.getX(), pose.getY()) <
 				getDistance(blueSpeaker.x, blueSpeaker.y, pose.getX(), pose.getY()) ? redSpeaker : blueSpeaker;
-		// TODO: Maybe change to an id based system using LimelightHelpers.getFiducialID() instead of this
+		// TODO: Maybe change to an id based system using LimelightHelpers.getFiducialID() instead of this ALEK STOP TRYING TO CODE U DONT KNOW WHAT IS GOING ON
 
 
         double angle = Math.atan2(closestSpeaker.y - pose.getY(), closestSpeaker.x - pose.getX());
