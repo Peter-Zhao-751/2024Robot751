@@ -83,7 +83,7 @@ public class IntakeSubsystem extends SubsystemBase{
         slot0.kP = Constants.Intake.kPIntakeController;
         slot0.kI = Constants.Intake.kIIntakeController;
         slot0.kD = Constants.Intake.kDIntakeController;
-        intakeMotor.getConfigurator().apply(slot0);
+        // intakeMotor.getConfigurator().apply(slot0);
 
         velocityVoltage = new VelocityVoltage(0);
 
@@ -192,7 +192,7 @@ public class IntakeSubsystem extends SubsystemBase{
     public void setIntakeSpeed(double speed) {
         // targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius) / 43;
         //intakeMotor.setControl(velocityVoltage.withVelocity(targetIntakeSpeed));
-        intakeMotor.set(1);
+        intakeMotor.set(0.9);
     }
 
     @Override

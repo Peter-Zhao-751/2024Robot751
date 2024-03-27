@@ -76,7 +76,7 @@ public class ControlBoard {
 //        driver.crossButton.whileTrue(new InstantCommand(/*TODO Disable LEDs*/));
 
        driver.leftTriggerButton.onTrue(new InstantCommand(this::togglePrecise));
-       driver.rightTriggerButton.whileTrue(new RunCommand(s_Swerve::crossWheels));
+       driver.rightTriggerButton.whileTrue(new InstantCommand(s_Swerve::crossWheels));
    }
 
     private void configureRoutines() {
