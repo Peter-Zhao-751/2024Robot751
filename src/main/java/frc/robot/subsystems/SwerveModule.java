@@ -17,7 +17,7 @@ import frc.robot.utility.TelemetryUpdater;
 public class SwerveModule {
     public final int moduleNumber;
     public SwerveModuleState desiredState;
-    private final Rotation2d angleOffset;
+    public final Rotation2d angleOffset;
 
     private final TalonFX mAngleMotor;
     private final TalonFX mDriveMotor;

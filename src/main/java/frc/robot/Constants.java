@@ -196,7 +196,7 @@ public class Constants {
         public static double maxAngularVelocity = maxSpeed / 1.6; // THIS IS THE MAX SPIN SPEED ROBOT, tested 2.1, feels sluggish
 
         /* Modifier for rotating to desired angle pose speed */
-        public static double angleKP = (10.46 * Math.exp(1.05 * speedMultiplier)); // I don't think this is right, take from SYSID instead
+        public static double angleKP = 2.183; // I don't think this is right, take from SYSID instead
 
         /* Neutral Modes */
         public static NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
@@ -220,10 +220,10 @@ public class Constants {
             }
         }
 
-        public static SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, -82.177);
-        public static SwerveModule frontRightModule = new SwerveModule(21, 22, 23, -60.292);
-        public static SwerveModule backLeftModule = new SwerveModule(31, 32, 33, -79.365);
-        public static SwerveModule backRightModule = new SwerveModule(41, 42, 43, 97.910);
+        public static SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, 8.0859375);
+        public static SwerveModule frontRightModule = new SwerveModule(21, 22, 23, 12.919921875);
+        public static SwerveModule backLeftModule = new SwerveModule(31, 32, 33, 225.17578125);
+        public static SwerveModule backRightModule = new SwerveModule(41, 42, 43, 66.796875);
     }
 
     public static class Limelight {

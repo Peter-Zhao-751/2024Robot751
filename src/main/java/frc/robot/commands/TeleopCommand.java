@@ -37,7 +37,6 @@ public class TeleopCommand extends Command {
     }
     @Override
     public void initialize() {
-        s_Swerve.setPose(new Pose2d(0, 0, new Rotation2d(0)));
     }
 
     @Override
@@ -48,7 +47,6 @@ public class TeleopCommand extends Command {
         double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband);
 
         if (Math.hypot(translationVal, strafeVal) < Constants.stickDeadband * Math.sqrt(2)) {
-            System.out.println("Deadband");
             translationVal = strafeVal = 0;
         }
 
