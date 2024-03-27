@@ -77,6 +77,7 @@ public class LimelightSubsystem {
     }
 
     public void debugDisplayValues() {
+        TelemetryUpdater.setTelemetryValue("LimelightSubsystem Has Target", hasTarget());
         double[] values = getValues();
         if (values != null) {
             TelemetryUpdater.setTelemetryValue("LimelightSubsystem X Position", values[0]);

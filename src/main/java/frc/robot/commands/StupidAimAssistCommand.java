@@ -67,7 +67,7 @@ public class StupidAimAssistCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         StateMachine.setState(StateMachine.State.Idle);
-		limelight.setDriverMode();
+		//limelight.setDriverMode();
 		limelight.setLEDMode(LimelightSubsystem.LEDMode.OFF);
     }
 

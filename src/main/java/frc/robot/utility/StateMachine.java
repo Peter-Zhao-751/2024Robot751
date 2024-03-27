@@ -40,10 +40,11 @@ public class StateMachine {
 
     public static void update() {
 		CANdleController.changeAnimation(state.animation);
-		if (state == State.Auton || state == State.Aimbot)
-			LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.ON);
-		else
-			LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.OFF);
+		if (state == State.Auton || state == State.Aimbot) {
+            LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.ON);
+        } else {
+            LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.OFF);
+        }
 
     }
 
