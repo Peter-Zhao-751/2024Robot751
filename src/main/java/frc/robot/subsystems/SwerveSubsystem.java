@@ -1,36 +1,36 @@
 package frc.robot.subsystems;
 
-import frc.lib.util.CTREConfigs;
-import frc.robot.Constants;
-import frc.robot.utility.StateEstimator;
-import frc.robot.utility.TelemetryUpdater;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
-import edu.wpi.first.math.kinematics.SwerveModulePosition;
-
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructArrayPublisher;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
+
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.ctre.phoenix6.SignalLogger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
+import frc.lib.util.CTREConfigs;
+import frc.robot.Constants;
+import frc.robot.utility.StateEstimator;
+import frc.robot.utility.TelemetryUpdater;
+
 import static edu.wpi.first.units.Units.Volts;
 
 //import edu.wpi.first.math.estimator.UnscentedKalmanFilter;
@@ -41,8 +41,6 @@ import static edu.wpi.first.units.Units.Volts;
 public class SwerveSubsystem extends SubsystemBase {
     public static final CTREConfigs ctreConfigs = new CTREConfigs();
     private static SwerveSubsystem instance;
-    public final StructArrayPublisher<SwerveModuleState> actualPublisher;
-    public final StructArrayPublisher<SwerveModuleState> desirePublisher;
     private final Field2d m_field = new Field2d();
     private final SwerveDriveOdometry swerveOdometry;
     private final SwerveModule[] mSwerveMods;
@@ -62,6 +60,8 @@ public class SwerveSubsystem extends SubsystemBase {
         limelightSubsystem = LimelightSubsystem.getInstance();
         gyro.getConfigurator().apply(new Pigeon2Configuration());
         gyro.setYaw(0);
+//        gyro.setYaw(limelightSubsystem.getYaw()); // TODO: check if this is correct
+
 
         mSwerveMods = new SwerveModule[]{
                 new SwerveModule(1, Constants.Swerve.frontLeftModule),
@@ -73,8 +73,6 @@ public class SwerveSubsystem extends SubsystemBase {
         stateEstimator = new StateEstimator(gyro, limelightSubsystem);
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());//, new Pose2d());
 
-        actualPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveActualStates", SwerveModuleState.struct).publish();
-        desirePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveDesiredStates", SwerveModuleState.struct).publish();
         TelemetryUpdater.setTelemetryValue("Field", m_field);
 
         routine = new SysIdRoutine(
@@ -219,7 +217,7 @@ public class SwerveSubsystem extends SubsystemBase {
      */
     public void resetModulesToAbsolute() {
         for (SwerveModule mod : mSwerveMods) {
-            mod.resetToAbsolute();
+            mod.setAngle();
         }
     }
 
@@ -230,12 +228,12 @@ public class SwerveSubsystem extends SubsystemBase {
      */
     public void crossWheels() {
         for (SwerveModule mod : mSwerveMods) {
-            mod.setModuleAngle((mod.moduleNumber - 1) * 0.25 + 0.125);
+            mod.setAngle((mod.moduleNumber - 1) * 0.25 - 0.125);
         }
     }
 
     public void kalmanReset(){
-        stateEstimator.setToLatestLimelightPose();
+        stateEstimator.resetLimelightPose();
     }
 
     @Override

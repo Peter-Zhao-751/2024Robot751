@@ -23,18 +23,19 @@ public class IntakeCommand extends Command {
         currentMode = ControlBoard.getInstance().getMode();
 
         if (currentMode == ControlBoard.Mode.Speaker) {
-            intakeSubsystem.setIntakeSpeed(Constants.Intake.intakeSpeed);
             intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
             transferSubsystem.setIntakeTransfer(Constants.Transfer.intakeTransferSpeed);
             transferSubsystem.setShooterTransfer(-50);
         } else if (currentMode == ControlBoard.Mode.Amp) {
-            intakeSubsystem.setIntakeSpeed(Constants.Intake.intakeSpeed);
             intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
         }
     }
 
     @Override
     public void execute() {
+        if (intakeSubsystem.closeToSetpoint()) {
+            intakeSubsystem.setIntakeSpeed(Constants.Intake.intakeSpeed);
+        }
     }
 
     @Override
@@ -47,11 +48,10 @@ public class IntakeCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        if (currentMode == ControlBoard.Mode.Speaker) {
-            return transferSubsystem.beamBroken();
-        } else if (currentMode == ControlBoard.Mode.Amp) {
-            return intakeSubsystem.beamBroken();
-        }
-        return false;
+        return switch (currentMode) {
+            case Speaker -> transferSubsystem.beamBroken();
+            case Amp -> intakeSubsystem.beamBroken();
+            default -> false;
+        };
     }
 }

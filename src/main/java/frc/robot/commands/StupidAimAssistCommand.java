@@ -26,8 +26,10 @@ public class StupidAimAssistCommand extends Command {
 	@Override
 	public void initialize() {
 		StateMachine.setState(StateMachine.State.Aimbot);
+
 		limelight.setVisionMode();
 		limelight.setLEDMode(LimelightSubsystem.LEDMode.ON);
+
 		Pose2d pose = limelight.getPose();
 
 		// if there is no target, then cancel the command

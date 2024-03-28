@@ -12,6 +12,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
+@SuppressWarnings("unused")
 public class Constants {
     public static boolean loggingEnabled = true;
 
@@ -172,19 +173,16 @@ public class Constants {
 
         /* Angle Motor PID Values */
         // KP is changed below in Swerve Profiling Values
-        public static double angleKI = chosenModule.angleKI;
-        public static double angleKD = chosenModule.angleKD;
+        public static double angleKP = 10;
+        public static double angleKI = 0;
+        public static double angleKD = 0.1;
 
         /* Drive Motor PID Values */
+        public static double driveKS = 0.32;
+        public static double driveKV = 1.51;
         public static double driveKP = 0.12;
         public static double driveKI = 0.0;
         public static double driveKD = 0.0;
-        public static double driveKF = 0.0;
-
-        /* Drive Motor Characterization Values From SYSID */
-        public static double driveKS = 0.32;
-        public static double driveKV = 1.51;
-        public static double driveKA = 0.27;
 
         /* Swerve Profiling Values */
         public static double preciseControlFactor = 0.25;
@@ -194,9 +192,6 @@ public class Constants {
         public static double speedMultiplier = 0.1; //TODO: testing speed, normal 1.0
         /** Radians per Second */
         public static double maxAngularVelocity = maxSpeed / 1.6; // THIS IS THE MAX SPIN SPEED ROBOT, tested 2.1, feels sluggish
-
-        /* Modifier for rotating to desired angle pose speed */
-        public static double angleKP = 2.183; // I don't think this is right, take from SYSID instead
 
         /* Neutral Modes */
         public static NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
@@ -220,6 +215,7 @@ public class Constants {
             }
         }
 
+        // TODO: Check if these values are correct
         public static SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, 8.0859375);
         public static SwerveModule frontRightModule = new SwerveModule(21, 22, 23, 12.919921875);
         public static SwerveModule backLeftModule = new SwerveModule(31, 32, 33, 225.17578125);
@@ -230,7 +226,7 @@ public class Constants {
         public static double version = 3.0;
         public static String streamIp = "http://10.7.51.11:5800";
 		public static String dashboardIp = "http://10.7.51.11:5801";
-        public static String name = "limelight"; // TODO: CHECK IF THIS IS RIGHT
+        public static String name = "limelight";
 
         public static double height = 15.61 + 3.75; // inches
         public static double angle = 35; // TODO check this value

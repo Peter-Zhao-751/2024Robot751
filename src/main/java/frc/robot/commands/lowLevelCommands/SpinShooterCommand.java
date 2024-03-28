@@ -21,8 +21,6 @@ public class SpinShooterCommand extends Command {
         this.intakeSubsystem = IntakeSubsystem.getInstance();
 
         this.aimAssistCommand = new StupidAimAssistCommand();
-        // each subsystem used by the command must be passed into the
-        // addRequirements() method (which takes a vararg of Subsystem)
         addRequirements(shooterSubsystem, intakeSubsystem);
     }
 
@@ -35,7 +33,7 @@ public class SpinShooterCommand extends Command {
         mode = ControlBoard.getInstance().getMode();
 
         if (mode == ControlBoard.Mode.Speaker) {
-            shooterSubsystem.setSpeed(ControlBoard.getInstance().shooterSpeed());
+//            shooterSubsystem.setSpeed(ControlBoard.getInstance().shooterSpeed());
             intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
             aimAssistCommand.initialize();
         } else {
@@ -69,8 +67,8 @@ public class SpinShooterCommand extends Command {
      */
     @Override
     public boolean isFinished() {
-        return false;
-        // return aimAssistCommand.isFinished();
+//        return false;
+        return aimAssistCommand.isFinished();
     }
 
     /**

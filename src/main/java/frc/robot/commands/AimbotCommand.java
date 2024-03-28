@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class AimbotCommand extends Command {
     private final SwerveSubsystem swerve;
     private MoveCommand moveCommand;
-    private LimelightSubsystem limelightSubsystem;
+    private final LimelightSubsystem limelightSubsystem;
 
     public AimbotCommand() {
         this.swerve = SwerveSubsystem.getInstance();

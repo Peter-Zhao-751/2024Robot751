@@ -33,20 +33,10 @@ public class ExportCommand extends Command {
     }
 
     @Override
-    public void execute() {
-        // The actual motor control is handled in the subsystem
-    }
-
-    @Override
     public void end(boolean interrupted) {
         transferSubsystem.stop();
         intakeSubsystem.setIntakeSpeed(0);
         intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
         StateMachine.setState(StateMachine.State.Idle);
-    }
-
-    @Override
-    public boolean isFinished() {
-        return false;
     }
 }

@@ -42,9 +42,11 @@ public class ShooterSubsystem extends SubsystemBase{
 
     private ShooterSubsystem(){
         leftShooterMotor = new TalonFX(Constants.Shooter.leftShooterMotorID, Constants.CANivoreID);
+        leftShooterMotor.setInverted(true);
         leftShooterMotor.setNeutralMode(NeutralModeValue.Coast);
 
         rightShooterMotor = new TalonFX(Constants.Shooter.rightShooterMotorID, Constants.CANivoreID);
+        rightShooterMotor.setInverted(true);
         rightShooterMotor.setNeutralMode(NeutralModeValue.Coast);
 
         flyWheelPlant = LinearSystemId.identifyVelocitySystem(Constants.Shooter.kVFlyWheelFeedforward, Constants.Shooter.kAFlyWheelFeedforward);
@@ -87,8 +89,8 @@ public class ShooterSubsystem extends SubsystemBase{
      */
     public void setSpeed(double speed){
         targetSpeed = speed;
-        leftShooterMotor.setControl(motionMagicVelocityVoltage.withVelocity(-speed));
-        rightShooterMotor.setControl(motionMagicVelocityVoltage.withVelocity(speed * 1.05));
+        leftShooterMotor.setControl(motionMagicVelocityVoltage.withVelocity(speed));
+        rightShooterMotor.setControl(motionMagicVelocityVoltage.withVelocity(speed * -1.05));
     }
 
     public double getTargetETA(){
@@ -104,7 +106,9 @@ public class ShooterSubsystem extends SubsystemBase{
      *
      */
     public void stop(){
-        setSpeed(0);
+        targetSpeed = 0;
+        leftShooterMotor.setControl(motionMagicVelocityVoltage.withAcceleration(-Math.signum(getLeftShooterMotorSpeed()) * 0.8 * Constants.Shooter.motionMagicAcceleration));
+        rightShooterMotor.setControl(new Follower(leftShooterMotor.getDeviceID(), true));
     }
 
     /**
@@ -136,7 +140,6 @@ public class ShooterSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
-
         kalmanFilter.correct(VecBuilder.fill(targetSpeed), VecBuilder.fill(getShooterSpeed()));
 
         //TelemetryUpdater.setTelemetryValue("Kalman Filter X-hat 0", kalmanFilter.getXhat(0));

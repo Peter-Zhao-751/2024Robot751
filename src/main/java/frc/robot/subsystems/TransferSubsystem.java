@@ -57,7 +57,8 @@ public class TransferSubsystem extends SubsystemBase {
      * @param speed in centimeters per second
      */
     public void setIntakeTransfer(double speed) { // cm/s
-        targetIntakeSpeed = speed / (2 * Math.PI * Constants.Transfer.intakeTransferRadius);
+//        targetIntakeSpeed = speed / (2 * Math.PI * Constants.Transfer.intakeTransferRadius);
+        intakeTransfer.set(speed/40);
     }
 
     /**
@@ -65,7 +66,8 @@ public class TransferSubsystem extends SubsystemBase {
      * @param speed in centimeters per second
      */
     public void setShooterTransfer(double speed) {
-        targetShooterSpeed = speed / (2 * Math.PI * Constants.Transfer.shooterTransferRadius);
+//        targetShooterSpeed = speed / (2 * Math.PI * Constants.Transfer.shooterTransferRadius);
+        shooterTransfer.set(speed/40);
     }
 
     /**
@@ -83,10 +85,10 @@ public class TransferSubsystem extends SubsystemBase {
      * Stop both transfer motors
      */
     public void stop() {
-        targetIntakeSpeed = 0;
-        targetShooterSpeed = 0;
-        // intakeTransfer.stopMotor(); 
-        // shooterTransfer.stopMotor();
+//        targetIntakeSpeed = 0;
+//        targetShooterSpeed = 0;
+        intakeTransfer.stopMotor();
+        shooterTransfer.stopMotor();
     }
 
     /**
@@ -108,7 +110,6 @@ public class TransferSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-
         isBeamBroken = beamDebouncer.calculate(!beamBreak.get());
         TelemetryUpdater.setTelemetryValue("Beam Break", beamBroken());
 

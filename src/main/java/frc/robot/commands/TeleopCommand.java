@@ -35,9 +35,6 @@ public class TeleopCommand extends Command {
 
         addRequirements(s_Swerve);
     }
-    @Override
-    public void initialize() {
-    }
 
     @Override
     public void execute() {
@@ -62,11 +59,6 @@ public class TeleopCommand extends Command {
             if (isDriving) StateMachine.setState(StateMachine.State.TeleopDrive);
             else StateMachine.setState(StateMachine.State.Idle);
         }
-    }
-
-    @Override
-    public boolean isFinished() {
-        return false;
     }
 
     @Override

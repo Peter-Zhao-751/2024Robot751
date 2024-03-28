@@ -100,9 +100,6 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledPeriodic() {}
 
-    @Override
-    public void disabledExit() {}
-
     /**
      * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
      */
@@ -153,9 +150,6 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {}
 
     @Override
-    public void teleopExit() {}
-
-    @Override
     public void testInit() {
         if (Constants.loggingEnabled) SignalLogger.start();
         // Cancels all running commands at the start of test mode.
@@ -167,12 +161,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void testPeriodic() {}
-
-    @Override
-    public void testExit() {}
-
-    @Override
-    public void simulationInit() {}
 
     @Override
     public void simulationPeriodic() {}

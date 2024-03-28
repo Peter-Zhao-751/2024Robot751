@@ -27,6 +27,7 @@ public class ControlBoard {
 
     private Mode currentMode = Mode.Speaker;
     private boolean precise = false;
+    private boolean fieldCentric = true;
     private double shooterSpeed = Constants.Shooter.maxShooterSpeed;
 
     public enum Mode {
@@ -49,35 +50,35 @@ public class ControlBoard {
                         () -> -driver.joystick.getRawAxis(PS5Controller.translationAxis),
                         () -> -driver.joystick.getRawAxis(PS5Controller.strafeAxis),
                         () -> -driver.joystick.getRawAxis(PS5Controller.rotationAxis),
-                        () -> false,
+                        () -> fieldCentric,
                         () -> precise
                 )
         );
 
-       configureDriverBindings();
-        // configureRoutines();
+        configureDriverBindings();
+//        configureRoutines();
 //        configureOperatorBindings();
     }
 
-   private void configureDriverBindings() {
-      driver.leftTrigger.whileTrue(new IntakeCommand());
-      driver.leftBumper.whileTrue(new ExportCommand());
-       driver.rightBumper.toggleOnTrue(new SpinShooterCommand());
-       driver.rightTrigger.whileTrue(new ShootCommand());
+    private void configureDriverBindings() {
+        driver.leftTrigger.whileTrue(new IntakeCommand());
+        driver.leftBumper.whileTrue(new ExportCommand());
+        driver.rightBumper.toggleOnTrue(new SpinShooterCommand());
+        driver.rightTrigger.whileTrue(new ShootCommand());
 
-       driver.dPad.up.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
-       driver.dPad.right.onTrue(new InstantCommand(() -> currentMode = Mode.Amp));
-       //driver.dPad.left.whileTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.kRetractedAngle)));
-//        driver.dPad.down.whileTrue(new TransferCommand());
+        driver.dPad.up.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
+        driver.dPad.right.onTrue(new InstantCommand(() -> currentMode = Mode.Amp));
+        driver.dPad.left.whileTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.kRetractedAngle)));
+        driver.dPad.down.whileTrue(new TransferCommand());
 
-       driver.triangleButton.whileTrue(new RunCommand(s_Swerve::resetModulesToAbsolute));
-//        driver.squareButton.whileTrue(new InstantCommand(/*TODO Reset Odometry*/));
-       driver.circleButton.whileTrue(new InstantCommand(s_Swerve::zeroHeading));
-//        driver.crossButton.whileTrue(new InstantCommand(/*TODO Disable LEDs*/));
+        driver.triangleButton.whileTrue(new RunCommand(s_Swerve::resetModulesToAbsolute));
+//       driver.squareButton.whileTrue(new InstantCommand(/*TODO Reset Odometry*/));
+        driver.circleButton.whileTrue(new InstantCommand(s_Swerve::zeroHeading));
+//       driver.crossButton.whileTrue(new InstantCommand(/*TODO Disable LEDs*/));
 
-       driver.leftTriggerButton.onTrue(new InstantCommand(this::togglePrecise));
-       driver.rightTriggerButton.whileTrue(new InstantCommand(s_Swerve::crossWheels));
-   }
+        driver.leftTriggerButton.onTrue(new InstantCommand(this::togglePrecise));
+        driver.rightTriggerButton.whileTrue(new InstantCommand(this::toggleFieldCentric));
+    }
 
     private void configureRoutines() {
         driver.leftBumper.whileTrue(s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
@@ -91,7 +92,7 @@ public class ControlBoard {
         driver.dPad.right.whileTrue(s_Intake.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     }
 
-//    private void configureOperatorBindings() {
+    private void configureOperatorBindings() {
 //         operator.leftTrigger.and(this::notClimberMode).whileTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
 //        // operator.leftTrigger.and(this::climberMode).whileTrue(new RunCommand(() -> s_Climber.changeLeftClimberLocation(-Constants.Climber.climberSpeed), s_Climber));
 //
@@ -113,10 +114,10 @@ public class ControlBoard {
 //        // operator.dPad.right.whileTrue(new RunCommand(this::extendIntake, s_Intake));
 //
 //         operator.triangleButton.toggleOnTrue(new StartEndCommand(() -> currentMode = Mode.Climb, () -> currentMode = Mode.Speaker));
-//        // operator.squareButton // TODO: TBD
+//         operator.squareButton.onTrue(new InstantCommand(() -> IntakeSubsystem.getInstance().setSwivelPosition(Constants.Intake.kRetractedAngle)));
 //        operator.circleButton.whileTrue(new InstantCommand(this::togglePrecise));
 //        operator.crossButton.whileTrue(new InstantCommand(s_Swerve::crossWheels, s_Swerve));
-//    }
+    }
 
     public static ControlBoard getInstance() {
         if (instance == null) instance = new ControlBoard();
@@ -126,6 +127,14 @@ public class ControlBoard {
     public void updateTelemetry() {
         SmartDashboard.putNumber("Shooter Speed", shooterSpeed);
         SmartDashboard.putString("Mode", currentMode.toString());
+    }
+
+    private void togglePrecise() {
+        precise = !precise;
+    }
+
+    private void toggleFieldCentric() {
+        fieldCentric = !fieldCentric;
     }
 
     public double shooterSpeed() {
@@ -140,10 +149,6 @@ public class ControlBoard {
         s_Intake.setSwivelPosition(s_Intake.getSwivelPosition() + intakeAngleIncrement);
     }
 
-    private void togglePrecise() {
-        precise = !precise;
-    }
-
     private void increaseShooterPower() {
         shooterSpeed += shooterSpeedIncrement;
     }
@@ -156,11 +161,11 @@ public class ControlBoard {
         return currentMode;
     }
 
-    private boolean notClimberMode() {
-        return currentMode != Mode.Climb;
-    }
-
     private boolean climberMode() {
         return currentMode == Mode.Climb;
+    }
+
+    private boolean notClimberMode() {
+        return currentMode != Mode.Climb;
     }
 }

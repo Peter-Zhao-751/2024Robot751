@@ -6,7 +6,6 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -44,13 +43,11 @@ public class IntakeSubsystem extends SubsystemBase{
 
     private final ArmFeedforward swivelFeedforwardController;
     private final PIDController swivelPIDController;
-    //private final PIDController intakePIDController;
     private final DigitalInput beamBreak;
     private final Debouncer beamDebouncer;
     private boolean isBeamBroken;
 
     private double swivelSetpoint;
-    private double targetIntakeSpeed;
     private double swivelMovementStartTime;
     private double swivelMovementStartAngle;
     private boolean isSwivelEnabled;
@@ -83,7 +80,7 @@ public class IntakeSubsystem extends SubsystemBase{
         slot0.kP = Constants.Intake.kPIntakeController;
         slot0.kI = Constants.Intake.kIIntakeController;
         slot0.kD = Constants.Intake.kDIntakeController;
-        // intakeMotor.getConfigurator().apply(slot0);
+        intakeMotor.getConfigurator().apply(slot0);
 
         velocityVoltage = new VelocityVoltage(0);
 
@@ -91,23 +88,13 @@ public class IntakeSubsystem extends SubsystemBase{
         swivelPIDController.enableContinuousInput(0, 360);
         swivelFeedforwardController = new ArmFeedforward(Constants.Intake.kSSwivelFeedforward, Constants.Intake.kGSwivelFeedforward, Constants.Intake.kVSwivelFeedforward);
 
-        //intakePIDController = new PIDController(Constants.Intake.kPIntakeController, Constants.Intake.kIIntakeController, Constants.Intake.kDIntakeController);
-
         swivelTrapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(300, 600));
-
-        targetIntakeSpeed = 0;
 
         swivelSetpoint = Constants.Intake.kRetractedAngle;
         swivelMovementStartTime = System.currentTimeMillis();
         swivelMovementStartAngle = getSwivelPosition();
 
         isSwivelEnabled = true;
-
-//        slider = Shuffleboard.getTab("intake")
-//        .add("Slider", 0)
-//        .withWidget(BuiltInWidgets.kNumberSlider)
-//        .withProperties(Map.of("min", 0, "max", 12))
-//        .getEntry();
 
         routine = new SysIdRoutine(
                 new SysIdRoutine.Config(
@@ -149,8 +136,7 @@ public class IntakeSubsystem extends SubsystemBase{
     public void stopAll() {
         leftSwivelMotor.stopMotor();
         rightSwivelMotor.stopMotor();
-        intakeMotor.set(0);
-        // intakeMotor.stopMotor();
+        setIntakeSpeed(0);
     }
 
     /**
@@ -195,14 +181,18 @@ public class IntakeSubsystem extends SubsystemBase{
     public void setIntakeSpeed(double speed) {
         // targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius) / 43;
         //intakeMotor.setControl(velocityVoltage.withVelocity(targetIntakeSpeed));
-        intakeMotor.set(0.9);
+        intakeMotor.set(Math.signum(speed) * 0.9);
+    }
+
+    public boolean closeToSetpoint() {
+        return Math.abs(swivelSetpoint - getSwivelPosition()) < 5;
     }
 
     @Override
     public void periodic() {
         isBeamBroken = beamDebouncer.calculate(!beamBreak.get());
         isSwivelEnabled = SmartDashboard.getBoolean("Swivel Enabled", true);
-        if (isSwivelEnabled && getSwivelPosition() < 180 && getSwivelPosition() > -20){
+        if (isSwivelEnabled && getSwivelPosition() < 180 && getSwivelPosition() > -20) {
             double deltaTime = (System.currentTimeMillis() - swivelMovementStartTime) / 1000;
             double currentAngle = getSwivelPosition();
 
@@ -232,19 +222,10 @@ public class IntakeSubsystem extends SubsystemBase{
             stopAll();
         }
 
-        //double intakePidOutput = intakePIDController.calculate(getIntakeSpeed(), targetIntakeSpeed);
-
-        intakeMotor.set(targetIntakeSpeed);
-
-
         // TelemetryUpdater.setTelemetryValue("Total Intake Current Draw", getCurrentDraw());
         TelemetryUpdater.setTelemetryValue("setpoint swivel", swivelSetpoint);
 
         TelemetryUpdater.setTelemetryValue("Intake Speed", getIntakeSpeed());
-        TelemetryUpdater.setTelemetryValue("Intake Desired Speed", targetIntakeSpeed);
-        // TelemetryUpdater.setTelemetryValue("Intake Speed", getIntakeSpeed());
-
-        //TelemetryUpdater.setTelemetryValue("Intake Desired Position", swivelSetpoint);
     }
 
     /**

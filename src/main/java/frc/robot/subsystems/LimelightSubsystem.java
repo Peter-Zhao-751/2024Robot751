@@ -41,6 +41,10 @@ public class LimelightSubsystem {
         return hasTarget() ? LimelightHelpers.getBotPose(this.name) : null;
     }
 
+    public double getYaw() {
+        return LimelightHelpers.getBotPose2d(this.name).getRotation().getDegrees();
+    }
+
     public void setDriverMode() {
         LimelightHelpers.setCameraMode_Driver(this.name);
     }
@@ -49,6 +53,10 @@ public class LimelightSubsystem {
         LimelightHelpers.setCameraMode_Processor(this.name);
     }
 
+    /**
+     * 0 is x, 1 is y, 2 z, 3 rotation x, 4 rotation y, 5 rotation z
+     * @return Pose2d, null if no target
+     */
 	public Pose2d getPose() {
 		double[] values = getValues();
         return values != null ? new Pose2d(values[0], values[1], new Rotation2d(values[4])) : null;

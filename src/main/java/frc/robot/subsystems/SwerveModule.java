@@ -1,18 +1,16 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import frc.lib.math.Conversions;
 import frc.robot.Constants;
-import frc.robot.utility.CurrentManager;
-import frc.robot.utility.TelemetryUpdater;
 
 public class SwerveModule {
     public final int moduleNumber;
@@ -22,8 +20,6 @@ public class SwerveModule {
     private final TalonFX mAngleMotor;
     private final TalonFX mDriveMotor;
     private final CANcoder angleEncoder;
-
-    private final SimpleMotorFeedforward driveFeedForward = new SimpleMotorFeedforward(Constants.Swerve.driveKS, Constants.Swerve.driveKV, Constants.Swerve.driveKA);
 
     /* drive motor control requests */
     private final DutyCycleOut driveDutyCycle = new DutyCycleOut(0);
@@ -38,12 +34,14 @@ public class SwerveModule {
 
         /* Angle Encoder Config */
         angleEncoder = new CANcoder(moduleConstants.CANCoderID, Constants.CANivoreID);
-        angleEncoder.getConfigurator().apply(SwerveSubsystem.ctreConfigs.swerveCANcoderConfig);
+        CANcoderConfiguration canCoderConfig = SwerveSubsystem.ctreConfigs.swerveCANcoderConfig;
+        canCoderConfig.MagnetSensor.MagnetOffset = angleOffset.getRotations();
+        angleEncoder.getConfigurator().apply(canCoderConfig);
 
         /* Angle Motor Config */
         mAngleMotor = new TalonFX(moduleConstants.angleMotorID, Constants.CANivoreID);
         mAngleMotor.getConfigurator().apply(SwerveSubsystem.ctreConfigs.swerveAngleFXConfig);
-        resetToAbsolute();
+        setAngle();
 
         /* Drive Motor Config */
         mDriveMotor = new TalonFX(moduleConstants.driveMotorID, Constants.CANivoreID);
@@ -51,17 +49,9 @@ public class SwerveModule {
         mDriveMotor.getConfigurator().setPosition(0.0);
     }
 
-//    public double getDriveMotorVoltage() {
-//        return mDriveMotor.getSupplyVoltage().getValue();
-//    }
-//
-//    public double getAngleMotorVoltage() {
-//        return mAngleMotor.getSupplyVoltage().getValue();
-//    }
-
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
-        mAngleMotor.setControl(anglePosition.withPosition(desiredState.angle.getRotations()));
+        setAngle(desiredState.angle.getRotations());
         setSpeed(desiredState, isOpenLoop);
         this.desiredState = desiredState;
     }
@@ -79,7 +69,6 @@ public class SwerveModule {
             mDriveMotor.setControl(driveDutyCycle);
         } else {
             driveVelocity.Velocity = Conversions.MPSToRPS(desiredState.speedMetersPerSecond, Constants.Swerve.wheelCircumference);
-            driveVelocity.FeedForward = driveFeedForward.calculate(desiredState.speedMetersPerSecond);
             driveVelocity.EnableFOC = Constants.Swerve.enableFOC;
             mDriveMotor.setControl(driveVelocity);
         }
@@ -97,17 +86,17 @@ public class SwerveModule {
     /**
      * Zeros the angle of the module
      */
-    public void resetToAbsolute() {
-        setModuleAngle(0);
+    public void setAngle() {
+        setAngle(0);
     }
 
     /**
-     * Sets the angle of the module
+     * Sets the angle of the module in rotations
      *
      * @param angle the angle to set the module to in rotations
      */
-    public void setModuleAngle(double angle) {
-        double absolutePosition = getCANcoder().getRotations() + angleOffset.getRotations() + angle;
+    public void setAngle(double angle) {
+        double absolutePosition = /*getCANcoder().getRotations() + */angle; // TODO: check if this fixes the issue
         mAngleMotor.setControl(anglePosition.withPosition(absolutePosition));
     }
 

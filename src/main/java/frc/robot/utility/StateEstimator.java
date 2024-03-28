@@ -21,10 +21,10 @@ public class StateEstimator {
 	private double previousLimelightUpdateTime;
 	private Pose2d previousLimelightPose;
 
-	private ShuffleboardTab tab = Shuffleboard.getTab("Robot State Estimator");
-   	private GenericEntry startingPoseX = tab.add("startingPoseX", 0).getEntry();
-	private GenericEntry startingPoseY = tab.add("startingPoseY", 0).getEntry();
-	private GenericEntry startingPoseTheta = tab.add("startingPoseTheta", 0).getEntry();
+	private final ShuffleboardTab tab = Shuffleboard.getTab("Robot State Estimator"); // TODO: look at starting POS x, y and theta and set the values. Start the robot looking at a tag and run auto
+   	private final GenericEntry startingPoseX = tab.add("startingPoseX", 0).getEntry();
+	private final GenericEntry startingPoseY = tab.add("startingPoseY", 0).getEntry();
+	private final GenericEntry startingPoseTheta = tab.add("startingPoseTheta", 0).getEntry();
 
 
 
@@ -90,9 +90,9 @@ public class StateEstimator {
 			previousLimelightPose = newLimePosition;
 			previousLimelightUpdateTime = System.currentTimeMillis();
         } else {
-            //kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY);
-            kalmanFilter.updateNewAcceleration(fieldAccelerationX, fieldAccelerationY);
-            //kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY, fieldAccelerationX, fieldAccelerationY);
+            //kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY); // already tested
+            kalmanFilter.updateNewAcceleration(fieldAccelerationX, fieldAccelerationY); // TODO: drive robot and measure if its right
+            //kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY, fieldAccelerationX, fieldAccelerationY); // TODO: use this after testing
         }
 
         kalmanFilter.debugDisplayValues();
@@ -111,7 +111,7 @@ public class StateEstimator {
 		gyro.setYaw(rotation.getDegrees());
 	}
 
-	public void setToLatestLimelightPose() {
+	public void resetLimelightPose() {
 		Pose2d newLimePosition = limelightSubsystem.hasTarget() ? limelightSubsystem.getPose() : previousLimelightPose;
 		if (newLimePosition != null || System.currentTimeMillis() - previousLimelightUpdateTime < 400) { // 400 ms of timeout
 			newLimePosition = previousLimelightPose;
