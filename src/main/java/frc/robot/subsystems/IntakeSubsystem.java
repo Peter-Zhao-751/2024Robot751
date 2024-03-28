@@ -169,8 +169,11 @@ public class IntakeSubsystem extends SubsystemBase{
      *
      * @param position the position of the swivel in degrees
      */
-    public void setSwivelPosition(double position) {
-        swivelSetpoint = position;
+	public void setSwivelPosition(double position) {
+		position %= 360;
+		if (position > 180) position = 180;
+		if (position < -20) position = -20;
+        swivelSetpoint = position % 360;
         swivelMovementStartAngle = getSwivelPosition();
         swivelMovementStartTime = System.currentTimeMillis();
     }
@@ -199,7 +202,7 @@ public class IntakeSubsystem extends SubsystemBase{
     public void periodic() {
         isBeamBroken = beamDebouncer.calculate(!beamBreak.get());
         isSwivelEnabled = SmartDashboard.getBoolean("Swivel Enabled", true);
-        if (isSwivelEnabled) {
+        if (isSwivelEnabled && getSwivelPosition() < 180 && getSwivelPosition() > -20){
             double deltaTime = (System.currentTimeMillis() - swivelMovementStartTime) / 1000;
             double currentAngle = getSwivelPosition();
 

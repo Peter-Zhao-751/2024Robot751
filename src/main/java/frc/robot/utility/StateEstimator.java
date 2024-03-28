@@ -113,7 +113,8 @@ public class StateEstimator {
 
 	public void setToLatestLimelightPose() {
 		Pose2d newLimePosition = limelightSubsystem.hasTarget() ? limelightSubsystem.getPose() : previousLimelightPose;
-		if (newLimePosition != null || System.currentTimeMillis() - previousLimelightUpdateTime < 400){ // 400 ms of timeout
+		if (newLimePosition != null || System.currentTimeMillis() - previousLimelightUpdateTime < 400) { // 400 ms of timeout
+			newLimePosition = previousLimelightPose;
 			kalmanFilter.reset(newLimePosition.getX(), newLimePosition.getY(), 0, 0, 0, 0);
 			gyro.setYaw(newLimePosition.getRotation().getDegrees());
 		} else {
