@@ -57,6 +57,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final StateEstimator stateEstimator;
 
     private SwerveSubsystem() {
+        register();
         gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.CANivoreID);
         limelightSubsystem = LimelightSubsystem.getInstance();
         gyro.getConfigurator().apply(new Pigeon2Configuration());
@@ -86,7 +87,7 @@ public class SwerveSubsystem extends SubsystemBase {
             new SysIdRoutine.Mechanism(
                 (Measure<Voltage> volts) -> {
                     for(SwerveModule mod : mSwerveMods){
-                        mod.setDriveVoltage(volts.in(Volts));
+                        mod.setAngleVoltage(volts.in(Volts));
                     }
                     resetModulesToAbsolute();
                 System.out.println("Volts: " + volts.in(Volts));
@@ -233,6 +234,10 @@ public class SwerveSubsystem extends SubsystemBase {
         }
     }
 
+    public void kalmanReset(){
+        stateEstimator.setToLatestLimelightPose();
+    }
+
     @Override
     public void periodic() {
         swerveUi();
@@ -260,6 +265,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
         TelemetryUpdater.setTelemetryValue("swerve x", swerveOdometry.getPoseMeters().getX());
         TelemetryUpdater.setTelemetryValue("swerve y", swerveOdometry.getPoseMeters().getY());
+
+        TelemetryUpdater.setTelemetryValue("gamer front left", mSwerveMods[0].getPosition().angle.getDegrees());
+        TelemetryUpdater.setTelemetryValue("gamer front right", mSwerveMods[1].getPosition().angle.getDegrees());
+        TelemetryUpdater.setTelemetryValue("gamer back left", mSwerveMods[2].getPosition().angle.getDegrees());
+        TelemetryUpdater.setTelemetryValue("gamer back right", mSwerveMods[3].getPosition().angle.getDegrees());
 
         limelightSubsystem.debugDisplayValues();
         //TelemetryUpdater.setTelemetryValue("Robot Pitch", gyro.getPitch().getValue());
