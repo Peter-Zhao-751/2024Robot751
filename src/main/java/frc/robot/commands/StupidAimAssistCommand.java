@@ -54,10 +54,8 @@ public class StupidAimAssistCommand extends Command {
 		angle = (angle + 360) % 360;
 
 
-		Pose2d dumbPose = s_Swerve.getSwerveOdometryPose2d();
-		double dumbAngle = (angle - dumbPose.getRotation().getDegrees() + 360) / 360;
-
-		moveCommand = new MoveCommand(new Pose2d(dumbPose.getX(), dumbPose.getY(), new Rotation2d(dumbAngle)));
+		Pose2d pose2d = s_Swerve.getSwerveOdometryPose2d();
+		moveCommand = new MoveCommand(new Pose2d(pose2d.getX(), pose2d.getY(), new Rotation2d((angle - pose2d.getRotation().getDegrees() + 360) / 360)));
 		moveCommand.initialize();
 	}
 
