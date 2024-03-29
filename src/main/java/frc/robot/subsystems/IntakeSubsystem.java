@@ -155,9 +155,8 @@ public class IntakeSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
-        System.out.println("Beam break; " + beamBreak.get());
         isBeamBroken = beamDebouncer.calculate(!beamBreak.get());
-        TelemetryUpdater.setTelemetryValue("Intake Beam Break", !beamBreak.get());
+        TelemetryUpdater.setTelemetryValue("Intake Beam Break", isBeamBroken);
 
         isSwivelEnabled = SmartDashboard.getBoolean("Swivel Enabled", true);
         if (isSwivelEnabled && getSwivelPosition() < 180 && getSwivelPosition() > -20) {
