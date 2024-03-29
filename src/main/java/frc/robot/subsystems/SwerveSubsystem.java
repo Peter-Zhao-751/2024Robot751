@@ -193,6 +193,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void zeroHeading() {
+        System.out.println("Zeroed Heading");
         setHeading(new Rotation2d());
     }
 
@@ -246,10 +247,10 @@ public class SwerveSubsystem extends SubsystemBase {
         TelemetryUpdater.setTelemetryValue("swerve x", swerveOdometry.getPoseMeters().getX());
         TelemetryUpdater.setTelemetryValue("swerve y", swerveOdometry.getPoseMeters().getY());
 
-        TelemetryUpdater.setTelemetryValue("gamer front left", mSwerveMods[0].getPosition().angle.getDegrees());
-        TelemetryUpdater.setTelemetryValue("gamer front right", mSwerveMods[1].getPosition().angle.getDegrees());
-        TelemetryUpdater.setTelemetryValue("gamer back left", mSwerveMods[2].getPosition().angle.getDegrees());
-        TelemetryUpdater.setTelemetryValue("gamer back right", mSwerveMods[3].getPosition().angle.getDegrees());
+        TelemetryUpdater.setTelemetryValue("gamer front left", mSwerveMods[0].getPosition().angle.getDegrees() % 360);
+        TelemetryUpdater.setTelemetryValue("gamer front right", mSwerveMods[1].getPosition().angle.getDegrees() % 360);
+        TelemetryUpdater.setTelemetryValue("gamer back left", mSwerveMods[2].getPosition().angle.getDegrees() % 360);
+        TelemetryUpdater.setTelemetryValue("gamer back right", mSwerveMods[3].getPosition().angle.getDegrees() % 360);
 
         limelightSubsystem.debugDisplayValues();
         //TelemetryUpdater.setTelemetryValue("Robot Pitch", gyro.getPitch().getValue());

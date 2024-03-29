@@ -28,7 +28,7 @@ public class ShootCommand extends Command{
     }
 
     public ShootCommand() {
-        this(false);
+        this(true);
     }
 
     @Override
@@ -63,6 +63,7 @@ public class ShootCommand extends Command{
     public void end(boolean interrupted) {
         shooterSubsystem.setSpeed(0);
         transferSubsystem.setTransferSpeed(0);
+        intakeSubsystem.setIntakeSpeed(0);
         intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
         StateMachine.setState(StateMachine.State.Idle);
     }

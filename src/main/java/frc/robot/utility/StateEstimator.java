@@ -90,8 +90,8 @@ public class StateEstimator {
 			previousLimelightPose = newLimePosition;
 			previousLimelightUpdateTime = System.currentTimeMillis();
         } else {
-            //kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY); // already tested
-            kalmanFilter.updateNewAcceleration(fieldAccelerationX, fieldAccelerationY); // TODO: drive robot and measure if its right
+            kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY); // already tested
+            // kalmanFilter.updateNewAcceleration(fieldAccelerationX, fieldAccelerationY); // TODO: drive robot and measure if its right
             //kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY, fieldAccelerationX, fieldAccelerationY); // TODO: use this after testing
         }
 
@@ -124,7 +124,7 @@ public class StateEstimator {
 	}
 
     public Rotation2d getYaw(){ // degrees
-        return new Rotation2d(gyro.getYaw().getValue());
+        return Rotation2d.fromDegrees(gyro.getYaw().getValue());
     }
 
     public double getVelX(){

@@ -7,9 +7,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.utility.TelemetrySubsystem;
 import frc.robot.utility.TelemetryUpdater;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -20,13 +20,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import com.ctre.phoenix6.SignalLogger;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Voltage;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-
-import static edu.wpi.first.units.Units.Volts;
 
 public class IntakeSubsystem extends SubsystemBase{
     private static IntakeSubsystem instance;
@@ -52,7 +45,6 @@ public class IntakeSubsystem extends SubsystemBase{
     private double swivelMovementStartAngle;
     private boolean isSwivelEnabled;
 
-    private final SysIdRoutine routine;
 
     private IntakeSubsystem() {
         leftSwivelMotor = new CANSparkMax(Constants.Intake.leftSwivelMotorID, MotorType.kBrushless);
@@ -76,6 +68,7 @@ public class IntakeSubsystem extends SubsystemBase{
         TalonFXConfiguration intakeMotorConfig = new TalonFXConfiguration();
         Slot0Configs slot0 = intakeMotorConfig.Slot0;
         slot0.kS = Constants.Intake.kSIntakeController;
+        slot0.kA = Constants.Intake.kAIntakeController;
         slot0.kV = Constants.Intake.kVIntakeController;
         slot0.kP = Constants.Intake.kPIntakeController;
         slot0.kI = Constants.Intake.kIIntakeController;
@@ -95,39 +88,11 @@ public class IntakeSubsystem extends SubsystemBase{
         swivelMovementStartAngle = getSwivelPosition();
 
         isSwivelEnabled = true;
-
-        routine = new SysIdRoutine(
-                new SysIdRoutine.Config(
-                        null,
-                        null,
-                        null,
-                        (state) -> SignalLogger.writeString("state", state.toString())
-                ),
-                new SysIdRoutine.Mechanism(
-                        (Measure<Voltage> volts) -> {
-                            intakeMotor.setVoltage(volts.in(Volts));
-                            System.out.println("Volts: " + volts.in(Volts));
-                        }, null, this)
-        );
     }
 
     public static IntakeSubsystem getInstance() {
         if (instance == null) instance = new IntakeSubsystem();
         return instance;
-    }
-
-    /**
-     * Changing voltage
-     */
-    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-        return routine.quasistatic(direction);
-    }
-
-    /**
-     * Static voltage
-     */
-    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-        return routine.dynamic(direction);
     }
 
     /**
@@ -176,12 +141,12 @@ public class IntakeSubsystem extends SubsystemBase{
     /**
      * Sets the speed of the intake motor
      *
-     * @param speed the speed of the intake motor in cm/s
+     * @param speed the speed of the intake motor in rps
      */
     public void setIntakeSpeed(double speed) {
-        // targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius) / 43;
-        //intakeMotor.setControl(velocityVoltage.withVelocity(targetIntakeSpeed));
-        intakeMotor.set(Math.signum(speed) * 0.9);
+        // double targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius);
+        intakeMotor.setControl(velocityVoltage.withVelocity(speed));
+        // intakeMotor.set(Math.signum(speed) * 0.9);
     }
 
     public boolean closeToSetpoint() {
@@ -191,6 +156,7 @@ public class IntakeSubsystem extends SubsystemBase{
     @Override
     public void periodic() {
         isBeamBroken = beamDebouncer.calculate(!beamBreak.get());
+        TelemetryUpdater.setTelemetryValue("Intake Beam Break", isBeamBroken);
         isSwivelEnabled = SmartDashboard.getBoolean("Swivel Enabled", true);
         if (isSwivelEnabled && getSwivelPosition() < 180 && getSwivelPosition() > -20) {
             double deltaTime = (System.currentTimeMillis() - swivelMovementStartTime) / 1000;

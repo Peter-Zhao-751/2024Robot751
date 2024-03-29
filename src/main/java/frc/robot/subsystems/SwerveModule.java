@@ -51,14 +51,14 @@ public class SwerveModule {
         angleConfiguration.Feedback.SensorToMechanismRatio = 1.0;
         angleConfiguration.Feedback.RotorToSensorRatio = Constants.Swerve.angleGearRatio;
 
-        angleConfiguration.CurrentLimits.SupplyCurrentLimit = Constants.Swerve.angleCurrentLimit;
-        angleConfiguration.CurrentLimits.SupplyTimeThreshold = Constants.Swerve.angleCurrentThreshold;
-        angleConfiguration.CurrentLimits.SupplyCurrentLimitEnable = Constants.Swerve.angleEnableCurrentLimit;
+        // angleConfiguration.CurrentLimits.SupplyCurrentLimit = Constants.Swerve.angleCurrentLimit;
+        // angleConfiguration.CurrentLimits.SupplyTimeThreshold = Constants.Swerve.angleCurrentThreshold;
+        // angleConfiguration.CurrentLimits.SupplyCurrentLimitEnable = Constants.Swerve.angleEnableCurrentLimit;
 
         mAngleMotor.getConfigurator().apply(angleConfiguration);
         setAngle();
 
-        anglePosition.EnableFOC = Constants.Swerve.enableFOC;
+        anglePosition.EnableFOC = false;
         driveDutyCycle.EnableFOC = Constants.Swerve.enableFOC;
         driveVelocity.EnableFOC = Constants.Swerve.enableFOC;
 
@@ -101,7 +101,7 @@ public class SwerveModule {
      * @see SwerveModule#setAngle(double)
      */
     public void setAngle() {
-        setAngle(0);
+        // setAngle(0);
     }
 
     /**

@@ -113,7 +113,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public void stop() {
         targetSpeed = 0;
         motionMagicVelocityVoltage.Acceleration = Constants.Shooter.motionMagicAcceleration / 4.0;
-        leftShooterMotor.setControl(motionMagicVelocityVoltage.withAcceleration(-Math.signum(getLeftShooterMotorSpeed()) * 0.8 * Constants.Shooter.motionMagicAcceleration));
+        leftShooterMotor.setControl(motionMagicVelocityVoltage.withVelocity(0));
         rightShooterMotor.setControl(new Follower(leftShooterMotor.getDeviceID(), true));
     }
 

@@ -50,13 +50,13 @@ public class ControlBoard {
                         () -> -driver.joystick.getRawAxis(PS5Controller.translationAxis),
                         () -> -driver.joystick.getRawAxis(PS5Controller.strafeAxis),
                         () -> -driver.joystick.getRawAxis(PS5Controller.rotationAxis),
-                        () -> fieldCentric,
+                        () -> false,
                         () -> precise
                 )
         );
 
         configureDriverBindings();
-//        configureRoutines();
+    //    configureRoutines();
 //        configureOperatorBindings();
     }
 
@@ -71,7 +71,7 @@ public class ControlBoard {
         driver.dPad.left.whileTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.kRetractedAngle)));
         driver.dPad.down.whileTrue(new TransferCommand());
 
-        driver.triangleButton.whileTrue(new RunCommand(s_Swerve::resetModulesToAbsolute));
+        driver.triangleButton.whileTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
 //       driver.squareButton.whileTrue(new InstantCommand(/*TODO Reset Odometry*/));
         driver.circleButton.whileTrue(new InstantCommand(s_Swerve::zeroHeading));
 //       driver.crossButton.whileTrue(new InstantCommand(/*TODO Disable LEDs*/));
@@ -85,11 +85,6 @@ public class ControlBoard {
         driver.leftTrigger.whileTrue(s_Swerve.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         driver.rightBumper.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kForward));
         driver.rightTrigger.whileTrue(s_Swerve.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-        driver.dPad.up.whileTrue(s_Intake.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        driver.dPad.down.whileTrue(s_Intake.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        driver.dPad.left.whileTrue(s_Intake.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        driver.dPad.right.whileTrue(s_Intake.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     }
 
     private void configureOperatorBindings() {
@@ -125,7 +120,7 @@ public class ControlBoard {
     }
 
     public void updateTelemetry() {
-        SmartDashboard.putNumber("Shooter Speed", shooterSpeed);
+        SmartDashboard.putNumber("Target Shooter Speed", shooterSpeed);
         SmartDashboard.putString("Mode", currentMode.toString());
     }
 

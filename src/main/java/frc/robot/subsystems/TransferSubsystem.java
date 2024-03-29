@@ -111,7 +111,7 @@ public class TransferSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         isBeamBroken = beamDebouncer.calculate(!beamBreak.get());
-        TelemetryUpdater.setTelemetryValue("Beam Break", beamBroken());
+        TelemetryUpdater.setTelemetryValue("Transfer Beam Break", isBeamBroken);
 
         TelemetryUpdater.setTelemetryValue("Intake Speed", getIntakeSpeed());
 //        TelemetryUpdater.setTelemetryValue("Shooter Speed", getShooterSpeed());

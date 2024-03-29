@@ -44,9 +44,10 @@ public class Constants {
         public static double kVSwivelFeedforward = 1.17;
 
         // TODO: Tune these values via SYSID
-        public static double kSIntakeController = 0;
-        public static double kVIntakeController = 0;
-        public static double kPIntakeController = 0.015;
+        public static double kSIntakeController = 0.30606;
+        public static double kVIntakeController = 0.1152;
+        public static double kAIntakeController = 0.0036207;
+        public static double kPIntakeController = 0.16228;
         public static double kIIntakeController = 0.0;
         public static double kDIntakeController = 0.0;
 
@@ -77,7 +78,7 @@ public class Constants {
 
         public static double maxTransferTime = 3.0; // unit in seconds
         public static double minTransferTime = 1.5;
-        public static double intakeTransferSpeed = 40.0; // units in centimeters per second
+        public static double intakeTransferSpeed = 40.0; // units in rotations per second
         public static double kTransferSpeed = 20.0; // units in centimeters per second
     }
 
@@ -173,7 +174,8 @@ public class Constants {
 
         /* Angle Motor PID Values */
         // KP is changed below in Swerve Profiling Values
-        public static double angleKP = 0.3;
+        public static double angleKP = 50;
+        //3.7402;
         public static double angleKI = 0;
         public static double angleKD = 0;
 
@@ -216,10 +218,10 @@ public class Constants {
         }
 
         // TODO: Check if these values are correct
-        public static SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, 101.07);
-        public static SwerveModule frontRightModule = new SwerveModule(21, 22, 23, 280.72);
-        public static SwerveModule backLeftModule = new SwerveModule(31, 32, 33, 97.38);
-        public static SwerveModule backRightModule = new SwerveModule(41, 42, 43, 120.41);
+        public static SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, 81.21);
+        public static SwerveModule frontRightModule = new SwerveModule(21, 22, 23, 59.41);
+        public static SwerveModule backLeftModule = new SwerveModule(31, 32, 33, 79.45);
+        public static SwerveModule backRightModule = new SwerveModule(41, 42, 43, 259.10);
     }
 
     public static class Limelight {
