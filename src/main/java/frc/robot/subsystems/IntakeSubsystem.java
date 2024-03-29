@@ -155,8 +155,10 @@ public class IntakeSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
+        System.out.println("Beam break; " + beamBreak.get());
         isBeamBroken = beamDebouncer.calculate(!beamBreak.get());
-        TelemetryUpdater.setTelemetryValue("Intake Beam Break", isBeamBroken);
+        TelemetryUpdater.setTelemetryValue("Intake Beam Break", !beamBreak.get());
+
         isSwivelEnabled = SmartDashboard.getBoolean("Swivel Enabled", true);
         if (isSwivelEnabled && getSwivelPosition() < 180 && getSwivelPosition() > -20) {
             double deltaTime = (System.currentTimeMillis() - swivelMovementStartTime) / 1000;
