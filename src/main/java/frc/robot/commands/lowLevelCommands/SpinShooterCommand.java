@@ -2,7 +2,7 @@ package frc.robot.commands.lowLevelCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.commands.StupidAimAssistCommand;
+import frc.robot.commands.AimAssistCommand;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.utility.ControlBoard;
@@ -14,13 +14,13 @@ public class SpinShooterCommand extends Command {
    private final IntakeSubsystem intakeSubsystem;
 
     private ControlBoard.Mode mode;
-    private final StupidAimAssistCommand aimAssistCommand;
+    private final AimAssistCommand aimAssistCommand;
 
     public SpinShooterCommand() {
         this.shooterSubsystem = ShooterSubsystem.getInstance();
         this.intakeSubsystem = IntakeSubsystem.getInstance();
 
-        this.aimAssistCommand = new StupidAimAssistCommand();
+        this.aimAssistCommand = new AimAssistCommand();
         addRequirements(shooterSubsystem, intakeSubsystem);
     }
 

@@ -137,7 +137,7 @@ public class Constants {
 
         /* Swerve Kinematics
          * No need to ever change this unless you are not doing a traditional rectangular/square 4 module swerve */
-         public static SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
+        public final static SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
             new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
             new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
             new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
@@ -158,7 +158,7 @@ public class Constants {
         /* Swerve Current Limiting */
         public static int angleCurrentLimit = 30;
         public static int angleCurrentThreshold = 40;
-        public static double angleCurrentThresholdTime = 0.1;
+        public static double angleCurrentThresholdTime = 0.25;
         public static boolean angleEnableCurrentLimit = true;
 
         public static int driveCurrentLimit = 40;
@@ -173,9 +173,9 @@ public class Constants {
 
         /* Angle Motor PID Values */
         // KP is changed below in Swerve Profiling Values
-        public static double angleKP = 10;
+        public static double angleKP = 0.3;
         public static double angleKI = 0;
-        public static double angleKD = 0.1;
+        public static double angleKD = 0;
 
         /* Drive Motor PID Values */
         public static double driveKS = 0.32;

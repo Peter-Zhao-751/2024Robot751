@@ -39,61 +39,66 @@ public class SwerveModule {
         angleEncoder = new CANcoder(moduleConstants.CANCoderID, Constants.CANivoreID);
         CANcoderConfiguration canCoderConfig = SwerveSubsystem.ctreConfigs.swerveCANcoderConfig;
         canCoderConfig.MagnetSensor.MagnetOffset = angleOffset.getRotations();
-        System.out.println(canCoderConfig.MagnetSensor.MagnetOffset);
         angleEncoder.getConfigurator().apply(canCoderConfig);
 
         /* Angle Motor Config */
         mAngleMotor = new TalonFX(moduleConstants.angleMotorID, Constants.CANivoreID);
+
         TalonFXConfiguration angleConfiguration = SwerveSubsystem.ctreConfigs.swerveAngleFXConfig;
+
         angleConfiguration.Feedback.FeedbackRemoteSensorID = angleEncoder.getDeviceID();
         angleConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         angleConfiguration.Feedback.SensorToMechanismRatio = 1.0;
         angleConfiguration.Feedback.RotorToSensorRatio = Constants.Swerve.angleGearRatio;
+
+        angleConfiguration.CurrentLimits.SupplyCurrentLimit = Constants.Swerve.angleCurrentLimit;
+        angleConfiguration.CurrentLimits.SupplyTimeThreshold = Constants.Swerve.angleCurrentThreshold;
+        angleConfiguration.CurrentLimits.SupplyCurrentLimitEnable = Constants.Swerve.angleEnableCurrentLimit;
+
         mAngleMotor.getConfigurator().apply(angleConfiguration);
         setAngle();
 
+        anglePosition.EnableFOC = Constants.Swerve.enableFOC;
+        driveDutyCycle.EnableFOC = Constants.Swerve.enableFOC;
+        driveVelocity.EnableFOC = Constants.Swerve.enableFOC;
+
         /* Drive Motor Config */
         mDriveMotor = new TalonFX(moduleConstants.driveMotorID, Constants.CANivoreID);
-        mDriveMotor.getConfigurator().apply(SwerveSubsystem.ctreConfigs.swerveDriveFXConfig);
+
+        TalonFXConfiguration driveConfiguration = SwerveSubsystem.ctreConfigs.swerveDriveFXConfig;
+        mDriveMotor.getConfigurator().apply(driveConfiguration);
         mDriveMotor.getConfigurator().setPosition(0.0);
     }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
         desiredState = SwerveModuleState.optimize(desiredState, getState().angle);
-        setAngle(desiredState.angle.getRotations());
+        setAngle(desiredState.angle);
         setSpeed(desiredState, isOpenLoop);
         this.desiredState = desiredState;
     }
 
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
-        /* Figuring out if we are in open loop or closed loop
-         * drive() in SwerveDrive.java is called with isOpenLoop = false most of the time
-         * but Teleop.java calls it with isOpenLoop = true
-         * So I think in teleop, we are in open loop, and in auto, we are in closed loop
-         */
-
         if (isOpenLoop) {
             driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
-            driveDutyCycle.EnableFOC = Constants.Swerve.enableFOC;
             mDriveMotor.setControl(driveDutyCycle);
         } else {
             driveVelocity.Velocity = Conversions.MPSToRPS(desiredState.speedMetersPerSecond, Constants.Swerve.wheelCircumference);
-            driveVelocity.EnableFOC = Constants.Swerve.enableFOC;
             mDriveMotor.setControl(driveVelocity);
         }
     }
 
     /**
-     * Gets the angle of the module in radians from the CANCoder
+     * Gets the angle of the module in Rotation2d from the CANCoder
      *
-     * @return the angle of the module in radians
+     * @return the angle of the module in Rotation2d
      */
-    public Rotation2d getCANcoder() {
+    public Rotation2d getAngle() {
         return Rotation2d.fromRotations(angleEncoder.getAbsolutePosition().getValue());
     }
 
     /**
-     * Zeros the angle of the module
+     * Sets the angle of the module to 0
+     * @see SwerveModule#setAngle(double)
      */
     public void setAngle() {
         setAngle(0);
@@ -105,8 +110,17 @@ public class SwerveModule {
      * @param angle the angle to set the module to in rotations
      */
     public void setAngle(double angle) {
-        double absolutePosition = /*getCANcoder().getRotations() + */angle; // TODO: check if this fixes the issue
-        mAngleMotor.setControl(anglePosition.withPosition(absolutePosition));
+        mAngleMotor.setControl(anglePosition.withPosition(angle));
+    }
+
+    /**
+     * Sets the angle of the module in Rotation2d
+     *
+     * @param angle the angle to set the module to in Rotation2d
+     */
+
+    public void setAngle(Rotation2d angle) {
+        setAngle(angle.getRotations());
     }
 
     /**

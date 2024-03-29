@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N1;
@@ -33,9 +32,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private final MotionMagicVelocityVoltage motionMagicVelocityVoltage;
 
-    private final LinearSystem<N1, N1, N1> flyWheelPlant;
-
-    private final KalmanFilter<N1, N1, N1> kalmanFilter;
+//    private final LinearSystem<N1, N1, N1> flyWheelPlant;
+//
+//    private final KalmanFilter<N1, N1, N1> kalmanFilter;
 
     public static ShooterSubsystem getInstance() {
         if (instance == null) instance = new ShooterSubsystem();
@@ -51,9 +50,9 @@ public class ShooterSubsystem extends SubsystemBase {
         rightShooterMotor.setInverted(true);
         rightShooterMotor.setNeutralMode(NeutralModeValue.Coast);
 
-        flyWheelPlant = LinearSystemId.identifyVelocitySystem(Constants.Shooter.kVFlyWheelFeedforward, Constants.Shooter.kAFlyWheelFeedforward);
+//        flyWheelPlant = LinearSystemId.identifyVelocitySystem(Constants.Shooter.kVFlyWheelFeedforward, Constants.Shooter.kAFlyWheelFeedforward);
 
-        kalmanFilter = new KalmanFilter<>(Nat.N1(), Nat.N1(), flyWheelPlant, VecBuilder.fill(Constants.Shooter.kProcessNoise), VecBuilder.fill(Constants.Shooter.kMeasurementNoise), 0.020);
+//        kalmanFilter = new KalmanFilter<>(Nat.N1(), Nat.N1(), flyWheelPlant, VecBuilder.fill(Constants.Shooter.kProcessNoise), VecBuilder.fill(Constants.Shooter.kMeasurementNoise), 0.020);
 
         // in init function
         TalonFXConfiguration talonFXConfigs = new TalonFXConfiguration();
@@ -139,7 +138,7 @@ public class ShooterSubsystem extends SubsystemBase {
     /**
      * <p> Returns the average speed of the shooter motors in rotations per second </p>
      *
-     * @return double
+     * @return double, the average speed of the shooter motors in rotations per second
      */
     public double getShooterSpeed() {
         return (getLeftShooterMotorSpeed() + getRightShooterMotorSpeed()) / 2;
@@ -147,9 +146,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        kalmanFilter.correct(VecBuilder.fill(targetSpeed), VecBuilder.fill(getShooterSpeed()));
+//        kalmanFilter.correct(VecBuilder.fill(targetSpeed), VecBuilder.fill(getShooterSpeed()));
 
         //TelemetryUpdater.setTelemetryValue("Kalman Filter X-hat 0", kalmanFilter.getXhat(0));
         //TelemetryUpdater.setTelemetryValue("Shooter Current Draw", getCurrentDraw());
+        TelemetryUpdater.setTelemetryValue("Shooter Speed", getShooterSpeed());
     }
 }

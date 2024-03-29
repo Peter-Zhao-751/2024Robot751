@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.Constants.FieldConstants;
@@ -11,13 +10,13 @@ import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.utility.StateMachine;
 
 
-public class StupidAimAssistCommand extends Command {
+public class AimAssistCommand extends Command {
 	private final LimelightSubsystem limelight;
 	private final SwerveSubsystem s_Swerve;
 
 	private MoveCommand moveCommand;
 
-	public StupidAimAssistCommand() {
+	public AimAssistCommand() {
 		this.limelight = LimelightSubsystem.getInstance();
 		this.s_Swerve = SwerveSubsystem.getInstance();
 		addRequirements(s_Swerve);
@@ -34,8 +33,8 @@ public class StupidAimAssistCommand extends Command {
 
 		// if there is no target, then cancel the command
 		if (pose == null) {
-			cancel();
 			System.err.println("No target found");
+			cancel();
 			return;
 		}
 
@@ -45,14 +44,10 @@ public class StupidAimAssistCommand extends Command {
 
 		FieldConstants.FieldElements closestSpeaker = getDistance(redSpeaker.x, redSpeaker.y, pose.getX(), pose.getY()) <
 				getDistance(blueSpeaker.x, blueSpeaker.y, pose.getX(), pose.getY()) ? redSpeaker : blueSpeaker;
-		// TODO: Maybe change to an id based system using LimelightHelpers.getFiducialID() instead of this ALEK STOP TRYING TO CODE U DONT KNOW WHAT IS GOING ON
+		// TODO: Maybe change to an id based system using LimelightHelpers.getFiducialID() instead of this
 
 
-        double angle = Math.atan2(closestSpeaker.y - pose.getY(), closestSpeaker.x - pose.getX());
-
-		angle = Math.toDegrees(angle);
-		angle = (angle + 360) % 360;
-
+        double angle = (Math.toDegrees(Math.atan2(closestSpeaker.y - pose.getY(), closestSpeaker.x - pose.getX())) + 360) % 360;
 
 		Pose2d pose2d = s_Swerve.getSwerveOdometryPose2d();
 		moveCommand = new MoveCommand(new Pose2d(pose2d.getX(), pose2d.getY(), new Rotation2d((angle - pose2d.getRotation().getDegrees() + 360) / 360)));

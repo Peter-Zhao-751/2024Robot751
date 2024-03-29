@@ -49,8 +49,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private final SysIdRoutine routine;
 
-    // forgive me father for I have sinned
-    private static GenericEntry resetX, resetY, setButtonEntry;
+//    // forgive me father for I have sinned
+//    private static GenericEntry resetX, resetY, setButtonEntry;
 
     private final StateEstimator stateEstimator;
 
@@ -92,9 +92,9 @@ public class SwerveSubsystem extends SubsystemBase {
             }, null, this)
         );
 
-        resetX = Shuffleboard.getTab("Initializer").add("Reset X", 0).withWidget(BuiltInWidgets.kToggleButton).getEntry();
-        resetY = Shuffleboard.getTab("Initializer").add("Reset Y", 0).withWidget(BuiltInWidgets.kToggleButton).getEntry();
-        setButtonEntry = Shuffleboard.getTab("Initializer").add("Set", false).withWidget(BuiltInWidgets.kToggleButton).getEntry();
+//        resetX = Shuffleboard.getTab("Initializer").add("Reset X", 0).withWidget(BuiltInWidgets.kToggleButton).getEntry();
+//        resetY = Shuffleboard.getTab("Initializer").add("Reset Y", 0).withWidget(BuiltInWidgets.kToggleButton).getEntry();
+//        setButtonEntry = Shuffleboard.getTab("Initializer").add("Set", false).withWidget(BuiltInWidgets.kToggleButton).getEntry();
     }
 
     public static SwerveSubsystem getInstance() {
@@ -141,18 +141,14 @@ public class SwerveSubsystem extends SubsystemBase {
                 );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
 
-        for (SwerveModule mod : mSwerveMods) {
-            mod.setDesiredState(swerveModuleStates[mod.moduleNumber - 1], isOpenLoop);
-        }
+        for (SwerveModule mod : mSwerveMods) mod.setDesiredState(swerveModuleStates[mod.moduleNumber - 1], isOpenLoop);
 
         return xSpeed >= 0.05 || ySpeed >= 0.05 || rot >= 0.2;
     }
 
     public SwerveModuleState[] getModuleStates() {
         SwerveModuleState[] states = new SwerveModuleState[4];
-        for (SwerveModule mod : mSwerveMods) {
-            states[mod.moduleNumber - 1] = mod.getState();
-        }
+        for (SwerveModule mod : mSwerveMods) states[mod.moduleNumber - 1] = mod.getState();
         return states;
     }
 
@@ -160,24 +156,18 @@ public class SwerveSubsystem extends SubsystemBase {
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
 
-        for (SwerveModule mod : mSwerveMods) {
-            mod.setDesiredState(desiredStates[mod.moduleNumber - 1], false);
-        }
+        for (SwerveModule mod : mSwerveMods) mod.setDesiredState(desiredStates[mod.moduleNumber - 1], false);
     }
 
     public SwerveModuleState[] getDesiredModuleStates() {
         SwerveModuleState[] states = new SwerveModuleState[4];
-        for (SwerveModule mod : mSwerveMods) {
-            states[mod.moduleNumber - 1] = mod.desiredState;
-        }
+        for (SwerveModule mod : mSwerveMods) states[mod.moduleNumber - 1] = mod.desiredState;
         return states;
     }
 
     public SwerveModulePosition[] getModulePositions() {
         SwerveModulePosition[] positions = new SwerveModulePosition[4];
-        for (SwerveModule mod : mSwerveMods) {
-            positions[mod.moduleNumber - 1] = mod.getPosition();
-        }
+        for (SwerveModule mod : mSwerveMods) positions[mod.moduleNumber - 1] = mod.getPosition();
         return positions;
     }
 
@@ -185,7 +175,7 @@ public class SwerveSubsystem extends SubsystemBase {
         return stateEstimator.getEstimatedPose();
     }
     public double getCurrentVelocityMagnitude(){
-        return Math.sqrt( Math.pow(stateEstimator.getVelX(), 2) + Math.pow(stateEstimator.getVelY(), 2));
+        return Math.hypot(stateEstimator.getVelX(), stateEstimator.getVelY());
     }
 
     public void setPose(Pose2d pose) {
@@ -203,8 +193,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void zeroHeading() {
-        stateEstimator.setRotation(new Rotation2d(0));
-        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), new Pose2d(getSwerveOdometryPose2d().getTranslation(), new Rotation2d()));
+        setHeading(new Rotation2d());
     }
 
     public Rotation2d getGyroYaw() {
@@ -247,20 +236,12 @@ public class SwerveSubsystem extends SubsystemBase {
         //TelemetryUpdater.setTelemetryValue("total swerve current draw", totalCurrent);
 
         //CurrentManager.updateCurrent(totalCurrent, CurrentManager.Subsystem.DriveTrain);
-
-        // for (SwerveModule mod : mSwerveMods) {
-        //     System.out.println(mod.moduleNumber + ": " + mod.getCANcoder().getDegrees());
-        // }
     }
 
     /**
      * <p> Updates the SmartDashboard with the current state of the swerve drive </p>
      */
     private void swerveUi() {
-
-        // if (setButtonEntry.getBoolean(false)) {
-        //     setPose(new Pose2d(resetX.getDouble(0), resetY.getDouble(0), getGyroYaw()));
-        // }
 
         TelemetryUpdater.setTelemetryValue("swerve x", swerveOdometry.getPoseMeters().getX());
         TelemetryUpdater.setTelemetryValue("swerve y", swerveOdometry.getPoseMeters().getY());
@@ -274,27 +255,6 @@ public class SwerveSubsystem extends SubsystemBase {
         //TelemetryUpdater.setTelemetryValue("Robot Pitch", gyro.getPitch().getValue());
         //TelemetryUpdater.setTelemetryValue("Robot Roll", gyro.getRoll().getValue());
 
-        m_field.setRobotPose(getPose());
-
-        // TelemetryUpdater.setTelemetryValue("Swerve Drive", new Sendable() {
-        //     @Override
-        //     public void initSendable(SendableBuilder builder) {
-        //         builder.setSmartDashboardType("SwerveDrive");
-
-        //         builder.addDoubleProperty("Front Left Angle", () -> mSwerveMods[0].getPosition().angle.getRadians(), null);
-        //         builder.addDoubleProperty("Front Left Velocity", () -> mSwerveMods[0].getState().speedMetersPerSecond, null);
-
-        //         builder.addDoubleProperty("Front Right Angle", () -> mSwerveMods[1].getPosition().angle.getRadians(), null);
-        //         builder.addDoubleProperty("Front Right Velocity", () -> mSwerveMods[1].getState().speedMetersPerSecond, null);
-
-        //         builder.addDoubleProperty("Back Left Angle", () -> mSwerveMods[2].getPosition().angle.getRadians(), null);
-        //         builder.addDoubleProperty("Back Left Velocity", () -> mSwerveMods[2].getState().speedMetersPerSecond, null);
-
-        //         builder.addDoubleProperty("Back Right Angle", () -> mSwerveMods[3].getPosition().angle.getRadians(), null);
-        //         builder.addDoubleProperty("Back Right Velocity", () -> mSwerveMods[3].getState().speedMetersPerSecond, null);
-
-        //         builder.addDoubleProperty("Robot Angle", () -> getGyroYaw().getRadians(), null);
-        //     }
-        // });
+        m_field.setRobotPose(getPose()); // TODO: Might be the thing that lags the command scheduler
     }
 }
