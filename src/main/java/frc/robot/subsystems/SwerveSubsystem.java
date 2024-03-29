@@ -216,6 +216,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * <p> Align all wheels forwards </p>
      */
     public void resetModulesToAbsolute() {
+        System.out.println("Resetting Modules");
         for (SwerveModule mod : mSwerveMods) {
             mod.setAngle();
         }

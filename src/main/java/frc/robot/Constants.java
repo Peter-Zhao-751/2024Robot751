@@ -14,7 +14,7 @@ import frc.lib.util.SwerveModuleConstants;
 
 @SuppressWarnings("unused")
 public class Constants {
-    public static boolean loggingEnabled = true;
+    public static boolean loggingEnabled = false;
 
     // Everything on the drive train is on the CANivore, so we use this ID for all CTRE configs
     public static String CANivoreID = "2003 Nissan Ultima"; // Don't ask Spencer why this is named this
@@ -216,10 +216,10 @@ public class Constants {
         }
 
         // TODO: Check if these values are correct
-        public static SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, 8.0859375);
-        public static SwerveModule frontRightModule = new SwerveModule(21, 22, 23, 12.919921875);
-        public static SwerveModule backLeftModule = new SwerveModule(31, 32, 33, 225.17578125);
-        public static SwerveModule backRightModule = new SwerveModule(41, 42, 43, 66.796875);
+        public static SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, 101.07);
+        public static SwerveModule frontRightModule = new SwerveModule(21, 22, 23, 280.72);
+        public static SwerveModule backLeftModule = new SwerveModule(31, 32, 33, 97.38);
+        public static SwerveModule backRightModule = new SwerveModule(41, 42, 43, 120.41);
     }
 
     public static class Limelight {
