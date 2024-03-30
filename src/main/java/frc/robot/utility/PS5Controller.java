@@ -6,11 +6,14 @@ import edu.wpi.first.wpilibj.PS5Controller.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+import java.util.function.DoubleSupplier;
+
 public class PS5Controller {
     /* Axes */
-    public static final int translationAxis = Axis.kLeftY.value;
-    public static final int strafeAxis = Axis.kLeftX.value;
-    public static final int rotationAxis = Axis.kRightX.value;
+    public final DoubleSupplier leftVerticalJoystick;
+    public final DoubleSupplier leftHorizontalJoystick;
+    public final DoubleSupplier rightHorizontalJoystick;
+    public final DoubleSupplier rightVerticalJoystick;
 
     /* Controllers */
     public final Joystick joystick;
@@ -45,6 +48,12 @@ public class PS5Controller {
 
     public PS5Controller(int port) {
         joystick = new Joystick(port);
+
+        leftVerticalJoystick = () -> -joystick.getRawAxis(Axis.kLeftY.value);
+        leftHorizontalJoystick = () -> -joystick.getRawAxis(Axis.kLeftX.value);
+        rightHorizontalJoystick = () -> -joystick.getRawAxis(Axis.kRightX.value);
+        rightVerticalJoystick = () -> -joystick.getRawAxis(Axis.kRightY.value);
+
         leftTrigger = new JoystickButton(joystick, Button.kL2.value);
         rightTrigger = new JoystickButton(joystick, Button.kR2.value);
 

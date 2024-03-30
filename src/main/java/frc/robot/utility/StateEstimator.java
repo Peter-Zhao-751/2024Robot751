@@ -12,9 +12,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import frc.robot.Constants;
 import frc.robot.subsystems.LimelightSubsystem;
+import frc.robot.subsystems.SwerveSubsystem;
 
 
 public class StateEstimator {
+    private static StateEstimator instance;
+
     private final Pigeon2 gyro;
     private final LimelightSubsystem limelightSubsystem;
 	private final KalmanFilter kalmanFilter;
@@ -27,9 +30,14 @@ public class StateEstimator {
 	private final GenericEntry startingPoseY = tab.add("startingPoseY", 0).getEntry();
 	private final GenericEntry startingPoseTheta = tab.add("startingPoseTheta", 0).getEntry();
 
-    public StateEstimator(Pigeon2 gyro, LimelightSubsystem limelightSubsystem){
-        this.gyro = gyro;
-        this.limelightSubsystem = limelightSubsystem;
+    public static StateEstimator getInstance() {
+        if(instance == null) instance = new StateEstimator();
+        return instance;
+    }
+
+    public StateEstimator(){
+        this.gyro = SwerveSubsystem.getInstance().getGyro();
+        this.limelightSubsystem = LimelightSubsystem.getInstance();
 		this.kalmanFilter = new KalmanFilter(0, 0, 0, 0, 0, 0, Constants.Odometry.kPositionNoiseVar,
 				Constants.Odometry.kVelocityNoiseVar, Constants.Odometry.kAccelerationNoiseVar,
 				Constants.Odometry.kPositionProcessNoise, Constants.Odometry.kVelocityProcessNoise,
@@ -104,6 +112,10 @@ public class StateEstimator {
     public void setPose(Pose2d pose){
         kalmanFilter.reset(pose.getX(), pose.getY(), 0, 0, 0, 0);
         setRotation(pose.getRotation());
+    }
+
+    public void resetPose() {
+        setPose(new Pose2d(0, 0, new Rotation2d(0)));
     }
 
 	public void setRotation(Rotation2d rotation) {

@@ -66,7 +66,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 new SwerveModule(4, Constants.Swerve.backRightModule)
         };
 
-        stateEstimator = new StateEstimator(gyro, limelightSubsystem);
+        stateEstimator = new StateEstimator();
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());//, new Pose2d());
 
         TelemetryUpdater.setTelemetryValue("Field", m_field);
@@ -98,6 +98,10 @@ public class SwerveSubsystem extends SubsystemBase {
         return instance;
     }
 
+    public Pigeon2 getGyro() {
+        return gyro;
+    }
+
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
         return routine.quasistatic(direction);
     }
@@ -114,7 +118,7 @@ public class SwerveSubsystem extends SubsystemBase {
         return drive(translation, rotation, fieldRelative, isOpenLoop, false, false);
     }
 
-    public boolean drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean isPrecise, boolean isZeroing) {
+    public boolean drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean isPrecise, boolean isOverridden) {
         // precision mode
         double xSpeed = !isPrecise ? translation.getX() : translation.getX() * Constants.Swerve.preciseControlFactor;
         double ySpeed = !isPrecise ? translation.getY() : translation.getY() * Constants.Swerve.preciseControlFactor;
@@ -137,7 +141,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
 
-        if (!isZeroing) for (SwerveModule mod : mSwerveMods) mod.setDesiredState(swerveModuleStates[mod.moduleNumber - 1], isOpenLoop);
+        if (!isOverridden) for (SwerveModule mod : mSwerveMods) mod.setDesiredState(swerveModuleStates[mod.moduleNumber - 1], isOpenLoop);
 
         return xSpeed >= 0.05 || ySpeed >= 0.05 || rot >= 0.2;
     }

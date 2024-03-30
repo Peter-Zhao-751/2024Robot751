@@ -1,6 +1,6 @@
 package frc.robot.utility;
 
-import frc.robot.commands.CANdleController;
+import frc.robot.commands.nonMovementCommands.CANdleController;
 import frc.robot.subsystems.CANdleSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 

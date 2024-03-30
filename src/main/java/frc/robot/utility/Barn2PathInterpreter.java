@@ -8,9 +8,9 @@ import java.util.Iterator;
 
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Constants;
-import frc.robot.commands.lowLevelCommands.IntakeCommand;
-import frc.robot.commands.lowLevelCommands.ShootCommand;
-import frc.robot.commands.MoveCommand;
+import frc.robot.commands.nonMovementCommands.IntakeCommand;
+import frc.robot.commands.nonMovementCommands.ShootCommand;
+import frc.robot.commands.movementCommands.MoveCommand;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;

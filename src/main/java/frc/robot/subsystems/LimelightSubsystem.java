@@ -11,8 +11,7 @@ import frc.lib.util.LimelightHelpers;
 import frc.robot.utility.TelemetryUpdater;
 
 public class LimelightSubsystem extends SubsystemBase {
-
-	public enum LEDMode {
+    public enum LEDMode {
 		PIPELINE(),
 		OFF(),
 		BLINK(),
@@ -25,6 +24,8 @@ public class LimelightSubsystem extends SubsystemBase {
     // https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-coordinate-systems
     private final String name;
 
+    public boolean forceLedOff = true;
+
     public static LimelightSubsystem getInstance() {
         if (instance == null) instance = new LimelightSubsystem();
         return instance;
@@ -32,6 +33,10 @@ public class LimelightSubsystem extends SubsystemBase {
 
 	private LimelightSubsystem() {
         name = Constants.Limelight.name;
+    }
+
+    public void toggleLeds() {
+        forceLedOff = !forceLedOff;
     }
 
     public boolean hasTarget() {
@@ -64,6 +69,7 @@ public class LimelightSubsystem extends SubsystemBase {
     }
 
 	public void setLEDMode(LEDMode mode) {
+        if (forceLedOff) mode = LEDMode.OFF;
         switch (mode) {
             case PIPELINE -> LimelightHelpers.setLEDMode_PipelineControl(this.name);
             case OFF -> LimelightHelpers.setLEDMode_ForceOff(this.name);

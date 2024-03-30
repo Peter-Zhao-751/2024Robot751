@@ -1,9 +1,10 @@
-package frc.robot.commands.lowLevelCommands;
+package frc.robot.commands.nonMovementCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.commands.AimAssistCommand;
+import frc.robot.commands.movementCommands.AimAssistCommand;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.utility.ControlBoard;
 import frc.robot.utility.StateMachine;
@@ -11,7 +12,8 @@ import frc.robot.utility.StateMachine;
 
 public class SpinShooterCommand extends Command {
     private final ShooterSubsystem shooterSubsystem;
-   private final IntakeSubsystem intakeSubsystem;
+    private final IntakeSubsystem intakeSubsystem;
+    private final LimelightSubsystem limelightSubsystem;
 
     private ControlBoard.Mode mode;
     private final AimAssistCommand aimAssistCommand;
@@ -19,6 +21,7 @@ public class SpinShooterCommand extends Command {
     public SpinShooterCommand() {
         this.shooterSubsystem = ShooterSubsystem.getInstance();
         this.intakeSubsystem = IntakeSubsystem.getInstance();
+        this.limelightSubsystem = LimelightSubsystem.getInstance();
 
         this.aimAssistCommand = new AimAssistCommand();
         addRequirements(shooterSubsystem, intakeSubsystem);
@@ -33,12 +36,18 @@ public class SpinShooterCommand extends Command {
         mode = ControlBoard.getInstance().getMode();
 
         if (mode == ControlBoard.Mode.Speaker) {
-//            shooterSubsystem.setSpeed(ControlBoard.getInstance().shooterSpeed());
+            shooterSubsystem.setSpeed(ControlBoard.getInstance().shooterSpeed());
             intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
-            aimAssistCommand.initialize();
+
+            StateMachine.setState(StateMachine.State.Aimbot);
+
+            limelightSubsystem.setVisionMode();
+            limelightSubsystem.setLEDMode(LimelightSubsystem.LEDMode.ON);
         } else {
-            intakeSubsystem.setSwivelPosition(Constants.Intake.kAmpAngle);
+            StateMachine.setState(StateMachine.State.Shoot);
+
             shooterSubsystem.setSpeed(0);
+            intakeSubsystem.setSwivelPosition(Constants.Intake.kAmpAngle);
         }
     }
 
@@ -48,27 +57,13 @@ public class SpinShooterCommand extends Command {
      */
     @Override
     public void execute() {
-        aimAssistCommand.execute();
-    }
-
-    /**
-     * <p>
-     * Returns whether this command has finished. Once a command finishes -- indicated by
-     * this method returning true -- the scheduler will call its {@link #end(boolean)} method.
-     * </p><p>
-     * Returning false will result in the command never ending automatically. It may still be
-     * cancelled manually or interrupted by another command. Hard coding this command to always
-     * return true will result in the command executing once and finishing immediately. It is
-     * recommended to use * {@link edu.wpi.first.wpilibj2.command.InstantCommand InstantCommand}
-     * for such an operation.
-     * </p>
-     *
-     * @return whether this command has finished.
-     */
-    @Override
-    public boolean isFinished() {
-//        return false;
-        return aimAssistCommand.isFinished();
+        if (mode == ControlBoard.Mode.Speaker) {
+            if (!aimAssistCommand.isScheduled() && limelightSubsystem.hasTarget()) {
+                aimAssistCommand.schedule();
+            } else {
+                aimAssistCommand.execute();
+            }
+        }
     }
 
     /**
@@ -83,6 +78,10 @@ public class SpinShooterCommand extends Command {
     public void end(boolean interrupted) {
         shooterSubsystem.setSpeed(0);
         intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
+
+        limelightSubsystem.setDriverMode();
+        limelightSubsystem.setLEDMode(LimelightSubsystem.LEDMode.OFF);
+
         if (mode == ControlBoard.Mode.Speaker) aimAssistCommand.end(interrupted);
         StateMachine.setState(StateMachine.State.Idle);
     }

@@ -1,8 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.commands.AutonCommand;
-import frc.robot.commands.CANdleController;
+import frc.robot.commands.movementCommands.AutonCommand;
 import frc.robot.subsystems.*;
 import frc.robot.utility.Barn2PathInterpreter;
 import frc.robot.utility.ControlBoard;

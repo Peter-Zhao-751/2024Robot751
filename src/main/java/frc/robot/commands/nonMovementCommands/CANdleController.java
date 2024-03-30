@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.nonMovementCommands;
 
 import frc.robot.subsystems.CANdleSubsystem;
 

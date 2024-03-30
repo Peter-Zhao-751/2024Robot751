@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.movementCommands;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -7,10 +7,7 @@ import frc.robot.utility.StateMachine;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -23,9 +20,9 @@ public class TeleopCommand extends Command {
     private final DoubleSupplier rotationSup;
     private final BooleanSupplier robotCentricSup;
     private final BooleanSupplier preciseControl;
-    private final BooleanSupplier zeroingSup;
+    private final BooleanSupplier overridden;
 
-    public TeleopCommand(DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier preciseControl, BooleanSupplier zeroingSup) {
+    public TeleopCommand(DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier preciseControl, BooleanSupplier overridden) {
         this.s_Swerve = SwerveSubsystem.getInstance();
 
         this.translationSup = translationSup;
@@ -33,9 +30,9 @@ public class TeleopCommand extends Command {
         this.rotationSup = rotationSup;
         this.robotCentricSup = robotCentricSup;
         this.preciseControl = preciseControl;
-        this.zeroingSup = zeroingSup;
+        this.overridden = overridden;
 
-        addRequirements(s_Swerve);
+        addRequirements(s_Swerve); // Not sure if we need this
     }
 
     @Override
@@ -56,7 +53,7 @@ public class TeleopCommand extends Command {
             !robotCentricSup.getAsBoolean(), 
             true, 
             preciseControl.getAsBoolean(),
-            zeroingSup.getAsBoolean()
+            overridden.getAsBoolean()
         );
         if (!StateMachine.isPerformingAction()){
             if (isDriving) StateMachine.setState(StateMachine.State.TeleopDrive);

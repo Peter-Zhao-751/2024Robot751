@@ -1,12 +1,14 @@
 package frc.robot.utility;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.Constants;
-import frc.robot.commands.TeleopCommand;
-import frc.robot.commands.lowLevelCommands.*;
+import frc.robot.commands.movementCommands.TeleopCommand;
+import frc.robot.commands.nonMovementCommands.*;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -50,12 +52,12 @@ public class ControlBoard {
 
         s_Swerve.setDefaultCommand(
                 new TeleopCommand(
-                        () -> -driver.joystick.getRawAxis(PS5Controller.translationAxis),
-                        () -> -driver.joystick.getRawAxis(PS5Controller.strafeAxis),
-                        () -> -driver.joystick.getRawAxis(PS5Controller.rotationAxis),
+                        driver.leftVerticalJoystick,
+                        driver.leftHorizontalJoystick,
+                        driver.rightHorizontalJoystick,
                         driver.rightJoystickButton,
                         driver.leftJoystickButton,
-                        driver.triangleButton
+                        driver.triangleButton.or(operator.crossButton) // Zeroing wheels or cross wheels
                 )
         );
 
@@ -76,9 +78,9 @@ public class ControlBoard {
         driver.dDown.whileTrue(new TransferCommand());
 
         driver.triangleButton.whileTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
-//       driver.squareButton.whileTrue(new InstantCommand(/*TODO Reset Odometry*/));
+        driver.squareButton.whileTrue(new InstantCommand(StateEstimator.getInstance()::resetPose));
         driver.circleButton.whileTrue(new InstantCommand(s_Swerve::zeroHeading));
-//       driver.crossButton.whileTrue(new InstantCommand(/*TODO Disable LEDs*/));
+        driver.crossButton.whileTrue(new InstantCommand(LimelightSubsystem.getInstance()::toggleLeds)); // TODO: add on CANdle disabling
     }
 
     private void configureRoutines() {

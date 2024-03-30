@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.movementCommands;
 
 import java.util.ArrayList;
 import frc.robot.subsystems.SwerveSubsystem;

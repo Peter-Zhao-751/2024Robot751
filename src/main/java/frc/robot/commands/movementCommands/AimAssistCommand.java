@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.movementCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.utility.StateMachine;
 
 
 public class AimAssistCommand extends Command {
@@ -24,11 +23,6 @@ public class AimAssistCommand extends Command {
 
 	@Override
 	public void initialize() {
-		StateMachine.setState(StateMachine.State.Aimbot);
-
-		limelight.setVisionMode();
-		limelight.setLEDMode(LimelightSubsystem.LEDMode.ON);
-
 		Pose2d pose = limelight.getPose();
 
 		// if there is no target, then cancel the command
@@ -65,10 +59,8 @@ public class AimAssistCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        StateMachine.setState(StateMachine.State.Idle);
-		//limelight.setDriverMode();
-		limelight.setLEDMode(LimelightSubsystem.LEDMode.OFF);
-    }
+		if (moveCommand != null) moveCommand.end(interrupted);
+	}
 
     @Override
     public boolean isFinished() {
