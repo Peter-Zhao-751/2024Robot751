@@ -57,7 +57,7 @@ public class ControlBoard {
                         driver.rightHorizontalJoystick,
                         driver.rightJoystickButton,
                         driver.leftJoystickButton,
-                        driver.triangleButton.or(operator.crossButton) // Zeroing wheels or cross wheels
+                        () -> driver.triangleButton.getAsBoolean() || operator.crossButton.getAsBoolean() // Zeroing wheels or cross wheels
                 )
         );
 
@@ -111,7 +111,7 @@ public class ControlBoard {
         operator.triangleButton.toggleOnTrue(new StartEndCommand(() -> currentMode = Mode.Climb, () -> currentMode = Mode.Speaker));
         operator.squareButton.onTrue(new InstantCommand(() -> IntakeSubsystem.getInstance().setSwivelPosition(Constants.Intake.kRetractedAngle)));
         operator.circleButton.whileTrue(new InstantCommand(this::togglePrecise));
-        operator.crossButton.whileTrue(new InstantCommand(s_Swerve::crossWheels, s_Swerve));
+        operator.crossButton.whileTrue(new InstantCommand(s_Swerve::crossWheels));
     }
 
     public static ControlBoard getInstance() {

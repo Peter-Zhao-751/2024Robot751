@@ -31,6 +31,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private final MotionMagicVelocityVoltage motionMagicVelocityVoltage;
 
+    private boolean isAtSpeed = false;
+    private long startOfAtSpeed = 0;
+
 //    private final LinearSystem<N1, N1, N1> flyWheelPlant;
 //
 //    private final KalmanFilter<N1, N1, N1> kalmanFilter;
@@ -42,11 +45,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
     private ShooterSubsystem() {
         leftShooterMotor = new TalonFX(Constants.Shooter.leftShooterMotorID, Constants.CANivoreID);
-        leftShooterMotor.setInverted(true);
+        leftShooterMotor.setInverted(false);
         leftShooterMotor.setNeutralMode(NeutralModeValue.Coast);
 
         rightShooterMotor = new TalonFX(Constants.Shooter.rightShooterMotorID, Constants.CANivoreID);
-        rightShooterMotor.setInverted(true);
+        rightShooterMotor.setInverted(false);
         rightShooterMotor.setNeutralMode(NeutralModeValue.Coast);
 
 //        flyWheelPlant = LinearSystemId.identifyVelocitySystem(Constants.Shooter.kVFlyWheelFeedforward, Constants.Shooter.kAFlyWheelFeedforward);
@@ -94,8 +97,8 @@ public class ShooterSubsystem extends SubsystemBase {
         }
         targetSpeed = speed;
         motionMagicVelocityVoltage.Acceleration = Constants.Shooter.motionMagicAcceleration;
-        leftShooterMotor.setControl(motionMagicVelocityVoltage.withVelocity(speed));
-        rightShooterMotor.setControl(motionMagicVelocityVoltage.withVelocity(speed * -1.05));
+        leftShooterMotor.setControl(motionMagicVelocityVoltage.withVelocity(-speed));
+        rightShooterMotor.setControl(motionMagicVelocityVoltage.withVelocity(speed * 1.05));
     }
 
     public double getTargetETA() {
@@ -140,12 +143,24 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return double, the average speed of the shooter motors in rotations per second
      */
     public double getShooterSpeed() {
-        return (getLeftShooterMotorSpeed() + getRightShooterMotorSpeed()) / 2;
+        return (-getLeftShooterMotorSpeed() + getRightShooterMotorSpeed()) / 2;
+    }
+
+    public boolean isAtTargetSpeed() {
+        return System.currentTimeMillis() - startOfAtSpeed > 751 && isAtSpeed;
     }
 
     @Override
     public void periodic() {
 //        kalmanFilter.correct(VecBuilder.fill(targetSpeed), VecBuilder.fill(getShooterSpeed()));
+
+        if (Math.abs(getShooterSpeed() - targetSpeed) < 5) {
+            if (!isAtSpeed) startOfAtSpeed = System.currentTimeMillis();
+            isAtSpeed = true;
+        } else {
+            isAtSpeed = false;
+            startOfAtSpeed = 0;
+        }
 
         //TelemetryUpdater.setTelemetryValue("Kalman Filter X-hat 0", kalmanFilter.getXhat(0));
         //TelemetryUpdater.setTelemetryValue("Shooter Current Draw", getCurrentDraw());

@@ -53,7 +53,7 @@ public class Constants {
 
         public static double kIntakeAngle = 7.0;
         public static double kMaintenanceAngle = 45.0;
-        public static double kAmpAngle = 60.0;
+        public static double kAmpAngle = 100.0;
         public static double kRetractedAngle = 135.0;
 
         public static double kSwivelEncoderZeroOffset = 360 - 94.1;
@@ -194,8 +194,9 @@ public class Constants {
         public static double maxSpeed = 5;
         /** Multiplier */
         public static double speedMultiplier = 0.1;
+        public static double spinSpeedMultiplier = 0.3;
         /** Radians per Second */
-        public static double maxAngularVelocity = maxSpeed / 1.6 * speedMultiplier;
+        public static double maxAngularVelocity = maxSpeed / 1.6 * spinSpeedMultiplier;
 
         /* Neutral Modes */
         public static NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;

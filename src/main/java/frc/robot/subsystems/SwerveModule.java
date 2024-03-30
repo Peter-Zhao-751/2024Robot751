@@ -101,7 +101,7 @@ public class SwerveModule {
      * @see SwerveModule#setAngle(double)
      */
     public void setAngle() {
-        // setAngle(0);
+        setAngle(0);
     }
 
     /**

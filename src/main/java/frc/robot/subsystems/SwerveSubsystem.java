@@ -66,7 +66,8 @@ public class SwerveSubsystem extends SubsystemBase {
                 new SwerveModule(4, Constants.Swerve.backRightModule)
         };
 
-        stateEstimator = new StateEstimator();
+        stateEstimator = StateEstimator.getInstance();
+        stateEstimator.gyro = gyro;
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());//, new Pose2d());
 
         TelemetryUpdater.setTelemetryValue("Field", m_field);
@@ -142,6 +143,7 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
 
         if (!isOverridden) for (SwerveModule mod : mSwerveMods) mod.setDesiredState(swerveModuleStates[mod.moduleNumber - 1], isOpenLoop);
+        else System.out.println("Overridden");
 
         return xSpeed >= 0.05 || ySpeed >= 0.05 || rot >= 0.2;
     }

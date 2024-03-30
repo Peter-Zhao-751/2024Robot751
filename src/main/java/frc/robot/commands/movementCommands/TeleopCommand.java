@@ -50,11 +50,12 @@ public class TeleopCommand extends Command {
         boolean isDriving = s_Swerve.drive(
             new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed), 
             rotationVal * Constants.Swerve.maxAngularVelocity, 
-            !robotCentricSup.getAsBoolean(), 
+            true, 
             true, 
             preciseControl.getAsBoolean(),
             overridden.getAsBoolean()
         );
+
         if (!StateMachine.isPerformingAction()){
             if (isDriving) StateMachine.setState(StateMachine.State.TeleopDrive);
             else StateMachine.setState(StateMachine.State.Idle);

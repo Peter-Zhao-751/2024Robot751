@@ -5,6 +5,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransferSubsystem;
 import frc.robot.utility.ControlBoard;
 import frc.robot.utility.StateMachine;
+import frc.robot.utility.TelemetryUpdater;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class ShootCommand extends Command{
@@ -48,8 +49,9 @@ public class ShootCommand extends Command{
 
     @Override
     public void execute() {
+        TelemetryUpdater.setTelemetryValue("At shooter Speed", shooterSubsystem.isAtTargetSpeed());
         if (!started && smartMode) {
-            if (mode == ControlBoard.Mode.Speaker && shooterSubsystem.getShooterSpeed() > 0.95 * ControlBoard.getInstance().shooterSpeed()) {
+            if (mode == ControlBoard.Mode.Speaker && shooterSubsystem.isAtTargetSpeed() && shooterSubsystem.getShooterSpeed() > 5) {
                 transferSubsystem.setTransferSpeed(Constants.Transfer.intakeTransferSpeed);
                 started = true;
             } else if (mode == ControlBoard.Mode.Amp && intakeSubsystem.closeToSetpoint()) {

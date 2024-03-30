@@ -18,7 +18,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class StateEstimator {
     private static StateEstimator instance;
 
-    private final Pigeon2 gyro;
+    public Pigeon2 gyro;
     private final LimelightSubsystem limelightSubsystem;
 	private final KalmanFilter kalmanFilter;
 
@@ -26,17 +26,17 @@ public class StateEstimator {
 	private Pose2d previousLimelightPose;
 
 	private final ShuffleboardTab tab = Shuffleboard.getTab("Robot State Estimator"); // TODO: look at starting POS x, y and theta and set the values. Start the robot looking at a tag and run auto
-   	private final GenericEntry startingPoseX = tab.add("startingPoseX", 0).getEntry();
-	private final GenericEntry startingPoseY = tab.add("startingPoseY", 0).getEntry();
-	private final GenericEntry startingPoseTheta = tab.add("startingPoseTheta", 0).getEntry();
+   	private final GenericEntry startingPoseX = tab.add("StartingPoseX", 0).getEntry();
+	private final GenericEntry startingPoseY = tab.add("StartingPoseY", 0).getEntry();
+	private final GenericEntry startingPoseTheta = tab.add("StartingPoseTheta", 0).getEntry();
 
     public static StateEstimator getInstance() {
-        if(instance == null) instance = new StateEstimator();
+        if (instance == null) instance = new StateEstimator();
         return instance;
     }
 
-    public StateEstimator(){
-        this.gyro = SwerveSubsystem.getInstance().getGyro();
+    private StateEstimator() {
+        // this.gyro = SwerveSubsystem.getInstance().getGyro();
         this.limelightSubsystem = LimelightSubsystem.getInstance();
 		this.kalmanFilter = new KalmanFilter(0, 0, 0, 0, 0, 0, Constants.Odometry.kPositionNoiseVar,
 				Constants.Odometry.kVelocityNoiseVar, Constants.Odometry.kAccelerationNoiseVar,
