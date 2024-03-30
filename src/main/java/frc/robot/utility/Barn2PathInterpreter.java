@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Iterator;
 
+import edu.wpi.first.wpilibj2.command.*;
+import frc.robot.Constants;
 import frc.robot.commands.lowLevelCommands.IntakeCommand;
 import frc.robot.commands.lowLevelCommands.ShootCommand;
 import frc.robot.commands.MoveCommand;
@@ -13,10 +15,6 @@ import frc.robot.commands.MoveCommand;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.Command;
 
 import org.json.simple.JSONArray; 
 import org.json.simple.JSONObject;
@@ -35,9 +33,7 @@ public class Barn2PathInterpreter {
 
         String encryptedData = new String(java.nio.file.Files.readAllBytes(pathFile.toPath()));
 
-        String decryptedData = encryptedData;//fullDecrypt(encryptedData);
-
-        jsonObject = (JSONObject) new JSONParser().parse(decryptedData); 
+        jsonObject = (JSONObject) new JSONParser().parse(encryptedData);
 
         jsonArray = (JSONArray) jsonObject.get("points"); 
 
@@ -70,14 +66,14 @@ public class Barn2PathInterpreter {
 
                 switch (getEvent(point).toLowerCase()){
                     case "shoot":
-                        //double primeDelay = (delay-Constants.Shooter.spinUpTime) > 0 ? (delay-Constants.Shooter.spinUpTime) : 0;
-                        //ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new InstantCommand()));
+                        double primeDelay = (delay- Constants.Shooter.spinUpTime) > 0 ? (delay-Constants.Shooter.spinUpTime) : 0;
+                        ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new InstantCommand()));
                         autonCommands.add(new SequentialCommandGroup(newMovementCommand, new ShootCommand()));
                         break;
                     case "intake":
                         double intakeDelay = (delay-5) > 0 ? (delay-5) : 0;
-                        //ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new IntakeCommand()));
-                        //autonCommands.add(moveAndIntake);
+                        ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new IntakeCommand()));
+                        autonCommands.add(moveAndIntake);
                         break;
                     default:
                         autonCommands.add(newMovementCommand);

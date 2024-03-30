@@ -9,7 +9,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.utility.TelemetrySubsystem;
 import frc.robot.utility.TelemetryUpdater;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -144,9 +143,7 @@ public class IntakeSubsystem extends SubsystemBase{
      * @param speed the speed of the intake motor in rps
      */
     public void setIntakeSpeed(double speed) {
-        // double targetIntakeSpeed = speed / (2 * Math.PI * Constants.Intake.intakeRollerRadius);
         intakeMotor.setControl(velocityVoltage.withVelocity(speed));
-        // intakeMotor.set(Math.signum(speed) * 0.9);
     }
 
     public boolean closeToSetpoint() {
@@ -159,40 +156,40 @@ public class IntakeSubsystem extends SubsystemBase{
         TelemetryUpdater.setTelemetryValue("Intake Beam Break", isBeamBroken);
 
         isSwivelEnabled = SmartDashboard.getBoolean("Swivel Enabled", true);
-        if (isSwivelEnabled && getSwivelPosition() < 180 && getSwivelPosition() > -20) {
-            double deltaTime = (System.currentTimeMillis() - swivelMovementStartTime) / 1000;
-            double currentAngle = getSwivelPosition();
-
-            TrapezoidProfile.State setPoint = swivelTrapezoidProfile.calculate(deltaTime, new TrapezoidProfile.State(swivelMovementStartAngle, 0), new TrapezoidProfile.State(swivelSetpoint, 0));
-
-            double maxVoltage = RobotController.getBatteryVoltage() * 0.95; // TODO: maybe replace with the PDH voltage?
-
-            double feedforwardOutput = swivelFeedforwardController.calculate(Math.toRadians(setPoint.position), Math.toRadians(setPoint.velocity), 0);
-            double swivelPidOutput = swivelPIDController.calculate(currentAngle, setPoint.position);
-
-            double combinedOutput = feedforwardOutput + swivelPidOutput;
-
-            combinedOutput = Math.min(combinedOutput, maxVoltage);
-            combinedOutput = Math.max(combinedOutput, -maxVoltage);
-
-            // TelemetryUpdater.setTelemetryValue("Swivel Output Voltage", combinedOutput);
-            // TelemetryUpdater.setTelemetryValue("PID output voltage", swivelPidOutput);
-            // TelemetryUpdater.setTelemetryValue("setpoint trapezoidal pos", setPoint.position);
-            // TelemetryUpdater.setTelemetryValue("setpoint trapezoidal vel", setPoint.velocity);
-            // TelemetryUpdater.setTelemetryValue("Trapezoidal ETA", trapezoidProfile.totalTime());
-
-            leftSwivelMotor.setVoltage(combinedOutput);
-            rightSwivelMotor.setVoltage(combinedOutput);
-            TelemetryUpdater.setTelemetryValue("Intake Swivel Position", currentAngle);
-            TelemetryUpdater.setTelemetryValue("raw intake swivel value", angleEncoder.getPosition());
-        } else {
-            stopAll();
-        }
+        if (isSwivelEnabled && getSwivelPosition() < 180 && getSwivelPosition() > -20) calculateSwivel();
+        else stopAll();
 
         // TelemetryUpdater.setTelemetryValue("Total Intake Current Draw", getCurrentDraw());
-        TelemetryUpdater.setTelemetryValue("setpoint swivel", swivelSetpoint);
+        TelemetryUpdater.setTelemetryValue("Intake Swivel Setpoint", swivelSetpoint);
 
         TelemetryUpdater.setTelemetryValue("Intake Speed", getIntakeSpeed());
+    }
+
+    private void calculateSwivel() {
+        double deltaTime = (System.currentTimeMillis() - swivelMovementStartTime) / 1000;
+        double currentAngle = getSwivelPosition();
+
+        TrapezoidProfile.State setPoint = swivelTrapezoidProfile.calculate(deltaTime, new TrapezoidProfile.State(swivelMovementStartAngle, 0), new TrapezoidProfile.State(swivelSetpoint, 0));
+
+        double maxVoltage = RobotController.getBatteryVoltage() * 0.95; // TODO: maybe replace with the PDH voltage?
+
+        double feedforwardOutput = swivelFeedforwardController.calculate(Math.toRadians(setPoint.position), Math.toRadians(setPoint.velocity), 0);
+        double swivelPidOutput = swivelPIDController.calculate(currentAngle, setPoint.position);
+
+        double combinedOutput = feedforwardOutput + swivelPidOutput;
+        if (combinedOutput > maxVoltage) combinedOutput = maxVoltage;
+        if (combinedOutput < -maxVoltage) combinedOutput = -maxVoltage;
+
+        // TelemetryUpdater.setTelemetryValue("Swivel Output Voltage", combinedOutput);
+        // TelemetryUpdater.setTelemetryValue("PID output voltage", swivelPidOutput);
+        // TelemetryUpdater.setTelemetryValue("setpoint trapezoidal pos", setPoint.position);
+        // TelemetryUpdater.setTelemetryValue("setpoint trapezoidal vel", setPoint.velocity);
+        // TelemetryUpdater.setTelemetryValue("Trapezoidal ETA", trapezoidProfile.totalTime());
+
+        leftSwivelMotor.setVoltage(combinedOutput);
+        rightSwivelMotor.follow(leftSwivelMotor, true);
+        TelemetryUpdater.setTelemetryValue("Intake Swivel Position", currentAngle);
+        TelemetryUpdater.setTelemetryValue("Intake Raw Swivel Position", angleEncoder.getPosition());
     }
 
     /**

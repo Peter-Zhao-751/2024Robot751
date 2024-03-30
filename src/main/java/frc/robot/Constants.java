@@ -95,6 +95,8 @@ public class Constants {
         public static int motionMagicAcceleration = 400; // units in rotations per second squared
         public static int motionMagicJerk = 4000; // units in rotations per second cubed
 
+        public static double intakeAmpSpeed = 20.0; // units in rotations per second
+
         public static double kSFlyWheelFeedforward = 0.25;
         public static double kVFlyWheelFeedforward = 0.12;
         public static double kAFlyWheelFeedforward = 0.01;
@@ -189,11 +191,11 @@ public class Constants {
         /* Swerve Profiling Values */
         public static double preciseControlFactor = 0.25;
         /** Meters per Second */
-        public static double maxSpeed = 5; //TODO: testing speed, normal: 4.5
+        public static double maxSpeed = 5;
         /** Multiplier */
-        public static double speedMultiplier = 0.1; //TODO: testing speed, normal 1.0
+        public static double speedMultiplier = 0.1;
         /** Radians per Second */
-        public static double maxAngularVelocity = maxSpeed / 1.6; // THIS IS THE MAX SPIN SPEED ROBOT, tested 2.1, feels sluggish
+        public static double maxAngularVelocity = maxSpeed / 1.6 * speedMultiplier;
 
         /* Neutral Modes */
         public static NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;

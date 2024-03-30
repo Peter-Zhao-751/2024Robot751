@@ -20,8 +20,8 @@ public class PS5Controller {
     public final JoystickButton rightTrigger;
 
     /* Trigger Buttons */
-    public final JoystickButton leftTriggerButton;
-    public final JoystickButton rightTriggerButton;
+    public final JoystickButton leftJoystickButton;
+    public final JoystickButton rightJoystickButton;
 
     /* Bumpers */
     public final JoystickButton leftBumper;
@@ -34,7 +34,10 @@ public class PS5Controller {
     public final JoystickButton crossButton;
 
     /* D-Pad */
-    public final DirectionPad dPad;
+    public final Trigger dUp;
+    public final Trigger dRight;
+    public final Trigger dDown;
+    public final Trigger dLeft;
 
     /* Other Buttons */
     public final JoystickButton optionsButton;
@@ -45,35 +48,23 @@ public class PS5Controller {
         leftTrigger = new JoystickButton(joystick, Button.kL2.value);
         rightTrigger = new JoystickButton(joystick, Button.kR2.value);
 
-        leftTriggerButton = new JoystickButton(joystick, Button.kL3.value);
-        rightTriggerButton = new JoystickButton(joystick, Button.kR3.value);
-
         leftBumper = new JoystickButton(joystick, Button.kL1.value);
         rightBumper = new JoystickButton(joystick, Button.kR1.value);
+
+        leftJoystickButton = new JoystickButton(joystick, Button.kL3.value);
+        rightJoystickButton = new JoystickButton(joystick, Button.kR3.value);
 
         triangleButton = new JoystickButton(joystick, Button.kTriangle.value);
         circleButton = new JoystickButton(joystick, Button.kCircle.value);
         squareButton = new JoystickButton(joystick, Button.kSquare.value);
         crossButton = new JoystickButton(joystick, Button.kCross.value);
 
-        dPad = new DirectionPad(joystick);
+        dUp = new Trigger(() -> joystick.getPOV() == 0.0);
+        dRight = new Trigger(() -> joystick.getPOV() == 90.0);
+        dDown = new Trigger(() -> joystick.getPOV() == 180.0);
+        dLeft = new Trigger(() -> joystick.getPOV() == 270.0);
 
         optionsButton = new JoystickButton(joystick, Button.kOptions.value);
         playstationButton = new JoystickButton(joystick, Button.kPS.value);
-    }
-
-    public static class DirectionPad {
-        public final Joystick joystick;
-        public final Trigger up;
-        public final Trigger right;
-        public final Trigger down;
-        public final Trigger left;
-        private DirectionPad(Joystick joystick) {
-            this.joystick = joystick;
-            up = new Trigger(() -> joystick.getPOV() == 0.0);
-            right = new Trigger(() -> joystick.getPOV() == 90.0);
-            down = new Trigger(() -> joystick.getPOV() == 180.0);
-            left = new Trigger(() -> joystick.getPOV() == 270.0);
-        }
     }
 }

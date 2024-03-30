@@ -1,17 +1,25 @@
 package frc.robot.utility;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TelemetrySubsystem implements Runnable {
+    private static final ConcurrentHashMap<String, Object> telemetryData = new ConcurrentHashMap<>();
+
     public void start() {
         Thread thread = new Thread(this);
         thread.start();
     }
 
     private static void putValue(String key, Object value) {
+        Object oldValue = telemetryData.get(key);
+        if (oldValue != null && oldValue.equals(value)) return; // Don't update if the value hasn't changed
+
+        telemetryData.put(key, value);
+
         if (value instanceof Double) {
             SmartDashboard.putNumber(key, (Double) value);
         } else if (value instanceof Integer) {

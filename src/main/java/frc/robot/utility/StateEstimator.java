@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,8 +27,6 @@ public class StateEstimator {
 	private final GenericEntry startingPoseY = tab.add("startingPoseY", 0).getEntry();
 	private final GenericEntry startingPoseTheta = tab.add("startingPoseTheta", 0).getEntry();
 
-
-
     public StateEstimator(Pigeon2 gyro, LimelightSubsystem limelightSubsystem){
         this.gyro = gyro;
         this.limelightSubsystem = limelightSubsystem;
@@ -40,9 +39,9 @@ public class StateEstimator {
     }
 
     public void update(SwerveModuleState[] moduleStates){
-        double accelerationX = gyro.getAccelerationX().getValue();
-        double accelerationY = gyro.getAccelerationY().getValue();
-        double accelerationZ = gyro.getAccelerationZ().getValue();
+        double accelerationX = Units.MetersPerSecondPerSecond.convertFrom(gyro.getAccelerationX().getValue(), Units.Gs);
+        double accelerationY = Units.MetersPerSecondPerSecond.convertFrom(gyro.getAccelerationY().getValue(), Units.Gs);
+        double accelerationZ = Units.MetersPerSecondPerSecond.convertFrom(gyro.getAccelerationZ().getValue(), Units.Gs);
 
         double quatW = gyro.getQuatW().getValue();
         double quatX = gyro.getQuatX().getValue();
@@ -51,17 +50,17 @@ public class StateEstimator {
 
         double[][] rotationMatrix = new double[3][3];
 
-        rotationMatrix[0][0] = 1.0 - 2.0 * (quatY * quatY + quatZ * quatZ);
-        rotationMatrix[0][1] = 2.0 * (quatX * quatY - quatZ * quatW);
-        rotationMatrix[0][2] = 2.0 * (quatX * quatZ + quatY * quatW);
+        rotationMatrix[0][0] = 1.0 - 2.0 * (quatY * quatY) - 2.0 * (quatZ * quatZ);
+        rotationMatrix[0][1] = 2.0 * (quatX * quatY) - 2.0 * (quatW * quatZ);
+        rotationMatrix[0][2] = 2.0 * (quatX * quatZ) + 2.0 * (quatW * quatY);
 
-        rotationMatrix[1][0] = 2.0 * (quatX * quatY + quatZ * quatW);
-        rotationMatrix[1][1] = 1.0 - 2.0 * (quatX * quatX + quatZ * quatZ);
-        rotationMatrix[1][2] = 2.0 * (quatY * quatZ - quatX * quatW);
+        rotationMatrix[1][0] = 2.0 * (quatX * quatY) + 2.0 * (quatW * quatZ);
+        rotationMatrix[1][1] = 1.0 - 2.0 * (quatX * quatX) - 2.0 * (quatZ * quatZ);
+        rotationMatrix[1][2] = 2.0 * (quatY * quatZ) - 2.0 * (quatW * quatX);
 
-        rotationMatrix[2][0] = 2.0 * (quatX * quatZ - quatY * quatW);
-        rotationMatrix[2][1] = 2.0 * (quatY * quatZ + quatX * quatW);
-        rotationMatrix[2][2] = 1.0 - 2.0 * (quatX * quatX + quatY * quatY);
+        rotationMatrix[2][0] = 2.0 * (quatX * quatZ) - 2.0 * (quatW * quatY);
+        rotationMatrix[2][1] = 2.0 * (quatY * quatZ) + 2.0 * (quatW * quatX);
+        rotationMatrix[2][2] = 1.0 - 2.0 * (quatX * quatX) - 2.0 * (quatY * quatY);
 
 
         double fieldAccelerationX = rotationMatrix[0][0] * accelerationX + rotationMatrix[0][1] * accelerationY + rotationMatrix[0][2] * accelerationZ;
@@ -90,9 +89,9 @@ public class StateEstimator {
 			previousLimelightPose = newLimePosition;
 			previousLimelightUpdateTime = System.currentTimeMillis();
         } else {
-            kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY); // already tested
-            // kalmanFilter.updateNewAcceleration(fieldAccelerationX, fieldAccelerationY); // TODO: drive robot and measure if its right
-            //kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY, fieldAccelerationX, fieldAccelerationY); // TODO: use this after testing
+//            kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY); // already tested
+            kalmanFilter.updateNewAcceleration(fieldAccelerationX, fieldAccelerationY); // TODO: drive robot and measure if its right
+//            kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY, fieldAccelerationX, fieldAccelerationY); // TODO: use this after testing
         }
 
         kalmanFilter.debugDisplayValues();

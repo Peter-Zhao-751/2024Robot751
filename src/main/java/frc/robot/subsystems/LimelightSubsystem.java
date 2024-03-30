@@ -4,12 +4,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 import frc.lib.util.LimelightHelpers;
 import frc.robot.utility.TelemetryUpdater;
 
-public class LimelightSubsystem {
+public class LimelightSubsystem extends SubsystemBase {
 
 	public enum LEDMode {
 		PIPELINE(),
@@ -84,7 +85,8 @@ public class LimelightSubsystem {
         return (targetHeightActual - mountHeight) / Math.tan(angle);
     }
 
-    public void debugDisplayValues() {
+    @Override
+    public void periodic() {
         TelemetryUpdater.setTelemetryValue("LimelightSubsystem Has Target", hasTarget());
         double[] values = getValues();
         if (values != null) {

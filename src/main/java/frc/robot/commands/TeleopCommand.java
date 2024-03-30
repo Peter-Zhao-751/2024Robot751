@@ -23,8 +23,9 @@ public class TeleopCommand extends Command {
     private final DoubleSupplier rotationSup;
     private final BooleanSupplier robotCentricSup;
     private final BooleanSupplier preciseControl;
+    private final BooleanSupplier zeroingSup;
 
-    public TeleopCommand(DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier preciseControl) {
+    public TeleopCommand(DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier preciseControl, BooleanSupplier zeroingSup) {
         this.s_Swerve = SwerveSubsystem.getInstance();
 
         this.translationSup = translationSup;
@@ -32,6 +33,7 @@ public class TeleopCommand extends Command {
         this.rotationSup = rotationSup;
         this.robotCentricSup = robotCentricSup;
         this.preciseControl = preciseControl;
+        this.zeroingSup = zeroingSup;
 
         addRequirements(s_Swerve);
     }
@@ -53,7 +55,8 @@ public class TeleopCommand extends Command {
             rotationVal * Constants.Swerve.maxAngularVelocity, 
             !robotCentricSup.getAsBoolean(), 
             true, 
-            preciseControl.getAsBoolean()
+            preciseControl.getAsBoolean(),
+            zeroingSup.getAsBoolean()
         );
         if (!StateMachine.isPerformingAction()){
             if (isDriving) StateMachine.setState(StateMachine.State.TeleopDrive);

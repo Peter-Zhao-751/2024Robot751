@@ -14,12 +14,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -55,7 +52,6 @@ public class SwerveSubsystem extends SubsystemBase {
     private final StateEstimator stateEstimator;
 
     private SwerveSubsystem() {
-        register();
         gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.CANivoreID);
         limelightSubsystem = LimelightSubsystem.getInstance();
         gyro.getConfigurator().apply(new Pigeon2Configuration());
@@ -115,10 +111,10 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public boolean drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
-        return drive(translation, rotation, fieldRelative, isOpenLoop, false);
+        return drive(translation, rotation, fieldRelative, isOpenLoop, false, false);
     }
 
-    public boolean drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean isPrecise) {
+    public boolean drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean isPrecise, boolean isZeroing) {
         // precision mode
         double xSpeed = !isPrecise ? translation.getX() : translation.getX() * Constants.Swerve.preciseControlFactor;
         double ySpeed = !isPrecise ? translation.getY() : translation.getY() * Constants.Swerve.preciseControlFactor;
@@ -141,7 +137,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
 
-        for (SwerveModule mod : mSwerveMods) mod.setDesiredState(swerveModuleStates[mod.moduleNumber - 1], isOpenLoop);
+        if (!isZeroing) for (SwerveModule mod : mSwerveMods) mod.setDesiredState(swerveModuleStates[mod.moduleNumber - 1], isOpenLoop);
 
         return xSpeed >= 0.05 || ySpeed >= 0.05 || rot >= 0.2;
     }
@@ -244,15 +240,14 @@ public class SwerveSubsystem extends SubsystemBase {
      */
     private void swerveUi() {
 
-        TelemetryUpdater.setTelemetryValue("swerve x", swerveOdometry.getPoseMeters().getX());
-        TelemetryUpdater.setTelemetryValue("swerve y", swerveOdometry.getPoseMeters().getY());
+        TelemetryUpdater.setTelemetryValue("Swerve X", swerveOdometry.getPoseMeters().getX());
+        TelemetryUpdater.setTelemetryValue("Swerve Y", swerveOdometry.getPoseMeters().getY());
 
-        TelemetryUpdater.setTelemetryValue("gamer front left", mSwerveMods[0].getPosition().angle.getDegrees() % 360);
-        TelemetryUpdater.setTelemetryValue("gamer front right", mSwerveMods[1].getPosition().angle.getDegrees() % 360);
-        TelemetryUpdater.setTelemetryValue("gamer back left", mSwerveMods[2].getPosition().angle.getDegrees() % 360);
-        TelemetryUpdater.setTelemetryValue("gamer back right", mSwerveMods[3].getPosition().angle.getDegrees() % 360);
+        TelemetryUpdater.setTelemetryValue("FL Angle", (mSwerveMods[0].getPosition().angle.getDegrees() + 360) % 360);
+        TelemetryUpdater.setTelemetryValue("FR Angle", (mSwerveMods[1].getPosition().angle.getDegrees() + 360) % 360);
+        TelemetryUpdater.setTelemetryValue("BL Angle", (mSwerveMods[2].getPosition().angle.getDegrees() + 360) % 360);
+        TelemetryUpdater.setTelemetryValue("BR Angle", (mSwerveMods[3].getPosition().angle.getDegrees() + 360) % 360);
 
-        limelightSubsystem.debugDisplayValues();
         //TelemetryUpdater.setTelemetryValue("Robot Pitch", gyro.getPitch().getValue());
         //TelemetryUpdater.setTelemetryValue("Robot Roll", gyro.getRoll().getValue());
 

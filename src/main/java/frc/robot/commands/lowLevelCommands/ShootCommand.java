@@ -42,18 +42,18 @@ public class ShootCommand extends Command{
             if (!smartMode) transferSubsystem.setTransferSpeed(Constants.Transfer.intakeTransferSpeed);
         } else {
             intakeSubsystem.setSwivelPosition(Constants.Intake.kAmpAngle);
-            if (!smartMode) intakeSubsystem.setIntakeSpeed(-Constants.Transfer.intakeTransferSpeed);
+            if (!smartMode) intakeSubsystem.setIntakeSpeed(-Constants.Shooter.intakeAmpSpeed);
         }
     }
 
     @Override
     public void execute() {
-        if (smartMode && !started) {
+        if (!started && smartMode) {
             if (mode == ControlBoard.Mode.Speaker && shooterSubsystem.getShooterSpeed() > 0.95 * ControlBoard.getInstance().shooterSpeed()) {
                 transferSubsystem.setTransferSpeed(Constants.Transfer.intakeTransferSpeed);
                 started = true;
             } else if (mode == ControlBoard.Mode.Amp && intakeSubsystem.closeToSetpoint()) {
-                intakeSubsystem.setIntakeSpeed(-Constants.Transfer.intakeTransferSpeed);
+                intakeSubsystem.setIntakeSpeed(-Constants.Shooter.intakeAmpSpeed);
                 started = true;
             }
         }
