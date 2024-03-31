@@ -43,13 +43,13 @@ public class TransferSubsystem extends SubsystemBase {
 
         beamBreak = new DigitalInput(Constants.Transfer.beamBreakDIOPort);
         beamDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kRising);
-        isBeamBroken = false;
 
         shooterTransferController = new FeedforwardPID(0, 0, 0, Constants.Transfer.kPShooterController, 0, 0);
         intakeTransferController = new FeedforwardPID(0, 0, 0, Constants.Transfer.kPIntakeController, 0, 0);
 
         targetIntakeSpeed = 0;
-        targetShooterSpeed = 0;
+		targetShooterSpeed = 0;
+		isBeamBroken = false;
     }
 
     /**
