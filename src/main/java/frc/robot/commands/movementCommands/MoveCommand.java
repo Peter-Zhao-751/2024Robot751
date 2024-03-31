@@ -52,13 +52,13 @@ public class MoveCommand extends Command {
         if (Math.abs(desiredLocation.getX() - currentRobotPosition.getX()) < 0.1 &&
             Math.abs(desiredLocation.getY() - currentRobotPosition.getY()) < 0.1 &&
             Math.abs(desiredLocation.getRotation().getDegrees() - currentRobotPosition.getRotation().getDegrees()) < 5) return;
-        
-        if (movementTrajectory == null) {
+
+        if (movementTrajectory == null || !isTranslationPlanned(currentRobotPosition, desiredLocation, interiorWaypoints)) {
             TrajectoryConfig config = new TrajectoryConfig(
                 Constants.AutoConstants.kMaxSpeedMetersPerSecond,
                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
                 .setKinematics(Constants.Swerve.swerveKinematics);
-            
+
             config.setStartVelocity(s_Swerve.getCurrentVelocityMagnitude());
 
             movementTrajectory = TrajectoryGenerator.generateTrajectory(
@@ -73,19 +73,19 @@ public class MoveCommand extends Command {
                 Constants.AutoConstants.kThetaControllerConstraints);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-        ETA = movementTrajectory.getTotalTimeSeconds();
+        if (movementTrajectory != null) ETA = movementTrajectory.getTotalTimeSeconds();
         //TelemetryUpdater.setTelemetryValue("Auton Current Trajectory Estimated ETA", ETA);
 
         swerveControllerCommand = new SwerveControllerCommand(
                 movementTrajectory,
                 s_Swerve::getSwerveOdometryPose2d,
                 Constants.Swerve.swerveKinematics,
-                new PIDController(Constants.AutoConstants.kPXController, 0, 0),
-                new PIDController(Constants.AutoConstants.kPYController, 0, 0),
+                (movementTrajectory != null) ? new PIDController(Constants.AutoConstants.kPXController, 0, 0) : null,
+                (movementTrajectory != null) ? new PIDController(Constants.AutoConstants.kPYController, 0, 0) : null,
                 thetaController,
                 s_Swerve::setModuleStates,
-                s_Swerve);
-        
+				s_Swerve);
+
         swerveControllerCommand.initialize();
     }
 
@@ -104,7 +104,11 @@ public class MoveCommand extends Command {
         return swerveControllerCommand != null && swerveControllerCommand.isFinished();
     }
 
-    public double getETA() {
-        return ETA;
-    }
+	public double getETA() {
+		return ETA;
+	}
+
+	private boolean isTranslationPlanned(Pose2d currPose2d, Pose2d desiredPose2d, List<Translation2d> interiorWaypoints) {
+		return Math.abs(desiredPose2d.getX() - currPose2d.getX()) < 0.1 && Math.abs(desiredPose2d.getY() - currPose2d.getY()) < 0.1 && interiorWaypoints.isEmpty();
+	}
 }
