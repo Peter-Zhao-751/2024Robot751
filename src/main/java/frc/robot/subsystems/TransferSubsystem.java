@@ -47,7 +47,7 @@ public class TransferSubsystem extends SubsystemBase {
 
         shooterTransferController = new FeedforwardPID(0, 0, 0, Constants.Transfer.kPShooterController, 0, 0);
         intakeTransferController = new FeedforwardPID(0, 0, 0, Constants.Transfer.kPIntakeController, 0, 0);
-        
+
         targetIntakeSpeed = 0;
         targetShooterSpeed = 0;
     }

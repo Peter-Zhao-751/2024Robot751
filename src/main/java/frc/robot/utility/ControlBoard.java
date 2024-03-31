@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.Constants;
+import frc.robot.commands.movementCommands.AimAssistCommand;
 import frc.robot.commands.movementCommands.TeleopCommand;
 import frc.robot.commands.nonMovementCommands.*;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -69,8 +70,9 @@ public class ControlBoard {
     private void configureDriverBindings() {
         driver.leftTrigger.whileTrue(new IntakeCommand());
         driver.leftBumper.whileTrue(new ExportCommand());
-        driver.rightBumper.toggleOnTrue(new SpinShooterCommand());
+        // driver.rightBumper.toggleOnTrue(new SpinShooterCommand());
         driver.rightTrigger.whileTrue(new ShootCommand());
+        driver.rightBumper.whileTrue(new AimAssistCommand());
 
         driver.dUp.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
         driver.dRight.onTrue(new InstantCommand(() -> currentMode = Mode.Amp));

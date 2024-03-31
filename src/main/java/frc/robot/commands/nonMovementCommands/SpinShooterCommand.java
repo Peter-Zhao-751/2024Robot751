@@ -39,7 +39,7 @@ public class SpinShooterCommand extends Command {
             shooterSubsystem.setSpeed(ControlBoard.getInstance().shooterSpeed());
             intakeSubsystem.setSwivelPosition(Constants.Intake.kRetractedAngle);
 
-            StateMachine.setState(StateMachine.State.Aimbot);
+            // StateMachine.setState(StateMachine.State.Aimbot);
 
             limelightSubsystem.setVisionMode();
             limelightSubsystem.setLEDMode(LimelightSubsystem.LEDMode.ON);
@@ -59,7 +59,8 @@ public class SpinShooterCommand extends Command {
     public void execute() {
         if (mode == ControlBoard.Mode.Speaker) {
             if (!aimAssistCommand.isScheduled() && limelightSubsystem.hasTarget()) {
-                aimAssistCommand.schedule();
+                aimAssistCommand.initialize();
+                System.out.println("Scheduled");
             } else {
                 aimAssistCommand.execute();
             }

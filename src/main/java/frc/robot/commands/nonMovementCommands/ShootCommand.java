@@ -54,7 +54,7 @@ public class ShootCommand extends Command{
             if (mode == ControlBoard.Mode.Speaker && shooterSubsystem.isAtTargetSpeed() && shooterSubsystem.getShooterSpeed() > 5) {
                 transferSubsystem.setTransferSpeed(Constants.Transfer.intakeTransferSpeed);
                 started = true;
-            } else if (mode == ControlBoard.Mode.Amp && intakeSubsystem.closeToSetpoint()) {
+            } else if (mode == ControlBoard.Mode.Amp && intakeSubsystem.closeToSetpoint() && intakeSubsystem.getSwivelPosition() < Constants.Intake.kRetractedAngle - 3) { // TODO: remove angle check if working
                 intakeSubsystem.setIntakeSpeed(-Constants.Shooter.intakeAmpSpeed);
                 started = true;
             }

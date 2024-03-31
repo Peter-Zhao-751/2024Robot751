@@ -47,10 +47,18 @@ public class MoveCommand extends Command {
     public void initialize() {
         Pose2d currentRobotPosition = s_Swerve.getSwerveOdometryPose2d(); // do something
 
+<<<<<<< HEAD
         if (isAtDesiredLocation(currentRobotPosition, desiredLocation, interiorWaypoints) &&
             Math.abs(desiredLocation.getRotation().getDegrees() - currentRobotPosition.getRotation().getDegrees()) < 5) return;
 
         if (movementTrajectory == null || !isAtDesiredLocation(currentRobotPosition, desiredLocation, interiorWaypoints)) {
+=======
+        // if (Math.abs(desiredLocation.getX() - currentRobotPosition.getX()) < 0.1 &&
+        //     Math.abs(desiredLocation.getY() - currentRobotPosition.getY()) < 0.1 &&
+        //     Math.abs(desiredLocation.getRotation().getDegrees() - currentRobotPosition.getRotation().getDegrees()) < 5) return;
+        
+        if (movementTrajectory == null) {
+>>>>>>> 69b8a43db6eba438365d7292889bc2999cc4bfda
             TrajectoryConfig config = new TrajectoryConfig(
                 Constants.AutoConstants.kMaxSpeedMetersPerSecond,
                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
