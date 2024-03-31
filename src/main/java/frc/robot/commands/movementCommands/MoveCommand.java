@@ -33,7 +33,6 @@ public class MoveCommand extends Command {
 
     public MoveCommand(Pose2d desiredLocation) {
         this(desiredLocation, List.of());
-        addRequirements(s_Swerve);
     }
 
     public MoveCommand(Trajectory trajectory) {
@@ -53,7 +52,7 @@ public class MoveCommand extends Command {
             Math.abs(desiredLocation.getY() - currentRobotPosition.getY()) < 0.1 &&
             Math.abs(desiredLocation.getRotation().getDegrees() - currentRobotPosition.getRotation().getDegrees()) < 5) return;
 
-        if (movementTrajectory == null || !isTranslationPlanned(currentRobotPosition, desiredLocation, interiorWaypoints)) {
+        if (movementTrajectory == null || !isAtDesiredLocation(currentRobotPosition, desiredLocation, interiorWaypoints)) {
             TrajectoryConfig config = new TrajectoryConfig(
                 Constants.AutoConstants.kMaxSpeedMetersPerSecond,
                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
@@ -70,7 +69,8 @@ public class MoveCommand extends Command {
 
         ProfiledPIDController thetaController = new ProfiledPIDController(
                 Constants.AutoConstants.kPThetaController, 0, 0,
-                Constants.AutoConstants.kThetaControllerConstraints);
+				Constants.AutoConstants.kThetaControllerConstraints);
+				
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         if (movementTrajectory != null) ETA = movementTrajectory.getTotalTimeSeconds();
@@ -90,11 +90,6 @@ public class MoveCommand extends Command {
     }
 
     @Override
-    public void execute() {
-        if (swerveControllerCommand != null) swerveControllerCommand.execute();
-    }
-
-    @Override
     public void end(boolean interrupted) {
         if (swerveControllerCommand != null) swerveControllerCommand.end(interrupted);
     }
@@ -108,7 +103,7 @@ public class MoveCommand extends Command {
 		return ETA;
 	}
 
-	private boolean isTranslationPlanned(Pose2d currPose2d, Pose2d desiredPose2d, List<Translation2d> interiorWaypoints) {
+	private boolean isAtDesiredLocation(Pose2d currPose2d, Pose2d desiredPose2d, List<Translation2d> interiorWaypoints) {
 		return Math.abs(desiredPose2d.getX() - currPose2d.getX()) < 0.1 && Math.abs(desiredPose2d.getY() - currPose2d.getY()) < 0.1 && interiorWaypoints.isEmpty();
 	}
 }
