@@ -29,7 +29,7 @@ public class Constants {
         public static int beamBreakDIOPort = 1;
 
         public static double swivelGearRatio = 15.0;
-        public static double intakeSpeed = 20.0; // units in centimeters per second
+        public static double intakeSpeed = 15.0; // units in rotations per second
 
         public static double intakeRollerRadius = 2.54; // units in centimeters
 
@@ -53,7 +53,7 @@ public class Constants {
 
         public static double kIntakeAngle = 7.0;
         public static double kMaintenanceAngle = 45.0;
-        public static double kAmpAngle = 100.0;
+        public static double kAmpAngle = 125.0;
         public static double kRetractedAngle = 135.0;
 
         public static double kSwivelEncoderZeroOffset = 360 - 94.1;
@@ -95,7 +95,7 @@ public class Constants {
         public static int motionMagicAcceleration = 400; // units in rotations per second squared
         public static int motionMagicJerk = 4000; // units in rotations per second cubed
 
-        public static double intakeAmpSpeed = 20.0; // units in rotations per second
+        public static double intakeAmpSpeed = 29.0; // units in rotations per second
 
         public static double kSFlyWheelFeedforward = 0.25;
         public static double kVFlyWheelFeedforward = 0.12;
@@ -320,7 +320,7 @@ public class Constants {
 
         public static FieldElements[] red = {
             new FieldElements("Amp", 12.99, 7.95, 0.0, -1.0, 1.0, -1.0, 1.0),
-            new FieldElements("Speaker", 15.76, 5.28, 0.0, -1.0, 1.0, -1.0, 1.0),
+            new FieldElements("Speaker", 15.76, 5.5, 0.0, -1.0, 1.0, -1.0, 1.0),
             new FieldElements("Stage", 10.74, 4.02, 0.0, -1.0, 1.0, -1.0, 1.0),
             new FieldElements("Chute", 13.74, 0.80, 0.0, -1.0, 1.0, -1.0, 1.0),
         };

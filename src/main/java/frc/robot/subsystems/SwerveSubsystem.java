@@ -120,6 +120,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public boolean drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean isPrecise, boolean isOverridden) {
+        System.out.println(rotation);
         // precision mode
         double xSpeed = !isPrecise ? translation.getX() : translation.getX() * Constants.Swerve.preciseControlFactor;
         double ySpeed = !isPrecise ? translation.getY() : translation.getY() * Constants.Swerve.preciseControlFactor;

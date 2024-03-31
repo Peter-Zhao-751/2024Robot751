@@ -44,6 +44,8 @@ public class IntakeSubsystem extends SubsystemBase{
     private double swivelMovementStartAngle;
     private boolean isSwivelEnabled;
 
+    private boolean isAtAngle = false;
+    private long startOfAtAngle = 0;
 
     private IntakeSubsystem() {
         leftSwivelMotor = new CANSparkMax(Constants.Intake.leftSwivelMotorID, MotorType.kBrushless);
@@ -120,6 +122,10 @@ public class IntakeSubsystem extends SubsystemBase{
      * @param position the position of the swivel in degrees
      */
 	public void setSwivelPosition(double position) {
+        if (position != swivelSetpoint) {
+            isAtAngle = false;
+            startOfAtAngle = 0;
+        }
 		position %= 360;
 		if (position > 180) position = 180;
 		if (position < -20) position = -20;
@@ -147,11 +153,19 @@ public class IntakeSubsystem extends SubsystemBase{
     }
 
     public boolean closeToSetpoint() {
-        return Math.abs(swivelSetpoint - getSwivelPosition()) < 5;
+        return System.currentTimeMillis() - startOfAtAngle > 751 && isAtAngle;
     }
 
     @Override
     public void periodic() {
+        if (Math.abs(getSwivelPosition() - swivelSetpoint) < 5) {
+            if (!isAtAngle) startOfAtAngle = System.currentTimeMillis();
+            isAtAngle = true;
+        } else {
+            isAtAngle = false;
+            startOfAtAngle = 0;
+        }
+
         isBeamBroken = beamDebouncer.calculate(!beamBreak.get());
         TelemetryUpdater.setTelemetryValue("Intake Beam Break", isBeamBroken);
 

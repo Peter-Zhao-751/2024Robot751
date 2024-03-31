@@ -24,7 +24,7 @@ public class LimelightSubsystem extends SubsystemBase {
     // https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-coordinate-systems
     private final String name;
 
-    public boolean forceLedOff = true;
+    public boolean forceLedOff = false;
 
     public static LimelightSubsystem getInstance() {
         if (instance == null) instance = new LimelightSubsystem();
@@ -44,7 +44,7 @@ public class LimelightSubsystem extends SubsystemBase {
     }
 
     public double[] getValues() {
-        return hasTarget() ? LimelightHelpers.getBotPose(this.name) : null;
+        return hasTarget() ? LimelightHelpers.getBotPose_wpiBlue(this.name) : null;
     }
 
     public double getYaw() {

@@ -50,7 +50,7 @@ public class TeleopCommand extends Command {
         boolean isDriving = s_Swerve.drive(
             new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed), 
             rotationVal * Constants.Swerve.maxAngularVelocity, 
-            true, 
+            false, 
             true, 
             preciseControl.getAsBoolean(),
             overridden.getAsBoolean()
