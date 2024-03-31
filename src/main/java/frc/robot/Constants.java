@@ -261,7 +261,7 @@ public class Constants {
 
         public static double kPositionProcessNoise = 0.015;
         public static double kVelocityProcessNoise = 0.075;
-        public static double kAccelerationProcessNoise = 0.15;
+        public static double kAccelerationProcessNoise = 0.075;
     }
 
     public static class AutoConstants {

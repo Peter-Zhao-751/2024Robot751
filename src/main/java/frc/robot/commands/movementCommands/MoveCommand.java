@@ -43,13 +43,11 @@ public class MoveCommand extends Command {
         addRequirements(s_Swerve);
     }
 
-
     @Override
     public void initialize() {
         Pose2d currentRobotPosition = s_Swerve.getSwerveOdometryPose2d(); // do something
 
-        if (Math.abs(desiredLocation.getX() - currentRobotPosition.getX()) < 0.1 &&
-            Math.abs(desiredLocation.getY() - currentRobotPosition.getY()) < 0.1 &&
+        if (isAtDesiredLocation(currentRobotPosition, desiredLocation, interiorWaypoints) &&
             Math.abs(desiredLocation.getRotation().getDegrees() - currentRobotPosition.getRotation().getDegrees()) < 5) return;
 
         if (movementTrajectory == null || !isAtDesiredLocation(currentRobotPosition, desiredLocation, interiorWaypoints)) {
@@ -70,7 +68,7 @@ public class MoveCommand extends Command {
         ProfiledPIDController thetaController = new ProfiledPIDController(
                 Constants.AutoConstants.kPThetaController, 0, 0,
 				Constants.AutoConstants.kThetaControllerConstraints);
-				
+
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         if (movementTrajectory != null) ETA = movementTrajectory.getTotalTimeSeconds();
