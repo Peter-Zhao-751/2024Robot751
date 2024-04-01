@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.io.File;
 
+import frc.robot.commands.movementCommands.AutonCommand;
 import frc.robot.subsystems.*;
 import frc.robot.utility.*;
 
@@ -105,6 +106,8 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         File selectedAuton = UIManager.selectedAuton();
+
+
         m_autonomousCommand = m_robotContainer.getAutonomousCommand(selectedAuton);
         LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.ON);
         if (Constants.loggingEnabled) SignalLogger.start();

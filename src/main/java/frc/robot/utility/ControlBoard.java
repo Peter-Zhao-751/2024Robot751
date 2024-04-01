@@ -1,5 +1,7 @@
 package frc.robot.utility;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -7,6 +9,7 @@ import frc.robot.Constants;
 import frc.robot.commands.movementCommands.*;
 import frc.robot.commands.gamepieceCommands.*;
 import frc.robot.subsystems.*;
+
 
 public class ControlBoard {
     private static ControlBoard instance;
@@ -63,7 +66,7 @@ public class ControlBoard {
         driver.leftBumper.whileTrue(new ExportCommand());
         driver.leftTrigger.whileTrue(new IntakeCommand());
 
-        driver.rightBumper.toggleOnTrue(new AimAssistCommand());
+        driver.rightBumper.whileTrue(new MoveCommand(new Pose2d(1, 0, new Rotation2d())));//AimAssistCommand());
         driver.rightTrigger.whileTrue(new ShootCommand());
 
         driver.dUp.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));

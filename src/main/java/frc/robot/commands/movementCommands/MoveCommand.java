@@ -45,7 +45,7 @@ public class MoveCommand extends Command {
 
     @Override
     public void initialize() { // TODO: make shit use getpose which gets the kalman pose once testing is complete
-        Pose2d currentRobotPosition = s_Swerve.getSwerveOdometryPose2d(); // do something
+        Pose2d currentRobotPosition = s_Swerve.getPose(); // do something
 
         if (isAtDesiredLocation(currentRobotPosition, desiredLocation, interiorWaypoints) &&
             Math.abs(desiredLocation.getRotation().getDegrees() - currentRobotPosition.getRotation().getDegrees()) < 5) return;
@@ -76,10 +76,10 @@ public class MoveCommand extends Command {
 
         swerveControllerCommand = new SwerveControllerCommand(
                 movementTrajectory,
-                s_Swerve::getSwerveOdometryPose2d,
+                s_Swerve::getPose,
                 Constants.Swerve.swerveKinematics,
-                (movementTrajectory != null) ? new PIDController(Constants.AutoConstants.kPXController, 0, 0) : null,
-                (movementTrajectory != null) ? new PIDController(Constants.AutoConstants.kPYController, 0, 0) : null,
+                new PIDController(Constants.AutoConstants.kPXController, 0, 0),
+                new PIDController(Constants.AutoConstants.kPYController, 0, 0),
                 thetaController,
                 s_Swerve::setModuleStates,
 				s_Swerve);
@@ -90,6 +90,11 @@ public class MoveCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         if (swerveControllerCommand != null) swerveControllerCommand.end(interrupted);
+    }
+
+    @Override 
+    public void execute(){
+        if (swerveControllerCommand != null) swerveControllerCommand.execute();
     }
 
     @Override

@@ -194,7 +194,7 @@ public class Constants {
         /** Meters per Second */
         public static double maxSpeed = 5;
         /** Multiplier */
-        public static double speedMultiplier = 0.25;
+        public static double speedMultiplier = 0.5;
         public static double spinSpeedMultiplier = 0.8;
         /** Radians per Second */
         public static double maxAngularVelocity = maxSpeed / 1.6 * spinSpeedMultiplier;
