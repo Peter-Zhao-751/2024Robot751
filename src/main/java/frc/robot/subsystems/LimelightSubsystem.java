@@ -68,7 +68,7 @@ public class LimelightSubsystem extends SubsystemBase {
      */
 	public Pose2d getPose() {
 		double[] values = getValues();
-        return values != null ? new Pose2d(values[0], values[1], new Rotation2d(values[4])) : null;
+        return values != null ? new Pose2d(values[0], values[1], new Rotation2d(getYaw())) : null;
     }
 
 	public void setLEDMode(LEDMode mode) {
