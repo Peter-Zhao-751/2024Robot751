@@ -64,7 +64,9 @@ public class LimelightSubsystem extends SubsystemBase {
 	}
 
 	public PoseEstimate getPoseEstimate() {
-		return LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+        PoseEstimate pose = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+        TelemetryUpdater.setTelemetryValue("Limelight/Est Yaw", pose.pose.getRotation().getDegrees());
+		return pose;
 	}
     /**
      * 0 is x, 1 is y, 2 z, 3 rotation x, 4 rotation y, 5 rotation z

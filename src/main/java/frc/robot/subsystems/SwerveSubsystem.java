@@ -7,6 +7,7 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -270,7 +271,7 @@ public class SwerveSubsystem extends SubsystemBase {
 		if (LimelightSubsystem.getInstance().hasTarget()) {
 			PoseEstimate pose = LimelightSubsystem.getInstance().getPoseEstimate();
             
-			poseEstimator.addVisionMeasurement(pose.pose, pose.timestampSeconds); //TODO: check
+			poseEstimator.addVisionMeasurement(pose.pose.plus(new Transform2d(new Translation2d(), Rotation2d.fromDegrees(180))), pose.timestampSeconds); //TODO: check
 		}
 
         //TelemetryUpdater.setTelemetryValue("total swerve current draw", totalCurrent);
@@ -288,6 +289,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
 		TelemetryUpdater.setTelemetryValue("PoseEstimator/Swerve X", poseEstimator.getEstimatedPosition().getX());
 		TelemetryUpdater.setTelemetryValue("PoseEstimator/Swerve Y", poseEstimator.getEstimatedPosition().getY());
+        TelemetryUpdater.setTelemetryValue("PoseEstimator/Yaw", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
 
         TelemetryUpdater.setTelemetryValue("Swerve/Angles/FL Angle", (mSwerveMods[0].getPosition().angle.getDegrees() + 360) % 360);
         TelemetryUpdater.setTelemetryValue("Swerve/Angles/FR Angle", (mSwerveMods[1].getPosition().angle.getDegrees() + 360) % 360);
