@@ -79,19 +79,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
 		Pose2d initPose2d = LimelightSubsystem.getInstance().getPose(); // TODO: i suck
 
-<<<<<<< HEAD
-		poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, new Rotation2d(gyro.getYaw().getValue()), getModulePositions(), new Pose2d(0, 0, new Rotation2d(0)));
-
-        stateEstimator = StateEstimator.getInstance();
-        stateEstimator.gyro = gyro;
-        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, new Rotation2d(gyro.getYaw().getValue()), getModulePositions());//, new Pose2d());
-=======
 		poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, Rotation2d.fromDegrees(gyro.getYaw().getValue()), getModulePositions(), new Pose2d(0, 0, new Rotation2d(0)));
 
         stateEstimator = StateEstimator.getInstance();
         stateEstimator.gyro = gyro;
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, Rotation2d.fromDegrees(gyro.getYaw().getValue()), getModulePositions());//, new Pose2d());
->>>>>>> 2f39b66022534873872368ceecc528eb24e3a18a
 
         TelemetryUpdater.setTelemetryValue("Field", m_field);
 
