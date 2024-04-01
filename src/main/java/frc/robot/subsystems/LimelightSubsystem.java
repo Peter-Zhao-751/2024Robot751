@@ -12,6 +12,7 @@ import frc.robot.Constants;
 import frc.lib.util.LimelightHelpers;
 import frc.robot.Constants.FieldConstants.FieldElements;
 import frc.robot.utility.TelemetryUpdater;
+import frc.lib.util.LimelightHelpers.PoseEstimate;
 
 public class LimelightSubsystem extends SubsystemBase {
     public enum LEDMode {
@@ -58,10 +59,13 @@ public class LimelightSubsystem extends SubsystemBase {
         LimelightHelpers.setCameraMode_Driver(this.name);
     }
 
-    public void setVisionMode() {
-        LimelightHelpers.setCameraMode_Processor(this.name);
-    }
+	public void setVisionMode() {
+		LimelightHelpers.setCameraMode_Processor(this.name);
+	}
 
+	public PoseEstimate getPoseEstimate() {
+		return LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+	}
     /**
      * 0 is x, 1 is y, 2 z, 3 rotation x, 4 rotation y, 5 rotation z
      * @return Pose2d, null if no target

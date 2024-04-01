@@ -23,12 +23,14 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 
 import frc.lib.util.CTREConfigs;
 import frc.robot.Constants;
 import frc.robot.utility.StateEstimator;
 import frc.robot.utility.TelemetryUpdater;
+import frc.lib.util.LimelightHelpers.PoseEstimate;
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -77,11 +79,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
 		Pose2d initPose2d = LimelightSubsystem.getInstance().getPose(); // TODO: i suck
 
-		poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions(), new Pose2d(0, 0, new Rotation2d(0)));
+		poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, new Rotation2d(gyro.getYaw().getValue()), getModulePositions(), new Pose2d(0, 0, new Rotation2d(0)));
 
         stateEstimator = StateEstimator.getInstance();
         stateEstimator.gyro = gyro;
-        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());//, new Pose2d());
+        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, new Rotation2d(gyro.getYaw().getValue()), getModulePositions());//, new Pose2d());
 
         TelemetryUpdater.setTelemetryValue("Field", m_field);
 
@@ -264,6 +266,10 @@ public class SwerveSubsystem extends SubsystemBase {
         swerveOdometry.update(getGyroYaw(), getModulePositions());
 		stateEstimator.update(getModuleStates());
 		poseEstimator.update(getGyroYaw(), getModulePositions());
+		if (LimelightSubsystem.getInstance().hasTarget()) {
+			PoseEstimate pose = LimelightSubsystem.getInstance().getPoseEstimate();
+			poseEstimator.addVisionMeasurement(pose.pose, pose.timestampSeconds); //TODO: check
+		}
 
         //TelemetryUpdater.setTelemetryValue("total swerve current draw", totalCurrent);
 
