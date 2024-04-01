@@ -157,7 +157,7 @@ public class IntakeSubsystem extends SubsystemBase{
     }
 
     public boolean greaterThanSetpoint() {
-        return getSwivelPosition() > swivelSetpoint;
+        return getSwivelPosition() < swivelSetpoint;
     }
 
     @Override
