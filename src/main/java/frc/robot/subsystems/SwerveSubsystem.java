@@ -49,7 +49,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final SwerveModule[] mSwerveMods;
     private final Pigeon2 gyro;
 
-    private final SysIdRoutine routine;
+    // private final SysIdRoutine routine;
 
     public boolean lockOnTarget = false;
     private final PIDController angleController = new PIDController(0.1, 0, 0);
@@ -77,30 +77,30 @@ public class SwerveSubsystem extends SubsystemBase {
 
 		Pose2d initPose2d = LimelightSubsystem.getInstance().getPose(); // TODO: i suck
 
-		poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions(), new Pose2d(0, 0, new Rotation2d(0)));
+		poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, Rotation2d.fromDegrees(gyro.getYaw().getValue()), getModulePositions(), new Pose2d(0, 0, new Rotation2d(0)));
 
         stateEstimator = StateEstimator.getInstance();
         stateEstimator.gyro = gyro;
-        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());//, new Pose2d());
+        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, Rotation2d.fromDegrees(gyro.getYaw().getValue()), getModulePositions());//, new Pose2d());
 
         TelemetryUpdater.setTelemetryValue("Field", m_field);
 
-        routine = new SysIdRoutine(
-            new SysIdRoutine.Config(
-                null,
-                null,
-                null,
-                (state) -> SignalLogger.writeString("state", state.toString())
-            ),
-            new SysIdRoutine.Mechanism(
-                (Measure<Voltage> volts) -> {
-                    for(SwerveModule mod : mSwerveMods){
-                        mod.setAngleVoltage(volts.in(Volts));
-                    }
-                    resetModulesToAbsolute();
-                System.out.println("Volts: " + volts.in(Volts));
-            }, null, this)
-        );
+        // routine = new SysIdRoutine(
+        //     new SysIdRoutine.Config(
+        //         null,
+        //         null,
+        //         null,
+        //         (state) -> SignalLogger.writeString("state", state.toString())
+        //     ),
+        //     new SysIdRoutine.Mechanism(
+        //         (Measure<Voltage> volts) -> {
+        //             for(SwerveModule mod : mSwerveMods){
+        //                 mod.setAngleVoltage(volts.in(Volts));
+        //             }
+        //             resetModulesToAbsolute();
+        //         System.out.println("Volts: " + volts.in(Volts));
+        //     }, null, this)
+        // );
 
 //        resetX = Shuffleboard.getTab("Initializer").add("Reset X", 0).withWidget(BuiltInWidgets.kToggleButton).getEntry();
 //        resetY = Shuffleboard.getTab("Initializer").add("Reset Y", 0).withWidget(BuiltInWidgets.kToggleButton).getEntry();
@@ -116,13 +116,13 @@ public class SwerveSubsystem extends SubsystemBase {
     //     return gyro;
     // }
 
-    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-        return routine.quasistatic(direction);
-    }
+    // public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    //     return routine.quasistatic(direction);
+    // }
 
-    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-        return routine.dynamic(direction);
-    }
+    // public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    //     return routine.dynamic(direction);
+    // }
 
     public void setPosition(Pose2d desiredLocation, Rotation2d desiredHeading) {
         drive(null, 0, false, false);
@@ -226,7 +226,8 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public Rotation2d getGyroYaw() {
-        return stateEstimator.getYaw();
+        return poseEstimator.getEstimatedPosition().getRotation();
+        // return stateEstimator.getYaw();
     }
 
     /**
