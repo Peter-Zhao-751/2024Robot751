@@ -195,7 +195,7 @@ public class Constants {
         public static double maxSpeed = 5;
         /** Multiplier */
         public static double speedMultiplier = 0.25;
-        public static double spinSpeedMultiplier = 0.5;
+        public static double spinSpeedMultiplier = 0.8;
         /** Radians per Second */
         public static double maxAngularVelocity = maxSpeed / 1.6 * spinSpeedMultiplier;
 
@@ -256,12 +256,12 @@ public class Constants {
         public static double limeSwerveMixRatio = 0.8; // 80% limelight, 20% swerve
 
 
-        public static double kPositionNoiseVar = 0.075;
+        public static double kPositionNoiseVar = 0.025;
         public static double kVelocityNoiseVar = 0.025;
         public static double kAccelerationNoiseVar = 0.25;
 
         public static double kPositionProcessNoise = 0.015;
-        public static double kVelocityProcessNoise = 0.075;
+        public static double kVelocityProcessNoise = 0.015;
         public static double kAccelerationProcessNoise = 0.075;
     }
 

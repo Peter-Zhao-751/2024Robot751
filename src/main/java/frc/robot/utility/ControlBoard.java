@@ -93,8 +93,8 @@ public class ControlBoard {
          operator.rightBumper.and(this::notClimberMode).whileTrue(new TransferCommand());
         // operator.rightBumper.and(this::climberMode).whileTrue(new RunCommand(() -> s_Climber.changeRightClimberLocation(Constants.Climber.climberSpeed), s_Climber));
 
-         operator.dUp.whileTrue(new RunCommand(this::increaseShooterPower, s_Shooter));
-         operator.dDown.whileTrue(new RunCommand(this::decreaseShooterPower, s_Shooter));
+         operator.dUp.whileTrue(new InstantCommand(this::increaseShooterPower, s_Shooter));
+         operator.dDown.whileTrue(new InstantCommand(this::decreaseShooterPower, s_Shooter));
          operator.dLeft.whileTrue(new RunCommand(this::retractIntake, s_Intake));
          operator.dRight.whileTrue(new RunCommand(this::extendIntake, s_Intake));
 
