@@ -2,12 +2,15 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 import frc.lib.util.LimelightHelpers;
+import frc.robot.Constants.FieldConstants.FieldElements;
 import frc.robot.utility.TelemetryUpdater;
 
 public class LimelightSubsystem extends SubsystemBase {
@@ -26,6 +29,8 @@ public class LimelightSubsystem extends SubsystemBase {
 
     public boolean forceLedOff = false;
 
+    private final SwerveSubsystem s_Swerve;
+
     public static LimelightSubsystem getInstance() {
         if (instance == null) instance = new LimelightSubsystem();
         return instance;
@@ -33,6 +38,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
 	private LimelightSubsystem() {
         name = Constants.Limelight.name;
+        s_Swerve = SwerveSubsystem.getInstance();
     }
 
     public void toggleLeds() {
@@ -78,29 +84,76 @@ public class LimelightSubsystem extends SubsystemBase {
         }
     }
 
+    private FieldElements closestSpeaker() {
+        Pose2d pose = this.getPose();
+
+        FieldElements redSpeaker = Constants.FieldConstants.red[1];
+        FieldElements blueSpeaker = Constants.FieldConstants.blue[1];
+        // if the 2 blue field element is closer than the 2 red, then use the blue field elements, otherwise use the red field elements
+
+        return Math.hypot(redSpeaker.x - pose.getX(), redSpeaker.y - pose.getY()) <
+                Math.hypot(blueSpeaker.x - pose.getX(), blueSpeaker.y - pose.getY()) ? redSpeaker : blueSpeaker;
+    }
+
     public double getDistance() {
-        // https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance#using-a-fixed-angle-camera
-        double mountHeight = Constants.Limelight.height;
-        double mountAngle = Constants.Limelight.angle; // might not be right
+        Pose2d pose = this.getPose();
 
-        double targetHeightRelative = LimelightHelpers.getTY(this.name);
-        double targetHeightActual = LimelightHelpers.getBotPose(this.name)[2];
+        if (pose == null) {
+            System.err.println("No target found");
+            return 0;
+//            pose = s_Swerve.getPose();
+        }
 
-        double angle = Units.degreesToRadians(mountAngle + targetHeightRelative);
+        FieldElements closestSpeaker = closestSpeaker();
+        double desired = Units.feetToMeters(10);
+        double distance = Math.hypot(closestSpeaker.x - pose.getX(), closestSpeaker.y - pose.getY());
 
-        return (targetHeightActual - mountHeight) / Math.tan(angle);
+        Pose2d desiredPosition = s_Swerve.getPose().plus(new Transform2d(new Translation2d(0, desired - distance), Rotation2d.fromDegrees(this.getAngle())));
+
+        TelemetryUpdater.setTelemetryValue("autoaim/dist/distance", distance);
+        TelemetryUpdater.setTelemetryValue("autoaim/dist/x", desiredPosition.getX());
+        TelemetryUpdater.setTelemetryValue("autoaim/dist/y", desiredPosition.getY());
+        return distance;
+    }
+
+    public double getAngle() {
+        Pose2d pose = this.getPose();
+
+        if (pose == null) {
+            System.err.println("No target found");
+            return 0;
+        }
+
+        FieldElements closestSpeaker = closestSpeaker();
+        TelemetryUpdater.setTelemetryValue("aimbot/pose/x", pose.getX());
+        TelemetryUpdater.setTelemetryValue("aimbot/pose/y", pose.getY());
+        TelemetryUpdater.setTelemetryValue("aimbot/speaker/x", closestSpeaker.x);
+        TelemetryUpdater.setTelemetryValue("aimbot/speaker/y", closestSpeaker.y);
+
+        // speaker: 15.76, 5.28
+        // us: 12.5, 6
+        double angle = (Math.toDegrees(Math.atan2(closestSpeaker.y - pose.getY(), closestSpeaker.x - pose.getX())) + 360) % 360;
+        angle = angle > 180 ? angle - 360: angle;
+        // angle - pose2d.getRotation().getDegrees() + 360) % 360;
+        double delta = this.getYaw() - angle;
+
+        double desiredAngle = (s_Swerve.getGyroYaw().getDegrees() + 360 - delta) % 360;
+        TelemetryUpdater.setTelemetryValue("aimbot/speakerAngle", angle);
+        TelemetryUpdater.setTelemetryValue("aimbot/limelightYaw", -this.getYaw());
+        TelemetryUpdater.setTelemetryValue("aimbot/delta", delta);
+        return desiredAngle;
     }
 
     @Override
     public void periodic() {
-        TelemetryUpdater.setTelemetryValue("LimelightSubsystem Has Target", hasTarget());
+        TelemetryUpdater.setTelemetryValue("Limelight/Limelight Has Target", hasTarget());
         double[] values = getValues();
         if (values != null) {
-            TelemetryUpdater.setTelemetryValue("LimelightSubsystem X Position", values[0]);
-			TelemetryUpdater.setTelemetryValue("LimelightSubsystem Y Position", values[1]);
-			TelemetryUpdater.setTelemetryValue("LimelightSubsystem Rotation", values[4]);
-            TelemetryUpdater.setTelemetryValue("LimelightSubsystem Area", values[2]);
-            TelemetryUpdater.setTelemetryValue("Estimated Distance", getDistance());
+            TelemetryUpdater.setTelemetryValue("Limelight/Limelight X Position", values[0]);
+			TelemetryUpdater.setTelemetryValue("Limelight/Limelight Y Position", values[1]);
+			TelemetryUpdater.setTelemetryValue("Limelight/Limelight Rotation", values[4]);
+            TelemetryUpdater.setTelemetryValue("Limelight/Limelight Area", values[2]);
+            TelemetryUpdater.setTelemetryValue("Limelight/Estimated Distance", getDistance());
         }
     }
 }

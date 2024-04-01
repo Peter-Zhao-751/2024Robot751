@@ -1,6 +1,6 @@
 package frc.robot.utility;
 
-import frc.robot.commands.nonMovementCommands.CANdleController;
+import frc.robot.commands.gamepieceCommands.CANdleController;
 import frc.robot.subsystems.CANdleSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 
@@ -49,7 +49,7 @@ public class StateMachine {
     }
 
     public static void periodic() {
-        TelemetryUpdater.setTelemetryValue("Robot State", state.stateName);
+        TelemetryUpdater.setTelemetryValue("StateMachine/Robot State", state.stateName);
     }
 
     public static boolean isPerformingAction(){

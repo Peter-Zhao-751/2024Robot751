@@ -29,7 +29,8 @@ public class Constants {
         public static int beamBreakDIOPort = 1;
 
         public static double swivelGearRatio = 15.0;
-        public static double intakeSpeed = 15.0; // units in rotations per second
+        public static double speakerIntakeSpeed = 30; // units in rotations per second
+        public static double ampIntakeSpeed = 15.0; // units in rotations per second
 
         public static double intakeRollerRadius = 2.54; // units in centimeters
 
@@ -311,6 +312,7 @@ public class Constants {
             }
         }
         // fix these values, only the speakers are (maybe correct)
+        // TODO: tune these values
         public static FieldElements[] blue = {
             new FieldElements("Amp", 3.57, 7.94, 0.0, -1.0, 1.0, -1.0, 1.0),
             new FieldElements("Speaker", 0.8, 5.28, 0.0, -1.0, 1.0, -1.0, 1.0),

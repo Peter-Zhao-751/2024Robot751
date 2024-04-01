@@ -109,12 +109,12 @@ public class TransferSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         isBeamBroken = beamDebouncer.calculate(!beamBreak.get());
-        TelemetryUpdater.setTelemetryValue("Transfer Beam Break", isBeamBroken);
+        TelemetryUpdater.setTelemetryValue("Transfer/Transfer Beam Break", isBeamBroken);
 
-        TelemetryUpdater.setTelemetryValue("Intake Transfer Speed", getIntakeSpeed());
-        TelemetryUpdater.setTelemetryValue("Shooter Transfer Speed", getShooterSpeed());
-        TelemetryUpdater.setTelemetryValue("Intake Transfer Target Speed", targetIntakeSpeed);
-        TelemetryUpdater.setTelemetryValue("Shooter Transfer Target Speed", targetShooterSpeed);
+        TelemetryUpdater.setTelemetryValue("Transfer/Intake Transfer Speed", getIntakeSpeed());
+        TelemetryUpdater.setTelemetryValue("Transfer/Shooter Transfer Speed", getShooterSpeed());
+        TelemetryUpdater.setTelemetryValue("Transfer/Intake Transfer Target Speed", targetIntakeSpeed);
+        TelemetryUpdater.setTelemetryValue("Transfer/Shooter Transfer Target Speed", targetShooterSpeed);
 
         // intakeTransfer.setVoltage(intakeTransferController.calculate(getIntakeSpeed(), targetIntakeSpeed));
         // shooterTransfer.setVoltage(shooterTransferController.calculate(getShooterSpeed(), targetShooterSpeed));

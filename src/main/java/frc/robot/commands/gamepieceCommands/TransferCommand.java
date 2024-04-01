@@ -1,4 +1,4 @@
-package frc.robot.commands.nonMovementCommands;
+package frc.robot.commands.gamepieceCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;

@@ -207,8 +207,8 @@ public class KalmanFilter {
     }
 
     public void debugDisplayValues(){
-        TelemetryUpdater.setTelemetryValue("Kalman X Position", xState.position);
-        TelemetryUpdater.setTelemetryValue("Kalman Y Position", yState.position);
+        TelemetryUpdater.setTelemetryValue("Kalman/Kalman X Position", xState.position);
+        TelemetryUpdater.setTelemetryValue("Kalman/Kalman Y Position", yState.position);
 
         // TelemetryUpdater.setTelemetryValue("Kalman Measurement Noise R Position", noise.R_position);
         // TelemetryUpdater.setTelemetryValue("Kalman Measurement Noise R Velocity", noise.R_velocity);
