@@ -130,7 +130,9 @@ public class LimelightSubsystem extends SubsystemBase {
         // speaker: 15.76, 5.28
         // us: 12.5, 6
         double angle = (Math.toDegrees(Math.atan2(closestSpeaker.y - pose.getY(), closestSpeaker.x - pose.getX())) + 360) % 360;
+        TelemetryUpdater.setTelemetryValue("aimbot/rawSpeakerAngle", angle);
         angle = angle > 180 ? angle - 360: angle;
+        angle = angle < -180 ? angle + 360 : angle;
         // angle - pose2d.getRotation().getDegrees() + 360) % 360;
         double delta = this.getYaw() - angle;
 
@@ -148,7 +150,7 @@ public class LimelightSubsystem extends SubsystemBase {
         if (values != null) {
             TelemetryUpdater.setTelemetryValue("Limelight/Limelight X Position", values[0]);
 			TelemetryUpdater.setTelemetryValue("Limelight/Limelight Y Position", values[1]);
-			TelemetryUpdater.setTelemetryValue("Limelight/Limelight Rotation", values[4]);
+			TelemetryUpdater.setTelemetryValue("Limelight/Limelight Rotation", getYaw());
             TelemetryUpdater.setTelemetryValue("Limelight/Limelight Area", values[2]);
             TelemetryUpdater.setTelemetryValue("Limelight/Estimated Distance", getDistance());
         }
