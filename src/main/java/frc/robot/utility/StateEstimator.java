@@ -76,7 +76,7 @@ public class StateEstimator {
         TelemetryUpdater.setTelemetryValue("StateEstimator/fieldAccelerationX", fieldAccelerationX);
         TelemetryUpdater.setTelemetryValue("StateEstimator/fieldAccelerationY", fieldAccelerationY);
         TelemetryUpdater.setTelemetryValue("StateEstimator/fieldAccelerationZ", fieldAccelerationZ);
-        TelemetryUpdater.setTelemetryValue("Robot Yaw", gyro.getYaw().getValue());
+        TelemetryUpdater.setTelemetryValue("Robot Yaw", getYaw().getDegrees());
 
         Pose2d newLimePosition = limelightSubsystem.getPose();
 
@@ -133,8 +133,9 @@ public class StateEstimator {
 	}
 
     public Rotation2d getYaw(){ // degrees
-        return Rotation2d.fromDegrees(gyro.getYaw().getValue());
+        return Rotation2d.fromDegrees((gyro.getYaw().getValue()) % 360);
     }
+
 
     public double getVelX(){
         return kalmanFilter.getVelX();

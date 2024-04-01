@@ -56,6 +56,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final StateEstimator stateEstimator;
 
     private SwerveSubsystem() {
+        angleController.enableContinuousInput(-180, 180);
         gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.CANivoreID);
         gyro.getConfigurator().apply(new Pigeon2Configuration());
         gyro.setYaw(0);
@@ -139,7 +140,8 @@ public class SwerveSubsystem extends SubsystemBase {
         }
         if (lockOnTarget && desiredAngle != 0) {
             rot = angleController.calculate(this.getGyroYaw().getDegrees(), desiredAngle);
-            rot = Math.min(rot, 1);
+            rot = Math.min(rot, 2);
+            rot = Math.max(rot, -2);
         }
         SwerveModuleState[] swerveModuleStates =
                 Constants.Swerve.swerveKinematics.toSwerveModuleStates(
@@ -209,7 +211,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void zeroHeading() {
         System.out.println("Zeroed Heading");
-        setHeading(new Rotation2d());
+        setHeading(new Rotation2d(0));
     }
 
     public Rotation2d getGyroYaw() {
