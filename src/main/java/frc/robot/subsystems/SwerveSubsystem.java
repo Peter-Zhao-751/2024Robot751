@@ -77,7 +77,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
 		Pose2d initPose2d = LimelightSubsystem.getInstance().getPose(); // TODO: i suck
 
-		poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions(), initPose2d);
+		poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions(), new Pose2d(0, 0, new Rotation2d(0)));
 
         stateEstimator = StateEstimator.getInstance();
         stateEstimator.gyro = gyro;
