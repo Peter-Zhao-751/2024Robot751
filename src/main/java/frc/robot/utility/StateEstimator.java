@@ -12,13 +12,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import frc.robot.Constants;
 import frc.robot.subsystems.LimelightSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
 
 
 public class StateEstimator {
     private static StateEstimator instance;
 
-    public Pigeon2 gyro;
+    private Pigeon2 gyro;
     private final LimelightSubsystem limelightSubsystem;
 	private final KalmanFilter kalmanFilter;
 
@@ -44,6 +43,10 @@ public class StateEstimator {
 				Constants.Odometry.kAccelerationProcessNoise);
 		previousLimelightPose = null;
 		previousLimelightUpdateTime = System.currentTimeMillis();
+    }
+
+    public void setGyro(Pigeon2 gyro){
+        this.gyro = gyro;
     }
 
     public void update(SwerveModuleState[] moduleStates){
@@ -75,9 +78,9 @@ public class StateEstimator {
         double fieldAccelerationY = rotationMatrix[1][0] * accelerationX + rotationMatrix[1][1] * accelerationY + rotationMatrix[1][2] * accelerationZ;
         double fieldAccelerationZ = rotationMatrix[2][0] * accelerationX + rotationMatrix[2][1] * accelerationY + rotationMatrix[2][2] * accelerationZ;
 
-        TelemetryUpdater.setTelemetryValue("fieldAccelerationX", fieldAccelerationX);
-        TelemetryUpdater.setTelemetryValue("fieldAccelerationY", fieldAccelerationY);
-        TelemetryUpdater.setTelemetryValue("fieldAccelerationZ", fieldAccelerationZ);
+        TelemetryUpdater.setTelemetryValue("StateEstimator/fieldAccelerationX", fieldAccelerationX);
+        TelemetryUpdater.setTelemetryValue("StateEstimator/fieldAccelerationY", fieldAccelerationY);
+        TelemetryUpdater.setTelemetryValue("StateEstimator/fieldAccelerationZ", fieldAccelerationZ);
         TelemetryUpdater.setTelemetryValue("Robot Yaw", gyro.getYaw().getValue());
 
         Pose2d newLimePosition = limelightSubsystem.getPose();
@@ -97,8 +100,8 @@ public class StateEstimator {
 			previousLimelightPose = newLimePosition;
 			previousLimelightUpdateTime = System.currentTimeMillis();
         } else {
-//            kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY); // already tested
-            kalmanFilter.updateNewAcceleration(fieldAccelerationX, fieldAccelerationY); // TODO: drive robot and measure if its right
+            kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY); // already tested
+//            kalmanFilter.updateNewAcceleration(fieldAccelerationX, fieldAccelerationY); // TODO: drive robot and measure if its right
 //            kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY, fieldAccelerationX, fieldAccelerationY); // TODO: use this after testing
         }
 

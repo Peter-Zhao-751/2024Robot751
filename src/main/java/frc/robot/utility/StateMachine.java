@@ -49,7 +49,7 @@ public class StateMachine {
     }
 
     public static void periodic() {
-        TelemetryUpdater.setTelemetryValue("Robot State", state.stateName);
+        TelemetryUpdater.setTelemetryValue("StateMachine/Robot State", state.stateName);
     }
 
     public static boolean isPerformingAction(){

@@ -72,7 +72,7 @@ public class SwerveSubsystem extends SubsystemBase {
         };
 
         stateEstimator = StateEstimator.getInstance();
-        stateEstimator.gyro = gyro;
+        stateEstimator.setGyro(gyro);
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());//, new Pose2d());
 
         TelemetryUpdater.setTelemetryValue("Field", m_field);
@@ -236,7 +236,7 @@ public class SwerveSubsystem extends SubsystemBase {
     public void crossWheels() {
         System.out.println("Crossing Wheels");
         for (SwerveModule mod : mSwerveMods) {
-            mod.setAngle((mod.moduleNumber - 1) * 0.25 - 0.125);
+            mod.setAngle((mod.moduleNumber - 1) * 0.25 + 0.125);
         }
     }
 
@@ -261,16 +261,16 @@ public class SwerveSubsystem extends SubsystemBase {
      */
     private void swerveUi() {
 
-        TelemetryUpdater.setTelemetryValue("Swerve X", swerveOdometry.getPoseMeters().getX());
-        TelemetryUpdater.setTelemetryValue("Swerve Y", swerveOdometry.getPoseMeters().getY());
+        TelemetryUpdater.setTelemetryValue("Swerve/Swerve X", swerveOdometry.getPoseMeters().getX());
+        TelemetryUpdater.setTelemetryValue("Swerve/Swerve Y", swerveOdometry.getPoseMeters().getY());
 
-        TelemetryUpdater.setTelemetryValue("FL Angle", (mSwerveMods[0].getPosition().angle.getDegrees() + 360) % 360);
-        TelemetryUpdater.setTelemetryValue("FR Angle", (mSwerveMods[1].getPosition().angle.getDegrees() + 360) % 360);
-        TelemetryUpdater.setTelemetryValue("BL Angle", (mSwerveMods[2].getPosition().angle.getDegrees() + 360) % 360);
-        TelemetryUpdater.setTelemetryValue("BR Angle", (mSwerveMods[3].getPosition().angle.getDegrees() + 360) % 360);
+        TelemetryUpdater.setTelemetryValue("Swerve/Angles/FL Angle", (mSwerveMods[0].getPosition().angle.getDegrees() + 360) % 360);
+        TelemetryUpdater.setTelemetryValue("Swerve/Angles/FR Angle", (mSwerveMods[1].getPosition().angle.getDegrees() + 360) % 360);
+        TelemetryUpdater.setTelemetryValue("Swerve/Angles/BL Angle", (mSwerveMods[2].getPosition().angle.getDegrees() + 360) % 360);
+        TelemetryUpdater.setTelemetryValue("Swerve/Angles/BR Angle", (mSwerveMods[3].getPosition().angle.getDegrees() + 360) % 360);
 
-        if (limelight.hasTarget()) TelemetryUpdater.setTelemetryValue("Distance to Target", limelight.getDistance());
-        else TelemetryUpdater.setTelemetryValue("Distance to Target", Double.NaN);
+        if (limelight.hasTarget()) TelemetryUpdater.setTelemetryValue("Limelight/Distance to Target", limelight.getDistance());
+        else TelemetryUpdater.setTelemetryValue("Limelight/Distance to Target", Double.NaN);
 
         //TelemetryUpdater.setTelemetryValue("Robot Pitch", gyro.getPitch().getValue());
         //TelemetryUpdater.setTelemetryValue("Robot Roll", gyro.getRoll().getValue());

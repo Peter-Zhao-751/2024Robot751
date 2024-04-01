@@ -141,14 +141,14 @@ public class LimelightSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        TelemetryUpdater.setTelemetryValue("LimelightSubsystem Has Target", hasTarget());
+        TelemetryUpdater.setTelemetryValue("Limelight/Limelight Has Target", hasTarget());
         double[] values = getValues();
         if (values != null) {
-            TelemetryUpdater.setTelemetryValue("LimelightSubsystem X Position", values[0]);
-			TelemetryUpdater.setTelemetryValue("LimelightSubsystem Y Position", values[1]);
-			TelemetryUpdater.setTelemetryValue("LimelightSubsystem Rotation", values[4]);
-            TelemetryUpdater.setTelemetryValue("LimelightSubsystem Area", values[2]);
-            TelemetryUpdater.setTelemetryValue("Estimated Distance", getDistance());
+            TelemetryUpdater.setTelemetryValue("Limelight/Limelight X Position", values[0]);
+			TelemetryUpdater.setTelemetryValue("Limelight/Limelight Y Position", values[1]);
+			TelemetryUpdater.setTelemetryValue("Limelight/Limelight Rotation", values[4]);
+            TelemetryUpdater.setTelemetryValue("Limelight/Limelight Area", values[2]);
+            TelemetryUpdater.setTelemetryValue("Limelight/Estimated Distance", getDistance());
         }
     }
 }

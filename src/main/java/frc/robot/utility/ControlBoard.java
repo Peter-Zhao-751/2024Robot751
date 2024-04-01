@@ -4,14 +4,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.Constants;
-import frc.robot.commands.movementCommands.AimAssistCommand;
-import frc.robot.commands.movementCommands.SwerveAngleCommand;
-import frc.robot.commands.movementCommands.TeleopCommand;
+import frc.robot.commands.movementCommands.*;
 import frc.robot.commands.gamepieceCommands.*;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.LimelightSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.*;
 
 public class ControlBoard {
     private static ControlBoard instance;
@@ -32,7 +27,7 @@ public class ControlBoard {
     private Mode currentMode = Mode.Speaker;
     private boolean precise = false;
     private boolean fieldCentric = true;
-    private double shooterSpeed = Constants.Shooter.maxShooterSpeed;
+    private double shooterSpeed = 0;
 
     public enum Mode {
         Speaker,
@@ -55,13 +50,12 @@ public class ControlBoard {
                         driver.leftVerticalJoystick,
                         driver.leftHorizontalJoystick,
                         driver.rightHorizontalJoystick,
-                        driver.rightJoystickButton,
+                        () -> fieldCentric,
                         driver.leftJoystickButton
                 )
         );
 
         configureDriverBindings();
-        //    configureRoutines();
         configureOperatorBindings();
     }
 
@@ -81,10 +75,6 @@ public class ControlBoard {
         driver.squareButton.whileTrue(new InstantCommand(StateEstimator.getInstance()::resetPose));
         driver.circleButton.whileTrue(new InstantCommand(s_Swerve::zeroHeading));
         driver.crossButton.whileTrue(new InstantCommand(s_Limelight::toggleLeds)); // TODO: add on CANdle disabling
-    }
-
-    private void configureRoutines() {
-
     }
 
     private void configureOperatorBindings() {
@@ -120,8 +110,8 @@ public class ControlBoard {
     }
 
     public void updateTelemetry() {
-        TelemetryUpdater.setTelemetryValue("Target Shooter Speed", shooterSpeed);
-        TelemetryUpdater.setTelemetryValue("Mode", currentMode.toString());
+        TelemetryUpdater.setTelemetryValue("ControlBoard/Target Shooter Speed", shooterSpeed);
+        TelemetryUpdater.setTelemetryValue("ControlBoard/Mode", currentMode.toString());
     }
 
     private void togglePrecise() {

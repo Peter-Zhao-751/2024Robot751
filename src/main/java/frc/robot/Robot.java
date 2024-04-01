@@ -73,7 +73,6 @@ public class Robot extends TimedRobot {
         UIManager.updatePathPreview();
         StateMachine.periodic();
         m_scheduler.run();
-        // TODO: Figure out if we need to call subsystem periodic methods here?
         ControlBoard.getInstance().updateTelemetry();
     }
 

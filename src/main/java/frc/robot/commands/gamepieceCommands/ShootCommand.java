@@ -1,6 +1,7 @@
 package frc.robot.commands.gamepieceCommands;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TransferSubsystem;
 import frc.robot.utility.ControlBoard;
@@ -10,8 +11,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class ShootCommand extends Command{
     private final ShooterSubsystem shooterSubsystem;
-   private final TransferSubsystem transferSubsystem;
+    private final TransferSubsystem transferSubsystem;
     private final IntakeSubsystem intakeSubsystem;
+
+    private final LimelightSubsystem limelightSubsystem;
+    private final ControlBoard controlBoard;
 
     private final boolean smartMode;
     private boolean started;
@@ -22,6 +26,9 @@ public class ShootCommand extends Command{
         this.shooterSubsystem = ShooterSubsystem.getInstance();
         this.transferSubsystem = TransferSubsystem.getInstance();
         this.intakeSubsystem = IntakeSubsystem.getInstance();
+
+        this.limelightSubsystem = LimelightSubsystem.getInstance();
+        this.controlBoard = ControlBoard.getInstance();
 
         this.smartMode = smartMode;
 
@@ -39,7 +46,13 @@ public class ShootCommand extends Command{
         started = !smartMode;
 
         if (mode == ControlBoard.Mode.Speaker) {
-            shooterSubsystem.setSpeed(ControlBoard.getInstance().shooterSpeed());
+            double power = Constants.Shooter.maxShooterSpeed;
+            if(limelightSubsystem.hasTarget()) {
+                double dist = limelightSubsystem.getDistance();
+                power = calculatePower(dist);
+            }
+
+            shooterSubsystem.setSpeed(power + controlBoard.shooterSpeed());
             if (!smartMode) transferSubsystem.setTransferSpeed(Constants.Transfer.intakeTransferSpeed);
         } else {
             intakeSubsystem.setSwivelPosition(Constants.Intake.kAmpAngle);
@@ -47,9 +60,13 @@ public class ShootCommand extends Command{
         }
     }
 
+    private double calculatePower(double dist) {
+        return 0;
+    }
+
     @Override
     public void execute() {
-        TelemetryUpdater.setTelemetryValue("At shooter Speed", shooterSubsystem.isAtTargetSpeed());
+        TelemetryUpdater.setTelemetryValue("Shooter/At shooter Speed", shooterSubsystem.isAtTargetSpeed());
         if (!started && smartMode) {
             if (mode == ControlBoard.Mode.Speaker && shooterSubsystem.isAtTargetSpeed() && shooterSubsystem.getShooterSpeed() > 5) {
                 transferSubsystem.setTransferSpeed(Constants.Transfer.intakeTransferSpeed);

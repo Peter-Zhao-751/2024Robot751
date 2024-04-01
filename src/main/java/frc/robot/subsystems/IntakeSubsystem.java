@@ -9,6 +9,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.utility.TelemetrySubsystem;
 import frc.robot.utility.TelemetryUpdater;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -18,7 +19,6 @@ import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeSubsystem extends SubsystemBase{
     private static IntakeSubsystem instance;
@@ -167,16 +167,16 @@ public class IntakeSubsystem extends SubsystemBase{
         }
 
         isBeamBroken = beamDebouncer.calculate(!beamBreak.get());
-        TelemetryUpdater.setTelemetryValue("Intake Beam Break", isBeamBroken);
+        TelemetryUpdater.setTelemetryValue("Intake/Intake Beam Break", isBeamBroken);
 
-        isSwivelEnabled = SmartDashboard.getBoolean("Swivel Enabled", true);
+        isSwivelEnabled = (boolean) TelemetryUpdater.getTelemetryValue("Intake/Swivel Enabled");
         if (isSwivelEnabled && getSwivelPosition() < 180 && getSwivelPosition() > -20) calculateSwivel();
         else stopAll();
 
         // TelemetryUpdater.setTelemetryValue("Total Intake Current Draw", getCurrentDraw());
-        TelemetryUpdater.setTelemetryValue("Intake Swivel Setpoint", swivelSetpoint);
+        TelemetryUpdater.setTelemetryValue("Intake/Intake Swivel Setpoint", swivelSetpoint);
 
-        TelemetryUpdater.setTelemetryValue("Intake Speed", getIntakeSpeed());
+        TelemetryUpdater.setTelemetryValue("Intake/Intake Speed", getIntakeSpeed());
     }
 
     private void calculateSwivel() {
@@ -202,8 +202,8 @@ public class IntakeSubsystem extends SubsystemBase{
 
         leftSwivelMotor.setVoltage(combinedOutput);
         rightSwivelMotor.follow(leftSwivelMotor, true);
-        TelemetryUpdater.setTelemetryValue("Intake Swivel Position", currentAngle);
-        TelemetryUpdater.setTelemetryValue("Intake Raw Swivel Position", angleEncoder.getPosition());
+        TelemetryUpdater.setTelemetryValue("Intake/Intake Swivel Position", currentAngle);
+        TelemetryUpdater.setTelemetryValue("Intake/Intake Raw Swivel Position", angleEncoder.getPosition());
     }
 
     /**

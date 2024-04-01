@@ -7,6 +7,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
+import frc.robot.utility.TelemetryUpdater;
 
 public class ClimberSubsystem extends SubsystemBase{
     private static ClimberSubsystem instance;
@@ -35,8 +36,8 @@ public class ClimberSubsystem extends SubsystemBase{
         rightClimberEncoder = rightClimberMotor.getEncoder();
 
         //leftClimberMotor.setInverted(true);
-        leftClimberMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-        rightClimberMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+        leftClimberMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        rightClimberMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
         climberPIDController = new PIDController(Constants.Climber.kPClimbController, Constants.Climber.kIClimbController, Constants.Climber.kDClimbController);
 
@@ -95,6 +96,8 @@ public class ClimberSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
+        TelemetryUpdater.setTelemetryValue("Climber/Left Climber Current", leftClimberMotor.getOutputCurrent());
+        TelemetryUpdater.setTelemetryValue("Climber/Right Climber Current", rightClimberMotor.getOutputCurrent());
 
         double leftOutput = climberPIDController.calculate(getLeftPosition(), leftDesiredLocation);
         double rightOutput = climberPIDController.calculate(getRightPosition(), rightDesiredLocation);
