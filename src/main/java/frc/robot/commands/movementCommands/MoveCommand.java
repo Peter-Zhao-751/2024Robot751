@@ -44,7 +44,7 @@ public class MoveCommand extends Command {
     }
 
     @Override
-    public void initialize() {
+    public void initialize() { // TODO: make shit use getpose which gets the kalman pose once testing is complete
         Pose2d currentRobotPosition = s_Swerve.getSwerveOdometryPose2d(); // do something
 
         if (isAtDesiredLocation(currentRobotPosition, desiredLocation, interiorWaypoints) &&

@@ -26,7 +26,7 @@ public class ClimberSubsystem extends SubsystemBase{
         if(instance == null) instance = new ClimberSubsystem();
         return instance;
     }
-    
+
     private ClimberSubsystem() {
         leftClimberMotor = new CANSparkMax(Constants.Climber.leftClimberMotorID, MotorType.kBrushless);
         rightClimberMotor = new CANSparkMax(Constants.Climber.rightClimberMotorID, MotorType.kBrushless);
@@ -44,7 +44,7 @@ public class ClimberSubsystem extends SubsystemBase{
         rightDesiredLocation = 0;
     }
 
-    private double getLeftPosition(){ 
+    private double getLeftPosition(){
         return leftClimberEncoder.getPosition() / Constants.Climber.kGearRatio * 2 * Constants.Climber.kSpoolRadius * Math.PI;
     }
 
