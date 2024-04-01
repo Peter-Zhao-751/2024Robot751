@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 
 import frc.lib.util.CTREConfigs;
 import frc.robot.Constants;
@@ -39,8 +40,12 @@ import static edu.wpi.first.units.Units.Volts;
 public class SwerveSubsystem extends SubsystemBase {
     public static final CTREConfigs ctreConfigs = new CTREConfigs();
     private static SwerveSubsystem instance;
-    private final Field2d m_field = new Field2d();
-    private final SwerveDriveOdometry swerveOdometry;
+	private final Field2d m_field = new Field2d();
+
+	private final SwerveDriveOdometry swerveOdometry;
+	private final SwerveDrivePoseEstimator poseEstimator;
+
+
     private final SwerveModule[] mSwerveMods;
     private final Pigeon2 gyro;
 
@@ -68,7 +73,11 @@ public class SwerveSubsystem extends SubsystemBase {
                 new SwerveModule(2, Constants.Swerve.frontRightModule),
                 new SwerveModule(3, Constants.Swerve.backLeftModule),
                 new SwerveModule(4, Constants.Swerve.backRightModule)
-        };
+		};
+
+		Pose2d initPose2d = LimelightSubsystem.getInstance().getPose(); // TODO: i suck
+
+		poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions(), initPose2d);
 
         stateEstimator = StateEstimator.getInstance();
         stateEstimator.gyro = gyro;
@@ -189,7 +198,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public Pose2d getPose() {
-        return stateEstimator.getEstimatedPose();
+		return poseEstimator.getEstimatedPosition();//stateEstimator.getEstimatedPose();
     }
     public double getCurrentVelocityMagnitude(){
         return Math.hypot(stateEstimator.getVelX(), stateEstimator.getVelY());
@@ -197,21 +206,23 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void setPose(Pose2d pose) {
         stateEstimator.setPose(pose);
-        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
+		swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
+		poseEstimator.resetPosition(getGyroYaw(), getModulePositions(), pose);
     }
 
     public Pose2d getSwerveOdometryPose2d() {
         return swerveOdometry.getPoseMeters();
     }
 
-    public void setHeading(Rotation2d heading) {
+	public void setHeading(Rotation2d heading) {
+		poseEstimator.resetPosition(getGyroYaw(), getModulePositions(), new Pose2d(getSwerveOdometryPose2d().getTranslation(), heading));
         stateEstimator.setRotation(heading);
         swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), new Pose2d(getSwerveOdometryPose2d().getTranslation(), heading));
     }
 
     public void zeroHeading() {
         System.out.println("Zeroed Heading");
-        setHeading(new Rotation2d(0));
+		setHeading(new Rotation2d(0));
     }
 
     public Rotation2d getGyroYaw() {
@@ -251,7 +262,8 @@ public class SwerveSubsystem extends SubsystemBase {
         swerveUi();
 
         swerveOdometry.update(getGyroYaw(), getModulePositions());
-        stateEstimator.update(getModuleStates());
+		stateEstimator.update(getModuleStates());
+		poseEstimator.update(getGyroYaw(), getModulePositions());
 
         //TelemetryUpdater.setTelemetryValue("total swerve current draw", totalCurrent);
 
@@ -264,7 +276,10 @@ public class SwerveSubsystem extends SubsystemBase {
     private void swerveUi() {
 
         TelemetryUpdater.setTelemetryValue("Swerve/Swerve X", swerveOdometry.getPoseMeters().getX());
-        TelemetryUpdater.setTelemetryValue("Swerve/Swerve Y", swerveOdometry.getPoseMeters().getY());
+		TelemetryUpdater.setTelemetryValue("Swerve/Swerve Y", swerveOdometry.getPoseMeters().getY());
+
+		TelemetryUpdater.setTelemetryValue("PoseEstimator/Swerve X", poseEstimator.getEstimatedPosition().getX());
+		TelemetryUpdater.setTelemetryValue("PoseEstimator/Swerve Y", poseEstimator.getEstimatedPosition().getY());
 
         TelemetryUpdater.setTelemetryValue("Swerve/Angles/FL Angle", (mSwerveMods[0].getPosition().angle.getDegrees() + 360) % 360);
         TelemetryUpdater.setTelemetryValue("Swerve/Angles/FR Angle", (mSwerveMods[1].getPosition().angle.getDegrees() + 360) % 360);
