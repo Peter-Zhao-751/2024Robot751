@@ -1,4 +1,5 @@
 package frc.robot.commands.gamepieceCommands;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
@@ -17,6 +18,8 @@ public class ShootCommand extends Command{
     private final LimelightSubsystem limelightSubsystem;
     private final ControlBoard controlBoard;
 
+    private final InterpolatingDoubleTreeMap shooterSpeedMap;
+
     private final boolean smartMode;
     private boolean started;
 
@@ -30,6 +33,8 @@ public class ShootCommand extends Command{
         this.limelightSubsystem = LimelightSubsystem.getInstance();
         this.controlBoard = ControlBoard.getInstance();
 
+        this.shooterSpeedMap = constructShooterSpeedMap();
+
         this.smartMode = smartMode;
 
         addRequirements(shooterSubsystem, transferSubsystem, intakeSubsystem);
@@ -37,6 +42,14 @@ public class ShootCommand extends Command{
 
     public ShootCommand() {
         this(true);
+    }
+
+    public InterpolatingDoubleTreeMap constructShooterSpeedMap() {
+        InterpolatingDoubleTreeMap map = new InterpolatingDoubleTreeMap();
+        // TODO: add points
+        // Dist, Speed
+        map.put(0.0, 0.0);
+        return map;
     }
 
     @Override
@@ -49,7 +62,7 @@ public class ShootCommand extends Command{
             double power = Constants.Shooter.maxShooterSpeed;
             if(limelightSubsystem.hasTarget()) {
                 double dist = limelightSubsystem.getDistance();
-                power = calculatePower(dist);
+                power = shooterSpeedMap.get(dist);
             }
 
             shooterSubsystem.setSpeed(power + controlBoard.shooterSpeed());
@@ -58,10 +71,6 @@ public class ShootCommand extends Command{
             intakeSubsystem.setSwivelPosition(Constants.Intake.kAmpAngle);
             if (!smartMode) intakeSubsystem.setIntakeSpeed(-Constants.Shooter.intakeAmpSpeed);
         }
-    }
-
-    private double calculatePower(double dist) {
-        return 0;
     }
 
     @Override
