@@ -43,7 +43,6 @@ public class SwerveSubsystem extends SubsystemBase {
     private final SwerveDriveOdometry swerveOdometry;
     private final SwerveModule[] mSwerveMods;
     private final Pigeon2 gyro;
-    private final LimelightSubsystem limelight;
 
     private final SysIdRoutine routine;
 
@@ -58,7 +57,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private SwerveSubsystem() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.CANivoreID);
-        limelight = LimelightSubsystem.getInstance();
         gyro.getConfigurator().apply(new Pigeon2Configuration());
         gyro.setYaw(0);
 //        gyro.setYaw(limelightSubsystem.getYaw()); // TODO: check if this is correct
@@ -72,7 +70,7 @@ public class SwerveSubsystem extends SubsystemBase {
         };
 
         stateEstimator = StateEstimator.getInstance();
-        stateEstimator.setGyro(gyro);
+        stateEstimator.gyro = gyro;
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());//, new Pose2d());
 
         TelemetryUpdater.setTelemetryValue("Field", m_field);
@@ -104,9 +102,9 @@ public class SwerveSubsystem extends SubsystemBase {
         return instance;
     }
 
-    public Pigeon2 getGyro() {
-        return gyro;
-    }
+    // public Pigeon2 getGyro() {
+    //     return gyro;
+    // }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
         return routine.quasistatic(direction);
@@ -125,6 +123,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public boolean drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean isPrecise) {
+        LimelightSubsystem limelight = LimelightSubsystem.getInstance();
         // precision mode
         double xSpeed = !isPrecise ? translation.getX() : translation.getX() * Constants.Swerve.preciseControlFactor;
         double ySpeed = !isPrecise ? translation.getY() : translation.getY() * Constants.Swerve.preciseControlFactor;
@@ -235,9 +234,10 @@ public class SwerveSubsystem extends SubsystemBase {
      */
     public void crossWheels() {
         System.out.println("Crossing Wheels");
-        for (SwerveModule mod : mSwerveMods) {
-            mod.setAngle((mod.moduleNumber - 1) * 0.25 + 0.125);
-        }
+        mSwerveMods[0].setAngle(0.125);
+        mSwerveMods[1].setAngle(0.375);
+        mSwerveMods[2].setAngle(0.875);
+        mSwerveMods[3].setAngle(0.625);
     }
 
     public void kalmanReset(){
@@ -269,6 +269,7 @@ public class SwerveSubsystem extends SubsystemBase {
         TelemetryUpdater.setTelemetryValue("Swerve/Angles/BL Angle", (mSwerveMods[2].getPosition().angle.getDegrees() + 360) % 360);
         TelemetryUpdater.setTelemetryValue("Swerve/Angles/BR Angle", (mSwerveMods[3].getPosition().angle.getDegrees() + 360) % 360);
 
+        LimelightSubsystem limelight = LimelightSubsystem.getInstance();
         if (limelight.hasTarget()) TelemetryUpdater.setTelemetryValue("Limelight/Distance to Target", limelight.getDistance());
         else TelemetryUpdater.setTelemetryValue("Limelight/Distance to Target", Double.NaN);
 

@@ -19,6 +19,7 @@ import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeSubsystem extends SubsystemBase{
     private static IntakeSubsystem instance;
@@ -173,7 +174,7 @@ public class IntakeSubsystem extends SubsystemBase{
         isBeamBroken = beamDebouncer.calculate(!beamBreak.get());
         TelemetryUpdater.setTelemetryValue("Intake/Intake Beam Break", isBeamBroken);
 
-        isSwivelEnabled = (boolean) TelemetryUpdater.getTelemetryValue("Intake/Swivel Enabled");
+        isSwivelEnabled = SmartDashboard.getBoolean("Intake/Swivel Enabled", true);
         if (isSwivelEnabled && getSwivelPosition() < 180 && getSwivelPosition() > -20) calculateSwivel();
         else stopAll();
 

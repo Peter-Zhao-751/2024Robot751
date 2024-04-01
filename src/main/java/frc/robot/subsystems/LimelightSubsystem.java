@@ -29,8 +29,6 @@ public class LimelightSubsystem extends SubsystemBase {
 
     public boolean forceLedOff = false;
 
-    private final SwerveSubsystem s_Swerve;
-
     public static LimelightSubsystem getInstance() {
         if (instance == null) instance = new LimelightSubsystem();
         return instance;
@@ -38,7 +36,6 @@ public class LimelightSubsystem extends SubsystemBase {
 
 	private LimelightSubsystem() {
         name = Constants.Limelight.name;
-        s_Swerve = SwerveSubsystem.getInstance();
     }
 
     public void toggleLeds() {
@@ -108,7 +105,7 @@ public class LimelightSubsystem extends SubsystemBase {
         double desired = Units.feetToMeters(10);
         double distance = Math.hypot(closestSpeaker.x - pose.getX(), closestSpeaker.y - pose.getY());
 
-        Pose2d desiredPosition = s_Swerve.getPose().plus(new Transform2d(new Translation2d(0, desired - distance), Rotation2d.fromDegrees(this.getAngle())));
+        Pose2d desiredPosition = SwerveSubsystem.getInstance().getPose().plus(new Transform2d(new Translation2d(0, desired - distance), Rotation2d.fromDegrees(this.getAngle())));
 
         TelemetryUpdater.setTelemetryValue("autoaim/dist/distance", distance);
         TelemetryUpdater.setTelemetryValue("autoaim/dist/x", desiredPosition.getX());
@@ -137,7 +134,7 @@ public class LimelightSubsystem extends SubsystemBase {
         // angle - pose2d.getRotation().getDegrees() + 360) % 360;
         double delta = this.getYaw() - angle;
 
-        double desiredAngle = (s_Swerve.getGyroYaw().getDegrees() + 360 - delta) % 360;
+        double desiredAngle = (SwerveSubsystem.getInstance().getGyroYaw().getDegrees() % 360 + 360 - delta) % 360;
         TelemetryUpdater.setTelemetryValue("aimbot/speakerAngle", angle);
         TelemetryUpdater.setTelemetryValue("aimbot/limelightYaw", -this.getYaw());
         TelemetryUpdater.setTelemetryValue("aimbot/delta", delta);

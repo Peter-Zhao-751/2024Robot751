@@ -32,7 +32,7 @@ public class TransferCommand extends Command {
         if (currentMode == ControlBoard.Mode.Speaker) {
             transferSubsystem.setTransferSpeed(Constants.Transfer.intakeTransferSpeed/10);
         } else {
-            intakeSubsystem.setIntakeSpeed(Constants.Intake.intakeSpeed/10);
+            intakeSubsystem.setIntakeSpeed(Constants.Intake.ampIntakeSpeed/10);
         }
     }
 

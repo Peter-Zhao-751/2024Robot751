@@ -17,7 +17,7 @@ import frc.robot.subsystems.LimelightSubsystem;
 public class StateEstimator {
     private static StateEstimator instance;
 
-    private Pigeon2 gyro;
+    public Pigeon2 gyro;
     private final LimelightSubsystem limelightSubsystem;
 	private final KalmanFilter kalmanFilter;
 
@@ -35,7 +35,6 @@ public class StateEstimator {
     }
 
     private StateEstimator() {
-        // this.gyro = SwerveSubsystem.getInstance().getGyro();
         this.limelightSubsystem = LimelightSubsystem.getInstance();
 		this.kalmanFilter = new KalmanFilter(0, 0, 0, 0, 0, 0, Constants.Odometry.kPositionNoiseVar,
 				Constants.Odometry.kVelocityNoiseVar, Constants.Odometry.kAccelerationNoiseVar,
@@ -43,10 +42,6 @@ public class StateEstimator {
 				Constants.Odometry.kAccelerationProcessNoise);
 		previousLimelightPose = null;
 		previousLimelightUpdateTime = System.currentTimeMillis();
-    }
-
-    public void setGyro(Pigeon2 gyro){
-        this.gyro = gyro;
     }
 
     public void update(SwerveModuleState[] moduleStates){

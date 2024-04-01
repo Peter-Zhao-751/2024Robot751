@@ -16,7 +16,6 @@ public class ShootCommand extends Command{
     private final IntakeSubsystem intakeSubsystem;
 
     private final LimelightSubsystem limelightSubsystem;
-    private final ControlBoard controlBoard;
 
     private final InterpolatingDoubleTreeMap shooterSpeedMap;
 
@@ -31,7 +30,6 @@ public class ShootCommand extends Command{
         this.intakeSubsystem = IntakeSubsystem.getInstance();
 
         this.limelightSubsystem = LimelightSubsystem.getInstance();
-        this.controlBoard = ControlBoard.getInstance();
 
         this.shooterSpeedMap = constructShooterSpeedMap();
 
@@ -60,12 +58,12 @@ public class ShootCommand extends Command{
 
         if (mode == ControlBoard.Mode.Speaker) {
             double power = Constants.Shooter.maxShooterSpeed;
-            if(limelightSubsystem.hasTarget()) {
-                double dist = limelightSubsystem.getDistance();
-                power = shooterSpeedMap.get(dist);
-            }
+            // if(limelightSubsystem.hasTarget()) {
+            //     double dist = limelightSubsystem.getDistance();
+            //     power = shooterSpeedMap.get(dist);
+            // }
 
-            shooterSubsystem.setSpeed(power + controlBoard.shooterSpeed());
+            shooterSubsystem.setSpeed(power + ControlBoard.getInstance().shooterSpeed());
             if (!smartMode) transferSubsystem.setTransferSpeed(Constants.Transfer.intakeTransferSpeed);
         } else {
             intakeSubsystem.setSwivelPosition(Constants.Intake.kAmpAngle);
