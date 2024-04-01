@@ -27,4 +27,9 @@ public class SwerveAngleCommand extends Command {
             case CROSS -> swerveSubsystem.crossWheels();
         }
     }
+
+    @Override
+    public void end(boolean interrupted) {
+        
+    }
 }
