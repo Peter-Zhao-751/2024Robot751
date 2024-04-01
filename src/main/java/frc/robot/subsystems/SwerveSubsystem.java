@@ -4,6 +4,7 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -42,9 +43,13 @@ public class SwerveSubsystem extends SubsystemBase {
     private final SwerveDriveOdometry swerveOdometry;
     private final SwerveModule[] mSwerveMods;
     private final Pigeon2 gyro;
-    private final LimelightSubsystem limelightSubsystem;
+    private final LimelightSubsystem limelight;
 
     private final SysIdRoutine routine;
+
+    public boolean lockOnTarget = false;
+    private final PIDController angleController = new PIDController(0.1, 0, 0);
+    private double desiredAngle = 0;
 
 //    // forgive me father for I have sinned
 //    private static GenericEntry resetX, resetY, setButtonEntry;
@@ -53,7 +58,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private SwerveSubsystem() {
         gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.CANivoreID);
-        limelightSubsystem = LimelightSubsystem.getInstance();
+        limelight = LimelightSubsystem.getInstance();
         gyro.getConfigurator().apply(new Pigeon2Configuration());
         gyro.setYaw(0);
 //        gyro.setYaw(limelightSubsystem.getYaw()); // TODO: check if this is correct
@@ -116,18 +121,27 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public boolean drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
-        return drive(translation, rotation, fieldRelative, isOpenLoop, false, false);
+        return drive(translation, rotation, fieldRelative, isOpenLoop, false);
     }
 
-    public boolean drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean isPrecise, boolean isOverridden) {
-        System.out.println(rotation);
+    public boolean drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean isPrecise) {
         // precision mode
         double xSpeed = !isPrecise ? translation.getX() : translation.getX() * Constants.Swerve.preciseControlFactor;
         double ySpeed = !isPrecise ? translation.getY() : translation.getY() * Constants.Swerve.preciseControlFactor;
         xSpeed *= Constants.Swerve.speedMultiplier;
         ySpeed *= Constants.Swerve.speedMultiplier;
-        double rot = !isPrecise ? rotation : rotation * Constants.Swerve.preciseControlFactor;
-        rot *= Math.max(Constants.Swerve.maxAngularVelocity / 10, 1);
+        double rot = 0;
+        if (!lockOnTarget) {
+            rot = !isPrecise ? rotation : rotation * Constants.Swerve.preciseControlFactor;
+            rot *= Math.max(Constants.Swerve.maxAngularVelocity / 10, 1);
+        }
+        if (lockOnTarget && limelight.hasTarget()){
+            desiredAngle = limelight.getAngle();
+        }
+        if (lockOnTarget) {
+            rot = angleController.calculate(this.getGyroYaw().getDegrees(), desiredAngle);
+            rot = Math.min(rot, 1);
+        }
         SwerveModuleState[] swerveModuleStates =
                 Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                         fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -143,8 +157,7 @@ public class SwerveSubsystem extends SubsystemBase {
                 );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
 
-        if (!isOverridden) for (SwerveModule mod : mSwerveMods) mod.setDesiredState(swerveModuleStates[mod.moduleNumber - 1], isOpenLoop);
-        else System.out.println("Overridden");
+        for (SwerveModule mod : mSwerveMods) mod.setDesiredState(swerveModuleStates[mod.moduleNumber - 1], isOpenLoop);
 
         return xSpeed >= 0.05 || ySpeed >= 0.05 || rot >= 0.2;
     }
@@ -221,6 +234,7 @@ public class SwerveSubsystem extends SubsystemBase {
      * <p> used to prevent defense </p>
      */
     public void crossWheels() {
+        System.out.println("Crossing Wheels");
         for (SwerveModule mod : mSwerveMods) {
             mod.setAngle((mod.moduleNumber - 1) * 0.25 - 0.125);
         }
@@ -254,6 +268,9 @@ public class SwerveSubsystem extends SubsystemBase {
         TelemetryUpdater.setTelemetryValue("FR Angle", (mSwerveMods[1].getPosition().angle.getDegrees() + 360) % 360);
         TelemetryUpdater.setTelemetryValue("BL Angle", (mSwerveMods[2].getPosition().angle.getDegrees() + 360) % 360);
         TelemetryUpdater.setTelemetryValue("BR Angle", (mSwerveMods[3].getPosition().angle.getDegrees() + 360) % 360);
+
+        if (limelight.hasTarget()) TelemetryUpdater.setTelemetryValue("Distance to Target", limelight.getDistance());
+        else TelemetryUpdater.setTelemetryValue("Distance to Target", Double.NaN);
 
         //TelemetryUpdater.setTelemetryValue("Robot Pitch", gyro.getPitch().getValue());
         //TelemetryUpdater.setTelemetryValue("Robot Roll", gyro.getRoll().getValue());

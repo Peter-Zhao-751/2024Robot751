@@ -8,8 +8,8 @@ import java.util.Iterator;
 
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Constants;
-import frc.robot.commands.nonMovementCommands.IntakeCommand;
-import frc.robot.commands.nonMovementCommands.ShootCommand;
+import frc.robot.commands.gamepieceCommands.IntakeCommand;
+import frc.robot.commands.gamepieceCommands.ShootCommand;
 import frc.robot.commands.movementCommands.MoveCommand;
 
 import edu.wpi.first.math.geometry.Translation2d;

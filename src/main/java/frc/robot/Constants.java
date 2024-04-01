@@ -311,6 +311,7 @@ public class Constants {
             }
         }
         // fix these values, only the speakers are (maybe correct)
+        // TODO: tune these values
         public static FieldElements[] blue = {
             new FieldElements("Amp", 3.57, 7.94, 0.0, -1.0, 1.0, -1.0, 1.0),
             new FieldElements("Speaker", 0.8, 5.28, 0.0, -1.0, 1.0, -1.0, 1.0),

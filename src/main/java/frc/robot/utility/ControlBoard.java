@@ -1,15 +1,13 @@
 package frc.robot.utility;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.Constants;
 import frc.robot.commands.movementCommands.AimAssistCommand;
+import frc.robot.commands.movementCommands.SwerveAngleCommand;
 import frc.robot.commands.movementCommands.TeleopCommand;
-import frc.robot.commands.nonMovementCommands.*;
+import frc.robot.commands.gamepieceCommands.*;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -29,11 +27,11 @@ public class ControlBoard {
     private final IntakeSubsystem s_Intake;
     private final ShooterSubsystem s_Shooter;
     // private final ClimberSubsystem s_Climber;
+    private final LimelightSubsystem s_Limelight;
 
     private Mode currentMode = Mode.Speaker;
     private boolean precise = false;
     private boolean fieldCentric = true;
-    private boolean zeroing = false;
     private double shooterSpeed = Constants.Shooter.maxShooterSpeed;
 
     public enum Mode {
@@ -50,6 +48,7 @@ public class ControlBoard {
         s_Intake = IntakeSubsystem.getInstance();
         s_Shooter = ShooterSubsystem.getInstance();
         // s_Climber = ClimberSubsystem.getInstance();
+        s_Limelight = LimelightSubsystem.getInstance();
 
         s_Swerve.setDefaultCommand(
                 new TeleopCommand(
@@ -57,8 +56,7 @@ public class ControlBoard {
                         driver.leftHorizontalJoystick,
                         driver.rightHorizontalJoystick,
                         driver.rightJoystickButton,
-                        driver.leftJoystickButton,
-                        () -> driver.triangleButton.getAsBoolean() || operator.crossButton.getAsBoolean() // Zeroing wheels or cross wheels
+                        driver.leftJoystickButton
                 )
         );
 
@@ -68,21 +66,21 @@ public class ControlBoard {
     }
 
     private void configureDriverBindings() {
-        driver.leftTrigger.whileTrue(new IntakeCommand());
         driver.leftBumper.whileTrue(new ExportCommand());
-        // driver.rightBumper.toggleOnTrue(new SpinShooterCommand());
+        driver.leftTrigger.whileTrue(new IntakeCommand());
+
+        driver.rightBumper.toggleOnTrue(new AimAssistCommand());
         driver.rightTrigger.whileTrue(new ShootCommand());
-        driver.rightBumper.whileTrue(new AimAssistCommand());
 
         driver.dUp.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
         driver.dRight.onTrue(new InstantCommand(() -> currentMode = Mode.Amp));
         driver.dLeft.whileTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.kRetractedAngle)));
         driver.dDown.whileTrue(new TransferCommand());
 
-        driver.triangleButton.whileTrue(new InstantCommand(s_Swerve::resetModulesToAbsolute));
+        driver.triangleButton.whileTrue(new SwerveAngleCommand(SwerveAngleCommand.SwerveAngle.ZERO));
         driver.squareButton.whileTrue(new InstantCommand(StateEstimator.getInstance()::resetPose));
         driver.circleButton.whileTrue(new InstantCommand(s_Swerve::zeroHeading));
-        driver.crossButton.whileTrue(new InstantCommand(LimelightSubsystem.getInstance()::toggleLeds)); // TODO: add on CANdle disabling
+        driver.crossButton.whileTrue(new InstantCommand(s_Limelight::toggleLeds)); // TODO: add on CANdle disabling
     }
 
     private void configureRoutines() {
@@ -94,8 +92,8 @@ public class ControlBoard {
         // operator.leftTrigger.and(this::climberMode).whileTrue(new RunCommand(() -> s_Climber.changeLeftClimberLocation(-Constants.Climber.climberSpeed), s_Climber));
 
         operator.leftBumper.and(this::notClimberMode).whileTrue(new StartEndCommand(
-                () -> LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.BLINK),
-                () -> LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.OFF)
+                () -> s_Limelight.setLEDMode(LimelightSubsystem.LEDMode.BLINK),
+                () -> s_Limelight.setLEDMode(LimelightSubsystem.LEDMode.OFF)
         ));
         // operator.leftBumper.and(this::climberMode).whileTrue(new RunCommand(() -> s_Climber.changeLeftClimberLocation(Constants.Climber.climberSpeed), s_Climber));
 
@@ -111,9 +109,9 @@ public class ControlBoard {
          operator.dRight.whileTrue(new RunCommand(this::extendIntake, s_Intake));
 
         operator.triangleButton.toggleOnTrue(new StartEndCommand(() -> currentMode = Mode.Climb, () -> currentMode = Mode.Speaker));
-        operator.squareButton.onTrue(new InstantCommand(() -> IntakeSubsystem.getInstance().setSwivelPosition(Constants.Intake.kRetractedAngle)));
+        operator.squareButton.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.kRetractedAngle)));
         operator.circleButton.whileTrue(new InstantCommand(this::togglePrecise));
-        operator.crossButton.whileTrue(new InstantCommand(s_Swerve::crossWheels));
+        operator.crossButton.whileTrue(new SwerveAngleCommand(SwerveAngleCommand.SwerveAngle.CROSS));
     }
 
     public static ControlBoard getInstance() {
@@ -122,8 +120,8 @@ public class ControlBoard {
     }
 
     public void updateTelemetry() {
-        SmartDashboard.putNumber("Target Shooter Speed", shooterSpeed);
-        SmartDashboard.putString("Mode", currentMode.toString());
+        TelemetryUpdater.setTelemetryValue("Target Shooter Speed", shooterSpeed);
+        TelemetryUpdater.setTelemetryValue("Mode", currentMode.toString());
     }
 
     private void togglePrecise() {

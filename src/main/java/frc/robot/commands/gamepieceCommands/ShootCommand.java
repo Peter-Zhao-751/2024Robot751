@@ -1,4 +1,4 @@
-package frc.robot.commands.nonMovementCommands;
+package frc.robot.commands.gamepieceCommands;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
