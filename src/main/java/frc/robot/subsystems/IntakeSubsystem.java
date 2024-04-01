@@ -156,6 +156,10 @@ public class IntakeSubsystem extends SubsystemBase{
         return System.currentTimeMillis() - startOfAtAngle > 751 && isAtAngle;
     }
 
+    public boolean greaterThanSetpoint() {
+        return getSwivelPosition() > swivelSetpoint;
+    }
+
     @Override
     public void periodic() {
         if (Math.abs(getSwivelPosition() - swivelSetpoint) < 5) {

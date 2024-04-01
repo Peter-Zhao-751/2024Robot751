@@ -4,6 +4,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransferSubsystem;
 import frc.robot.utility.ControlBoard;
+import frc.robot.utility.ControlBoard.Mode;
 import frc.robot.utility.StateMachine;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -22,19 +23,19 @@ public class IntakeCommand extends Command {
         StateMachine.setState(StateMachine.State.Intake);
         currentMode = ControlBoard.getInstance().getMode();
 
-        if (currentMode == ControlBoard.Mode.Speaker) {
+        if (currentMode == Mode.Speaker) {
             intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
             transferSubsystem.setIntakeTransfer(Constants.Transfer.intakeTransferSpeed);
             transferSubsystem.setShooterTransfer(-50);
-        } else if (currentMode == ControlBoard.Mode.Amp) {
+        } else if (currentMode == Mode.Amp) {
             intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
         }
     }
 
     @Override
     public void execute() {
-        if (intakeSubsystem.closeToSetpoint()) {
-            intakeSubsystem.setIntakeSpeed(Constants.Intake.intakeSpeed);
+        if (intakeSubsystem.greaterThanSetpoint()) {
+            intakeSubsystem.setIntakeSpeed(currentMode == Mode.Speaker ? Constants.Intake.speakerIntakeSpeed : Constants.Intake.ampIntakeSpeed);
         }
     }
 

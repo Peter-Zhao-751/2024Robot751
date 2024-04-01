@@ -138,7 +138,7 @@ public class SwerveSubsystem extends SubsystemBase {
         if (lockOnTarget && limelight.hasTarget()){
             desiredAngle = limelight.getAngle();
         }
-        if (lockOnTarget) {
+        if (lockOnTarget && desiredAngle != 0) {
             rot = angleController.calculate(this.getGyroYaw().getDegrees(), desiredAngle);
             rot = Math.min(rot, 1);
         }

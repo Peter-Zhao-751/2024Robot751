@@ -29,7 +29,8 @@ public class Constants {
         public static int beamBreakDIOPort = 1;
 
         public static double swivelGearRatio = 15.0;
-        public static double intakeSpeed = 15.0; // units in rotations per second
+        public static double speakerIntakeSpeed = 30; // units in rotations per second
+        public static double ampIntakeSpeed = 15.0; // units in rotations per second
 
         public static double intakeRollerRadius = 2.54; // units in centimeters
 

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 import frc.lib.util.LimelightHelpers;
+import frc.robot.Constants.FieldConstants.FieldElements;
 import frc.robot.utility.TelemetryUpdater;
 
 public class LimelightSubsystem extends SubsystemBase {
@@ -83,21 +84,30 @@ public class LimelightSubsystem extends SubsystemBase {
         }
     }
 
+    private FieldElements closestSpeaker() {
+        Pose2d pose = this.getPose();
+
+        FieldElements redSpeaker = Constants.FieldConstants.red[1];
+        FieldElements blueSpeaker = Constants.FieldConstants.blue[1];
+        // if the 2 blue field element is closer than the 2 red, then use the blue field elements, otherwise use the red field elements
+
+        return Math.hypot(redSpeaker.x - pose.getX(), redSpeaker.y - pose.getY()) <
+                Math.hypot(blueSpeaker.x - pose.getX(), blueSpeaker.y - pose.getY()) ? redSpeaker : blueSpeaker;
+    }
+
     public double getDistance() {
         Pose2d pose = this.getPose();
 
         if (pose == null) {
             System.err.println("No target found");
             return 0;
+//            pose = s_Swerve.getPose();
         }
 
-        Constants.FieldConstants.FieldElements redSpeaker = Constants.FieldConstants.red[1];
-        Constants.FieldConstants.FieldElements blueSpeaker = Constants.FieldConstants.blue[1];
-
-        Constants.FieldConstants.FieldElements closestSpeaker = Math.hypot(redSpeaker.x - redSpeaker.y, pose.getX() - pose.getY()) <
-                Math.hypot(blueSpeaker.x - blueSpeaker.y, pose.getX() - pose.getY()) ? redSpeaker : blueSpeaker;
+        FieldElements closestSpeaker = closestSpeaker();
         double desired = Units.feetToMeters(10);
         double distance = Math.hypot(closestSpeaker.x - pose.getX(), closestSpeaker.y - pose.getY());
+
         Pose2d desiredPosition = s_Swerve.getPose().plus(new Transform2d(new Translation2d(0, desired - distance), Rotation2d.fromDegrees(this.getAngle())));
 
         TelemetryUpdater.setTelemetryValue("autoaim/dist/distance", distance);
@@ -114,12 +124,7 @@ public class LimelightSubsystem extends SubsystemBase {
             return 0;
         }
 
-        // if the 2 blue field element is closer than the 2 red, then use the blue field elements, otherwise use the red field elements
-        Constants.FieldConstants.FieldElements redSpeaker = Constants.FieldConstants.red[1];
-        Constants.FieldConstants.FieldElements blueSpeaker = Constants.FieldConstants.blue[1];
-
-        Constants.FieldConstants.FieldElements closestSpeaker = Math.hypot(redSpeaker.x - redSpeaker.y, pose.getX() - pose.getY()) <
-         		Math.hypot(blueSpeaker.x - blueSpeaker.y, pose.getX() - pose.getY()) ? redSpeaker : blueSpeaker;
+        FieldElements closestSpeaker = closestSpeaker();
         TelemetryUpdater.setTelemetryValue("aimbot/pose/x", pose.getX());
         TelemetryUpdater.setTelemetryValue("aimbot/pose/y", pose.getY());
         TelemetryUpdater.setTelemetryValue("aimbot/speaker/x", closestSpeaker.x);
