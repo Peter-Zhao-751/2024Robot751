@@ -81,9 +81,7 @@ public class LimelightSubsystem extends SubsystemBase {
         }
     }
 
-    private FieldElements closestSpeaker() {
-        Pose2d pose = this.getPose();
-
+    private FieldElements closestSpeaker(Pose2d pose) {
         FieldElements redSpeaker = Constants.FieldConstants.red[1];
         FieldElements blueSpeaker = Constants.FieldConstants.blue[1];
         // if the 2 blue field element is closer than the 2 red, then use the blue field elements, otherwise use the red field elements
@@ -101,7 +99,7 @@ public class LimelightSubsystem extends SubsystemBase {
 //            pose = s_Swerve.getPose();
         }
 
-        FieldElements closestSpeaker = closestSpeaker();
+        FieldElements closestSpeaker = closestSpeaker(pose);
         double desired = Units.feetToMeters(10);
         double distance = Math.hypot(closestSpeaker.x - pose.getX(), closestSpeaker.y - pose.getY());
 
@@ -121,7 +119,7 @@ public class LimelightSubsystem extends SubsystemBase {
             return 0;
         }
 
-        FieldElements closestSpeaker = closestSpeaker();
+        FieldElements closestSpeaker = closestSpeaker(pose);
         TelemetryUpdater.setTelemetryValue("aimbot/pose/x", pose.getX());
         TelemetryUpdater.setTelemetryValue("aimbot/pose/y", pose.getY());
         TelemetryUpdater.setTelemetryValue("aimbot/speaker/x", closestSpeaker.x);
