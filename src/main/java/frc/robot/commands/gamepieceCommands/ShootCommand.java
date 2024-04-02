@@ -74,9 +74,14 @@ public class ShootCommand extends Command{
             //     power = shooterSpeedMap.get(dist);
             // }
             shooterSubsystem.setSpeed(power + ControlBoard.getInstance().shooterSpeed());
-        } else {
-			intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
-			ampShootingState = AmpState.MovingIntakeToLoad;
+		} else {
+			if (!intakeSubsystem.beamBroken()) {
+				intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
+				ampShootingState = AmpState.MovingIntakeToLoad;
+			} else {
+				intakeSubsystem.setSwivelPosition(Constants.Intake.kAmpAngle);
+				ampShootingState = AmpState.MovingIntakeToShoot;
+			}
         }
     }
 
