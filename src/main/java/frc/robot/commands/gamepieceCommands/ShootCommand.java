@@ -104,7 +104,7 @@ public class ShootCommand extends Command{
 						if (intakeSubsystem.beamBroken()) {
 							intakeSubsystem.stopAll();
 							transferSubsystem.stop();
-							intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
+							intakeSubsystem.setSwivelPosition(Constants.Intake.kAmpAngle);
 							ampShootingState = AmpState.MovingIntakeToShoot;
 						}
 						break;
