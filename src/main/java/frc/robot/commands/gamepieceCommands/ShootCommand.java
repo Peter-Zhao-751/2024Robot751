@@ -27,11 +27,12 @@ public class ShootCommand extends Command{
     private final InterpolatingDoubleTreeMap shooterSpeedMap;
 
     private final boolean smartMode;
-	private boolean started;
+	private boolean startedShooting;
+	private double shootingStartTime;
 
 	private AmpState ampShootingState;
 
-    private ControlBoard.Mode mode;
+	private ControlBoard.Mode mode;
 
     public ShootCommand(boolean smartMode) {
         this.shooterSubsystem = ShooterSubsystem.getInstance();
@@ -64,7 +65,7 @@ public class ShootCommand extends Command{
     public void initialize() {
         StateMachine.setState(StateMachine.State.Shoot);
         mode = ControlBoard.getInstance().getMode();
-        started = !smartMode;
+        startedShooting = false;
 
         if (mode == ControlBoard.Mode.Speaker) {
             double power = Constants.Shooter.maxShooterSpeed;
@@ -72,9 +73,7 @@ public class ShootCommand extends Command{
             //     double dist = limelightSubsystem.getDistance();
             //     power = shooterSpeedMap.get(dist);
             // }
-
             shooterSubsystem.setSpeed(power + ControlBoard.getInstance().shooterSpeed());
-            if (!smartMode) transferSubsystem.setTransferSpeed(Constants.Transfer.intakeTransferSpeed);
         } else {
 			intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
 			ampShootingState = AmpState.MovingIntakeToLoad;
@@ -84,14 +83,16 @@ public class ShootCommand extends Command{
     @Override
 	public void execute() {
 		TelemetryUpdater.setTelemetryValue("Shooter/At shooter Speed", shooterSubsystem.isAtTargetSpeed());
-		if (!started && smartMode) {
-			if (mode == ControlBoard.Mode.Speaker && shooterSubsystem.isAtTargetSpeed()
-					&& shooterSubsystem.getShooterSpeed() > 5) {
+		if (!startedShooting) {
+			if (mode == ControlBoard.Mode.Speaker && shooterSubsystem.isAtTargetSpeed()) {
 				transferSubsystem.setTransferSpeed(Constants.Transfer.intakeTransferSpeed);
-				started = true;
+				startedShooting = true;
+				shootingStartTime = System.currentTimeMillis();
+
 			} else if (mode == ControlBoard.Mode.Amp) {
 
 				TelemetryUpdater.setTelemetryValue("Shooter/Amp State", ampShootingState.name());
+
 				switch (ampShootingState) {
 					case MovingIntakeToLoad:
 						if (intakeSubsystem.closeToSetpoint()) {
@@ -102,8 +103,8 @@ public class ShootCommand extends Command{
 						break;
 					case TransferToIntake:
 						if (intakeSubsystem.beamBroken()) {
-							intakeSubsystem.stopAll();
-							transferSubsystem.stop();
+							intakeSubsystem.setIntakeSpeed(0);
+							transferSubsystem.setTransferSpeed(0);
 							intakeSubsystem.setSwivelPosition(Constants.Intake.kAmpAngle);
 							ampShootingState = AmpState.MovingIntakeToShoot;
 						}
@@ -115,11 +116,17 @@ public class ShootCommand extends Command{
 						}
 						break;
 					default:
-						started = true;
+						startedShooting = true;
+						shootingStartTime = System.currentTimeMillis();
 						break;
 				}
 			}
 		}
+	}
+
+	@Override
+	public boolean isFinished() {
+		return smartMode && System.currentTimeMillis() - shootingStartTime > Constants.Shooter.feedTime * 1000;
 	}
 
     @Override

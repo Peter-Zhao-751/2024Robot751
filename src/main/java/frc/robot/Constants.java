@@ -90,7 +90,7 @@ public class Constants {
 
         public static double spinUpTime = 0.5;
         public static double transferSpeed = 20.0; // units in centimeters per second
-        public static double feedTime = 0.2;
+		public static double feedTime = 2; // seconds
 
         public static double maxShooterSpeed = 42; // units in rotations per second
         public static int motionMagicAcceleration = 400; // units in rotations per second squared
@@ -107,7 +107,8 @@ public class Constants {
         public static double kDFlyWheelController = 0.0;
 
         public static double kProcessNoise = 3.0;
-        public static double kMeasurementNoise = 0.01;
+		public static double kMeasurementNoise = 0.01;
+
     }
 
     public static class Climber{

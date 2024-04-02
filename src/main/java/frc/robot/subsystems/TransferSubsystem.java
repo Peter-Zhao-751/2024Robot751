@@ -86,7 +86,8 @@ public class TransferSubsystem extends SubsystemBase {
 //        targetIntakeSpeed = 0;
 //        targetShooterSpeed = 0;
         intakeTransfer.stopMotor();
-        shooterTransfer.stopMotor();
+		shooterTransfer.stopMotor();
+		setTransferSpeed(0);
     }
 
     /**
