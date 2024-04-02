@@ -30,7 +30,9 @@ public class Constants {
 
         public static double swivelGearRatio = 15.0;
         public static double intakeSpeed = 30; // units in rotations per second
-        public static double ampScoreSpeed = 15.0; // units in rotations per second
+		public static double ampScoreSpeed = 15.0; // units in rotations per second
+
+		public static double intakeTime = 5.0; // unit in seconds
 
         public static double intakeRollerRadius = 2.54; // units in centimeters
 

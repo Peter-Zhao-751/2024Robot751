@@ -13,6 +13,7 @@ public class IntakeCommand extends Command {
     private final TransferSubsystem transferSubsystem;
 	private boolean smartMode;
 	private double intakeStartTime;
+	private boolean hasStartedIntake;
 
 	public IntakeCommand(boolean smartMode) {
 		this.intakeSubsystem = IntakeSubsystem.getInstance();
@@ -30,11 +31,15 @@ public class IntakeCommand extends Command {
 		intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
         transferSubsystem.setIntakeTransfer(Constants.Transfer.intakeTransferSpeed);
 		transferSubsystem.setShooterTransfer(-50);
+		intakeStartTime = 0;
+		hasStartedIntake = false;
     }
 
     @Override
     public void execute() {
 		if (intakeSubsystem.greaterThanSetpoint()) {
+			hasStartedIntake = true;
+			intakeStartTime = System.currentTimeMillis();
 			intakeSubsystem.setIntakeSpeed(Constants.Intake.intakeSpeed);
             //intakeSubsystem.setIntakeSpeed(currentMode == Mode.Speaker ? Constants.Intake.speakerIntakeSpeed : Constants.Intake.ampIntakeSpeed);
         }
@@ -50,7 +55,7 @@ public class IntakeCommand extends Command {
 
     @Override
 	public boolean isFinished() {
-		return transferSubsystem.beamBroken() || (smartMode && intakeSubsystem.beamBroken());
+		return transferSubsystem.beamBroken() || (smartMode && hasStartedIntake && System.currentTimeMillis() - intakeStartTime > Constants.Intake.intakeTime);
         // return switch (currentMode) {
         //     case Speaker -> transferSubsystem.beamBroken();
         //     case Amp -> intakeSubsystem.beamBroken();
