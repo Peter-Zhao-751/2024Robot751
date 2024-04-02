@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class IntakeCommand extends Command {
     private final IntakeSubsystem intakeSubsystem;
     private final TransferSubsystem transferSubsystem;
-    private ControlBoard.Mode currentMode;
+    //private ControlBoard.Mode currentMode;
 
     public IntakeCommand() {
         this.intakeSubsystem = IntakeSubsystem.getInstance();
@@ -21,21 +21,17 @@ public class IntakeCommand extends Command {
     @Override
     public void initialize() {
         StateMachine.setState(StateMachine.State.Intake);
-        currentMode = ControlBoard.getInstance().getMode();
-
-        if (currentMode == Mode.Speaker) {
-            intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
-            transferSubsystem.setIntakeTransfer(Constants.Transfer.intakeTransferSpeed);
-            transferSubsystem.setShooterTransfer(-50);
-        } else if (currentMode == Mode.Amp) {
-            intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
-        }
+        //currentMode = ControlBoard.getInstance().getMode();
+		intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
+        transferSubsystem.setIntakeTransfer(Constants.Transfer.intakeTransferSpeed);
+		transferSubsystem.setShooterTransfer(-50);
     }
 
     @Override
     public void execute() {
-        if (intakeSubsystem.greaterThanSetpoint()) {
-            intakeSubsystem.setIntakeSpeed(currentMode == Mode.Speaker ? Constants.Intake.speakerIntakeSpeed : Constants.Intake.ampIntakeSpeed);
+		if (intakeSubsystem.greaterThanSetpoint()) {
+			intakeSubsystem.setIntakeSpeed(Constants.Intake.intakeSpeed);
+            //intakeSubsystem.setIntakeSpeed(currentMode == Mode.Speaker ? Constants.Intake.speakerIntakeSpeed : Constants.Intake.ampIntakeSpeed);
         }
     }
 
@@ -48,11 +44,12 @@ public class IntakeCommand extends Command {
     }
 
     @Override
-    public boolean isFinished() {
-        return switch (currentMode) {
-            case Speaker -> transferSubsystem.beamBroken();
-            case Amp -> intakeSubsystem.beamBroken();
-            default -> false;
-        };
+	public boolean isFinished() {
+		return transferSubsystem.beamBroken();
+        // return switch (currentMode) {
+        //     case Speaker -> transferSubsystem.beamBroken();
+        //     case Amp -> intakeSubsystem.beamBroken();
+        //     default -> false;
+        // };
     }
 }

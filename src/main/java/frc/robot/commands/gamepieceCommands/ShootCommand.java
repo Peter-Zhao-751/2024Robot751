@@ -13,14 +13,23 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class ShootCommand extends Command{
     private final ShooterSubsystem shooterSubsystem;
     private final TransferSubsystem transferSubsystem;
-    private final IntakeSubsystem intakeSubsystem;
+	private final IntakeSubsystem intakeSubsystem;
+
+	private enum AmpState {
+		MovingIntakeToLoad,
+		TransferToIntake,
+		MovingIntakeToShoot,
+		Shoot;
+	}
 
     private final LimelightSubsystem limelightSubsystem;
 
     private final InterpolatingDoubleTreeMap shooterSpeedMap;
 
     private final boolean smartMode;
-    private boolean started;
+	private boolean started;
+
+	private AmpState ampShootingState;
 
     private ControlBoard.Mode mode;
 
@@ -33,7 +42,8 @@ public class ShootCommand extends Command{
 
         this.shooterSpeedMap = constructShooterSpeedMap();
 
-        this.smartMode = smartMode;
+		this.smartMode = smartMode;
+		ampShootingState = null;
 
         addRequirements(shooterSubsystem, transferSubsystem, intakeSubsystem);
     }
@@ -66,24 +76,51 @@ public class ShootCommand extends Command{
             shooterSubsystem.setSpeed(power + ControlBoard.getInstance().shooterSpeed());
             if (!smartMode) transferSubsystem.setTransferSpeed(Constants.Transfer.intakeTransferSpeed);
         } else {
-            intakeSubsystem.setSwivelPosition(Constants.Intake.kAmpAngle);
-            if (!smartMode) intakeSubsystem.setIntakeSpeed(-Constants.Shooter.intakeAmpSpeed);
+			intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
+			ampShootingState = AmpState.MovingIntakeToLoad;
         }
     }
 
     @Override
-    public void execute() {
-        TelemetryUpdater.setTelemetryValue("Shooter/At shooter Speed", shooterSubsystem.isAtTargetSpeed());
-        if (!started && smartMode) {
-            if (mode == ControlBoard.Mode.Speaker && shooterSubsystem.isAtTargetSpeed() && shooterSubsystem.getShooterSpeed() > 5) {
-                transferSubsystem.setTransferSpeed(Constants.Transfer.intakeTransferSpeed);
-                started = true;
-            } else if (mode == ControlBoard.Mode.Amp && intakeSubsystem.closeToSetpoint() && intakeSubsystem.getSwivelPosition() < Constants.Intake.kRetractedAngle - 3) { // TODO: remove angle check if working
-                intakeSubsystem.setIntakeSpeed(-Constants.Shooter.intakeAmpSpeed);
-                started = true;
-            }
-        }
-    }
+	public void execute() {
+		TelemetryUpdater.setTelemetryValue("Shooter/At shooter Speed", shooterSubsystem.isAtTargetSpeed());
+		if (!started && smartMode) {
+			if (mode == ControlBoard.Mode.Speaker && shooterSubsystem.isAtTargetSpeed()
+					&& shooterSubsystem.getShooterSpeed() > 5) {
+				transferSubsystem.setTransferSpeed(Constants.Transfer.intakeTransferSpeed);
+				started = true;
+			} else if (mode == ControlBoard.Mode.Amp) {
+
+				TelemetryUpdater.setTelemetryValue("Shooter/Amp State", ampShootingState.name());
+				switch (ampShootingState) {
+					case MovingIntakeToLoad:
+						if (intakeSubsystem.closeToSetpoint()) {
+							intakeSubsystem.setIntakeSpeed(-Constants.Shooter.scoreAmpSpeed);
+							transferSubsystem.setTransferSpeed(-Constants.Shooter.scoreAmpSpeed);
+							ampShootingState = AmpState.TransferToIntake;
+						}
+						break;
+					case TransferToIntake:
+						if (intakeSubsystem.beamBroken()) {
+							intakeSubsystem.stopAll();
+							transferSubsystem.stop();
+							intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
+							ampShootingState = AmpState.MovingIntakeToShoot;
+						}
+						break;
+					case MovingIntakeToShoot:
+						if (intakeSubsystem.closeToSetpoint()) {
+							intakeSubsystem.setIntakeSpeed(-Constants.Shooter.scoreAmpSpeed);
+							ampShootingState = AmpState.Shoot;
+						}
+						break;
+					default:
+						started = true;
+						break;
+				}
+			}
+		}
+	}
 
     @Override
     public void end(boolean interrupted) {

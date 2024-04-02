@@ -29,8 +29,8 @@ public class Constants {
         public static int beamBreakDIOPort = 1;
 
         public static double swivelGearRatio = 15.0;
-        public static double speakerIntakeSpeed = 30; // units in rotations per second
-        public static double ampIntakeSpeed = 15.0; // units in rotations per second
+        public static double intakeSpeed = 30; // units in rotations per second
+        public static double ampScoreSpeed = 15.0; // units in rotations per second
 
         public static double intakeRollerRadius = 2.54; // units in centimeters
 
@@ -96,7 +96,7 @@ public class Constants {
         public static int motionMagicAcceleration = 400; // units in rotations per second squared
         public static int motionMagicJerk = 4000; // units in rotations per second cubed
 
-        public static double intakeAmpSpeed = 29.0; // units in rotations per second
+        public static double scoreAmpSpeed = 29.0; // units in rotations per second
 
         public static double kSFlyWheelFeedforward = 0.25;
         public static double kVFlyWheelFeedforward = 0.12;
