@@ -11,17 +11,22 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class IntakeCommand extends Command {
     private final IntakeSubsystem intakeSubsystem;
     private final TransferSubsystem transferSubsystem;
-    //private ControlBoard.Mode currentMode;
+	private boolean smartMode;
+	private double intakeStartTime;
 
-    public IntakeCommand() {
-        this.intakeSubsystem = IntakeSubsystem.getInstance();
-        this.transferSubsystem = TransferSubsystem.getInstance();
-    }
+	public IntakeCommand(boolean smartMode) {
+		this.intakeSubsystem = IntakeSubsystem.getInstance();
+		this.transferSubsystem = TransferSubsystem.getInstance();
+		this.smartMode = smartMode;
+	}
+
+	public IntakeCommand() {
+		this(false);
+	}
 
     @Override
     public void initialize() {
         StateMachine.setState(StateMachine.State.Intake);
-        //currentMode = ControlBoard.getInstance().getMode();
 		intakeSubsystem.setSwivelPosition(Constants.Intake.kIntakeAngle);
         transferSubsystem.setIntakeTransfer(Constants.Transfer.intakeTransferSpeed);
 		transferSubsystem.setShooterTransfer(-50);
@@ -45,7 +50,7 @@ public class IntakeCommand extends Command {
 
     @Override
 	public boolean isFinished() {
-		return transferSubsystem.beamBroken();
+		return transferSubsystem.beamBroken() || (smartMode && intakeSubsystem.beamBroken());
         // return switch (currentMode) {
         //     case Speaker -> transferSubsystem.beamBroken();
         //     case Amp -> intakeSubsystem.beamBroken();

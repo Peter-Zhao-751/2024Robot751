@@ -65,7 +65,8 @@ public class ShootCommand extends Command{
     public void initialize() {
         StateMachine.setState(StateMachine.State.Shoot);
         mode = ControlBoard.getInstance().getMode();
-        startedShooting = false;
+		startedShooting = false;
+		shootingStartTime = 0;
 
         if (mode == ControlBoard.Mode.Speaker) {
             double power = Constants.Shooter.maxShooterSpeed;
@@ -131,7 +132,7 @@ public class ShootCommand extends Command{
 
 	@Override
 	public boolean isFinished() {
-		return smartMode && System.currentTimeMillis() - shootingStartTime > Constants.Shooter.feedTime * 1000;
+		return smartMode && startedShooting && System.currentTimeMillis() - shootingStartTime > Constants.Shooter.feedTime * 1000;
 	}
 
     @Override
