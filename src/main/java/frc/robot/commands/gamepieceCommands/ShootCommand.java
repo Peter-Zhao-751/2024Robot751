@@ -118,12 +118,13 @@ public class ShootCommand extends Command{
 					case MovingIntakeToShoot:
 						if (intakeSubsystem.closeToSetpoint()) {
 							intakeSubsystem.setIntakeSpeed(-Constants.Shooter.scoreAmpSpeed);
+							startedShooting = true;
+							shootingStartTime = System.currentTimeMillis();
 							ampShootingState = AmpState.Shoot;
 						}
 						break;
 					default:
-						startedShooting = true;
-						shootingStartTime = System.currentTimeMillis();
+						System.err.println("should not be here, amp shoot is being weird");
 						break;
 				}
 			}
