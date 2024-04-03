@@ -23,6 +23,7 @@ public class StateEstimator {
 
 	private double previousLimelightUpdateTime;
 	private Pose2d previousLimelightPose;
+	private double gyroOffset;
 
 	private final ShuffleboardTab tab = Shuffleboard.getTab("Robot State Estimator"); // TODO: look at starting POS x, y and theta and set the values. Start the robot looking at a tag and run auto
    	private final GenericEntry startingPoseX = tab.add("StartingPoseX", 0).getEntry();
@@ -42,6 +43,7 @@ public class StateEstimator {
 				Constants.Odometry.kAccelerationProcessNoise);
 		previousLimelightPose = null;
 		previousLimelightUpdateTime = System.currentTimeMillis();
+		gyroOffset = 0;
     }
 
     public void update(SwerveModuleState[] moduleStates){
@@ -76,15 +78,15 @@ public class StateEstimator {
         TelemetryUpdater.setTelemetryValue("StateEstimator/fieldAccelerationX", fieldAccelerationX);
         TelemetryUpdater.setTelemetryValue("StateEstimator/fieldAccelerationY", fieldAccelerationY);
         TelemetryUpdater.setTelemetryValue("StateEstimator/fieldAccelerationZ", fieldAccelerationZ);
-        TelemetryUpdater.setTelemetryValue("Robot Yaw", getYaw().getDegrees());
+        TelemetryUpdater.setTelemetryValue("StateEstimator Yaw", getYaw().getDegrees());
 
         Pose2d newLimePosition = limelightSubsystem.getPose();
 
         // Chassis speeds
         ChassisSpeeds speeds = Constants.Swerve.swerveKinematics.toChassisSpeeds(moduleStates);
 
-        double fieldChassisSpeedX = (rotationMatrix[0][0] * speeds.vxMetersPerSecond + rotationMatrix[0][1] * speeds.vyMetersPerSecond);
-        double fieldChassisSpeedY = (rotationMatrix[1][0] * speeds.vxMetersPerSecond + rotationMatrix[1][1] * speeds.vyMetersPerSecond);
+        double fieldChassisSpeedX = -1 * (rotationMatrix[0][0] * speeds.vxMetersPerSecond + rotationMatrix[0][1] * speeds.vyMetersPerSecond);
+        double fieldChassisSpeedY = -1 * (rotationMatrix[1][0] * speeds.vxMetersPerSecond + rotationMatrix[1][1] * speeds.vyMetersPerSecond);
 
         //TelemetryUpdater.setTelemetryValue("Field Space Chassis Speeds X", fieldChassisSpeedX);
         //TelemetryUpdater.setTelemetryValue("Field Space Chassis Speeds Y", fieldChassisSpeedY);
@@ -104,7 +106,7 @@ public class StateEstimator {
     }
 
     public Pose2d getEstimatedPose(){
-        return new Pose2d(kalmanFilter.getPosX(), kalmanFilter.getPosY(), new Rotation2d(gyro.getYaw().getValue()));
+        return new Pose2d(kalmanFilter.getPosX(), kalmanFilter.getPosY(), getYaw());
     }
 
     public void setPose(Pose2d pose){
@@ -117,7 +119,11 @@ public class StateEstimator {
     }
 
 	public void setRotation(Rotation2d rotation) {
-		gyro.setYaw(rotation.getDegrees());
+		gyroOffset = rotation.getDegrees() - gyro.getYaw().getValue();
+	}
+
+	public Rotation2d getYaw() {
+		return new Rotation2d(Math.toRadians(gyro.getYaw().getValue() + gyroOffset));
 	}
 
 	public void resetLimelightPose() {
@@ -131,10 +137,6 @@ public class StateEstimator {
 			gyro.setYaw(startingPoseTheta.getDouble(0));
 		}
 	}
-
-    public Rotation2d getYaw(){ // degrees
-        return Rotation2d.fromDegrees((gyro.getYaw().getValue()) % 360);
-    }
 
 
     public double getVelX(){
