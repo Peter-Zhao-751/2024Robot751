@@ -80,11 +80,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
 		Pose2d initPose2d = LimelightSubsystem.getInstance().getPose(); // TODO: i suck
 
-		poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, gyro.getRotation2d(), getModulePositions(), new Pose2d(0, 0, new Rotation2d(0)));
+		poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, getCorrectedGyroYaw(), getModulePositions(), new Pose2d(0, 0, new Rotation2d(0)));
 
         stateEstimator = StateEstimator.getInstance();
         stateEstimator.gyro = gyro;
-        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, gyro.getRotation2d(), getModulePositions());//, new Pose2d());
+        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getCorrectedGyroYaw(), getModulePositions());//, new Pose2d());
 
         TelemetryUpdater.setTelemetryValue("Field", m_field);
 
@@ -228,10 +228,14 @@ public class SwerveSubsystem extends SubsystemBase {
 		setHeading(new Rotation2d(0));
     }
 
-    public Rotation2d getGyroYaw() {
-        return poseEstimator.getEstimatedPosition().getRotation();
-        // return stateEstimator.getYaw();
-    }
+	public Rotation2d getGyroYaw() {
+		return poseEstimator.getEstimatedPosition().getRotation();
+		// return stateEstimator.getYaw();
+	}
+
+	private Rotation2d getCorrectedGyroYaw() {
+		return new Rotation2d((gyro.getYaw().getValue() + 180) % 360);
+	}
 
     /**
      * <p> Resets the swerve modules to their absolute positions </p>
@@ -265,13 +269,13 @@ public class SwerveSubsystem extends SubsystemBase {
     public void periodic() {
         swerveUi();
 
-        swerveOdometry.update(gyro.getRotation2d(), getModulePositions());
+        swerveOdometry.update(getCorrectedGyroYaw(), getModulePositions());
 		stateEstimator.update(getModuleStates());
-		poseEstimator.update(gyro.getRotation2d(), getModulePositions());
+		poseEstimator.update(getCorrectedGyroYaw(), getModulePositions());
 		if (LimelightSubsystem.getInstance().hasTarget()) {
 			PoseEstimate pose = LimelightSubsystem.getInstance().getPoseEstimate();
-            
-			poseEstimator.addVisionMeasurement(pose.pose.plus(new Transform2d(new Translation2d(), Rotation2d.fromDegrees(180))), pose.timestampSeconds); //TODO: check
+
+			poseEstimator.addVisionMeasurement(pose.pose, pose.timestampSeconds); //TODO: check // plus(new Transform2d(new Translation2d(), Rotation2d.fromDegrees(180))
 		}
 
         //TelemetryUpdater.setTelemetryValue("total swerve current draw", totalCurrent);
