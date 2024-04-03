@@ -50,7 +50,7 @@ public class MoveCommand extends Command {
         if (isAtDesiredLocation(currentRobotPosition, desiredLocation, interiorWaypoints) &&
             Math.abs(desiredLocation.getRotation().getDegrees() - currentRobotPosition.getRotation().getDegrees()) < 5) return;
 
-        if (movementTrajectory == null || !isAtDesiredLocation(currentRobotPosition, desiredLocation, interiorWaypoints)) {
+        if (movementTrajectory == null && !isAtDesiredLocation(currentRobotPosition, desiredLocation, interiorWaypoints)) {
             TrajectoryConfig config = new TrajectoryConfig(
                 Constants.AutoConstants.kMaxSpeedMetersPerSecond,
                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
@@ -92,7 +92,7 @@ public class MoveCommand extends Command {
         if (swerveControllerCommand != null) swerveControllerCommand.end(interrupted);
     }
 
-    @Override 
+    @Override
     public void execute(){
         if (swerveControllerCommand != null) swerveControllerCommand.execute();
     }
