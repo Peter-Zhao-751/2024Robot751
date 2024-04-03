@@ -48,7 +48,7 @@ public class TeleopCommand extends Command {
         boolean isDriving = s_Swerve.drive(
             new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed), 
             rotationVal * Constants.Swerve.maxAngularVelocity, 
-            robotCentricSup.getAsBoolean(),
+            !robotCentricSup.getAsBoolean(),
             true, 
             preciseControl.getAsBoolean()
         );

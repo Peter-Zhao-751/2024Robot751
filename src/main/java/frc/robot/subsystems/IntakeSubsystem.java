@@ -63,7 +63,7 @@ public class IntakeSubsystem extends SubsystemBase{
         angleEncoder.setZeroOffset(Constants.Intake.kSwivelEncoderZeroOffset);
 
         beamBreak = new DigitalInput(Constants.Intake.beamBreakDIOPort);
-        beamDebouncer = new Debouncer(0.3, Debouncer.DebounceType.kRising);
+        beamDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kRising);
         isBeamBroken = false;
 
 

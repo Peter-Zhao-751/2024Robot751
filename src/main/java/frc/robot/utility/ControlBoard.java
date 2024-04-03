@@ -53,7 +53,7 @@ public class ControlBoard {
                         driver.leftVerticalJoystick,
                         driver.leftHorizontalJoystick,
                         driver.rightHorizontalJoystick,
-                        driver.rightJoystickButton,
+                        () -> false,
                         driver.leftJoystickButton
                 )
         );
@@ -66,8 +66,8 @@ public class ControlBoard {
         driver.leftBumper.whileTrue(new ExportCommand());
         driver.leftTrigger.whileTrue(new IntakeCommand());
 
-        // driver.rightBumper.whileTrue(new MoveCommand(new Pose2d(1, 0, new Rotation2d())));
-        driver.rightBumper.toggleOnTrue(new AimAssistCommand());
+        driver.rightBumper.whileTrue(new AimbotCommand());
+        //driver.rightBumper.toggleOnTrue(new AimAssistCommand());
         driver.rightTrigger.whileTrue(new ShootCommand());
 
         driver.dUp.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));

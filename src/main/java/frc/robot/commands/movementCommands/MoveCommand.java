@@ -56,7 +56,7 @@ public class MoveCommand extends Command {
                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
                 .setKinematics(Constants.Swerve.swerveKinematics);
 
-            config.setStartVelocity(s_Swerve.getCurrentVelocityMagnitude());
+            //config.setStartVelocity(s_Swerve.getCurrentVelocityMagnitude());
 
             movementTrajectory = TrajectoryGenerator.generateTrajectory(
                 currentRobotPosition,
