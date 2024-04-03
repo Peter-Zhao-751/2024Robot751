@@ -161,7 +161,7 @@ public class SwerveSubsystem extends SubsystemBase {
                                 xSpeed,
                                 ySpeed,
                                 rot,
-                                gyro.getRotation2d()
+                                this.getGyroYaw()
                         )
                                 : new ChassisSpeeds(
                                 xSpeed,
@@ -224,12 +224,13 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void zeroHeading() {
+        gyro.reset();
         System.out.println("Zeroed Heading");
 		setHeading(new Rotation2d(0));
     }
 
 	public Rotation2d getGyroYaw() {
-		return poseEstimator.getEstimatedPosition().getRotation();
+		return gyro.getRotation2d();
 		// return stateEstimator.getYaw();
 	}
 

@@ -95,8 +95,9 @@ public class LimelightSubsystem extends SubsystemBase {
         FieldElements blueSpeaker = Constants.FieldConstants.blue[1];
         // if the 2 blue field element is closer than the 2 red, then use the blue field elements, otherwise use the red field elements
 
-        return Math.hypot(redSpeaker.x - pose.getX(), redSpeaker.y - pose.getY()) <
-                Math.hypot(blueSpeaker.x - pose.getX(), blueSpeaker.y - pose.getY()) ? redSpeaker : blueSpeaker;
+        // return Math.hypot(redSpeaker.x - pose.getX(), redSpeaker.y - pose.getY()) <
+        //         Math.hypot(blueSpeaker.x - pose.getX(), blueSpeaker.y - pose.getY()) ? redSpeaker : blueSpeaker;
+        return redSpeaker;
     }
 
     private FieldElements closestSpeaker() {

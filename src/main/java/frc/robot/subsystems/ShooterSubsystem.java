@@ -147,7 +147,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public boolean isAtTargetSpeed() {
-        return System.currentTimeMillis() - startOfAtSpeed > 751 && isAtSpeed;
+        return System.currentTimeMillis() - startOfAtSpeed > 751 && isAtSpeed && Math.abs(targetSpeed) > 5;
     }
 
     @Override
