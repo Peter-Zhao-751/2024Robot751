@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -14,12 +15,14 @@ import frc.robot.Constants.FieldConstants.FieldElements;
 import frc.robot.utility.TelemetryUpdater;
 import frc.lib.util.LimelightHelpers.PoseEstimate;
 
+import java.util.Optional;
+
 public class LimelightSubsystem extends SubsystemBase {
     public enum LEDMode {
-		PIPELINE(),
-		OFF(),
-		BLINK(),
-		ON()
+		PIPELINE,
+		OFF,
+		BLINK,
+		ON
     }
 
     private static LimelightSubsystem instance;
@@ -96,6 +99,11 @@ public class LimelightSubsystem extends SubsystemBase {
                 Math.hypot(blueSpeaker.x - pose.getX(), blueSpeaker.y - pose.getY()) ? redSpeaker : blueSpeaker;
     }
 
+    private FieldElements closestSpeaker() {
+        Optional<DriverStation.Alliance> alliance = DriverStation.getAlliance();
+        return alliance.isPresent() && alliance.get() == DriverStation.Alliance.Blue ? Constants.FieldConstants.blue[1] : Constants.FieldConstants.red[1];
+    }
+
     public double getDistance() {
         Pose2d pose = this.getPose();
 
@@ -137,7 +145,6 @@ public class LimelightSubsystem extends SubsystemBase {
         TelemetryUpdater.setTelemetryValue("aimbot/rawSpeakerAngle", angle);
         angle = angle > 180 ? angle - 360: angle;
         angle = angle < -180 ? angle + 360 : angle;
-        // angle - pose2d.getRotation().getDegrees() + 360) % 360;
         double delta = this.getYaw() - angle;
 
         double desiredAngle = (SwerveSubsystem.getInstance().getGyroYaw().getDegrees() % 360 + 360 - delta) % 360;
@@ -155,7 +162,6 @@ public class LimelightSubsystem extends SubsystemBase {
             TelemetryUpdater.setTelemetryValue("Limelight/Limelight X Position", values[0]);
 			TelemetryUpdater.setTelemetryValue("Limelight/Limelight Y Position", values[1]);
 			TelemetryUpdater.setTelemetryValue("Limelight/Limelight Rotation", getYaw());
-            TelemetryUpdater.setTelemetryValue("Limelight/Limelight Area", values[2]);
             TelemetryUpdater.setTelemetryValue("Limelight/Estimated Distance", getDistance());
         }
     }

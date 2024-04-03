@@ -301,8 +301,13 @@ public class SwerveSubsystem extends SubsystemBase {
         TelemetryUpdater.setTelemetryValue("Swerve/Angles/BR Angle", (mSwerveMods[3].getPosition().angle.getDegrees() + 360) % 360);
 
         LimelightSubsystem limelight = LimelightSubsystem.getInstance();
-        if (limelight.hasTarget()) TelemetryUpdater.setTelemetryValue("Limelight/Distance to Target", limelight.getDistance());
-        else TelemetryUpdater.setTelemetryValue("Limelight/Distance to Target", Double.NaN);
+        if (limelight.hasTarget()) {
+            TelemetryUpdater.setTelemetryValue("Limelight/Distance to Target", limelight.getDistance());
+            TelemetryUpdater.setTelemetryValue("Limelight/Distance Percentage", 100 * limelight.getDistance() / Constants.Shooter.targetDistance);
+        } else {
+            TelemetryUpdater.setTelemetryValue("Limelight/Distance to Target", Double.NaN);
+            TelemetryUpdater.setTelemetryValue("Limelight/Distance Percentage", 0.0);
+        }
 
         //TelemetryUpdater.setTelemetryValue("Robot Pitch", gyro.getPitch().getValue());
         //TelemetryUpdater.setTelemetryValue("Robot Roll", gyro.getRoll().getValue());

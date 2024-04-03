@@ -111,6 +111,7 @@ public class Constants {
         public static double kProcessNoise = 3.0;
 		public static double kMeasurementNoise = 0.01;
 
+        public static double targetDistance = 2.05; // units in meters
     }
 
     public static class Climber{

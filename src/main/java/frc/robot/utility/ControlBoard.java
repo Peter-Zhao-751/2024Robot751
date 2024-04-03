@@ -53,7 +53,7 @@ public class ControlBoard {
                         driver.leftVerticalJoystick,
                         driver.leftHorizontalJoystick,
                         driver.rightHorizontalJoystick,
-                        () -> fieldCentric,
+                        driver.rightJoystickButton,
                         driver.leftJoystickButton
                 )
         );
@@ -66,7 +66,8 @@ public class ControlBoard {
         driver.leftBumper.whileTrue(new ExportCommand());
         driver.leftTrigger.whileTrue(new IntakeCommand());
 
-        driver.rightBumper.whileTrue(new MoveCommand(new Pose2d(1, 0, new Rotation2d())));//AimAssistCommand());
+        driver.rightBumper.whileTrue(new MoveCommand(new Pose2d(1, 0, new Rotation2d())));
+//        driver.rightTrigger.whileTrue(new AimAssistCommand());
         driver.rightTrigger.whileTrue(new ShootCommand());
 
         driver.dUp.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
@@ -96,10 +97,10 @@ public class ControlBoard {
          operator.rightBumper.and(this::notClimberMode).whileTrue(new TransferCommand());
         // operator.rightBumper.and(this::climberMode).whileTrue(new RunCommand(() -> s_Climber.changeRightClimberLocation(Constants.Climber.climberSpeed), s_Climber));
 
-         operator.dUp.whileTrue(new InstantCommand(this::increaseShooterPower, s_Shooter));
-         operator.dDown.whileTrue(new InstantCommand(this::decreaseShooterPower, s_Shooter));
-         operator.dLeft.whileTrue(new RunCommand(this::retractIntake, s_Intake));
-         operator.dRight.whileTrue(new RunCommand(this::extendIntake, s_Intake));
+        operator.dUp.whileTrue(new InstantCommand(this::increaseShooterPower, s_Shooter));
+        operator.dDown.whileTrue(new InstantCommand(this::decreaseShooterPower, s_Shooter));
+        operator.dLeft.whileTrue(new RunCommand(this::retractIntake, s_Intake));
+        operator.dRight.whileTrue(new RunCommand(this::extendIntake, s_Intake));
 
         operator.triangleButton.toggleOnTrue(new StartEndCommand(() -> currentMode = Mode.Climb, () -> currentMode = Mode.Speaker));
         operator.squareButton.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.kRetractedAngle)));
@@ -121,7 +122,7 @@ public class ControlBoard {
         precise = !precise;
     }
 
-    public double shooterSpeed() {
+    public double shooterSpeedOffset() {
         return shooterSpeed;
     }
 

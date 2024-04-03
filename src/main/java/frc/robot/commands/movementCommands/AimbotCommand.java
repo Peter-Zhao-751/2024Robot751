@@ -15,22 +15,22 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 @Deprecated
 public class AimbotCommand extends Command {
-    private final SwerveSubsystem swerve;
+    private final SwerveSubsystem swerveSubsystem;
     private MoveCommand moveCommand;
     private final LimelightSubsystem limelightSubsystem;
 
     public AimbotCommand() {
-        this.swerve = SwerveSubsystem.getInstance();
+        this.swerveSubsystem = SwerveSubsystem.getInstance();
         this.limelightSubsystem = LimelightSubsystem.getInstance();
 
-        limelightSubsystem.setDriverMode();
-        limelightSubsystem.setLEDMode(LimelightSubsystem.LEDMode.OFF);
-
-        addRequirements(swerve);
+        addRequirements(swerveSubsystem);
     }
 
     @Override
     public void initialize() {
+        limelightSubsystem.setVisionMode();
+        limelightSubsystem.setLEDMode(LimelightSubsystem.LEDMode.ON);
+
         FieldConstants.FieldElements[] fieldElements = FieldConstants.red;
 
         Optional<Alliance> alliance = DriverStation.getAlliance();
@@ -39,7 +39,8 @@ public class AimbotCommand extends Command {
 
         FieldConstants.FieldElements element = fieldElements[1];
 
-        double angle = Math.atan2(element.y - swerve.getPose().getY(), element.x - swerve.getPose().getX());
+        double angle = Math.atan2(element.y - swerveSubsystem.getPose().getY(), element.x - swerveSubsystem.getPose().getX());
+
         double targetX = element.x - 300 * Math.cos(angle);
         double targetY = element.y - 300 * Math.sin(angle);
 
@@ -50,8 +51,6 @@ public class AimbotCommand extends Command {
 
         StateMachine.setState(StateMachine.State.Aimbot);
 
-        limelightSubsystem.setVisionMode();
-
         moveCommand = new MoveCommand(new Pose2d(targetX, targetY, new Rotation2d(angle)));
         moveCommand.initialize();
     }
@@ -61,7 +60,7 @@ public class AimbotCommand extends Command {
 
         FieldConstants.FieldElements closestElement = null;
 
-        Pose2d currentPose = swerve.getPose();
+        Pose2d currentPose = swerveSubsystem.getPose();
         for (FieldConstants.FieldElements fieldElement : fieldElements) {
             double distance = Math.sqrt(Math.pow(currentPose.getX() - fieldElement.x, 2) + Math.pow(currentPose.getY() - fieldElement.y, 2));
             if (distance < closestDistance) {
@@ -74,12 +73,14 @@ public class AimbotCommand extends Command {
 
     @Override
     public void execute() {
+        if (moveCommand != null) moveCommand.execute();
     }
 
     @Override
     public void end(boolean interrupted) {
         StateMachine.setState(StateMachine.State.Idle);
-        limelightSubsystem.setDriverMode();
+        limelightSubsystem.setLEDMode(LimelightSubsystem.LEDMode.OFF);
+        if (moveCommand != null) moveCommand.end(interrupted);
     }
 
     @Override
