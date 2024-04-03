@@ -1,7 +1,8 @@
 package frc.robot.utility;
 
-import frc.robot.commands.CANdleController;
+import frc.robot.commands.gamepieceCommands.CANdleController;
 import frc.robot.subsystems.CANdleSubsystem;
+import frc.robot.subsystems.LimelightSubsystem;
 
 public class StateMachine {
 
@@ -38,11 +39,17 @@ public class StateMachine {
     }
 
     public static void update() {
-        CANdleController.changeAnimation(state.animation);
+		CANdleController.changeAnimation(state.animation);
+		if (state == State.Auton || state == State.Aimbot) {
+            LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.ON);
+        } else {
+            LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.OFF);
+        }
+
     }
 
     public static void periodic() {
-        TelemetryUpdater.setTelemetryValue("Robot State", state.stateName);
+        TelemetryUpdater.setTelemetryValue("StateMachine/Robot State", state.stateName);
     }
 
     public static boolean isPerformingAction(){

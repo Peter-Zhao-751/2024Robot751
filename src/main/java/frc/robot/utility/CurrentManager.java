@@ -2,25 +2,37 @@ package frc.robot.utility;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+import frc.lib.util.Component;
 import frc.robot.Constants;
-import frc.robot.subsystems.Component;
 
+@Deprecated
 public class CurrentManager {
-    public static final double maxCurrent = Constants.CurrentManager.maxCurrent;
-    public static final double maxPercent = Constants.CurrentManager.maxPercent;
-    public static final double nominalPercent = Constants.CurrentManager.nominalPercent;
-    public static double totalCurrent = 0;
+    private static CurrentManager instance;
 
-    private static final ArrayList<Component> components = new ArrayList<>();
+    public final double maxCurrent;
+    public final double maxPercent;
+    public final double nominalPercent;
+    public double totalCurrent;
 
-    private CurrentManager() {
+    private final ArrayList<Component> components = new ArrayList<>();
+
+    public static CurrentManager getInstance() {
+        if (instance == null) instance = new CurrentManager();
+        return instance;
     }
 
-    public static void addComponent(Component component) {
+    private CurrentManager() {
+        maxCurrent = Constants.CurrentManager.maxCurrent;
+        maxPercent = Constants.CurrentManager.maxPercent;
+        nominalPercent = Constants.CurrentManager.nominalPercent;
+        totalCurrent = 0;
+    }
+
+    public void addComponent(Component component) {
         components.add(component);
     }
 
-    public static void allocateCurrent() {
+    public void allocateCurrent() {
         components.sort(Comparator.comparingInt(Component::getPriority));
         double totalAvailableCurrent = maxCurrent*maxPercent;
 
@@ -54,16 +66,16 @@ public class CurrentManager {
         }
     }
 
-    public static double getCurrent(){
+    public double getCurrent(){
         return totalCurrent;
     }
-    public static double getPercent(){
+    public double getPercent(){
         return totalCurrent / maxCurrent;
     }
-    public static boolean isOverNominal(){
+    public boolean isOverNominal(){
         return getPercent() > nominalPercent;
     }
-    public static boolean isOverMax(){
+    public boolean isOverMax(){
         return getPercent() > maxPercent;
     }
 }

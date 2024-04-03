@@ -12,6 +12,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
+@SuppressWarnings("unused")
 public class Constants {
     public static boolean loggingEnabled = false;
 
@@ -25,11 +26,11 @@ public class Constants {
         public static int intakeMotorID = 57;
         public static int leftSwivelMotorID = 58;
         public static int rightSwivelMotorID = 59;
+        public static int beamBreakDIOPort = 1;
 
-        public static double swivelGearRatio = 15.0; 
-        public static double maxSwivelSpeed = 0.15;
-        public static double intakeTime = 3.0;
-        public static double intakeSpeed = 20.0; // units in centimeters per second
+        public static double swivelGearRatio = 15.0;
+        public static double speakerIntakeSpeed = 30; // units in rotations per second
+        public static double ampIntakeSpeed = 15.0; // units in rotations per second
 
         public static double intakeRollerRadius = 2.54; // units in centimeters
 
@@ -44,18 +45,19 @@ public class Constants {
         public static double kVSwivelFeedforward = 1.17;
 
         // TODO: Tune these values via SYSID
-        public static double kSIntakeController = 0;
-        public static double kVIntakeController = 0;
-        public static double kPIntakeController = 0.015;
+        public static double kSIntakeController = 0.30606;
+        public static double kVIntakeController = 0.1152;
+        public static double kAIntakeController = 0.0036207;
+        public static double kPIntakeController = 0.16228;
         public static double kIIntakeController = 0.0;
         public static double kDIntakeController = 0.0;
 
         public static double kIntakeAngle = 7.0;
         public static double kMaintenanceAngle = 45.0;
-        public static double kAmpAngle = 60.0;
+        public static double kAmpAngle = 125.0;
         public static double kRetractedAngle = 135.0;
 
-        public static double kSwivelEncoderZeroOffset = 85.4; 
+        public static double kSwivelEncoderZeroOffset = 360 - 94.1;
     }
 
     public static class Transfer{
@@ -65,21 +67,24 @@ public class Constants {
         public static int shooterTransferID = 55;
         public static double shooterTransferRadius = 2.8575; // units in centimeters
 
-        public static int beamBreakDIOPort = 1;
+        public static int beamBreakDIOPort = 0;
 
+        public static double kSIntakeController = 0.0;
+        public static double kVIntakeController = 0.0;
         public static double kPIntakeController = 0.450;
-        public static double kPShooterController = 0.50; // TODO: alek is bad at life
 
-        public static double feedSpeed = 30; // units in centimeters per second // TODO: all the fucking values are retarded
+        public static double kSShootController = 3.07;
+        public static double kVShootController = 0.02;
+        public static double kPShooterController = 0.01;
 
         public static double maxTransferTime = 3.0; // unit in seconds
         public static double minTransferTime = 1.5;
-
-        public static double intakeSpeed = 20.0; // units in centimeters per second
+        public static double intakeTransferSpeed = 40.0; // units in rotations per second
+        public static double kTransferSpeed = 20.0; // units in centimeters per second
     }
 
     public static class Shooter{
-        // 2 krakens for shooting, one neo for the transfer belts. 
+        // 2 krakens for shooting, one neo for the transfer belts.
         public static int leftShooterMotorID = 51;
         public static int rightShooterMotorID = 52;
 
@@ -90,6 +95,8 @@ public class Constants {
         public static double maxShooterSpeed = 42; // units in rotations per second
         public static int motionMagicAcceleration = 400; // units in rotations per second squared
         public static int motionMagicJerk = 4000; // units in rotations per second cubed
+
+        public static double intakeAmpSpeed = 29.0; // units in rotations per second
 
         public static double kSFlyWheelFeedforward = 0.25;
         public static double kVFlyWheelFeedforward = 0.12;
@@ -106,8 +113,9 @@ public class Constants {
     public static class Climber{
         public static int leftClimberMotorID = 61;
         public static int rightClimberMotorID = 62;
-        
-        public static double intakeTime = 3.0;
+
+        public static double maxClimberHeight = 100.0; // TODO
+        public static double minClimberHeight = 5.0; // TODO
 
         public static double climberSpeed = 5.0;
 
@@ -131,9 +139,9 @@ public class Constants {
         public static double wheelBase = 0.55245;
         public static double wheelCircumference = chosenModule.wheelCircumference;
 
-        /* Swerve Kinematics 
+        /* Swerve Kinematics
          * No need to ever change this unless you are not doing a traditional rectangular/square 4 module swerve */
-         public static SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
+        public final static SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
             new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
             new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
             new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
@@ -144,7 +152,7 @@ public class Constants {
         public static double driveGearRatio = chosenModule.driveGearRatio;
         public static double angleGearRatio = chosenModule.angleGearRatio;
 
-        /* Motor Inverts */         
+        /* Motor Inverts */
         public static InvertedValue angleMotorInvert = chosenModule.angleMotorInvert;
         public static InvertedValue driveMotorInvert = chosenModule.driveMotorInvert;
 
@@ -154,10 +162,10 @@ public class Constants {
         /* Swerve Current Limiting */
         public static int angleCurrentLimit = 30;
         public static int angleCurrentThreshold = 40;
-        public static double angleCurrentThresholdTime = 0.1;
+        public static double angleCurrentThresholdTime = 0.25;
         public static boolean angleEnableCurrentLimit = true;
 
-        public static int driveCurrentLimit = 40; 
+        public static int driveCurrentLimit = 40;
         public static int driveCurrentThreshold = 50;
         public static double driveCurrentThresholdTime = 0.1;
         public static boolean driveEnableCurrentLimit = true;
@@ -169,31 +177,27 @@ public class Constants {
 
         /* Angle Motor PID Values */
         // KP is changed below in Swerve Profiling Values
-        public static double angleKI = chosenModule.angleKI;
-        public static double angleKD = chosenModule.angleKD;
+        public static double angleKP = 50;
+        //3.7402;
+        public static double angleKI = 0;
+        public static double angleKD = 0;
 
         /* Drive Motor PID Values */
+        public static double driveKS = 0.32;
+        public static double driveKV = 1.51;
         public static double driveKP = 0.12;
         public static double driveKI = 0.0;
         public static double driveKD = 0.0;
-        public static double driveKF = 0.0;
-
-        /* Drive Motor Characterization Values From SYSID */
-        public static double driveKS = 0.32;
-        public static double driveKV = 1.51;
-        public static double driveKA = 0.27;
 
         /* Swerve Profiling Values */
         public static double preciseControlFactor = 0.25;
         /** Meters per Second */
-        public static double maxSpeed = 5; //TODO: testing speed, normal: 4.5
+        public static double maxSpeed = 5;
         /** Multiplier */
-        public static double speedMultiplier = 1.0; //TODO: testing speed, normal 1.0
+        public static double speedMultiplier = 0.5;
+        public static double spinSpeedMultiplier = 0.8;
         /** Radians per Second */
-        public static double maxAngularVelocity = maxSpeed / 1.6; // THIS IS THE MAX SPIN SPEED ROBOT, tested 2.1, feels sluggish
-
-        /* Modifier for rotating to desired angle pose speed */
-        public static double angleKP = (10.46 * Math.exp(1.05 * speedMultiplier)); // I don't think this is right, take from SYSID instead
+        public static double maxAngularVelocity = maxSpeed / 1.6 * spinSpeedMultiplier;
 
         /* Neutral Modes */
         public static NeutralModeValue angleNeutralMode = NeutralModeValue.Coast;
@@ -216,17 +220,22 @@ public class Constants {
                 this.constants = new SwerveModuleConstants(driveMotorID, angleMotorID, CANCoderID, angleOffset);
             }
         }
-        
-        public static SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, -82.177);
-        public static SwerveModule frontRightModule = new SwerveModule(21, 22, 23, -60.292);
-        public static SwerveModule backLeftModule = new SwerveModule(31, 32, 33, -79.365);
-        public static SwerveModule backRightModule = new SwerveModule(41, 42, 43, 97.910);
+
+        // TODO: Check if these values are correct
+        public static SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, 81.21);
+        public static SwerveModule frontRightModule = new SwerveModule(21, 22, 23, 59.41);
+        public static SwerveModule backLeftModule = new SwerveModule(31, 32, 33, 79.45);
+        public static SwerveModule backRightModule = new SwerveModule(41, 42, 43, 259.10);
     }
 
     public static class Limelight {
         public static double version = 3.0;
         public static String streamIp = "http://10.7.51.11:5800";
-        public static String dashboardIp = "http://10.7.51.11:5801";
+		public static String dashboardIp = "http://10.7.51.11:5801";
+        public static String name = "limelight";
+
+        public static double height = 15.61 + 3.75; // inches
+        public static double angle = 35; // TODO check this value
     }
 
     public static class CANdle {
@@ -241,34 +250,34 @@ public class Constants {
     }
 
     public static class Odometry{
-        public static double maxLimeTimeout = 0.5; // seconds
+        public static double maxLimeTimeout = 0.1; // seconds
         public static double maxLimeSwerveDeviation = 0.1; // meters
         public static double kalmanGain = 0.5; // bro guess too lazy
         public static double limeSwerveMixRatio = 0.8; // 80% limelight, 20% swerve
 
 
-        public static double kPositionNoiseVar = 0.075;
+        public static double kPositionNoiseVar = 0.025;
         public static double kVelocityNoiseVar = 0.025;
-        public static double kAccelerationNoiseVar = 0.25; 
+        public static double kAccelerationNoiseVar = 0.25;
 
         public static double kPositionProcessNoise = 0.015;
-        public static double kVelocityProcessNoise = 0.075;
-        public static double kAccelerationProcessNoise = 0.15;
+        public static double kVelocityProcessNoise = 0.015;
+        public static double kAccelerationProcessNoise = 0.075;
     }
 
-    public static class AutoConstants { 
+    public static class AutoConstants {
         //TODO: tune everything here
-        public static double kMaxSpeedMetersPerSecond = 3; // 3 
+        public static double kMaxSpeedMetersPerSecond = 3; // 3
         public static double kMaxAccelerationMetersPerSecondSquared = 3; // 3
         public static double kMaxAngularSpeedRadiansPerSecond = 2.4; //Math.PI;
         public static double kMaxAngularSpeedRadiansPerSecondSquared = 2.4; //Math.PI;
-        
+
 
         //especially these values
         public static double kPXController = 0.8;
         public static double kPYController = 0.8;
         public static double kPThetaController = 1;
-    
+
         /* Constraint for the motion profiled robot angle controller */
         public static TrapezoidProfile.Constraints kThetaControllerConstraints =
             new TrapezoidProfile.Constraints(
@@ -281,7 +290,7 @@ public class Constants {
             public double x;
             public double y;
             public double z;
-            
+
             public double minX;
             public double maxX;
             public double minY;
@@ -303,6 +312,7 @@ public class Constants {
             }
         }
         // fix these values, only the speakers are (maybe correct)
+        // TODO: tune these values
         public static FieldElements[] blue = {
             new FieldElements("Amp", 3.57, 7.94, 0.0, -1.0, 1.0, -1.0, 1.0),
             new FieldElements("Speaker", 0.8, 5.28, 0.0, -1.0, 1.0, -1.0, 1.0),
@@ -312,7 +322,7 @@ public class Constants {
 
         public static FieldElements[] red = {
             new FieldElements("Amp", 12.99, 7.95, 0.0, -1.0, 1.0, -1.0, 1.0),
-            new FieldElements("Speaker", 15.76, 5.28, 0.0, -1.0, 1.0, -1.0, 1.0),
+            new FieldElements("Speaker", 15.76, 5.5, 0.0, -1.0, 1.0, -1.0, 1.0),
             new FieldElements("Stage", 10.74, 4.02, 0.0, -1.0, 1.0, -1.0, 1.0),
             new FieldElements("Chute", 13.74, 0.80, 0.0, -1.0, 1.0, -1.0, 1.0),
         };

@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.movementCommands;
 
 import frc.robot.Constants;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -23,39 +23,40 @@ public class MoveCommand extends Command {
     private Trajectory movementTrajectory;
     private SwerveControllerCommand swerveControllerCommand;
 
-    public MoveCommand(SwerveSubsystem s_Swerve, Pose2d desiredLocation, List<Translation2d> interiorWaypoints) {
-        this.s_Swerve = s_Swerve;
+    public MoveCommand(Pose2d desiredLocation, List<Translation2d> interiorWaypoints) {
+        this.s_Swerve = SwerveSubsystem.getInstance();
         this.desiredLocation = desiredLocation;
         this.interiorWaypoints = interiorWaypoints;
         this.movementTrajectory = null;
         addRequirements(s_Swerve);
     }
 
-    public MoveCommand(SwerveSubsystem s_Swerve, Pose2d desiredLocation) {
-        this(s_Swerve, desiredLocation, List.of());
-        addRequirements(s_Swerve);
+    public MoveCommand(Pose2d desiredLocation) {
+        this(desiredLocation, List.of());
     }
 
-    public MoveCommand(SwerveSubsystem s_Swerve, Trajectory trajectory) {
-        this.s_Swerve = s_Swerve;
+    public MoveCommand(Trajectory trajectory) {
+        this.s_Swerve = SwerveSubsystem.getInstance();
         this.desiredLocation = trajectory.getStates().get(trajectory.getStates().size() - 1).poseMeters;
         this.interiorWaypoints = null;
         this.movementTrajectory = trajectory;
         addRequirements(s_Swerve);
     }
 
-
     @Override
-    public void initialize() {
-        Pose2d currentRobotPosition = s_Swerve.getSwerveOdometryPose2d(); // do something
+    public void initialize() { // TODO: make shit use getpose which gets the kalman pose once testing is complete
+        Pose2d currentRobotPosition = s_Swerve.getPose(); // do something
 
-        if (Math.abs(desiredLocation.getX() - currentRobotPosition.getX()) < 0.1 && Math.abs(desiredLocation.getY() - currentRobotPosition.getY()) < 0.1) return;
-        
-        if (movementTrajectory == null){
+        if (isAtDesiredLocation(currentRobotPosition, desiredLocation, interiorWaypoints) &&
+            Math.abs(desiredLocation.getRotation().getDegrees() - currentRobotPosition.getRotation().getDegrees()) < 5) return;
+
+        if (movementTrajectory == null || !isAtDesiredLocation(currentRobotPosition, desiredLocation, interiorWaypoints)) {
             TrajectoryConfig config = new TrajectoryConfig(
                 Constants.AutoConstants.kMaxSpeedMetersPerSecond,
                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
                 .setKinematics(Constants.Swerve.swerveKinematics);
+
+            config.setStartVelocity(s_Swerve.getCurrentVelocityMagnitude());
 
             movementTrajectory = TrajectoryGenerator.generateTrajectory(
                 currentRobotPosition,
@@ -66,37 +67,34 @@ public class MoveCommand extends Command {
 
         ProfiledPIDController thetaController = new ProfiledPIDController(
                 Constants.AutoConstants.kPThetaController, 0, 0,
-                Constants.AutoConstants.kThetaControllerConstraints);
+				Constants.AutoConstants.kThetaControllerConstraints);
+
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-        ETA = movementTrajectory.getTotalTimeSeconds();
+        if (movementTrajectory != null) ETA = movementTrajectory.getTotalTimeSeconds();
         //TelemetryUpdater.setTelemetryValue("Auton Current Trajectory Estimated ETA", ETA);
 
         swerveControllerCommand = new SwerveControllerCommand(
                 movementTrajectory,
-                s_Swerve::getSwerveOdometryPose2d,
+                s_Swerve::getPose,
                 Constants.Swerve.swerveKinematics,
                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),
                 thetaController,
                 s_Swerve::setModuleStates,
-                s_Swerve);
-        
+				s_Swerve);
+
         swerveControllerCommand.initialize();
     }
 
     @Override
-    public void execute() {
-        if (swerveControllerCommand != null) {
-            swerveControllerCommand.execute();
-        }
+    public void end(boolean interrupted) {
+        if (swerveControllerCommand != null) swerveControllerCommand.end(interrupted);
     }
 
-    @Override
-    public void end(boolean interrupted) {
-        if (swerveControllerCommand != null) {
-            swerveControllerCommand.end(interrupted);
-        }
+    @Override 
+    public void execute(){
+        if (swerveControllerCommand != null) swerveControllerCommand.execute();
     }
 
     @Override
@@ -104,7 +102,11 @@ public class MoveCommand extends Command {
         return swerveControllerCommand != null && swerveControllerCommand.isFinished();
     }
 
-    public double getETA() {
-        return ETA;
-    }
+	public double getETA() {
+		return ETA;
+	}
+
+	private boolean isAtDesiredLocation(Pose2d currPose2d, Pose2d desiredPose2d, List<Translation2d> interiorWaypoints) {
+		return Math.abs(desiredPose2d.getX() - currPose2d.getX()) < 0.1 && Math.abs(desiredPose2d.getY() - currPose2d.getY()) < 0.1 && interiorWaypoints.isEmpty();
+	}
 }

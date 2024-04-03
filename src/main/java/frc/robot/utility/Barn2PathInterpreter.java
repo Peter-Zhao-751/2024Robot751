@@ -6,41 +6,25 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Iterator;
 
-import frc.robot.commands.lowLevelCommands.IntakeCommand;
-import frc.robot.commands.lowLevelCommands.ShootCommand;
-import frc.robot.commands.lowLevelCommands.IntakeCommand.IntakeSwivelMode;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.TransferSubsystem;
-import frc.robot.commands.MoveCommand;
+import edu.wpi.first.wpilibj2.command.*;
+import frc.robot.Constants;
+import frc.robot.commands.gamepieceCommands.IntakeCommand;
+import frc.robot.commands.gamepieceCommands.ShootCommand;
+import frc.robot.commands.movementCommands.MoveCommand;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.Command;
 
 import org.json.simple.JSONArray; 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 public class Barn2PathInterpreter {
-    private static IntakeSubsystem intakeSubsystem;
-    private static TransferSubsystem transferSubsystem;
-    private static ShooterSubsystem shooterSubsystem;
-    private static SwerveSubsystem swerveSubsystem;
     private static JSONObject jsonObject;
     private static JSONArray jsonArray;
 
-    public Barn2PathInterpreter(IntakeSubsystem intakeSubsystem, TransferSubsystem transferSubsystem, ShooterSubsystem shooterSubsystem, SwerveSubsystem swerveSubsystem){
-        Barn2PathInterpreter.intakeSubsystem = intakeSubsystem;
-        Barn2PathInterpreter.transferSubsystem = transferSubsystem;
-        Barn2PathInterpreter.shooterSubsystem = shooterSubsystem;
-        Barn2PathInterpreter.swerveSubsystem = swerveSubsystem;
-
+    public Barn2PathInterpreter(){
         jsonObject = null;
         jsonArray = null; 
     }
@@ -49,27 +33,25 @@ public class Barn2PathInterpreter {
 
         String encryptedData = new String(java.nio.file.Files.readAllBytes(pathFile.toPath()));
 
-        String decryptedData = encryptedData;//fullDecrypt(encryptedData);
-
-        jsonObject = (JSONObject) new JSONParser().parse(decryptedData); 
+        jsonObject = (JSONObject) new JSONParser().parse(encryptedData);
 
         jsonArray = (JSONArray) jsonObject.get("points"); 
 
         ArrayList<Command> autonCommands = new ArrayList<>();
 
-        Iterator<JSONObject> iterator = jsonArray.iterator();
+        Iterator iterator = jsonArray.iterator();
 
         JSONObject point;
 
         System.out.println(jsonArray.toString());
 
         while (iterator.hasNext()) {
-            point = iterator.next();
+            point = (JSONObject) iterator.next();
 
             if (getEvent(point).isEmpty() || getEvent(point).equals("start")){
                 ArrayList<Translation2d> interiorPoints = new ArrayList<>();
                 while (iterator.hasNext()){
-                    JSONObject interiorPoint = iterator.next();
+                    JSONObject interiorPoint = (JSONObject) iterator.next();
                     if (getEvent(interiorPoint).isEmpty()){
                         interiorPoints.add(getInteriorPoint(interiorPoint));
                     }else{
@@ -78,19 +60,19 @@ public class Barn2PathInterpreter {
                     }
                 }
 
-                MoveCommand newMovementCommand = new MoveCommand(swerveSubsystem, getMainPoint(point), interiorPoints);
+                MoveCommand newMovementCommand = new MoveCommand(getMainPoint(point), interiorPoints);
 
                 double delay = newMovementCommand.getETA();
 
                 switch (getEvent(point).toLowerCase()){
                     case "shoot":
-                        //double primeDelay = (delay-Constants.Shooter.spinUpTime) > 0 ? (delay-Constants.Shooter.spinUpTime) : 0;
-                        //ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new InstantCommand()));
-                        autonCommands.add(new SequentialCommandGroup(newMovementCommand, new ShootCommand(shooterSubsystem, transferSubsystem, 200, true)));
+                        double primeDelay = (delay- Constants.Shooter.spinUpTime) > 0 ? (delay-Constants.Shooter.spinUpTime) : 0;
+                        ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new InstantCommand()));
+                        autonCommands.add(new SequentialCommandGroup(newMovementCommand, new ShootCommand()));
                         break;
                     case "intake":
                         double intakeDelay = (delay-5) > 0 ? (delay-5) : 0;
-                        ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new IntakeCommand(intakeSubsystem, transferSubsystem, IntakeSwivelMode.Extend, true)));
+                        ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new IntakeCommand()));
                         autonCommands.add(moveAndIntake);
                         break;
                     default:
@@ -132,7 +114,7 @@ public class Barn2PathInterpreter {
     public static String getAutonPreview(File pathFile){
         if (pathFile != null){
             try {
-                // pretty sure this doesnt work
+                // pretty sure this doesn't work
                 String data = new String(java.nio.file.Files.readAllBytes(pathFile.toPath()));
                 jsonObject = (JSONObject) new JSONParser().parse(new FileReader(pathFile)); 
                 return (String) jsonObject.get("preview");

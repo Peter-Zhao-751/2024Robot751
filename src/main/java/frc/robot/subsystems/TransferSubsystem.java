@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.Constants;
+import frc.robot.utility.FeedforwardPID;
 import frc.robot.utility.TelemetryUpdater;
 
 import com.revrobotics.CANSparkMax;
@@ -11,23 +12,21 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class TransferSubsystem extends SubsystemBase implements Component {
+public class TransferSubsystem extends SubsystemBase {
     private static TransferSubsystem instance;
 
     private final CANSparkMax shooterTransfer;
     private final CANSparkMax intakeTransfer;
+
+    private final FeedforwardPID shooterTransferController;
+    private final FeedforwardPID intakeTransferController;
+
     private final DigitalInput beamBreak;
-
-    private final PIDController shooterTransferPIDController;
-    private final PIDController intakeTransferPIDController;
-
     private final Debouncer beamDebouncer;
+    private boolean isBeamBroken;
 
     private double targetIntakeSpeed;
     private double targetShooterSpeed;
-    private boolean isBeamBroken;
-
-    private double allocatedCurrent;
 
     public static TransferSubsystem getInstance() {
         if (instance == null) {
@@ -40,19 +39,17 @@ public class TransferSubsystem extends SubsystemBase implements Component {
         shooterTransfer = new CANSparkMax(Constants.Transfer.shooterTransferID, MotorType.kBrushless);
         intakeTransfer = new CANSparkMax(Constants.Transfer.intakeTransferID, MotorType.kBrushless);
         intakeTransfer.setInverted(true);
-        shooterTransfer.setInverted(false);
+        shooterTransfer.setInverted(true);
+
         beamBreak = new DigitalInput(Constants.Transfer.beamBreakDIOPort);
-        beamDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kRising);
+        beamDebouncer = new Debouncer(0.01, Debouncer.DebounceType.kRising);
 
-        shooterTransferPIDController = new PIDController(Constants.Transfer.kPIntakeController, 0, 0);
-        intakeTransferPIDController = new PIDController(Constants.Transfer.kPShooterController, 0, 0);
-        
+        shooterTransferController = new FeedforwardPID(0, 0, 0, Constants.Transfer.kPShooterController, 0, 0);
+        intakeTransferController = new FeedforwardPID(0, 0, 0, Constants.Transfer.kPIntakeController, 0, 0);
+
         targetIntakeSpeed = 0;
-        targetShooterSpeed = 0;
-
-        isBeamBroken = false;
-
-        allocatedCurrent = 0;
+		targetShooterSpeed = 0;
+		isBeamBroken = false;
     }
 
     /**
@@ -60,8 +57,8 @@ public class TransferSubsystem extends SubsystemBase implements Component {
      * @param speed in centimeters per second
      */
     public void setIntakeTransfer(double speed) { // cm/s
-        double targetIntakeSpeed = speed / (2 * Math.PI * Constants.Transfer.intakeTransferRadius) / 43;
-        intakeTransfer.set(targetIntakeSpeed);
+//        targetIntakeSpeed = speed / (2 * Math.PI * Constants.Transfer.intakeTransferRadius);
+        intakeTransfer.set(speed/40);
     }
 
     /**
@@ -69,16 +66,8 @@ public class TransferSubsystem extends SubsystemBase implements Component {
      * @param speed in centimeters per second
      */
     public void setShooterTransfer(double speed) {
-        //double targetShooterSpeed = speed / (2 * Math.PI * Constants.Transfer.shooterTransferRadius) / 43;
-        //shooterTransfer.set(1);
-        double targetShooterSpeed = Math.signum(speed);
-        System.out.println("hfuidh");
-        System.out.println("hfuidh");
-        System.out.println("hfuidh");
-        System.out.println("hfuidh");
-        System.out.println(getShooterSpeed());
-        System.out.println("hfuidh");
-        shooterTransfer.set(targetShooterSpeed);
+//        targetShooterSpeed = speed / (2 * Math.PI * Constants.Transfer.shooterTransferRadius);
+        shooterTransfer.set(speed/40);
     }
 
     /**
@@ -94,11 +83,9 @@ public class TransferSubsystem extends SubsystemBase implements Component {
      * Stop both transfer motors
      */
     public void stop() {
-        targetIntakeSpeed = 0;
-        targetShooterSpeed = 0;
-        //shooterTransfer.set(0);
-        //intakeTransfer.set(0);
-        intakeTransfer.stopMotor(); 
+//        targetIntakeSpeed = 0;
+//        targetShooterSpeed = 0;
+        intakeTransfer.stopMotor();
         shooterTransfer.stopMotor();
     }
 
@@ -121,39 +108,18 @@ public class TransferSubsystem extends SubsystemBase implements Component {
 
     @Override
     public void periodic() {
-
         isBeamBroken = beamDebouncer.calculate(!beamBreak.get());
-        TelemetryUpdater.setTelemetryValue("Beam Break", beamBroken());
-        //TelemetryUpdater.setTelemetryValue("Transfer Current Draw", getCurrentDraw());
+        TelemetryUpdater.setTelemetryValue("Transfer/Transfer Beam Break", isBeamBroken);
 
-        TelemetryUpdater.setTelemetryValue("Intake Speed", getIntakeSpeed());
-        TelemetryUpdater.setTelemetryValue("Shooter Speed", getShooterSpeed());
-        TelemetryUpdater.setTelemetryValue("Intake Target Speed", targetIntakeSpeed);
-        TelemetryUpdater.setTelemetryValue("Shooter Target Speed", targetShooterSpeed);
+        TelemetryUpdater.setTelemetryValue("Transfer/Intake Transfer Speed", getIntakeSpeed());
+        TelemetryUpdater.setTelemetryValue("Transfer/Shooter Transfer Speed", getShooterSpeed());
+        TelemetryUpdater.setTelemetryValue("Transfer/Intake Transfer Target Speed", targetIntakeSpeed);
+        TelemetryUpdater.setTelemetryValue("Transfer/Shooter Transfer Target Speed", targetShooterSpeed);
 
-        // double currentIntakeSpeed = intakeTransfer.getEncoder().getVelocity() / 60;
-        // double intakeOutput = intakeTransferPIDController.calculate(currentIntakeSpeed, targetIntakeSpeed);
-        // TelemetryUpdater.setTelemetryValue("Intake Output", intakeOutput);
-        
+        // intakeTransfer.setVoltage(intakeTransferController.calculate(getIntakeSpeed(), targetIntakeSpeed));
+        // shooterTransfer.setVoltage(shooterTransferController.calculate(getShooterSpeed(), targetShooterSpeed));
 
-        // double currentShooterSpeed = shooterTransfer.getEncoder().getVelocity() / 60;
-        // double shooterOutput = shooterTransferPIDController.calculate(currentShooterSpeed, targetShooterSpeed);
-        // TelemetryUpdater.setTelemetryValue("Shooter Output", shooterOutput);
-        //shooterTransfer.set(targetShooterSpeed);
-
-    }
-
-    @Override
-    public double getCurrentDraw() {
-        return shooterTransfer.getOutputCurrent() + intakeTransfer.getOutputCurrent();
-    }
-
-    @Override
-    public void allocateCurrent(double current) {
-    }
-
-    @Override
-    public int getPriority() {
-        return 5; // CHANGE
+        intakeTransferController.debugPrintouts("intake transfer");
+        shooterTransferController.debugPrintouts("shooter transfer");
     }
 }

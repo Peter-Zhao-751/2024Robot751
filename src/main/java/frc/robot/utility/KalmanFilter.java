@@ -1,8 +1,6 @@
 package frc.robot.utility;
 
 import frc.robot.Constants;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 public class KalmanFilter {
@@ -11,7 +9,7 @@ public class KalmanFilter {
     private final MeasurementNoise noise;
     private final ProcessNoise processNoise;
     private double lastUpdateTime;
-    
+
 
     public KalmanFilter(double initialPosX, double initialPosY, double initialVelX, double initialVelY, double initialAccX, double initialAccY, double positionNoiseVar, double velocityNoiseVar, double accelerationNoiseVar, double positionProcessNoise, double velocityProcessNoise, double accelerationProcessNoise) {
         this.xState = new State(initialPosX, initialVelX, initialAccX, 1, 1, 1); // Initial P values for x
@@ -44,11 +42,11 @@ public class KalmanFilter {
 
             this.P_position += this.P_velocity + processNoise.positionProcessNoise * deltaTime;
             this.P_velocity += this.P_acceleration + processNoise.velocityProcessNoise * deltaTime;
-            this.P_acceleration += processNoise.accelerationProcessNoise * deltaTime; 
+            this.P_acceleration += processNoise.accelerationProcessNoise * deltaTime;
         }
 
         public void updatePosition(double sensorPosition, double R) {
-            double innovation = sensorPosition - this.position; 
+            double innovation = sensorPosition - this.position;
             double K = P_position / (P_position + R);
             this.position = this.position + K * innovation;
             this.P_position = (1 - K) * P_position;
@@ -113,7 +111,7 @@ public class KalmanFilter {
         if (isPosition) noise.R_position = adjustR(noise.R_position, innovation);
 
         if (isVelocity) noise.R_velocity = adjustR(noise.R_velocity, innovation);
-        
+
         if (isAcceleration) noise.R_acceleration = adjustR(noise.R_acceleration, innovation);
     }
 
@@ -147,7 +145,7 @@ public class KalmanFilter {
         double currentTime = System.currentTimeMillis();
         double deltaTime = (currentTime - this.lastUpdateTime) / 1000;
         this.lastUpdateTime = currentTime;
-        if (deltaTime <= 0) return 0; 
+        if (deltaTime <= 0) return 0;
         xState.predict(deltaTime);
         yState.predict(deltaTime);
         return deltaTime;
@@ -183,7 +181,7 @@ public class KalmanFilter {
         predictAndUpdateTime();
         updateVelocity(sensorVelX, sensorVelY);
     }
-    
+
     public void updateNewAcceleration(double sensorAccX, double sensorAccY) {
         predictAndUpdateTime();
         updateAcceleration(sensorAccX, sensorAccY);
@@ -197,13 +195,20 @@ public class KalmanFilter {
         return yState.position;
     }
 
+    public double getVelX() {
+        return xState.velocity;
+    }
+    public double getVelY() {
+        return yState.velocity;
+    }
+
     public Translation2d getTranslation2d(){
         return new Translation2d(xState.position, yState.position);
     }
 
     public void debugDisplayValues(){
-        TelemetryUpdater.setTelemetryValue("Kalman X Position", xState.position);
-        TelemetryUpdater.setTelemetryValue("Kalman Y Position", yState.position);
+        TelemetryUpdater.setTelemetryValue("Kalman/Kalman X Position", xState.position);
+        TelemetryUpdater.setTelemetryValue("Kalman/Kalman Y Position", yState.position);
 
         // TelemetryUpdater.setTelemetryValue("Kalman Measurement Noise R Position", noise.R_position);
         // TelemetryUpdater.setTelemetryValue("Kalman Measurement Noise R Velocity", noise.R_velocity);

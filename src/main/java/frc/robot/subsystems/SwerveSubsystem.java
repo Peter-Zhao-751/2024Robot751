@@ -1,100 +1,113 @@
 package frc.robot.subsystems;
 
-import frc.lib.util.CTREConfigs;
-import frc.robot.Constants;
-import frc.robot.utility.KalmanFilter;
-import frc.robot.utility.Odometry;
-import frc.robot.utility.TelemetryUpdater;
+import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
+import com.ctre.phoenix6.hardware.Pigeon2;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
+
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-
-import com.ctre.phoenix6.configs.Pigeon2Configuration;
-import com.ctre.phoenix6.hardware.Pigeon2;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructArrayPublisher;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-//import com.ctre.phoenix6.SignalLogger;
-//import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-//import edu.wpi.first.units.Measure;
-//import edu.wpi.first.units.Voltage;
-//import static edu.wpi.first.units.Units.Volts;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.math.estimator.PoseEstimator;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+
+import frc.lib.util.CTREConfigs;
+import frc.robot.Constants;
+import frc.robot.utility.StateEstimator;
+import frc.robot.utility.TelemetryUpdater;
+import frc.lib.util.LimelightHelpers.PoseEstimate;
+
+import static edu.wpi.first.units.Units.Volts;
 
 //import edu.wpi.first.math.estimator.UnscentedKalmanFilter;
 
 // import sendable and sendable buffer
 
 
-public class SwerveSubsystem extends SubsystemBase implements Component {
+public class SwerveSubsystem extends SubsystemBase {
     public static final CTREConfigs ctreConfigs = new CTREConfigs();
     private static SwerveSubsystem instance;
-    // forgive me father for I have sinned
-    private static GenericEntry resetX, resetY, setButtonEntry;
-    public final StructArrayPublisher<SwerveModuleState> actualPublisher;
-    public final StructArrayPublisher<SwerveModuleState> desirePublisher;
-    private final Field2d m_field = new Field2d();
-    private final SwerveDriveOdometry swerveOdometry;
+	private final Field2d m_field = new Field2d();
+
+	private final SwerveDriveOdometry swerveOdometry;
+	private final SwerveDrivePoseEstimator poseEstimator;
+
+
     private final SwerveModule[] mSwerveMods;
     private final Pigeon2 gyro;
 
-//    private final SysIdRoutine routine;
-    private final Limelight limelight;
-    private final KalmanFilter kalmanFilter;
-    private double allocatedCurrent;
+    // private final SysIdRoutine routine;
+
+    public boolean lockOnTarget = false;
+    private final PIDController angleController = new PIDController(0.1, 0, 0);
+    private double desiredAngle = 0;
+
+//    // forgive me father for I have sinned
+//    private static GenericEntry resetX, resetY, setButtonEntry;
+
+    private final StateEstimator stateEstimator;
 
     private SwerveSubsystem() {
+        angleController.enableContinuousInput(-180, 180);
         gyro = new Pigeon2(Constants.Swerve.pigeonID, Constants.CANivoreID);
-        limelight = Limelight.getInstance();
         gyro.getConfigurator().apply(new Pigeon2Configuration());
         gyro.setYaw(0);
+//        gyro.setYaw(limelightSubsystem.getYaw()); // TODO: check if this is correct
+
 
         mSwerveMods = new SwerveModule[]{
                 new SwerveModule(1, Constants.Swerve.frontLeftModule),
                 new SwerveModule(2, Constants.Swerve.frontRightModule),
                 new SwerveModule(3, Constants.Swerve.backLeftModule),
                 new SwerveModule(4, Constants.Swerve.backRightModule)
-        };
+		};
 
-        //odometry = new Odometry(limelight.getPose(), Constants.Swerve.swerveKinematics, getHeading(), getModulePositions());
-        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());//, new Pose2d());
+		Pose2d initPose2d = LimelightSubsystem.getInstance().getPose(); // TODO: i suck
 
-        actualPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveActualStates", SwerveModuleState.struct).publish();
-        desirePublisher = NetworkTableInstance.getDefault().getStructArrayTopic("SwerveDesiredStates", SwerveModuleState.struct).publish();
+		poseEstimator = new SwerveDrivePoseEstimator(Constants.Swerve.swerveKinematics, gyro.getRotation2d(), getModulePositions(), new Pose2d(0, 0, new Rotation2d(0)));
+
+        stateEstimator = StateEstimator.getInstance();
+        stateEstimator.gyro = gyro;
+        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, gyro.getRotation2d(), getModulePositions());//, new Pose2d());
+
         TelemetryUpdater.setTelemetryValue("Field", m_field);
 
-//        routine = new SysIdRoutine(
-//            new SysIdRoutine.Config(
-//                null,
-//                null,
-//                null,
-//                (state) -> SignalLogger.writeString("state", state.toString())
-//            ),
-//            new SysIdRoutine.Mechanism(
-//                (Measure<Voltage> volts) -> {
-//                    for(SwerveModule mod : mSwerveMods){
-//                        mod.setDriveVoltage(volts.in(Volts));
-//                    }
-//                    resetModulesToAbsolute();
-//                System.out.println("Volts: " + volts.in(Volts));
-//            }, null, this)
-//        );
+        // routine = new SysIdRoutine(
+        //     new SysIdRoutine.Config(
+        //         null,
+        //         null,
+        //         null,
+        //         (state) -> SignalLogger.writeString("state", state.toString())
+        //     ),
+        //     new SysIdRoutine.Mechanism(
+        //         (Measure<Voltage> volts) -> {
+        //             for(SwerveModule mod : mSwerveMods){
+        //                 mod.setAngleVoltage(volts.in(Volts));
+        //             }
+        //             resetModulesToAbsolute();
+        //         System.out.println("Volts: " + volts.in(Volts));
+        //     }, null, this)
+        // );
 
-        kalmanFilter = new KalmanFilter(0, 0, 0, 0, 0, 0, Constants.Odometry.kPositionNoiseVar, Constants.Odometry.kVelocityNoiseVar, Constants.Odometry.kAccelerationNoiseVar, Constants.Odometry.kPositionProcessNoise, Constants.Odometry.kVelocityProcessNoise, Constants.Odometry.kAccelerationProcessNoise);
-
-        resetX = Shuffleboard.getTab("Initializer").add("Reset X", 0).withWidget(BuiltInWidgets.kToggleButton).getEntry();
-        resetY = Shuffleboard.getTab("Initializer").add("Reset Y", 0).withWidget(BuiltInWidgets.kToggleButton).getEntry();
-        setButtonEntry = Shuffleboard.getTab("Initializer").add("Set", false).withWidget(BuiltInWidgets.kToggleButton).getEntry();
+//        resetX = Shuffleboard.getTab("Initializer").add("Reset X", 0).withWidget(BuiltInWidgets.kToggleButton).getEntry();
+//        resetY = Shuffleboard.getTab("Initializer").add("Reset Y", 0).withWidget(BuiltInWidgets.kToggleButton).getEntry();
+//        setButtonEntry = Shuffleboard.getTab("Initializer").add("Set", false).withWidget(BuiltInWidgets.kToggleButton).getEntry();
     }
 
     public static SwerveSubsystem getInstance() {
@@ -102,38 +115,53 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
         return instance;
     }
 
-//    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-//        return routine.quasistatic(direction);
-//    }
-//
-//    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-//        return routine.dynamic(direction);
-//    }
+    // public Pigeon2 getGyro() {
+    //     return gyro;
+    // }
+
+    // public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    //     return routine.quasistatic(direction);
+    // }
+
+    // public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    //     return routine.dynamic(direction);
+    // }
 
     public void setPosition(Pose2d desiredLocation, Rotation2d desiredHeading) {
         drive(null, 0, false, false);
     }
 
-    public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
-        drive(translation, rotation, fieldRelative, isOpenLoop, false);
+    public boolean drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
+        return drive(translation, rotation, fieldRelative, isOpenLoop, false);
     }
 
     public boolean drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean isPrecise) {
+        LimelightSubsystem limelight = LimelightSubsystem.getInstance();
         // precision mode
         double xSpeed = !isPrecise ? translation.getX() : translation.getX() * Constants.Swerve.preciseControlFactor;
         double ySpeed = !isPrecise ? translation.getY() : translation.getY() * Constants.Swerve.preciseControlFactor;
-        xSpeed = xSpeed * Constants.Swerve.speedMultiplier;
-        ySpeed = ySpeed * Constants.Swerve.speedMultiplier;
-        double rot = !isPrecise ? rotation : rotation * Constants.Swerve.preciseControlFactor;
-        rot = rot * Math.max(Constants.Swerve.maxAngularVelocity / 10, 1);
-
+        xSpeed *= Constants.Swerve.speedMultiplier;
+        ySpeed *= Constants.Swerve.speedMultiplier;
+        double rot = 0;
+        if (!lockOnTarget) {
+            rot = !isPrecise ? rotation : rotation * Constants.Swerve.preciseControlFactor;
+            rot *= Math.max(Constants.Swerve.maxAngularVelocity / 10, 1);
+        }
+        if (lockOnTarget && limelight.hasTarget()){
+            desiredAngle = limelight.getAngle();
+        }
+        if (lockOnTarget && desiredAngle != 0) {
+            rot = angleController.calculate(this.getGyroYaw().getDegrees(), desiredAngle);
+            rot = Math.min(rot, 2);
+            rot = Math.max(rot, -2);
+        }
         SwerveModuleState[] swerveModuleStates =
                 Constants.Swerve.swerveKinematics.toSwerveModuleStates(
                         fieldRelative ? ChassisSpeeds.fromFieldRelativeSpeeds(
                                 xSpeed,
                                 ySpeed,
                                 rot,
-                                getGyroYaw()
+                                gyro.getRotation2d()
                         )
                                 : new ChassisSpeeds(
                                 xSpeed,
@@ -142,18 +170,14 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
                 );
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.Swerve.maxSpeed);
 
-        for (SwerveModule mod : mSwerveMods) {
-            mod.setDesiredState(swerveModuleStates[mod.moduleNumber - 1], isOpenLoop);
-        }
+        for (SwerveModule mod : mSwerveMods) mod.setDesiredState(swerveModuleStates[mod.moduleNumber - 1], isOpenLoop);
 
-        return (xSpeed >= 0.05 && ySpeed >= 0.05 && rot >= 0.2);
+        return xSpeed >= 0.05 || ySpeed >= 0.05 || rot >= 0.2;
     }
 
     public SwerveModuleState[] getModuleStates() {
         SwerveModuleState[] states = new SwerveModuleState[4];
-        for (SwerveModule mod : mSwerveMods) {
-            states[mod.moduleNumber - 1] = mod.getState();
-        }
+        for (SwerveModule mod : mSwerveMods) states[mod.moduleNumber - 1] = mod.getState();
         return states;
     }
 
@@ -161,52 +185,52 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
     public void setModuleStates(SwerveModuleState[] desiredStates) {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
 
-        for (SwerveModule mod : mSwerveMods) {
-            mod.setDesiredState(desiredStates[mod.moduleNumber - 1], false);
-        }
+        for (SwerveModule mod : mSwerveMods) mod.setDesiredState(desiredStates[mod.moduleNumber - 1], false);
     }
 
     public SwerveModuleState[] getDesiredModuleStates() {
         SwerveModuleState[] states = new SwerveModuleState[4];
-        for (SwerveModule mod : mSwerveMods) {
-            states[mod.moduleNumber - 1] = mod.desiredState;
-        }
+        for (SwerveModule mod : mSwerveMods) states[mod.moduleNumber - 1] = mod.desiredState;
         return states;
     }
 
     public SwerveModulePosition[] getModulePositions() {
         SwerveModulePosition[] positions = new SwerveModulePosition[4];
-        for (SwerveModule mod : mSwerveMods) {
-            positions[mod.moduleNumber - 1] = mod.getPosition();
-        }
+        for (SwerveModule mod : mSwerveMods) positions[mod.moduleNumber - 1] = mod.getPosition();
         return positions;
     }
 
     public Pose2d getPose() {
-        return new Pose2d(kalmanFilter.getTranslation2d(), getGyroYaw());
+		return poseEstimator.getEstimatedPosition();//stateEstimator.getEstimatedPose();
+    }
+    public double getCurrentVelocityMagnitude(){
+        return Math.hypot(stateEstimator.getVelX(), stateEstimator.getVelY());
     }
 
     public void setPose(Pose2d pose) {
-        kalmanFilter.reset(pose.getX(), pose.getY(), 0, 0, 0, 0);
-        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
+        stateEstimator.setPose(pose);
+		//swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
+		//poseEstimator.resetPosition(getGyroYaw(), getModulePositions(), pose);
     }
 
     public Pose2d getSwerveOdometryPose2d() {
         return swerveOdometry.getPoseMeters();
     }
 
-    public void setHeading(Rotation2d heading) {
-        gyro.setYaw(heading.getDegrees());
-        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), new Pose2d(getPose().getTranslation(), heading));
+	public void setHeading(Rotation2d heading) {
+		//poseEstimator.resetPosition(getGyroYaw(), getModulePositions(), new Pose2d(getSwerveOdometryPose2d().getTranslation(), heading));
+        stateEstimator.setRotation(heading);
+        //swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), new Pose2d(getSwerveOdometryPose2d().getTranslation(), heading));
     }
 
     public void zeroHeading() {
-        gyro.setYaw(0);
-        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), new Pose2d(getPose().getTranslation(), new Rotation2d()));
+        System.out.println("Zeroed Heading");
+		setHeading(new Rotation2d(0));
     }
 
     public Rotation2d getGyroYaw() {
-        return Rotation2d.fromDegrees(gyro.getYaw().getValue());
+        return poseEstimator.getEstimatedPosition().getRotation();
+        // return stateEstimator.getYaw();
     }
 
     /**
@@ -214,8 +238,9 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
      * <p> Align all wheels forwards </p>
      */
     public void resetModulesToAbsolute() {
+        System.out.println("Resetting Modules");
         for (SwerveModule mod : mSwerveMods) {
-            mod.resetToAbsolute();
+            mod.setAngle();
         }
     }
 
@@ -224,15 +249,30 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
      * <p> Sets the desired state of each module to a 0 speed and a offset rotation of 45 degrees </p>
      * <p> used to prevent defense </p>
      */
-    public void crossModules() {
-        for (SwerveModule mod : mSwerveMods) {
-            mod.setModuleAngle((mod.moduleNumber - 1) * 0.25 + 0.125);
-        }
+    public void crossWheels() {
+        System.out.println("Crossing Wheels");
+        mSwerveMods[0].setAngle(0.125);
+        mSwerveMods[1].setAngle(0.375);
+        mSwerveMods[2].setAngle(0.875);
+        mSwerveMods[3].setAngle(0.625);
+    }
+
+    public void kalmanReset(){
+        stateEstimator.resetLimelightPose();
     }
 
     @Override
     public void periodic() {
         swerveUi();
+
+        swerveOdometry.update(gyro.getRotation2d(), getModulePositions());
+		stateEstimator.update(getModuleStates());
+		poseEstimator.update(gyro.getRotation2d(), getModulePositions());
+		if (LimelightSubsystem.getInstance().hasTarget()) {
+			PoseEstimate pose = LimelightSubsystem.getInstance().getPoseEstimate();
+            
+			poseEstimator.addVisionMeasurement(pose.pose.plus(new Transform2d(new Translation2d(), Rotation2d.fromDegrees(180))), pose.timestampSeconds); //TODO: check
+		}
 
         //TelemetryUpdater.setTelemetryValue("total swerve current draw", totalCurrent);
 
@@ -244,128 +284,25 @@ public class SwerveSubsystem extends SubsystemBase implements Component {
      */
     private void swerveUi() {
 
-        // if (setButtonEntry.getBoolean(false)) {
-        //     setPose(new Pose2d(resetX.getDouble(0), resetY.getDouble(0), getGyroYaw()));
-        // }
-        double accelerationX = gyro.getAccelerationX().getValue();
-        double accelerationY = gyro.getAccelerationY().getValue();
-        double accelerationZ = gyro.getAccelerationZ().getValue();
+        TelemetryUpdater.setTelemetryValue("Swerve/Swerve X", swerveOdometry.getPoseMeters().getX());
+		TelemetryUpdater.setTelemetryValue("Swerve/Swerve Y", swerveOdometry.getPoseMeters().getY());
 
-        double yaw = gyro.getYaw().getValue();
-        double pitch = gyro.getPitch().getValue();
-        double roll = gyro.getRoll().getValue();
+		TelemetryUpdater.setTelemetryValue("PoseEstimator/Swerve X", poseEstimator.getEstimatedPosition().getX());
+		TelemetryUpdater.setTelemetryValue("PoseEstimator/Swerve Y", poseEstimator.getEstimatedPosition().getY());
+        TelemetryUpdater.setTelemetryValue("PoseEstimator/Yaw", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
 
-        double yawRadians = Math.toRadians(yaw);
+        TelemetryUpdater.setTelemetryValue("Swerve/Angles/FL Angle", (mSwerveMods[0].getPosition().angle.getDegrees() + 360) % 360);
+        TelemetryUpdater.setTelemetryValue("Swerve/Angles/FR Angle", (mSwerveMods[1].getPosition().angle.getDegrees() + 360) % 360);
+        TelemetryUpdater.setTelemetryValue("Swerve/Angles/BL Angle", (mSwerveMods[2].getPosition().angle.getDegrees() + 360) % 360);
+        TelemetryUpdater.setTelemetryValue("Swerve/Angles/BR Angle", (mSwerveMods[3].getPosition().angle.getDegrees() + 360) % 360);
 
-        double quatW = gyro.getQuatW().getValue();
-        double quatX = gyro.getQuatX().getValue();
-        double quatY = gyro.getQuatY().getValue();
-        double quatZ = gyro.getQuatZ().getValue();
+        LimelightSubsystem limelight = LimelightSubsystem.getInstance();
+        if (limelight.hasTarget()) TelemetryUpdater.setTelemetryValue("Limelight/Distance to Target", limelight.getDistance());
+        else TelemetryUpdater.setTelemetryValue("Limelight/Distance to Target", Double.NaN);
 
-        double[][] rotationMatrix = new double[3][3];
-
-        rotationMatrix[0][0] = 1.0 - 2.0 * (quatY * quatY + quatZ * quatZ);
-        rotationMatrix[0][1] = 2.0 * (quatX * quatY - quatZ * quatW);
-        rotationMatrix[0][2] = 2.0 * (quatX * quatZ + quatY * quatW);
-
-        rotationMatrix[1][0] = 2.0 * (quatX * quatY + quatZ * quatW);
-        rotationMatrix[1][1] = 1.0 - 2.0 * (quatX * quatX + quatZ * quatZ);
-        rotationMatrix[1][2] = 2.0 * (quatY * quatZ - quatX * quatW);
-
-        rotationMatrix[2][0] = 2.0 * (quatX * quatZ - quatY * quatW);
-        rotationMatrix[2][1] = 2.0 * (quatY * quatZ + quatX * quatW);
-        rotationMatrix[2][2] = 1.0 - 2.0 * (quatX * quatX + quatY * quatY);
-
-
-        double fieldAccelerationX = rotationMatrix[0][0] * accelerationX + rotationMatrix[0][1] * accelerationY + rotationMatrix[0][2] * accelerationZ;
-        double fieldAccelerationY = rotationMatrix[1][0] * accelerationX + rotationMatrix[1][1] * accelerationY + rotationMatrix[1][2] * accelerationZ;
-        double fieldAccelerationZ = rotationMatrix[2][0] * accelerationX + rotationMatrix[2][1] * accelerationY + rotationMatrix[2][2] * accelerationZ;
-
-        TelemetryUpdater.setTelemetryValue("fieldAccelerationX", fieldAccelerationX);
-        TelemetryUpdater.setTelemetryValue("fieldAccelerationY", fieldAccelerationY);
-        TelemetryUpdater.setTelemetryValue("fieldAccelerationZ", fieldAccelerationZ);
-
-        swerveOdometry.update(getGyroYaw(), getModulePositions());
-
-        // Experimental odometry fusion using limelight and swerve
-        Pose2d newLimePosition = limelight.getPose();
-
-        // Chassis speeds
-
-        ChassisSpeeds speeds = Constants.Swerve.swerveKinematics.toChassisSpeeds(getModuleStates());
-
-        double fieldChassisSpeedX = rotationMatrix[0][0] * speeds.vxMetersPerSecond + rotationMatrix[0][1] * speeds.vyMetersPerSecond;
-        double fieldChassisSpeedY = rotationMatrix[1][0] * speeds.vxMetersPerSecond + rotationMatrix[1][1] * speeds.vyMetersPerSecond;
-
-        //TelemetryUpdater.setTelemetryValue("Field Space Chassis Speeds X", fieldChassisSpeedX);
-        //TelemetryUpdater.setTelemetryValue("Field Space Chassis Speeds Y", fieldChassisSpeedY);
-
-        if (limelight.hasTarget() && newLimePosition != null) {
-            kalmanFilter.update(newLimePosition.getX(), newLimePosition.getY(), fieldChassisSpeedX, fieldChassisSpeedY, fieldAccelerationX, fieldAccelerationY);
-        } else {
-            //kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY);
-            kalmanFilter.update(fieldChassisSpeedX, fieldChassisSpeedY, fieldAccelerationX, fieldAccelerationY);
-        }
-
-        kalmanFilter.debugDisplayValues();
-
-        // for(SwerveModule mod : mSwerveMods){
-        //     TelemetryUpdater.setTelemetryValue("Mod " + mod.moduleNumber + " Drive Current", mod.getDriveMotorCurrent());
-        //     TelemetryUpdater.setTelemetryValue("Mod " + mod.moduleNumber + " Angle Current", mod.getAngleMotorCurrent());
-        //     TelemetryUpdater.setTelemetryValue("Mod " + mod.moduleNumber + " CANcoder", mod.getCANcoder().getDegrees());
-        //     TelemetryUpdater.setTelemetryValue("Mod " + mod.moduleNumber + " Angle", mod.getPosition().angle.getDegrees());
-        //     TelemetryUpdater.setTelemetryValue("Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);    
-        // }
-
-        TelemetryUpdater.setTelemetryValue("swerve x", swerveOdometry.getPoseMeters().getX());
-        TelemetryUpdater.setTelemetryValue("swerve y", swerveOdometry.getPoseMeters().getY());
-
-        TelemetryUpdater.setTelemetryValue("Robot Yaw", gyro.getYaw().getValue());
-
-        limelight.debugDisplayValues();
         //TelemetryUpdater.setTelemetryValue("Robot Pitch", gyro.getPitch().getValue());
         //TelemetryUpdater.setTelemetryValue("Robot Roll", gyro.getRoll().getValue());
 
-        m_field.setRobotPose(getPose());
-
-        // TelemetryUpdater.setTelemetryValueata("Swerve Drive", new Sendable() {
-        //     @Override
-        //     public void initSendable(SendableBuilder builder) {
-        //         builder.setSmartDashboardType("SwerveDrive");
-
-        //         builder.addDoubleProperty("Front Left Angle", () -> mSwerveMods[0].getPosition().angle.getRadians(), null);
-        //         builder.addDoubleProperty("Front Left Velocity", () -> mSwerveMods[0].getState().speedMetersPerSecond, null);
-
-        //         builder.addDoubleProperty("Front Right Angle", () -> mSwerveMods[1].getPosition().angle.getRadians(), null);
-        //         builder.addDoubleProperty("Front Right Velocity", () -> mSwerveMods[1].getState().speedMetersPerSecond, null);
-
-        //         builder.addDoubleProperty("Back Left Angle", () -> mSwerveMods[2].getPosition().angle.getRadians(), null);
-        //         builder.addDoubleProperty("Back Left Velocity", () -> mSwerveMods[2].getState().speedMetersPerSecond, null);
-
-        //         builder.addDoubleProperty("Back Right Angle", () -> mSwerveMods[3].getPosition().angle.getRadians(), null);
-        //         builder.addDoubleProperty("Back Right Velocity", () -> mSwerveMods[3].getState().speedMetersPerSecond, null);
-
-        //         builder.addDoubleProperty("Robot Angle", () -> getGyroYaw().getRadians(), null);
-        //     }
-        // });
-    }
-
-    @Override
-    public void allocateCurrent(double current) {
-        //set motor controller current
-    }
-
-    @Override
-    public double getCurrentDraw() {
-        double totalCurrent = 0;
-        for (SwerveModule mod : mSwerveMods) {
-            totalCurrent += mod.getTotalCurrent();
-        }
-        return totalCurrent;
-    }
-
-    @Override
-    public int getPriority() {
-        return 1;
+        m_field.setRobotPose(getPose()); // TODO: Might be the thing that lags the command scheduler
     }
 }
