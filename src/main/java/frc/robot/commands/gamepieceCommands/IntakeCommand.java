@@ -3,22 +3,20 @@ package frc.robot.commands.gamepieceCommands;
 import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TransferSubsystem;
-import frc.robot.utility.ControlBoard;
-import frc.robot.utility.ControlBoard.Mode;
 import frc.robot.utility.StateMachine;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class IntakeCommand extends Command {
     private final IntakeSubsystem intakeSubsystem;
     private final TransferSubsystem transferSubsystem;
-	private boolean smartMode;
+	private final boolean autonMode;
 	private double intakeStartTime;
 	private boolean hasStartedIntake;
 
-	public IntakeCommand(boolean smartMode) {
+	public IntakeCommand(boolean autonMode) {
 		this.intakeSubsystem = IntakeSubsystem.getInstance();
 		this.transferSubsystem = TransferSubsystem.getInstance();
-		this.smartMode = smartMode;
+		this.autonMode = autonMode;
 	}
 
 	public IntakeCommand() {
@@ -55,7 +53,7 @@ public class IntakeCommand extends Command {
 
     @Override
 	public boolean isFinished() {
-		return transferSubsystem.beamBroken() || (smartMode && hasStartedIntake && System.currentTimeMillis() - intakeStartTime > Constants.Intake.intakeTime);
+		return transferSubsystem.beamBroken() || (autonMode && hasStartedIntake && System.currentTimeMillis() - intakeStartTime > Constants.Intake.intakeTime);
         // return switch (currentMode) {
         //     case Speaker -> transferSubsystem.beamBroken();
         //     case Amp -> intakeSubsystem.beamBroken();
