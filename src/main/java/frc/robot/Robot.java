@@ -117,7 +117,6 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             m_autonomousCommand.schedule();
         }
-        SwerveSubsystem.getInstance().kalmanReset();
     }
 
     /**
@@ -144,7 +143,6 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             m_autonomousCommand.cancel();
         }
-        SwerveSubsystem.getInstance().kalmanReset();
     }
 
     /**

@@ -200,9 +200,10 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
 	public void resetOdometry() {
-		gyro.reset();
 		Pose2d desiredPose = poseEstimator.getEstimatedPosition();
 		if (LimelightSubsystem.getInstance().hasTarget()) {
+
+			//TODO: if have time, try to make this reset the gyro based on the limelight and team alliance
 			Translation2d limelightTranslation = LimelightSubsystem.getInstance().getPose().getTranslation();
 			desiredPose = new Pose2d(limelightTranslation,
 					new Rotation2d(Math.toRadians(LimelightSubsystem.getInstance().getYaw() + 180) % 360));
@@ -247,10 +248,6 @@ public class SwerveSubsystem extends SubsystemBase {
         mSwerveMods[1].setAngle(0.375);
         mSwerveMods[2].setAngle(0.875);
         mSwerveMods[3].setAngle(0.625);
-    }
-
-    public void kalmanReset(){
-        stateEstimator.resetLimelightPose();
     }
 
     @Override

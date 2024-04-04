@@ -131,10 +131,10 @@ public class StateEstimator {
 		if (newLimePosition != null || System.currentTimeMillis() - previousLimelightUpdateTime < 400) { // 400 ms of timeout
 			newLimePosition = previousLimelightPose;
 			kalmanFilter.reset(newLimePosition.getX(), newLimePosition.getY(), 0, 0, 0, 0);
-			gyro.setYaw(newLimePosition.getRotation().getDegrees());
+			gyroOffset = newLimePosition.getRotation().getDegrees() - gyro.getYaw().getValue();
 		} else {
 			kalmanFilter.reset(startingPoseX.getDouble(0), startingPoseY.getDouble(0), 0, 0, 0, 0);
-			gyro.setYaw(startingPoseTheta.getDouble(0));
+			gyroOffset = startingPoseTheta.getDouble(0) - gyro.getYaw().getValue();
 		}
 	}
 
