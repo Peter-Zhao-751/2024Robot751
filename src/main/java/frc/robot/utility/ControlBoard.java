@@ -1,5 +1,7 @@
 package frc.robot.utility;
 
+import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -7,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.Constants;
 import frc.robot.commands.movementCommands.*;
+import frc.robot.commands.movementCommands.ClimberCommand.Side;
 import frc.robot.commands.gamepieceCommands.*;
 import frc.robot.subsystems.*;
 
@@ -83,19 +86,19 @@ public class ControlBoard {
 
     private void configureOperatorBindings() {
         operator.leftTrigger.and(this::notClimberMode).whileTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
-        operator.leftTrigger.and(this::climberMode).onTrue(new InstantCommand(() -> s_Climber.rampUpLeft()));
+        operator.leftTrigger.and(this::climberMode).whileTrue(new ClimberCommand(frc.robot.commands.movementCommands.ClimberCommand.Direction.Bwd, Side.Left));
 
         operator.leftBumper.and(this::notClimberMode).whileTrue(new StartEndCommand(
                 () -> s_Limelight.setLEDMode(LimelightSubsystem.LEDMode.BLINK),
                 () -> s_Limelight.setLEDMode(LimelightSubsystem.LEDMode.OFF)
         ));
-		operator.leftBumper.and(this::climberMode).onTrue(new InstantCommand(() -> s_Climber.rampDownLeft()));
+		operator.leftBumper.and(this::climberMode).whileTrue(new ClimberCommand(frc.robot.commands.movementCommands.ClimberCommand.Direction.Fwd, Side.Left));
 
         operator.rightTrigger.and(this::notClimberMode).whileTrue(new InstantCommand(() -> currentMode = Mode.Amp));
-        operator.rightTrigger.and(this::climberMode).onTrue(new InstantCommand(() -> s_Climber.rampUpRight()));
+        operator.rightTrigger.and(this::climberMode).whileTrue(new ClimberCommand(frc.robot.commands.movementCommands.ClimberCommand.Direction.Bwd, Side.Right));
 
         operator.rightBumper.and(this::notClimberMode).whileTrue(new TransferCommand());
-        operator.rightBumper.and(this::climberMode).onTrue(new InstantCommand(() -> s_Climber.rampDownRight()));
+		operator.rightBumper.and(this::climberMode).whileTrue(new ClimberCommand(frc.robot.commands.movementCommands.ClimberCommand.Direction.Fwd, Side.Right));
 
         operator.dUp.whileTrue(new InstantCommand(this::increaseShooterPower, s_Shooter));
         operator.dDown.whileTrue(new InstantCommand(this::decreaseShooterPower, s_Shooter));

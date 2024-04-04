@@ -125,6 +125,8 @@ public class Constants {
 
         public static double kGearRatio = 64.0;
         public static double kSpoolRadius = 1.0; // units in centimeters
+
+        public static double voltage = 5;
     }
 
     public static class Swerve {
