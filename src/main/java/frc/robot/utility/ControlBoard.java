@@ -69,8 +69,8 @@ public class ControlBoard {
         driver.leftBumper.whileTrue(new ExportCommand());
         driver.leftTrigger.whileTrue(new IntakeCommand());
 
-        driver.rightBumper.whileTrue(new AimbotCommand());
-        //driver.rightBumper.toggleOnTrue(new AimAssistCommand());
+        // driver.rightBumper.whileTrue(new AimbotCommand());
+        driver.rightBumper.toggleOnTrue(new AimAssistCommand());
         driver.rightTrigger.whileTrue(new ShootCommand());
 
         driver.dUp.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));

@@ -147,14 +147,14 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     public boolean isAtTargetSpeed() {
-        return System.currentTimeMillis() - startOfAtSpeed > 751 && isAtSpeed && Math.abs(targetSpeed) > 5;
+        return System.currentTimeMillis() - startOfAtSpeed > 751 && isAtSpeed && Math.abs(targetSpeed) > 8;
     }
 
     @Override
     public void periodic() {
 //        kalmanFilter.correct(VecBuilder.fill(targetSpeed), VecBuilder.fill(getShooterSpeed()));
 
-        if (Math.abs(getShooterSpeed() - targetSpeed) < 5) {
+        if (Math.abs(getShooterSpeed() - targetSpeed) < 5 && Math.abs(targetSpeed) > 5) {
             if (!isAtSpeed) startOfAtSpeed = System.currentTimeMillis();
             isAtSpeed = true;
         } else {
