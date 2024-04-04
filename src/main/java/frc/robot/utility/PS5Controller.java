@@ -52,7 +52,7 @@ public class PS5Controller {
         leftVerticalJoystick = () -> -joystick.getRawAxis(Axis.kLeftY.value);
         leftHorizontalJoystick = () -> -joystick.getRawAxis(Axis.kLeftX.value);
         rightHorizontalJoystick = () -> -joystick.getRawAxis(Axis.kRightX.value);
-        rightVerticalJoystick = () -> -joystick.getRawAxis(Axis.kRightY.value);
+		rightVerticalJoystick = () -> -joystick.getRawAxis(Axis.kRightY.value);
 
         leftTrigger = new JoystickButton(joystick, Button.kL2.value);
         rightTrigger = new JoystickButton(joystick, Button.kR2.value);

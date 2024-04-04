@@ -18,10 +18,8 @@ public class ClimberSubsystem extends SubsystemBase{
     private final RelativeEncoder leftClimberEncoder;
     private final RelativeEncoder rightClimberEncoder;
 
-    private final PIDController climberPIDController;
-
-    private double leftDesiredLocation;
-    private double rightDesiredLocation;
+    private double leftDesiredVoltage;
+    private double rightDesiredVoltage;
 
     public static ClimberSubsystem getInstance() {
         if(instance == null) instance = new ClimberSubsystem();
@@ -37,12 +35,10 @@ public class ClimberSubsystem extends SubsystemBase{
 
         //leftClimberMotor.setInverted(true);
         leftClimberMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        rightClimberMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+		rightClimberMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
-        climberPIDController = new PIDController(Constants.Climber.kPClimbController, Constants.Climber.kIClimbController, Constants.Climber.kDClimbController);
-
-        leftDesiredLocation = 0;
-        rightDesiredLocation = 0;
+        leftDesiredVoltage = 0;
+        rightDesiredVoltage = 0;
     }
 
     private double getLeftPosition(){
@@ -53,62 +49,42 @@ public class ClimberSubsystem extends SubsystemBase{
         return rightClimberEncoder.getPosition() / Constants.Climber.kGearRatio * 2 * Constants.Climber.kSpoolRadius * Math.PI;
     }
 
-    /**
-     * Set the speed of the left climber motor
-     * @param location in distance
-     */
-    public void setLeftDesiredLocation(double location){
-        leftDesiredLocation = location;
-    }
+	public void rampUpLeft() {
+		leftDesiredVoltage = 2.0;
+	}
 
-    /**
-     * Change the speed of the left climber motor
-     * @param difference in distance
-     */
-    public void changeLeftClimberLocation(double difference){
-        leftDesiredLocation += difference;
-    }
+	public void rampUpRight() {
+		rightDesiredVoltage = 2.0;
+	}
 
-    /**
-     * Set the speed of the right climber motor
-     * @param location in distance
-     */
+	public void rampDownLeft() {
+		leftDesiredVoltage = -2;
+	}
 
-    public void setRightDesiredLocation(double location){
-        rightDesiredLocation = location;
-    }
-
-    /**
-     * Change the speed of the right climber motor
-     * @param difference in distance
-     */
-    public void changeRightClimberLocation(double difference){
-        rightDesiredLocation += difference;
-    }
+	public void rampDownRight() {
+		rightDesiredVoltage = -2;
+	}
 
     /**
      * Stop both climber motors
      */
     public void stop(){
-        leftClimberMotor.set(0);
-        rightClimberMotor.set(0);
+		leftClimberMotor.stopMotor();
+		rightClimberMotor.stopMotor();
+		leftDesiredVoltage = 0;
+		rightDesiredVoltage = 0;
     }
 
     @Override
     public void periodic() {
         TelemetryUpdater.setTelemetryValue("Climber/Left Climber Current", leftClimberMotor.getOutputCurrent());
-        TelemetryUpdater.setTelemetryValue("Climber/Right Climber Current", rightClimberMotor.getOutputCurrent());
+		TelemetryUpdater.setTelemetryValue("Climber/Right Climber Current", rightClimberMotor.getOutputCurrent());
 
-        double leftOutput = climberPIDController.calculate(getLeftPosition(), leftDesiredLocation);
-        double rightOutput = climberPIDController.calculate(getRightPosition(), rightDesiredLocation);
+		TelemetryUpdater.setTelemetryValue("Climber/Left Climber Position", getLeftPosition());
+		TelemetryUpdater.setTelemetryValue("Climber/Right Climber Position", getRightPosition());
 
-        if (leftOutput > 0 && getLeftPosition() > Constants.Climber.maxClimberHeight) leftOutput = 0;
-        if (rightOutput > 0 && getRightPosition() > Constants.Climber.maxClimberHeight) rightOutput = 0;
-        if (leftOutput < 0 && getLeftPosition() < Constants.Climber.minClimberHeight) leftOutput = 0;
-        if (rightOutput < 0 && getRightPosition() < Constants.Climber.minClimberHeight) rightOutput = 0;
-
-        leftClimberMotor.set(leftOutput);
-        rightClimberMotor.set(rightOutput);
+        leftClimberMotor.set(leftDesiredVoltage);
+        rightClimberMotor.set(rightDesiredVoltage);
 
         /*TelemetryUpdater.setTelemetryValue("Climber Current Draw", getCurrentDraw());
         TelemetryUpdater.setTelemetryValue("Left Climber Position", getLeftPosition());
