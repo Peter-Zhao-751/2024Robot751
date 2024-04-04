@@ -64,17 +64,20 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
+
+        // updating ui
+        UIManager.updatePathPreview(); // todo: maybe disable
+        StateMachine.periodic();
+        ControlBoard.getInstance().updateTelemetry();
+
         // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
         // commands, running already-scheduled commands, removing finished or interrupted commands,
         // and running subsystem periodic() methods.  This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
-
-        // updating ui
-        //UISubsystem.updateTelemetry();
-        UIManager.updatePathPreview();
-        StateMachine.periodic();
         m_scheduler.run();
-        ControlBoard.getInstance().updateTelemetry();
+        m_scheduler.onCommandInitialize(command -> System.out.println("Command initialized: " + command.getName()));
+        m_scheduler.onCommandInterrupt(command -> System.out.println("Command interrupted: " + command.getName()));
+        m_scheduler.onCommandFinish(command -> System.out.println("Command finished: " + command.getName()));
     }
 
     @Override
