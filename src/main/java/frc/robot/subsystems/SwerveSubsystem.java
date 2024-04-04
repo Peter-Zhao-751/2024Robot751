@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Rotation;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
@@ -181,7 +183,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
 	public Pose2d getPose() {
 		Pose2d poseEstimatorPose = poseEstimator.getEstimatedPosition();
-		return new Pose2d(poseEstimatorPose.getTranslation(), new Rotation2d((poseEstimatorPose.getRotation().getDegrees() % 360 + 540) % 360));  //stateEstimator.getEstimatedPose();
+		return new Pose2d(poseEstimatorPose.getTranslation(), new Rotation2d((poseEstimatorPose.getRotation().getDegrees() + 540) % 360));  //stateEstimator.getEstimatedPose();
     }
     public double getCurrentVelocityMagnitude(){
         return Math.hypot(stateEstimator.getVelX(), stateEstimator.getVelY());
@@ -202,12 +204,21 @@ public class SwerveSubsystem extends SubsystemBase {
 		Pose2d desiredPose = poseEstimator.getEstimatedPosition();
 		if (LimelightSubsystem.getInstance().hasTarget()) {
 			Translation2d limelightTranslation = LimelightSubsystem.getInstance().getPose().getTranslation();
-			desiredPose = new Pose2d(limelightTranslation, new Rotation2d(Math.toRadians(LimelightSubsystem.getInstance().getYaw() + 180) % 360));
+			desiredPose = new Pose2d(limelightTranslation,
+					new Rotation2d(Math.toRadians(LimelightSubsystem.getInstance().getYaw() + 180) % 360));
 		}
 		poseEstimator.resetPosition(getGyroYaw(), getModulePositions(), desiredPose);
-        stateEstimator.setPose(desiredPose);
-        swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), desiredPose);
-    }
+		stateEstimator.setPose(desiredPose);
+		swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), desiredPose);
+	}
+
+	public void resetGyro() {
+		Pose2d currentPose = poseEstimator.getEstimatedPosition();
+		gyro.reset();
+		poseEstimator.resetPosition(gyro.getRotation2d(), getModulePositions(), currentPose);
+		stateEstimator.setPose(currentPose);
+		swerveOdometry.resetPosition(gyro.getRotation2d(), getModulePositions(), currentPose);
+	}
 
 	public Rotation2d getGyroYaw() {
 		return gyro.getRotation2d();

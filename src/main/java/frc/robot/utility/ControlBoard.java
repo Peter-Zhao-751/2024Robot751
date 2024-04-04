@@ -76,8 +76,8 @@ public class ControlBoard {
         driver.dDown.whileTrue(new TransferCommand());
 
         driver.triangleButton.whileTrue(new SwerveAngleCommand(SwerveAngleCommand.SwerveAngle.ZERO));
-        driver.squareButton.whileTrue(new InstantCommand(StateEstimator.getInstance()::resetPose));
-        driver.circleButton.whileTrue(new InstantCommand(s_Swerve::resetOdometry));
+        driver.squareButton.whileTrue(new InstantCommand(s_Swerve::resetOdometry));
+        driver.circleButton.whileTrue(new InstantCommand(s_Swerve::resetGyro));
         driver.crossButton.whileTrue(new InstantCommand(s_Limelight::toggleLeds)); // TODO: add on CANdle disabling
     }
 
