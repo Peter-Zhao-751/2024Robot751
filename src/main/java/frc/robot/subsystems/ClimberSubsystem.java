@@ -49,21 +49,13 @@ public class ClimberSubsystem extends SubsystemBase{
         return rightClimberEncoder.getPosition() / Constants.Climber.kGearRatio * 2 * Constants.Climber.kSpoolRadius * Math.PI;
     }
 
-	public void rampUpLeft() {
-		leftDesiredVoltage = 2.0;
-	}
+    public void setRightVoltage(double volts) {
+        rightClimberMotor.setVoltage(volts);
+    }
 
-	public void rampUpRight() {
-		rightDesiredVoltage = 2.0;
-	}
-
-	public void rampDownLeft() {
-		leftDesiredVoltage = -2;
-	}
-
-	public void rampDownRight() {
-		rightDesiredVoltage = -2;
-	}
+    public void setLeftVoltage(double volts) {
+        leftClimberMotor.setVoltage(volts);
+    }
 
     /**
      * Stop both climber motors
@@ -82,9 +74,6 @@ public class ClimberSubsystem extends SubsystemBase{
 
 		TelemetryUpdater.setTelemetryValue("Climber/Left Climber Position", getLeftPosition());
 		TelemetryUpdater.setTelemetryValue("Climber/Right Climber Position", getRightPosition());
-
-        leftClimberMotor.set(leftDesiredVoltage);
-        rightClimberMotor.set(rightDesiredVoltage);
 
         /*TelemetryUpdater.setTelemetryValue("Climber Current Draw", getCurrentDraw());
         TelemetryUpdater.setTelemetryValue("Left Climber Position", getLeftPosition());
