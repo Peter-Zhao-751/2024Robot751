@@ -47,6 +47,9 @@ public class Robot extends TimedRobot {
         // robot container
         m_robotContainer = new RobotContainer();
         m_scheduler = CommandScheduler.getInstance();
+        m_scheduler.onCommandInitialize(command -> System.out.println("Command initialized: " + command.getName()));
+        m_scheduler.onCommandInterrupt(command -> System.out.println("Command interrupted: " + command.getName()));
+        m_scheduler.onCommandFinish(command -> System.out.println("Command finished: " + command.getName()));
 
         LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.OFF);
 
@@ -64,7 +67,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-
         // updating ui
         UIManager.updatePathPreview(); // todo: maybe disable
         StateMachine.periodic();
@@ -75,9 +77,6 @@ public class Robot extends TimedRobot {
         // and running subsystem periodic() methods.  This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
         m_scheduler.run();
-        m_scheduler.onCommandInitialize(command -> System.out.println("Command initialized: " + command.getName()));
-        m_scheduler.onCommandInterrupt(command -> System.out.println("Command interrupted: " + command.getName()));
-        m_scheduler.onCommandFinish(command -> System.out.println("Command finished: " + command.getName()));
     }
 
     @Override
@@ -108,12 +107,12 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
+        if (Constants.loggingEnabled) SignalLogger.start();
+        LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.ON);
         File selectedAuton = UIManager.selectedAuton();
 
 
         m_autonomousCommand = m_robotContainer.getAutonomousCommand(selectedAuton);
-        LimelightSubsystem.getInstance().setLEDMode(LimelightSubsystem.LEDMode.ON);
-        if (Constants.loggingEnabled) SignalLogger.start();
 
         if (m_autonomousCommand != null) {
             m_autonomousCommand.schedule();
