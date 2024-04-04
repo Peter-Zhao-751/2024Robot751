@@ -16,7 +16,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
-import org.json.simple.JSONArray; 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -26,7 +26,7 @@ public class Barn2PathInterpreter {
 
     public Barn2PathInterpreter(){
         jsonObject = null;
-        jsonArray = null; 
+        jsonArray = null;
     }
 
     public ArrayList<Command> getAutonCommands(File pathFile) throws Exception{
@@ -35,7 +35,7 @@ public class Barn2PathInterpreter {
 
         jsonObject = (JSONObject) new JSONParser().parse(encryptedData);
 
-        jsonArray = (JSONArray) jsonObject.get("points"); 
+        jsonArray = (JSONArray) jsonObject.get("points");
 
         ArrayList<Command> autonCommands = new ArrayList<>();
 
@@ -116,14 +116,14 @@ public class Barn2PathInterpreter {
             try {
                 // pretty sure this doesn't work
                 String data = new String(java.nio.file.Files.readAllBytes(pathFile.toPath()));
-                jsonObject = (JSONObject) new JSONParser().parse(new FileReader(pathFile)); 
+                jsonObject = (JSONObject) new JSONParser().parse(new FileReader(pathFile));
                 return (String) jsonObject.get("preview");
-            }     
+            }
             catch (Exception e) { System.out.println("Error: " + e);}
         }
         return "No Path";
     }
-    
+
     private static Translation2d getInteriorPoint(JSONObject point){
         return new Translation2d((double)point.get("x"), (double)point.get("y"));
     }

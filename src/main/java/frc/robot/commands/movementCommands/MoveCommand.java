@@ -9,6 +9,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
@@ -17,35 +18,46 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 public class MoveCommand extends Command {
     private final SwerveSubsystem s_Swerve;
-    private final Pose2d desiredLocation;
+    private Pose2d desiredLocation;
     private final List<Translation2d> interiorWaypoints;
     private double ETA;
     private Trajectory movementTrajectory;
-    private SwerveControllerCommand swerveControllerCommand;
+	private SwerveControllerCommand swerveControllerCommand;
 
-    public MoveCommand(Pose2d desiredLocation, List<Translation2d> interiorWaypoints) {
-        this.s_Swerve = SwerveSubsystem.getInstance();
-        this.desiredLocation = desiredLocation;
-        this.interiorWaypoints = interiorWaypoints;
-        this.movementTrajectory = null;
-        addRequirements(s_Swerve);
-    }
+	private boolean isAbsolute;
 
-    public MoveCommand(Pose2d desiredLocation) {
-        this(desiredLocation, List.of());
-    }
+	private MoveCommand(Pose2d desiredLocation, List<Translation2d> interiorWaypoints, boolean isAbsolute) {
+		this.s_Swerve = SwerveSubsystem.getInstance();
+		this.desiredLocation = desiredLocation;
+		this.interiorWaypoints = interiorWaypoints;
+		this.movementTrajectory = null;
+		this.isAbsolute = isAbsolute;
+		addRequirements(s_Swerve);
+	}
 
-    public MoveCommand(Trajectory trajectory) {
-        this.s_Swerve = SwerveSubsystem.getInstance();
-        this.desiredLocation = trajectory.getStates().get(trajectory.getStates().size() - 1).poseMeters;
-        this.interiorWaypoints = null;
-        this.movementTrajectory = trajectory;
-        addRequirements(s_Swerve);
-    }
+	public MoveCommand(Pose2d desiredLocation, List<Translation2d> interiorWaypoints) {
+		this(desiredLocation, interiorWaypoints, true);
+
+	}
+
+	public MoveCommand(Pose2d desiredLocation) {
+		this(desiredLocation, List.of(), true);
+	}
+	public MoveCommand(Pose2d desiredLocation, boolean isAbsolute) {
+		this(desiredLocation, List.of(), isAbsolute);
+	}
 
     @Override
     public void initialize() { // TODO: make stuff use getpose which gets the kalman pose once testing is complete
-        Pose2d currentRobotPosition = s_Swerve.getPose(); // do something
+		Pose2d currentRobotPosition = s_Swerve.getPose(); // do something
+
+		if (!isAbsolute) {
+			Pose2d referenceDesiredLocation = desiredLocation;
+			desiredLocation = new Pose2d(
+				currentRobotPosition.getX() + referenceDesiredLocation.getX(),
+				currentRobotPosition.getY() + referenceDesiredLocation.getY(),
+				new Rotation2d(Math.toRadians(referenceDesiredLocation.getRotation().getDegrees() + currentRobotPosition.getRotation().getDegrees() + 360) % 360));
+		}
 
         if (isAtDesiredLocation(currentRobotPosition, desiredLocation, interiorWaypoints) &&
             Math.abs(desiredLocation.getRotation().getDegrees() - currentRobotPosition.getRotation().getDegrees()) < 5) return;
