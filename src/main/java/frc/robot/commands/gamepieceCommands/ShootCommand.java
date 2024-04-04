@@ -102,8 +102,8 @@ public class ShootCommand extends Command {
                 switch (ampShootingState) {
                     case MovingIntakeToLoad:
                         if (intakeSubsystem.greaterThanSetpoint()) {
-                            intakeSubsystem.setIntakeSpeed(-Constants.Shooter.scoreAmpSpeed);
-                            transferSubsystem.setTransferSpeed(-Constants.Shooter.scoreAmpSpeed);
+                            intakeSubsystem.setIntakeSpeed(-Constants.Shooter.scoreAmpSpeed/1.5);
+                            transferSubsystem.setTransferSpeed(-Constants.Shooter.scoreAmpSpeed/1.5);
                             ampShootingState = AmpState.TransferToIntake;
                         }
                         break;
