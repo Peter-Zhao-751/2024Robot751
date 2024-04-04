@@ -183,17 +183,22 @@ public class SwerveSubsystem extends SubsystemBase {
 
 	public Pose2d getPose() {
 		Pose2d poseEstimatorPose = poseEstimator.getEstimatedPosition();
-		return new Pose2d(poseEstimatorPose.getTranslation(), new Rotation2d((poseEstimatorPose.getRotation().getDegrees() + 540) % 360));  //stateEstimator.getEstimatedPose();
-    }
+		return new Pose2d(poseEstimatorPose.getTranslation(),
+				new Rotation2d((poseEstimatorPose.getRotation().getDegrees() + 540) % 360)); //stateEstimator.getEstimatedPose();
+	}
+
     public double getCurrentVelocityMagnitude(){
         return Math.hypot(stateEstimator.getVelX(), stateEstimator.getVelY());
     }
 
-    public void setPose(Pose2d pose) {
-        stateEstimator.setPose(pose);
-		swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
+	public void setPose(Pose2d pose) {
+		stateEstimator.setPose(pose);
 		poseEstimator.resetPosition(getGyroYaw(), getModulePositions(), pose);
-    }
+	}
+
+	public void setSwerveOdometryPose2d(Pose2d pose) {
+		swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
+	}
 
     public Pose2d getSwerveOdometryPose2d() {
         return swerveOdometry.getPoseMeters();
@@ -210,7 +215,7 @@ public class SwerveSubsystem extends SubsystemBase {
 		}
 		poseEstimator.resetPosition(getGyroYaw(), getModulePositions(), desiredPose);
 		stateEstimator.setPose(desiredPose);
-		swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), desiredPose);
+		//swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), desiredPose);
 	}
 
 	public void resetGyro() {
@@ -218,7 +223,7 @@ public class SwerveSubsystem extends SubsystemBase {
 		gyro.reset();
 		poseEstimator.resetPosition(gyro.getRotation2d(), getModulePositions(), currentPose);
 		stateEstimator.setPose(currentPose);
-		swerveOdometry.resetPosition(gyro.getRotation2d(), getModulePositions(), currentPose);
+		//swerveOdometry.resetPosition(gyro.getRotation2d(), getModulePositions(), currentPose);
 	}
 
 	public Rotation2d getGyroYaw() {

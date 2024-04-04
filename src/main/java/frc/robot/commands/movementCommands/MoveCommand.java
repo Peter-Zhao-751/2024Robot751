@@ -38,8 +38,8 @@ public class MoveCommand extends Command {
     @Override
     public void initialize() {
         Pose2d currentRobotPosition = s_Swerve.getPose();
-
-        if (Math.abs(desiredLocation.getX() - currentRobotPosition.getX()) < 0.1 && Math.abs(desiredLocation.getY() - currentRobotPosition.getY()) < 0.1) return;
+		s_Swerve.setSwerveOdometryPose2d(currentRobotPosition);
+        if (Math.abs(desiredLocation.getX() - currentRobotPosition.getX()) < 0.5 && Math.abs(desiredLocation.getY() - currentRobotPosition.getY()) < 0.5) return;
 
         if (movementTrajectory == null){
             TrajectoryConfig config = new TrajectoryConfig(
@@ -64,7 +64,7 @@ public class MoveCommand extends Command {
 
         swerveControllerCommand = new SwerveControllerCommand(
                 movementTrajectory,
-                s_Swerve::getPose,
+                s_Swerve::getSwerveOdometryPose2d, // i might be retardes
                 Constants.Swerve.swerveKinematics,
                 new PIDController(Constants.AutoConstants.kPXController, 0, 0),
                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),

@@ -56,76 +56,76 @@ public class UIManager {
      * created. If it does exist, the Constant will be updated to match the
      * preference.
      */
-    public static void updatePreferencesBasedOnConstants(Class<?> constants, boolean reset) {
-        Field[] fields = constants.getDeclaredFields();
-        for (Field field : fields) {
-            if (Modifier.isPublic(field.getModifiers()) && Modifier.isStatic(field.getModifiers())) {
-                if (reset) resetPreferenceToConstant(field);
-                else updateOrRetrievePreference(field);
-            }
-        }
+    // public static void updatePreferencesBasedOnConstants(Class<?> constants, boolean reset) {
+    //     Field[] fields = constants.getDeclaredFields();
+    //     for (Field field : fields) {
+    //         if (Modifier.isPublic(field.getModifiers()) && Modifier.isStatic(field.getModifiers())) {
+    //             if (reset) resetPreferenceToConstant(field);
+    //             else updateOrRetrievePreference(field);
+    //         }
+    //     }
 
-        // Recursively handle inner classes
-        Class<?>[] innerClasses = constants.getDeclaredClasses();
-        for (Class<?> innerClass : innerClasses) updatePreferencesBasedOnConstants(innerClass, reset);
-    }
+    //     // Recursively handle inner classes
+    //     Class<?>[] innerClasses = constants.getDeclaredClasses();
+    //     for (Class<?> innerClass : innerClasses) updatePreferencesBasedOnConstants(innerClass, reset);
+    // }
 
-    /**
-     * This function will update the preference based on the value of the field, or
-     * retrieve the
-     * preference and update the field's value based on the preference.
-     */
-    public static void updateOrRetrievePreference(Field field) {
-        try {
-            // Ensure the field is accessible
-            field.setAccessible(true);
-            // Check if a Preference exists for this field
-            if (!Preferences.containsKey(field.getName())) {
-                setPreferences(field);
-            } else {
-                // Preference exists, update field's value from Preference
-                switch (field.getType().getName()) {
-                    case "int" -> field.setInt(null, Preferences.getInt(field.getName(), field.getInt(null)));
-                    case "double" ->
-                            field.setDouble(null, Preferences.getDouble(field.getName(), field.getDouble(null)));
-                    case "boolean" ->
-                            field.setBoolean(null, Preferences.getBoolean(field.getName(), field.getBoolean(null)));
-                    case "java.lang.String" ->
-                            field.set(null, Preferences.getString(field.getName(), (String) field.get(null)));
-                }
-            }
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
+    // /**
+    //  * This function will update the preference based on the value of the field, or
+    //  * retrieve the
+    //  * preference and update the field's value based on the preference.
+    //  */
+    // public static void updateOrRetrievePreference(Field field) {
+    //     try {
+    //         // Ensure the field is accessible
+    //         field.setAccessible(true);
+    //         // Check if a Preference exists for this field
+    //         if (!Preferences.containsKey(field.getName())) {
+    //             setPreferences(field);
+    //         } else {
+    //             // Preference exists, update field's value from Preference
+    //             switch (field.getType().getName()) {
+    //                 case "int" -> field.setInt(null, Preferences.getInt(field.getName(), field.getInt(null)));
+    //                 case "double" ->
+    //                         field.setDouble(null, Preferences.getDouble(field.getName(), field.getDouble(null)));
+    //                 case "boolean" ->
+    //                         field.setBoolean(null, Preferences.getBoolean(field.getName(), field.getBoolean(null)));
+    //                 case "java.lang.String" ->
+    //                         field.set(null, Preferences.getString(field.getName(), (String) field.get(null)));
+    //             }
+    //         }
+    //     } catch (IllegalArgumentException | IllegalAccessException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
-    private static void setPreferences(Field field) throws IllegalAccessException {
-        switch (field.getType().getName()) {
-            case "int" -> Preferences.setInt(field.getName(), field.getInt(null));
-            case "double" -> Preferences.setDouble(field.getName(), field.getDouble(null));
-            case "boolean" -> Preferences.setBoolean(field.getName(), field.getBoolean(null));
-            case "java.lang.String" -> Preferences.setString(field.getName(), (String) field.get(null));
-        }
-    }
+    // private static void setPreferences(Field field) throws IllegalAccessException {
+    //     switch (field.getType().getName()) {
+    //         case "int" -> Preferences.setInt(field.getName(), field.getInt(null));
+    //         case "double" -> Preferences.setDouble(field.getName(), field.getDouble(null));
+    //         case "boolean" -> Preferences.setBoolean(field.getName(), field.getBoolean(null));
+    //         case "java.lang.String" -> Preferences.setString(field.getName(), (String) field.get(null));
+    //     }
+    // }
 
     /**
      * This function will reset the preference based on the value of the field, or
      * retrieve the
      * preference and reset the field's value based on the preference.
      */
-    public static void resetPreferenceToConstant(Field field) {
-        try {
-            // Ensure the field is accessible
-            field.setAccessible(true);
-            // Check if a Preference exists for this field
-            if (Preferences.containsKey(field.getName())) {
-                // Preference exists, update preferences' value from field
-                setPreferences(field);
-            }
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
+    // public static void resetPreferenceToConstant(Field field) {
+    //     try {
+    //         // Ensure the field is accessible
+    //         field.setAccessible(true);
+    //         // Check if a Preference exists for this field
+    //         if (Preferences.containsKey(field.getName())) {
+    //             // Preference exists, update preferences' value from field
+    //             setPreferences(field);
+    //         }
+    //     } catch (IllegalArgumentException | IllegalAccessException e) {
+    //         e.printStackTrace();
+    //     }
+    // }
 
     public static void updateTelemetry() {
 
@@ -166,22 +166,22 @@ public class UIManager {
 
             CvSink cvSink = new CvSink("cvSink");
             cvSink.setSource(camera);
-        
+
             CvSource outputStream = new CvSource("Processed Frames", PixelFormat.kGray, 640, 480, 25);
             CameraServer.addCamera(outputStream);
             CameraServer.startAutomaticCapture(outputStream);
-        
+
             Mat mat = new Mat();
-        
+
             while (!Thread.interrupted()) {
                 if (cvSink.grabFrame(mat) == 0) continue;
 
                 // Flip 180 degrees
                 Core.flip(mat, mat, -1); //TODO: 0 if left is right
-        
+
                 // Convert to black and white
                 Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY);
-        
+
                 outputStream.putFrame(mat);
             }
         }).start();
@@ -191,7 +191,7 @@ public class UIManager {
         // CameraServer.startAutomaticCapture(imageSource);
 
 
-        // TODO: something 
+        // TODO: something
         CvSource imageSource = new CvSource("Path Preview", PixelFormat.kMJPEG, 827, 401, 1);
         CameraServer.addCamera(imageSource);
         CameraServer.startAutomaticCapture(imageSource);
