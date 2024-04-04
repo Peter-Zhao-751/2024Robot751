@@ -25,26 +25,32 @@ public class MoveCommand extends Command {
 	private SwerveControllerCommand swerveControllerCommand;
 
 	private boolean isAbsolute;
+	private boolean withEndVelocity;
 
-	private MoveCommand(Pose2d desiredLocation, List<Translation2d> interiorWaypoints, boolean isAbsolute) {
+	private MoveCommand(Pose2d desiredLocation, List<Translation2d> interiorWaypoints, boolean isAbsolute,
+			boolean withEndVelocity) {
 		this.s_Swerve = SwerveSubsystem.getInstance();
 		this.desiredLocation = desiredLocation;
 		this.interiorWaypoints = interiorWaypoints;
 		this.movementTrajectory = null;
 		this.isAbsolute = isAbsolute;
+		this.withEndVelocity = withEndVelocity;
 		addRequirements(s_Swerve);
 	}
 
-	public MoveCommand(Pose2d desiredLocation, List<Translation2d> interiorWaypoints) {
-		this(desiredLocation, interiorWaypoints, true);
+	public MoveCommand(Pose2d desiredLocation, List<Translation2d> interiorWaypoints, boolean withEndVelocity) {
+		this(desiredLocation, interiorWaypoints, true, withEndVelocity);
+	}
 
+	public MoveCommand(Pose2d desiredLocation, List<Translation2d> interiorWaypoints) {
+		this(desiredLocation, interiorWaypoints, true, false);
 	}
 
 	public MoveCommand(Pose2d desiredLocation) {
-		this(desiredLocation, List.of(), true);
+		this(desiredLocation, List.of(), true, false);
 	}
 	public MoveCommand(Pose2d desiredLocation, boolean isAbsolute) {
-		this(desiredLocation, List.of(), isAbsolute);
+		this(desiredLocation, List.of(), isAbsolute, false);
 	}
 
     @Override
@@ -68,7 +74,8 @@ public class MoveCommand extends Command {
                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
                 .setKinematics(Constants.Swerve.swerveKinematics);
 
-            //config.setStartVelocity(s_Swerve.getCurrentVelocityMagnitude()); // TODO: this shitter might be broken
+			//config.setStartVelocity(s_Swerve.getCurrentVelocityMagnitude()); // TODO: this shitter might be broken
+			//if (withEndVelocity) config.setEndVelocity(Constants.AutoConstants.kMaxSpeedMetersPerSecond); // TODO: test shitter
 
             movementTrajectory = TrajectoryGenerator.generateTrajectory(
                 currentRobotPosition,

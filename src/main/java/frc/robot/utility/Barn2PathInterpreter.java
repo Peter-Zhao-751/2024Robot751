@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Constants;
 import frc.robot.commands.gamepieceCommands.IntakeCommand;
 import frc.robot.commands.gamepieceCommands.ShootCommand;
+import frc.robot.commands.movementCommands.AimbotCommand;
 import frc.robot.commands.movementCommands.MoveCommand;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -60,22 +61,22 @@ public class Barn2PathInterpreter {
                     }
                 }
 
-                MoveCommand newMovementCommand = new MoveCommand(getMainPoint(point), interiorPoints);
 
-                double delay = newMovementCommand.getETA();
 
                 switch (getEvent(point).toLowerCase()){
-                    case "shoot":
-                        double primeDelay = (delay- Constants.Shooter.spinUpTime) > 0 ? (delay-Constants.Shooter.spinUpTime) : 0;
-                        ParallelDeadlineGroup moveAndPrime = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(primeDelay), new InstantCommand()));
-                        autonCommands.add(new SequentialCommandGroup(newMovementCommand, new ShootCommand()));
+					case "shoot":
+						MoveCommand newShootMovementCommand = new MoveCommand(getMainPoint(point), interiorPoints, true);
+                        autonCommands.add(new SequentialCommandGroup(newShootMovementCommand, new AimbotCommand(), new ShootCommand(true)));
                         break;
-                    case "intake":
+					case "intake":
+						MoveCommand newIntakeMovementCommand = new MoveCommand(getMainPoint(point), interiorPoints, true);
+						double delay = newIntakeMovementCommand.getETA();
                         double intakeDelay = (delay-5) > 0 ? (delay-5) : 0;
-                        ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new IntakeCommand()));
+                        ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newIntakeMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new IntakeCommand()));
                         autonCommands.add(moveAndIntake);
                         break;
-                    default:
+					default:
+						MoveCommand newMovementCommand = new MoveCommand(getMainPoint(point), interiorPoints, false);
                         autonCommands.add(newMovementCommand);
                         break;
                 }
