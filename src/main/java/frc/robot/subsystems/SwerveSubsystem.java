@@ -7,7 +7,6 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -16,15 +15,9 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Voltage;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 
 import frc.lib.util.CTREConfigs;
@@ -32,13 +25,6 @@ import frc.robot.Constants;
 import frc.robot.utility.StateEstimator;
 import frc.robot.utility.TelemetryUpdater;
 import frc.lib.util.LimelightHelpers.PoseEstimate;
-
-import static edu.wpi.first.units.Units.Volts;
-
-//import edu.wpi.first.math.estimator.UnscentedKalmanFilter;
-
-// import sendable and sendable buffer
-
 
 public class SwerveSubsystem extends SubsystemBase {
     public static final CTREConfigs ctreConfigs = new CTREConfigs();
@@ -123,10 +109,6 @@ public class SwerveSubsystem extends SubsystemBase {
     // public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     //     return routine.dynamic(direction);
     // }
-
-    public void setPosition(Pose2d desiredLocation, Rotation2d desiredHeading) {
-        drive(null, 0, false, false);
-    }
 
     public boolean drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
         return drive(translation, rotation, fieldRelative, isOpenLoop, false);
