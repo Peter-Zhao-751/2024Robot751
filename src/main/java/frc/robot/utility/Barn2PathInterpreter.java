@@ -65,18 +65,18 @@ public class Barn2PathInterpreter {
 
                 switch (getEvent(point).toLowerCase()){
 					case "shoot":
-						MoveCommand newShootMovementCommand = new MoveCommand(getMainPoint(point), interiorPoints, true);
+						MoveCommand newShootMovementCommand = new MoveCommand(getMainPoint(point), interiorPoints);
                         autonCommands.add(new SequentialCommandGroup(newShootMovementCommand, new AimbotCommand(), new ShootCommand(true)));
                         break;
 					case "intake":
-						MoveCommand newIntakeMovementCommand = new MoveCommand(getMainPoint(point), interiorPoints, true);
+						MoveCommand newIntakeMovementCommand = new MoveCommand(getMainPoint(point), interiorPoints);
 						double delay = newIntakeMovementCommand.getETA();
                         double intakeDelay = (delay-5) > 0 ? (delay-5) : 0;
                         ParallelDeadlineGroup moveAndIntake = new ParallelDeadlineGroup(newIntakeMovementCommand, new SequentialCommandGroup(new WaitCommand(intakeDelay), new IntakeCommand()));
                         autonCommands.add(moveAndIntake);
                         break;
 					default:
-						MoveCommand newMovementCommand = new MoveCommand(getMainPoint(point), interiorPoints, false);
+						MoveCommand newMovementCommand = new MoveCommand(getMainPoint(point), interiorPoints);
                         autonCommands.add(newMovementCommand);
                         break;
                 }

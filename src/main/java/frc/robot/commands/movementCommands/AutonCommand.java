@@ -16,7 +16,7 @@ public class AutonCommand extends SequentialCommandGroup {
 	public AutonCommand() {
 		Optional<Alliance> alliance = DriverStation.getAlliance();
         //simple auton
-        MoveCommand moveToLocation = new MoveCommand(new Pose2d((alliance.get() == Alliance.Blue) ? 7 : -7, 0, new Rotation2d(0)), false);
+        MoveCommand moveToLocation = new MoveCommand(new Pose2d(7, 0, new Rotation2d(0)));
 
         //MoveCommand moveToLocation2 = new MoveCommand(s_Swerve, new Pose2d(1, 0, new Rotation2d(0)));
         addCommands(moveToLocation);
