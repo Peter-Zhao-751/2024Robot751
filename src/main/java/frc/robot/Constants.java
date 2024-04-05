@@ -82,7 +82,7 @@ public class Constants {
 
         public static double maxTransferTime = 3.0; // unit in seconds
         public static double minTransferTime = 1.5;
-        public static double intakeTransferSpeed = 40.0; // units in rotations per second
+        public static double intakeTransferSpeed = 20.0; // units in rotations per second
         public static double kTransferSpeed = 20.0; // units in centimeters per second
     }
 
@@ -127,7 +127,7 @@ public class Constants {
         public static double kGearRatio = 64.0;
         public static double kSpoolRadius = 1.0; // units in centimeters
 
-        public static double voltage = 5 ;
+        public static double voltage = 5;
     }
 
     public static class Swerve {
@@ -197,7 +197,7 @@ public class Constants {
         /** Meters per Second */
         public static double maxSpeed = 5;
         /** Multiplier */
-		public static double speedMultiplier = 1.0;
+		public static double speedMultiplier = 0.3;
         public static double spinSpeedMultiplier = 1.0;
         /** Radians per Second */
         public static double maxAngularVelocity = maxSpeed / 1.6 * spinSpeedMultiplier;

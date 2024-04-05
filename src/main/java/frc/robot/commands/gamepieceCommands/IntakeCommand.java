@@ -36,8 +36,8 @@ public class IntakeCommand extends Command {
     @Override
     public void execute() {
 		if (intakeSubsystem.greaterThanSetpoint()) {
+            if (!hasStartedIntake) intakeStartTime = System.currentTimeMillis();
 			hasStartedIntake = true;
-			intakeStartTime = System.currentTimeMillis();
 			intakeSubsystem.setIntakeSpeed(Constants.Intake.intakeSpeed);
             //intakeSubsystem.setIntakeSpeed(currentMode == Mode.Speaker ? Constants.Intake.speakerIntakeSpeed : Constants.Intake.ampIntakeSpeed);
         }
@@ -53,7 +53,7 @@ public class IntakeCommand extends Command {
 
     @Override
 	public boolean isFinished() {
-		boolean smartBeamBreak = transferSubsystem.beamBroken() && hasStartedIntake && System.currentTimeMillis() - intakeStartTime > Constants.Intake.minIntakeTime * 1000;
+		boolean smartBeamBreak = transferSubsystem.beamBroken() && hasStartedIntake && System.currentTimeMillis() - intakeStartTime > 0.2 * 1000;
 		return smartBeamBreak || (autonMode && hasStartedIntake && System.currentTimeMillis() - intakeStartTime > Constants.Intake.intakeTime);
         // return switch (currentMode) {
         //     case Speaker -> transferSubsystem.beamBroken();
