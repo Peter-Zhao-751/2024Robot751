@@ -18,7 +18,7 @@ public class SwerveRotateControllerCommand extends Command {
         this.swerveSubsystem = SwerveSubsystem.getInstance();
         this.targetAngle = targetAngle;
 		addRequirements(swerveSubsystem);
-		
+
         thetaController = new ProfiledPIDController(
                 Constants.AutoConstants.kPThetaController, 0, 0,
                 new TrapezoidProfile.Constraints(
@@ -30,7 +30,6 @@ public class SwerveRotateControllerCommand extends Command {
 
     @Override
     public void initialize() {
-        // Ensure controller is starting fresh
         thetaController.reset(swerveSubsystem.getPose().getRotation().getRadians());
     }
 
@@ -48,13 +47,11 @@ public class SwerveRotateControllerCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        // Optionally, stop the swerve modules or set them to a neutral state
         swerveSubsystem.stopModules();
     }
 
     @Override
     public boolean isFinished() {
-        // Command is finished when the robot's rotation is within a small threshold of the target
         return thetaController.atGoal();
     }
 }
