@@ -70,7 +70,7 @@ public class MoveCommand extends Command {
                 new PIDController(Constants.AutoConstants.kPYController, 0, 0),
                 thetaController,
                 s_Swerve::setModuleStates,
-                s_Swerve);
+				s_Swerve);
 
         swerveControllerCommand.initialize();
     }
