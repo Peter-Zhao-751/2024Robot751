@@ -70,6 +70,7 @@ public class SwerveSubsystem extends SubsystemBase {
         stateEstimator.gyro = gyro;
 		swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getGyroYaw(), getModulePositions());//, new Pose2d());
 		resetOdometry();
+		resetGyro();
 
         TelemetryUpdater.setTelemetryValue("Field", m_field);
 
