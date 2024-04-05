@@ -33,6 +33,7 @@ public class Constants {
 		public static double ampScoreSpeed = 15.0; // units in rotations per second
 
 		public static double intakeTime = 5.0; // unit in seconds
+		public static double minIntakeTime = 1.5;
 
         public static double intakeRollerRadius = 2.54; // units in centimeters
 
