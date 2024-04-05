@@ -53,7 +53,8 @@ public class IntakeCommand extends Command {
 
     @Override
 	public boolean isFinished() {
-		return transferSubsystem.beamBroken() || (autonMode && hasStartedIntake && System.currentTimeMillis() - intakeStartTime > Constants.Intake.intakeTime);
+		boolean smartBeamBreak = transferSubsystem.beamBroken() && hasStartedIntake && System.currentTimeMillis() - intakeStartTime > Constants.Intake.minIntakeTime * 1000;
+		return smartBeamBreak || (autonMode && hasStartedIntake && System.currentTimeMillis() - intakeStartTime > Constants.Intake.intakeTime);
         // return switch (currentMode) {
         //     case Speaker -> transferSubsystem.beamBroken();
         //     case Amp -> intakeSubsystem.beamBroken();
