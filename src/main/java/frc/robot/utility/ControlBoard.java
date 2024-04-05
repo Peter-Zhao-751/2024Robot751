@@ -71,6 +71,7 @@ public class ControlBoard {
 
         // driver.rightBumper.whileTrue(new AimbotCommand());
         driver.rightBumper.toggleOnTrue(new AimAssistCommand());
+        //driver.rightBumper.whileTrue(new SwerveRotateControllerCommand(new Rotation2d(Math.PI)));
         driver.rightTrigger.whileTrue(new ShootCommand());
 
         driver.dUp.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));

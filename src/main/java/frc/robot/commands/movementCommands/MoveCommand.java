@@ -13,6 +13,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 
 public class MoveCommand extends Command {
@@ -37,7 +38,7 @@ public class MoveCommand extends Command {
     @Override
     public void initialize() {
         Pose2d currentRobotPosition = s_Swerve.getPose();
-		s_Swerve.setSwerveOdometryPose2d(currentRobotPosition);
+		//s_Swerve.setSwerveOdometryPose2d(currentRobotPosition);
 
 		if (Math.abs(currentRobotPosition.getTranslation().getDistance(desiredLocation.getTranslation())) < 0.1 && Math.abs(currentRobotPosition.getRotation().getDegrees() - desiredLocation.getRotation().getDegrees()) < 5) return;
 
@@ -68,7 +69,7 @@ public class MoveCommand extends Command {
 
 			swerveControllerCommand = new SwerveControllerCommand(
 					movementTrajectory,
-					s_Swerve::getSwerveOdometryPose2d, // i might be retardes
+					s_Swerve::getPose, // i might be retardes
 					Constants.Swerve.swerveKinematics,
 					new PIDController(Constants.AutoConstants.kPXController, 0, 0),
 					new PIDController(Constants.AutoConstants.kPYController, 0, 0),
