@@ -61,8 +61,8 @@ public class ClimberSubsystem extends SubsystemBase{
      * Stop both climber motors
      */
     public void stop(){
-		leftClimberMotor.stopMotor();
-		rightClimberMotor.stopMotor();
+		// leftClimberMotor.stopMotor();
+		// rightClimberMotor.stopMotor();
 		leftDesiredVoltage = 0;
 		rightDesiredVoltage = 0;
     }
