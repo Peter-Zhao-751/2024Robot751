@@ -182,9 +182,10 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
 	public Pose2d getPose() {
-		return poseEstimator.getEstimatedPosition();
-		// return new Pose2d(poseEstimatorPose.getTranslation(),
-		// 		new Rotation2d((poseEstimatorPose.getRotation().getDegrees() + 540) % 360)); //stateEstimator.getEstimatedPose();
+		//return poseEstimator.getEstimatedPosition();
+		Pose2d poseEstimatorPose = poseEstimator.getEstimatedPosition();
+		return new Pose2d(poseEstimatorPose.getTranslation(),
+				new Rotation2d((poseEstimatorPose.getRotation().getDegrees() % 360 + 540) % 360)); //stateEstimator.getEstimatedPose();
 	}
 
     public double getCurrentVelocityMagnitude(){
@@ -235,12 +236,22 @@ public class SwerveSubsystem extends SubsystemBase {
      * <p> Resets the swerve modules to their absolute positions </p>
      * <p> Align all wheels forwards </p>
      */
-    public void resetModulesToAbsolute() {
-        System.out.println("Resetting Modules");
-        for (SwerveModule mod : mSwerveMods) {
-            mod.setAngle();
-        }
-    }
+	public void resetModulesToAbsolute() {
+		System.out.println("Resetting Modules");
+		for (SwerveModule mod : mSwerveMods) {
+			mod.setAngle();
+		}
+	}
+
+	public SwerveDriveKinematics getKinematics() {
+		return Constants.Swerve.swerveKinematics;
+	}
+
+	public void stopModules() {
+		for (SwerveModule mod : mSwerveMods) {
+			mod.setDriveVoltage(0);
+		}
+	}
 
     /**
      * <p> Crosses the swerve modules </p>

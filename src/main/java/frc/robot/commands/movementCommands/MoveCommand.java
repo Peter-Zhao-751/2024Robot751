@@ -20,13 +20,12 @@ public class MoveCommand extends Command {
     private final Pose2d desiredLocation;
     private final List<Translation2d> interiorWaypoints;
     private double ETA;
-    private Trajectory movementTrajectory;
 	private SwerveControllerCommand swerveControllerCommand;
+	private SwerveRotateControllerCommand swerveRotateControllerCommand;
 
     public MoveCommand(Pose2d desiredLocation, List<Translation2d> interiorWaypoints) {
 		this.desiredLocation = desiredLocation;
         this.interiorWaypoints = interiorWaypoints;
-		this.movementTrajectory = null;
 		this.s_Swerve = SwerveSubsystem.getInstance();
         addRequirements(s_Swerve);
     }
@@ -39,59 +38,74 @@ public class MoveCommand extends Command {
     public void initialize() {
         Pose2d currentRobotPosition = s_Swerve.getPose();
 		s_Swerve.setSwerveOdometryPose2d(currentRobotPosition);
-        if (Math.abs(desiredLocation.getX() - currentRobotPosition.getX()) < 0.5 && Math.abs(desiredLocation.getY() - currentRobotPosition.getY()) < 0.5) return;
 
-        if (movementTrajectory == null){
-            TrajectoryConfig config = new TrajectoryConfig(
-                Constants.AutoConstants.kMaxSpeedMetersPerSecond,
-                Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-                .setKinematics(Constants.Swerve.swerveKinematics);
+		if (Math.abs(currentRobotPosition.getTranslation().getDistance(desiredLocation.getTranslation())) < 0.1 && Math.abs(currentRobotPosition.getRotation().getDegrees() - desiredLocation.getRotation().getDegrees()) < 5) return;
 
-            movementTrajectory = TrajectoryGenerator.generateTrajectory(
-                currentRobotPosition,
-                interiorWaypoints,
-                desiredLocation,
-                config);
-        }
+		if (Math.abs(currentRobotPosition.getTranslation().getDistance(desiredLocation.getTranslation())) < 1) {
 
-        ProfiledPIDController thetaController = new ProfiledPIDController(
-                Constants.AutoConstants.kPThetaController, 0, 0,
-                Constants.AutoConstants.kThetaControllerConstraints);
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+			swerveRotateControllerCommand = new SwerveRotateControllerCommand(desiredLocation.getRotation());
+			swerveRotateControllerCommand.initialize();
+			ETA = 1;
+		} else {
+			TrajectoryConfig config = new TrajectoryConfig(
+					Constants.AutoConstants.kMaxSpeedMetersPerSecond,
+					Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+					.setKinematics(Constants.Swerve.swerveKinematics);
 
-        ETA = movementTrajectory.getTotalTimeSeconds();
-        //TelemetryUpdater.setTelemetryValue("Auton Current Trajectory Estimated ETA", ETA);
+			Trajectory movementTrajectory = TrajectoryGenerator.generateTrajectory(
+					currentRobotPosition,
+					interiorWaypoints,
+					desiredLocation,
+					config);
 
-        swerveControllerCommand = new SwerveControllerCommand(
-                movementTrajectory,
-                s_Swerve::getSwerveOdometryPose2d, // i might be retardes
-                Constants.Swerve.swerveKinematics,
-                new PIDController(Constants.AutoConstants.kPXController, 0, 0),
-                new PIDController(Constants.AutoConstants.kPYController, 0, 0),
-                thetaController,
-                s_Swerve::setModuleStates,
-				s_Swerve);
+			ProfiledPIDController thetaController = new ProfiledPIDController(
+					Constants.AutoConstants.kPThetaController, 0, 0,
+					Constants.AutoConstants.kThetaControllerConstraints);
+			thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-        swerveControllerCommand.initialize();
+			ETA = movementTrajectory.getTotalTimeSeconds();
+			//TelemetryUpdater.setTelemetryValue("Auton Current Trajectory Estimated ETA", ETA);
+
+			swerveControllerCommand = new SwerveControllerCommand(
+					movementTrajectory,
+					s_Swerve::getSwerveOdometryPose2d, // i might be retardes
+					Constants.Swerve.swerveKinematics,
+					new PIDController(Constants.AutoConstants.kPXController, 0, 0),
+					new PIDController(Constants.AutoConstants.kPYController, 0, 0),
+					thetaController,
+					s_Swerve::setModuleStates,
+					s_Swerve);
+
+			swerveControllerCommand.initialize();
+		}
     }
 
     @Override
     public void execute() {
         if (swerveControllerCommand != null) {
             swerveControllerCommand.execute();
-        }
+        } else if (swerveRotateControllerCommand != null) {
+			swerveRotateControllerCommand.execute();
+		}
     }
 
     @Override
     public void end(boolean interrupted) {
         if (swerveControllerCommand != null) {
             swerveControllerCommand.end(interrupted);
-        }
+		} else if (swerveRotateControllerCommand != null) {
+			swerveRotateControllerCommand.end(interrupted);
+		}
     }
 
     @Override
     public boolean isFinished() {
-        return swerveControllerCommand != null && swerveControllerCommand.isFinished();
+		if (swerveControllerCommand != null) {
+			return swerveControllerCommand.isFinished();
+		} else if (swerveRotateControllerCommand != null) {
+			return swerveRotateControllerCommand.isFinished();
+		}
+		return true;
     }
 
     public double getETA() {
