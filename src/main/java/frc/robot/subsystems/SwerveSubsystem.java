@@ -249,7 +249,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
 	public void stopModules() {
 		for (SwerveModule mod : mSwerveMods) {
-			mod.setDriveVoltage(0);
+			mod.stop();
 		}
 	}
 

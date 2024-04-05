@@ -77,15 +77,20 @@ public class SwerveModule {
         this.desiredState = desiredState;
     }
 
-    private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
-        if (isOpenLoop) {
-            driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
-            mDriveMotor.setControl(driveDutyCycle);
-        } else {
-            driveVelocity.Velocity = Conversions.MPSToRPS(desiredState.speedMetersPerSecond, Constants.Swerve.wheelCircumference);
-            mDriveMotor.setControl(driveVelocity);
-        }
-    }
+	private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop) {
+		if (isOpenLoop) {
+			driveDutyCycle.Output = desiredState.speedMetersPerSecond / Constants.Swerve.maxSpeed;
+			mDriveMotor.setControl(driveDutyCycle);
+		} else {
+			driveVelocity.Velocity = Conversions.MPSToRPS(desiredState.speedMetersPerSecond,
+					Constants.Swerve.wheelCircumference);
+			mDriveMotor.setControl(driveVelocity);
+		}
+	}
+
+	public void stop() {
+		mDriveMotor.setControl(driveDutyCycle.withOutput(0));
+	}
 
     /**
      * Gets the angle of the module in Rotation2d from the CANCoder
