@@ -72,7 +72,8 @@ public class MoveCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         if (swerveControllerCommand != null) {
-            swerveControllerCommand.end(interrupted);
+			swerveControllerCommand.end(interrupted);
+			s_Swerve.stopModules();
         }
     }
     @Override
