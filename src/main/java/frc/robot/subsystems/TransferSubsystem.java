@@ -42,7 +42,7 @@ public class TransferSubsystem extends SubsystemBase {
         shooterTransfer.setInverted(true);
 
         beamBreak = new DigitalInput(Constants.Transfer.beamBreakDIOPort);
-        beamDebouncer = new Debouncer(0.05, Debouncer.DebounceType.kRising);
+        beamDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kBoth);
 
         shooterTransferController = new FeedforwardPID(0, 0, 0, Constants.Transfer.kPShooterController, 0, 0);
         intakeTransferController = new FeedforwardPID(0, 0, 0, Constants.Transfer.kPIntakeController, 0, 0);

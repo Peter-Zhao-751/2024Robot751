@@ -63,7 +63,7 @@ public class IntakeSubsystem extends SubsystemBase{
         angleEncoder.setZeroOffset(Constants.Intake.kSwivelEncoderZeroOffset);
 
         beamBreak = new DigitalInput(Constants.Intake.beamBreakDIOPort);
-        beamDebouncer = new Debouncer(0.2, Debouncer.DebounceType.kRising);
+        beamDebouncer = new Debouncer(0.1, Debouncer.DebounceType.kRising);
         isBeamBroken = false;
 
 
@@ -182,6 +182,7 @@ public class IntakeSubsystem extends SubsystemBase{
         TelemetryUpdater.setTelemetryValue("Intake/Intake Swivel Setpoint", swivelSetpoint);
 
         TelemetryUpdater.setTelemetryValue("Intake/Intake Speed", getIntakeSpeed());
+        TelemetryUpdater.setTelemetryValue("Intake/Intake Raw Swivel Position", angleEncoder.getPosition());
     }
 
     private void calculateSwivel() {
@@ -208,7 +209,6 @@ public class IntakeSubsystem extends SubsystemBase{
         leftSwivelMotor.setVoltage(combinedOutput);
         rightSwivelMotor.follow(leftSwivelMotor, true);
         TelemetryUpdater.setTelemetryValue("Intake/Intake Swivel Position", currentAngle);
-        TelemetryUpdater.setTelemetryValue("Intake/Intake Raw Swivel Position", angleEncoder.getPosition());
     }
 
     /**

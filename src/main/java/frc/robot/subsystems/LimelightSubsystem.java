@@ -114,14 +114,9 @@ public class LimelightSubsystem extends SubsystemBase {
         }
 
         FieldElements closestSpeaker = closestSpeaker(pose);
-        double desired = Units.feetToMeters(10);
         double distance = Math.hypot(closestSpeaker.x - pose.getX(), closestSpeaker.y - pose.getY());
 
-        Pose2d desiredPosition = SwerveSubsystem.getInstance().getPose().plus(new Transform2d(new Translation2d(0, desired - distance), Rotation2d.fromDegrees(this.getAngle())));
-
         TelemetryUpdater.setTelemetryValue("autoaim/dist/distance", distance);
-        TelemetryUpdater.setTelemetryValue("autoaim/dist/x", desiredPosition.getX());
-        TelemetryUpdater.setTelemetryValue("autoaim/dist/y", desiredPosition.getY());
         return distance;
     }
 

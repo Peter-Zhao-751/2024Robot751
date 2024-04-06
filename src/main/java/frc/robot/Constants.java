@@ -21,7 +21,7 @@ public class Constants {
     public static double stickDeadband = 0.05;
     public static int teamNumber = 751;
 
-    public static class Intake{
+    public static class Intake {
         // 1 falcon for intake, 2 NEOs for moving intake TBD gear ratio
         public static int intakeMotorID = 57;
         public static int leftSwivelMotorID = 58;
@@ -60,10 +60,10 @@ public class Constants {
         public static double kAmpAngle = 125.0;
         public static double kRetractedAngle = 135.0;
 
-        public static double kSwivelEncoderZeroOffset = 360 - 94.1;
+        public static double kSwivelEncoderZeroOffset = 266;
     }
 
-    public static class Transfer{
+    public static class Transfer {
         public static int intakeTransferID = 54;
         public static double intakeTransferRadius = 5.08; // units in centimeters
 
@@ -86,7 +86,7 @@ public class Constants {
         public static double kTransferSpeed = 20.0; // units in centimeters per second
     }
 
-    public static class Shooter{
+    public static class Shooter {
         // 2 krakens for shooting, one neo for the transfer belts.
         public static int leftShooterMotorID = 51;
         public static int rightShooterMotorID = 52;
@@ -112,10 +112,10 @@ public class Constants {
         public static double kProcessNoise = 3.0;
 		public static double kMeasurementNoise = 0.01;
 
-        public static double targetDistance = 2.05; // units in meters
+        public static double targetDistance = 2.10; // units in meters
     }
 
-    public static class Climber{
+    public static class Climber {
         public static int leftClimberMotorID = 61;
         public static int rightClimberMotorID = 62;
 
@@ -247,13 +247,13 @@ public class Constants {
         public static int LEDCount = 13 + 8; // the 8 is the number of LEDs on the CANdle
     }
 
-    public static class CurrentManager{
+    public static class CurrentManager {
         public static double maxCurrent = 180.0;
         public static double maxPercent = 0.8;
         public static double nominalPercent = 0.5;
     }
 
-    public static class Odometry{
+    public static class Odometry {
         public static double maxLimeTimeout = 0.1; // seconds
         public static double maxLimeSwerveDeviation = 0.1; // meters
         public static double kalmanGain = 0.5; // bro guess too lazy
@@ -288,7 +288,7 @@ public class Constants {
                 kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
     }
 
-    public static class FieldConstants{
+    public static class FieldConstants {
         public static class FieldElements{
             public String name;
             public double x;
