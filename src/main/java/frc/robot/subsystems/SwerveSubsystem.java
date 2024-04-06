@@ -1,8 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Rotation;
-
-import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
@@ -120,13 +117,13 @@ public class SwerveSubsystem extends SubsystemBase {
     public boolean drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop, boolean isPrecise) {
         LimelightSubsystem limelight = LimelightSubsystem.getInstance();
         // precision mode
-        double xSpeed = !isPrecise ? translation.getX() : translation.getX() * Constants.Swerve.preciseControlFactor;
-        double ySpeed = !isPrecise ? translation.getY() : translation.getY() * Constants.Swerve.preciseControlFactor;
+        double xSpeed = !isPrecise ? translation.getX() : translation.getX() * Constants.Swerve.translationPreciseControlFactor;
+        double ySpeed = !isPrecise ? translation.getY() : translation.getY() * Constants.Swerve.translationPreciseControlFactor;
         xSpeed *= Constants.Swerve.speedMultiplier;
         ySpeed *= Constants.Swerve.speedMultiplier;
         double rot = 0;
         if (!lockOnTarget) {
-            rot = !isPrecise ? rotation : rotation * Constants.Swerve.preciseControlFactor;
+            rot = !isPrecise ? rotation : rotation * Constants.Swerve.rotationPreciseControlFactor;
             rot *= Math.max(Constants.Swerve.maxAngularVelocity / 10, 1);
         }
         if (lockOnTarget && limelight.hasTarget()){

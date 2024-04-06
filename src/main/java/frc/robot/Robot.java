@@ -68,7 +68,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         // updating ui
-        UIManager.updatePathPreview(); // todo: maybe disable
+//        UIManager.updatePathPreview(); // todo: maybe disable
         StateMachine.periodic();
         ControlBoard.getInstance().updateTelemetry();
 

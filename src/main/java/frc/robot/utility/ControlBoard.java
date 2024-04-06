@@ -1,9 +1,5 @@
 package frc.robot.utility;
 
-import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -17,8 +13,8 @@ import frc.robot.subsystems.*;
 public class ControlBoard {
     private static ControlBoard instance;
 
-    private static final double shooterSpeedIncrement = 1;
-    private static final double intakeAngleIncrement = 1;
+    private static final double shooterSpeedIncrement = 0.5; // rps / tick
+    private static final double intakeAngleIncrement = 10; // degrees / tick
 
     /* Controllers */
     private final PS5Controller driver;
@@ -29,6 +25,7 @@ public class ControlBoard {
     private final ShooterSubsystem s_Shooter;
     private final ClimberSubsystem s_Climber;
     private final LimelightSubsystem s_Limelight;
+    private final CANdleSubsystem s_Candle;
 
     private Mode currentMode = Mode.Speaker;
     private boolean precise = false;
@@ -50,13 +47,14 @@ public class ControlBoard {
         s_Shooter = ShooterSubsystem.getInstance();
         s_Climber = ClimberSubsystem.getInstance();
         s_Limelight = LimelightSubsystem.getInstance();
+        s_Candle = CANdleSubsystem.getInstance();
 
         s_Swerve.setDefaultCommand(
                 new TeleopCommand(
                         driver.leftVerticalJoystick,
                         driver.leftHorizontalJoystick,
                         driver.rightHorizontalJoystick,
-                        () -> false,
+                        () -> fieldCentric,
                         driver.leftJoystickButton.or(() -> precise)
                 )
         );
@@ -71,7 +69,6 @@ public class ControlBoard {
 
         // driver.rightBumper.whileTrue(new AimbotCommand());
         driver.rightBumper.toggleOnTrue(new AimAssistCommand());
-        //driver.rightBumper.whileTrue(new MoveCommand(new Pose2d(10, 0, new Rotation2d(0))));
         driver.rightTrigger.whileTrue(new ShootCommand());
 
         driver.dUp.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
@@ -90,7 +87,10 @@ public class ControlBoard {
         operator.leftTrigger.and(this::climberMode).whileTrue(new ClimberCommand(frc.robot.commands.movementCommands.ClimberCommand.Direction.Bwd, Side.Left));
 
         operator.leftBumper.and(this::notClimberMode).whileTrue(new StartEndCommand(
-                () -> s_Limelight.setLEDMode(LimelightSubsystem.LEDMode.BLINK),
+                () -> {
+                    s_Limelight.setLEDMode(LimelightSubsystem.LEDMode.BLINK);
+                    s_Candle.twinkle();
+                },
                 () -> s_Limelight.setLEDMode(LimelightSubsystem.LEDMode.OFF)
         ));
 		operator.leftBumper.and(this::climberMode).whileTrue(new ClimberCommand(frc.robot.commands.movementCommands.ClimberCommand.Direction.Fwd, Side.Left));

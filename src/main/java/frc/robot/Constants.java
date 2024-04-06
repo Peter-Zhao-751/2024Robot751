@@ -193,7 +193,8 @@ public class Constants {
         public static double driveKD = 0.0;
 
         /* Swerve Profiling Values */
-        public static double preciseControlFactor = 0.25;
+        public static double translationPreciseControlFactor = 0.25;
+        public static double rotationPreciseControlFactor = 0.5;
         /** Meters per Second */
         public static double maxSpeed = 5;
         /** Multiplier */

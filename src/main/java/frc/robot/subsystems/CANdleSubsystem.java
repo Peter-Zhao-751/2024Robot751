@@ -17,12 +17,13 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 public class CANdleSubsystem extends SubsystemBase {
     private static CANdleSubsystem instance;
 
-    private final CANdle m_candle = new CANdle(Constants.CANdle.CANdleID);
+    private final CANdle m_candle;
     private AnimationTypes desiredAnimation;
     private AnimationTypes currentAnimation;
     private AnimationTypes lastAnimation;
 
     private CANdleSubsystem() {
+        m_candle = new CANdle(Constants.CANdle.CANdleID);
         currentAnimation = AnimationTypes.Idle;
         changeAnimation(AnimationTypes.Idle);
 
@@ -93,7 +94,7 @@ public class CANdleSubsystem extends SubsystemBase {
         Intake(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount, 8)),
         Climb(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount, 8)),
         Dance(new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.CANdle.LEDCount, 8), 2000),
-        Alert(new StrobeAnimation(255, 255, 255, 255, 0.8, Constants.CANdle.LEDCount, 8)),
+        Alert(new StrobeAnimation(255, 255, 255, 255, 0.8, Constants.CANdle.LEDCount, 8), 2000),
         Aimbot(new TwinkleAnimation(0, 0, 255, 0, 0.5, Constants.CANdle.LEDCount, TwinkleAnimation.TwinklePercent.Percent42, 8)),
         Idle(null),
         Disabled(null);

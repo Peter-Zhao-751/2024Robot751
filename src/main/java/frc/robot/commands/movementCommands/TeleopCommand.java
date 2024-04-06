@@ -18,16 +18,16 @@ public class TeleopCommand extends Command {
     private final DoubleSupplier translationSup;
     private final DoubleSupplier strafeSup;
     private final DoubleSupplier rotationSup;
-    private final BooleanSupplier robotCentricSup;
+    private final BooleanSupplier fieldCentricSup;
     private final BooleanSupplier preciseControl;
 
-    public TeleopCommand(DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup, BooleanSupplier preciseControl) {
+    public TeleopCommand(DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier fieldCentricSup, BooleanSupplier preciseControl) {
         this.s_Swerve = SwerveSubsystem.getInstance();
 
         this.translationSup = translationSup;
         this.strafeSup = strafeSup;
         this.rotationSup = rotationSup;
-        this.robotCentricSup = robotCentricSup;
+        this.fieldCentricSup = fieldCentricSup;
         this.preciseControl = preciseControl;
 
         addRequirements(s_Swerve); // Not sure if we need this
@@ -48,7 +48,7 @@ public class TeleopCommand extends Command {
         boolean isDriving = s_Swerve.drive(
             new Translation2d(translationVal, strafeVal).times(Constants.Swerve.maxSpeed), 
             rotationVal * Constants.Swerve.maxAngularVelocity, 
-            !robotCentricSup.getAsBoolean(),
+            fieldCentricSup.getAsBoolean(),
             true, 
             preciseControl.getAsBoolean()
         );
