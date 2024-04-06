@@ -183,10 +183,10 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
 	public Pose2d getPose() {
-		//return poseEstimator.getEstimatedPosition();
-		Pose2d poseEstimatorPose = poseEstimator.getEstimatedPosition();
-		return new Pose2d(poseEstimatorPose.getTranslation(),
-				new Rotation2d(Math.toRadians(poseEstimatorPose.getRotation().getDegrees() % 360))); //stateEstimator.getEstimatedPose();
+		return poseEstimator.getEstimatedPosition();
+		// Pose2d poseEstimatorPose = poseEstimator.getEstimatedPosition();
+		// return new Pose2d(poseEstimatorPose.getTranslation(),
+		// 		new Rotation2d(Math.toRadians(poseEstimatorPose.getRotation().getDegrees() % 360))); //stateEstimator.getEstimatedPose();
 	}
 
     public double getCurrentVelocityMagnitude(){
@@ -196,7 +196,7 @@ public class SwerveSubsystem extends SubsystemBase {
 	public void setPose(Pose2d pose) {
 		stateEstimator.setPose(pose);
 		poseEstimator.resetPosition(getGyroYaw(), getModulePositions(), pose);
-		swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
+		//swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
 	}
 
 	public void setSwerveOdometryPose2d(Pose2d pose) {
@@ -218,7 +218,7 @@ public class SwerveSubsystem extends SubsystemBase {
 		}
 		poseEstimator.resetPosition(getGyroYaw(), getModulePositions(), desiredPose);
 		stateEstimator.setPose(desiredPose);
-		swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), desiredPose);
+		//swerveOdometry.resetPosition(getGyroYaw(), getModulePositions(), desiredPose);
 	}
 
 	public void resetGyro() {
@@ -226,7 +226,7 @@ public class SwerveSubsystem extends SubsystemBase {
 		gyro.reset();
 		poseEstimator.resetPosition(gyro.getRotation2d(), getModulePositions(), currentPose);
 		stateEstimator.setPose(currentPose);
-		swerveOdometry.resetPosition(gyro.getRotation2d(), getModulePositions(), currentPose);
+		//swerveOdometry.resetPosition(gyro.getRotation2d(), getModulePositions(), currentPose);
 	}
 
 	public Rotation2d getGyroYaw() {

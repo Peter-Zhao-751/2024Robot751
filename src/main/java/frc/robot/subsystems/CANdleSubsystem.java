@@ -9,7 +9,6 @@ import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.utility.CurrentManager;
 import frc.robot.utility.TelemetryUpdater;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;

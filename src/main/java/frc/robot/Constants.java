@@ -127,7 +127,7 @@ public class Constants {
         public static double kGearRatio = 64.0;
         public static double kSpoolRadius = 1.0; // units in centimeters
 
-        public static double voltage = 5;
+        public static double voltage = 8;
     }
 
     public static class Swerve {
@@ -270,10 +270,10 @@ public class Constants {
 
     public static class AutoConstants {
         //TODO: tune everything here
-        public static double kMaxSpeedMetersPerSecond = 3; // 3
-        public static double kMaxAccelerationMetersPerSecondSquared = 3; // 3
-        public static double kMaxAngularSpeedRadiansPerSecond = 2.4; //Math.PI;
-        public static double kMaxAngularSpeedRadiansPerSecondSquared = 2.4; //Math.PI;
+        public static double kMaxSpeedMetersPerSecond = 1; // 3
+        public static double kMaxAccelerationMetersPerSecondSquared = 1; // 3
+        public static double kMaxAngularSpeedRadiansPerSecond = Math.PI;
+        public static double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
 
 
         //especially these values

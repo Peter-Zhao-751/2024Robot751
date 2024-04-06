@@ -44,6 +44,7 @@ public class MoveCommand extends Command {
                 interiorWaypoints,
                 desiredLocation,
                 config);
+
         ProfiledPIDController thetaController = new ProfiledPIDController(
                 Constants.AutoConstants.kPThetaController, 0, 0,
                 Constants.AutoConstants.kThetaControllerConstraints);

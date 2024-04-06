@@ -17,7 +17,7 @@ import frc.robot.subsystems.*;
 public class ControlBoard {
     private static ControlBoard instance;
 
-    private static final double shooterSpeedIncrement = 0.02;
+    private static final double shooterSpeedIncrement = 1;
     private static final double intakeAngleIncrement = 1;
 
     /* Controllers */
@@ -57,7 +57,7 @@ public class ControlBoard {
                         driver.leftHorizontalJoystick,
                         driver.rightHorizontalJoystick,
                         () -> false,
-                        driver.leftJoystickButton
+                        driver.leftJoystickButton.or(() -> precise)
                 )
         );
 
@@ -71,7 +71,7 @@ public class ControlBoard {
 
         // driver.rightBumper.whileTrue(new AimbotCommand());
         driver.rightBumper.toggleOnTrue(new AimAssistCommand());
-        //driver.rightBumper.whileTrue(new SwerveRotateControllerCommand(new Rotation2d(Math.PI)));
+        //driver.rightBumper.whileTrue(new MoveCommand(new Pose2d(10, 0, new Rotation2d(0))));
         driver.rightTrigger.whileTrue(new ShootCommand());
 
         driver.dUp.onTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
