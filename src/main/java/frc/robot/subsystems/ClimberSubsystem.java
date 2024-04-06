@@ -35,7 +35,9 @@ public class ClimberSubsystem extends SubsystemBase{
 
         //leftClimberMotor.setInverted(true);
         leftClimberMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        leftClimberMotor.setSmartCurrentLimit(20);
 		rightClimberMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+        rightClimberMotor.setSmartCurrentLimit(20);
 
         leftDesiredVoltage = 0;
         rightDesiredVoltage = 0;
