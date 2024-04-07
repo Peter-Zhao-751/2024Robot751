@@ -11,12 +11,14 @@ public class IntakeCommand extends Command {
     private final TransferSubsystem transferSubsystem;
 	private final boolean autonMode;
 	private double intakeStartTime;
+    private boolean firstBeamBroken;
 	private boolean hasStartedIntake;
 
 	public IntakeCommand(boolean autonMode) {
 		this.intakeSubsystem = IntakeSubsystem.getInstance();
 		this.transferSubsystem = TransferSubsystem.getInstance();
 		this.autonMode = autonMode;
+        this.firstBeamBroken = false;
 	}
 
 	public IntakeCommand() {
@@ -31,6 +33,7 @@ public class IntakeCommand extends Command {
 		transferSubsystem.setShooterTransfer(-50);
 		intakeStartTime = 0;
 		hasStartedIntake = false;
+        firstBeamBroken = false;
     }
 
     @Override
