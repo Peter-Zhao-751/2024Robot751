@@ -18,7 +18,7 @@ public class ControlBoard {
 
     /* Controllers */
     private final PS5Controller driver;
-    private final PS5Controller operator;
+    // private final PS5Controller operator;
 
     private final SwerveSubsystem s_Swerve;
     private final IntakeSubsystem s_Intake;
@@ -40,7 +40,7 @@ public class ControlBoard {
 
     private ControlBoard() {
         driver = new PS5Controller(0);
-        operator = new PS5Controller(1);
+        // operator = new PS5Controller(1);
 
         s_Swerve = SwerveSubsystem.getInstance();
         s_Intake = IntakeSubsystem.getInstance();
@@ -83,33 +83,33 @@ public class ControlBoard {
     }
 
     private void configureOperatorBindings() {
-        operator.leftTrigger.and(this::notClimberMode).whileTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
-        operator.leftTrigger.and(this::climberMode).whileTrue(new ClimberCommand(frc.robot.commands.movementCommands.ClimberCommand.Direction.Bwd, Side.Left));
+        // operator.leftTrigger.and(this::notClimberMode).whileTrue(new InstantCommand(() -> currentMode = Mode.Speaker));
+        // operator.leftTrigger.and(this::climberMode).whileTrue(new ClimberCommand(frc.robot.commands.movementCommands.ClimberCommand.Direction.Bwd, Side.Left));
 
-        operator.leftBumper.and(this::notClimberMode).whileTrue(new StartEndCommand(
-                () -> {
-                    s_Limelight.setLEDMode(LimelightSubsystem.LEDMode.BLINK);
-                    s_Candle.twinkle();
-                },
-                () -> s_Limelight.setLEDMode(LimelightSubsystem.LEDMode.OFF)
-        ));
-		operator.leftBumper.and(this::climberMode).whileTrue(new ClimberCommand(frc.robot.commands.movementCommands.ClimberCommand.Direction.Fwd, Side.Left));
+        // operator.leftBumper.and(this::notClimberMode).whileTrue(new StartEndCommand(
+        //         () -> {
+        //             s_Limelight.setLEDMode(LimelightSubsystem.LEDMode.BLINK);
+        //             s_Candle.twinkle();
+        //         },
+        //         () -> s_Limelight.setLEDMode(LimelightSubsystem.LEDMode.OFF)
+        // ));
+		// operator.leftBumper.and(this::climberMode).whileTrue(new ClimberCommand(frc.robot.commands.movementCommands.ClimberCommand.Direction.Fwd, Side.Left));
 
-        operator.rightTrigger.and(this::notClimberMode).whileTrue(new InstantCommand(() -> currentMode = Mode.Amp));
-        operator.rightTrigger.and(this::climberMode).whileTrue(new ClimberCommand(frc.robot.commands.movementCommands.ClimberCommand.Direction.Bwd, Side.Right));
+        // operator.rightTrigger.and(this::notClimberMode).whileTrue(new InstantCommand(() -> currentMode = Mode.Amp));
+        // operator.rightTrigger.and(this::climberMode).whileTrue(new ClimberCommand(frc.robot.commands.movementCommands.ClimberCommand.Direction.Bwd, Side.Right));
 
-        operator.rightBumper.and(this::notClimberMode).whileTrue(new TransferCommand());
-		operator.rightBumper.and(this::climberMode).whileTrue(new ClimberCommand(frc.robot.commands.movementCommands.ClimberCommand.Direction.Fwd, Side.Right));
+        // operator.rightBumper.and(this::notClimberMode).whileTrue(new TransferCommand());
+		// operator.rightBumper.and(this::climberMode).whileTrue(new ClimberCommand(frc.robot.commands.movementCommands.ClimberCommand.Direction.Fwd, Side.Right));
 
-        operator.dUp.whileTrue(new InstantCommand(this::increaseShooterPower, s_Shooter));
-        operator.dDown.whileTrue(new InstantCommand(this::decreaseShooterPower, s_Shooter));
-        operator.dLeft.whileTrue(new RunCommand(this::retractIntake, s_Intake));
-        operator.dRight.whileTrue(new RunCommand(this::extendIntake, s_Intake));
+        // operator.dUp.whileTrue(new InstantCommand(this::increaseShooterPower, s_Shooter));
+        // operator.dDown.whileTrue(new InstantCommand(this::decreaseShooterPower, s_Shooter));
+        // operator.dLeft.whileTrue(new RunCommand(this::retractIntake, s_Intake));
+        // operator.dRight.whileTrue(new RunCommand(this::extendIntake, s_Intake));
 
-        operator.triangleButton.toggleOnTrue(new StartEndCommand(() -> currentMode = Mode.Climb, () -> currentMode = Mode.Speaker));
-        operator.squareButton.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.kRetractedAngle)));
-        operator.circleButton.whileTrue(new InstantCommand(this::togglePrecise));
-        operator.crossButton.whileTrue(new SwerveAngleCommand(SwerveAngleCommand.SwerveAngle.CROSS));
+        // operator.triangleButton.toggleOnTrue(new StartEndCommand(() -> currentMode = Mode.Climb, () -> currentMode = Mode.Speaker));
+        // operator.squareButton.onTrue(new InstantCommand(() -> s_Intake.setSwivelPosition(Constants.Intake.kRetractedAngle)));
+        // operator.circleButton.whileTrue(new InstantCommand(this::togglePrecise));
+        // operator.crossButton.whileTrue(new SwerveAngleCommand(SwerveAngleCommand.SwerveAngle.CROSS));
     }
 
     public static ControlBoard getInstance() {
