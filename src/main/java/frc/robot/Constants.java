@@ -95,7 +95,7 @@ public class Constants {
         public static double transferSpeed = 20.0; // units in centimeters per second
 		public static double feedTime = 2; // seconds
 
-        public static double maxShooterSpeed = 84; // units in rotations per second
+        public static double maxShooterSpeed = 84 * 0.333; // units in rotations per second
         public static int motionMagicAcceleration = 400; // units in rotations per second squared
         public static int motionMagicJerk = 4000; // units in rotations per second cubed
 
@@ -198,8 +198,8 @@ public class Constants {
         /** Meters per Second */
         public static double maxSpeed = 5;
         /** Multiplier */
-		public static double speedMultiplier = 1.0;
-        public static double spinSpeedMultiplier = 1.0;
+		public static double speedMultiplier = 0.2;
+        public static double spinSpeedMultiplier = 0.5;
         /** Radians per Second */
         public static double maxAngularVelocity = maxSpeed / 1.6 * spinSpeedMultiplier;
 
