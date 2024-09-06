@@ -28,10 +28,10 @@ public class CANdleSubsystem extends SubsystemBase {
         changeAnimation(AnimationTypes.Idle);
 
         CANdleConfiguration configAll = new CANdleConfiguration();
-        configAll.statusLedOffWhenActive = true;
+        configAll.statusLedOffWhenActive = false;
         configAll.disableWhenLOS = false;
         configAll.stripType = LEDStripType.GRB;
-        configAll.brightnessScalar = 0.1;
+        configAll.brightnessScalar = 1;
         configAll.vBatOutputMode = VBatOutputMode.Modulated;
         m_candle.configAllSettings(configAll, 100);
     }
@@ -71,20 +71,21 @@ public class CANdleSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (desiredAnimation != currentAnimation) {
-            desiredAnimation.setStartAnimationTime();
+        setColorToAllianceColor();
+        // if (desiredAnimation != currentAnimation) {
+        //     desiredAnimation.setStartAnimationTime();
 
-            if (desiredAnimation.getAnimation() != null) m_candle.animate(desiredAnimation.getAnimation());
-            else setColorToAllianceColor();
+        //     if (desiredAnimation.getAnimation() != null) m_candle.animate(desiredAnimation.getAnimation());
+        //     else setColorToAllianceColor();
 
-            currentAnimation = desiredAnimation;
+        //     currentAnimation = desiredAnimation;
 
-            //TelemetryUpdater.setTelemetryValue("Current Robot LED Animation", CurrentManager.isOverNominal() ? "Disabled due to over-current" : currentAnimation.name());
-        } else if (currentAnimation.isDone()) {
-            changeAnimation(lastAnimation);
-            currentAnimation = lastAnimation;
-            desiredAnimation = lastAnimation;
-        }
+        //     //TelemetryUpdater.setTelemetryValue("Current Robot LED Animation", CurrentManager.isOverNominal() ? "Disabled due to over-current" : currentAnimation.name());
+        // } else if (currentAnimation.isDone()) {
+        //     changeAnimation(lastAnimation);
+        //     currentAnimation = lastAnimation;
+        //     desiredAnimation = lastAnimation;
+        // }
     }
 
     public enum AnimationTypes {
