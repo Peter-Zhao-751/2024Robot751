@@ -47,7 +47,6 @@ public class Constants {
         public static double kGSwivelFeedforward = 0.19;
         public static double kVSwivelFeedforward = 1.17;
 
-        // TODO: Tune these values via SYSID
         public static double kSIntakeController = 0.30606;
         public static double kVIntakeController = 0.1152;
         public static double kAIntakeController = 0.0036207;
@@ -119,8 +118,8 @@ public class Constants {
         public static int leftClimberMotorID = 61;
         public static int rightClimberMotorID = 62;
 
-        public static double maxClimberHeight = 100.0; // TODO
-        public static double minClimberHeight = 5.0; // TODO
+        public static double maxClimberHeight = 100.0;
+        public static double minClimberHeight = 5.0;
 
         public static double climberSpeed = 5.0;
 
@@ -198,8 +197,8 @@ public class Constants {
         /** Meters per Second */
         public static double maxSpeed = 5;
         /** Multiplier */
-		public static double speedMultiplier = 0.33;
-        public static double spinSpeedMultiplier = 0.75;
+		public static double speedMultiplier = 1;
+        public static double spinSpeedMultiplier = 1;
         /** Radians per Second */
         public static double maxAngularVelocity = maxSpeed / 1.6 * spinSpeedMultiplier;
 
@@ -225,7 +224,6 @@ public class Constants {
             }
         }
 
-        // TODO: Check if these values are correct
         public static SwerveModule frontLeftModule = new SwerveModule(11, 12, 13, 81.21);
         public static SwerveModule frontRightModule = new SwerveModule(21, 22, 23, 59.41);
         public static SwerveModule backLeftModule = new SwerveModule(31, 32, 33, 79.45);
@@ -239,7 +237,7 @@ public class Constants {
         public static String name = "limelight";
 
         public static double height = 15.61 + 3.75; // inches
-        public static double angle = 35; // TODO check this value
+        public static double angle = 35;
     }
 
     public static class CANdle {
@@ -270,7 +268,6 @@ public class Constants {
     }
 
     public static class AutoConstants {
-        //TODO: tune everything here
         public static double kMaxSpeedMetersPerSecond = 1; // 3
         public static double kMaxAccelerationMetersPerSecondSquared = 1; // 3
         public static double kMaxAngularSpeedRadiansPerSecond = Math.PI;
@@ -315,8 +312,6 @@ public class Constants {
                 return robotPose.getX() > minX && robotPose.getX() < maxX && robotPose.getY() > minY && robotPose.getY() < maxY;
             }
         }
-        // fix these values, only the speakers are (maybe correct)
-        // TODO: tune these values
         public static FieldElements[] blue = {
             new FieldElements("Amp", 3.57, 7.94, 0.0, -1.0, 1.0, -1.0, 1.0),
             new FieldElements("Speaker", 0.5, 5.5, 0.0, -1.0, 1.0, -1.0, 1.0),

@@ -6,7 +6,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.math.controller.PIDController;
 import frc.robot.utility.TelemetryUpdater;
 
 public class ClimberSubsystem extends SubsystemBase{
@@ -17,9 +16,6 @@ public class ClimberSubsystem extends SubsystemBase{
 
     private final RelativeEncoder leftClimberEncoder;
     private final RelativeEncoder rightClimberEncoder;
-
-    private double leftDesiredVoltage;
-    private double rightDesiredVoltage;
 
     public static ClimberSubsystem getInstance() {
         if(instance == null) instance = new ClimberSubsystem();
@@ -38,9 +34,6 @@ public class ClimberSubsystem extends SubsystemBase{
         leftClimberMotor.setSmartCurrentLimit(80);
 		rightClimberMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
         rightClimberMotor.setSmartCurrentLimit(80);
-
-        leftDesiredVoltage = 0;
-        rightDesiredVoltage = 0;
     }
 
     private double getLeftPosition(){
@@ -63,10 +56,8 @@ public class ClimberSubsystem extends SubsystemBase{
      * Stop both climber motors
      */
     public void stop(){
-		// leftClimberMotor.stopMotor();
-		// rightClimberMotor.stopMotor();
-		leftDesiredVoltage = 0;
-		rightDesiredVoltage = 0;
+        leftClimberMotor.stopMotor();
+        rightClimberMotor.stopMotor();
     }
 
     @Override
